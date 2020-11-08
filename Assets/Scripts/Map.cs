@@ -6,7 +6,7 @@ public struct Map
 {
     //public NativeArray<Particle> map;
     public int2 sizes;
-
+    public int ArrayLenght => sizes.x * sizes.y;
     public Map(int2 sizes)
     {
         //map = new NativeArray<Particle>(sizes.x * sizes.y, Allocator.Persistent);
@@ -25,6 +25,7 @@ public struct Map
     //    set { map[pos.y * sizes.x + pos.x] = value; }
     //}
 
+
     public void MoveParticle(NativeArray<Particle> particles, Particle particle, int2 from, int2 to)
     {
         int fromI = PosToIndex(from);
@@ -34,10 +35,25 @@ public struct Map
         particles[toI] = particle;
     }
 
+    public void SwapParticles(NativeArray<Particle> particles, int2 from, int2 to)
+    {
+        int fromI = PosToIndex(from);
+        int toI = PosToIndex(to);
+        Particle temp = particles[fromI];
+        particles[fromI] = particles[toI];
+        particles[toI] = temp;
+    }
+
     public bool IsFreePosition(NativeArray<Particle> particles, int2 pos)
     {
         int i = PosToIndex(pos);
         return InBound(pos) && particles[i].type == ParticleType.None;
+    }
+
+    public ParticleType ParticleTypeAtPosition(NativeArray<Particle> particles, int2 pos)
+    {
+        int i = PosToIndex(pos);
+        return particles[i].type;
     }
 
     public bool InBound(int2 pos)

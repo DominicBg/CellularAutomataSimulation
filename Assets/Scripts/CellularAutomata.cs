@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class CellularAutomata : MonoBehaviour
 {
+    public static int Tick { get; private set; }
+    public static uint TickSeed { get; private set; }
+
     public int2 sizes = 100;
 
     public GridRenderer gridRenderer;
@@ -16,8 +19,21 @@ public class CellularAutomata : MonoBehaviour
 
     NativeArray<Particle> particles;
     NativeArray<ParticleSpawner> nativeParticleSpawners;
+
+    //NativeArray<PixelSprite> sprites; cancer a rendre burstable lol
+    PixelSprite[] sprites = new PixelSprite[1];
+
     Map map;
     Unity.Mathematics.Random m_random;
+
+    public float desiredFPS = 60;
+    float currentDeltaTime;
+    float frameDuration;
+
+    private void OnValidate()
+    {
+        frameDuration = 1f / desiredFPS;
+    }
 
     private void Awake()
     {
@@ -25,44 +41,70 @@ public class CellularAutomata : MonoBehaviour
     }
     private void OnDestroy()
     {
-        particles.Dispose();
-        nativeParticleSpawners.Dispose();
+        Dispose();
+    }
+
+    void Dispose()
+    {
+        if (particles.IsCreated)
+        {
+            particles.Dispose();
+            nativeParticleSpawners.Dispose();
+        }
     }
 
     private void Init()
     {
         map = new Map(sizes);
-        if(particles.IsCreated)
-        {
-            particles.Dispose();
-            nativeParticleSpawners.Dispose();
-        }
+        Dispose();
 
         particles = new NativeArray<Particle>(sizes.x * sizes.y, Allocator.Persistent);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(particleSpawners, Allocator.Persistent);
 
-        player.Init(0);
+        player.Init(0, particles, map);
         gridRenderer.Init(sizes);
         m_random.InitState();
     }
 
     public void Update()
     {
-        if (player.TryUpdate(particles, map) || Input.GetKey(KeyCode.Space))
+        //Force correct fps
+        currentDeltaTime += Time.deltaTime;
+        while(currentDeltaTime >= frameDuration)
         {
+            Tick++;
+            TickSeed = m_random.NextUInt();
+            //Store tick to Ctrl+Z?
+
+            FrameUpdate();
+            currentDeltaTime -= frameDuration;
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Init();
+        }
+    }
+
+    void FrameUpdate()
+    {
+        if (player.TryUpdate(particles, map) || Input.GetKey(KeyCode.Space))
+        {
+            //Recopy player sprites in native array
+            sprites[0] = player.sprite;
+
             CellularAutomataJob cellularAutomataJob = new CellularAutomataJob();
-            uint seed = m_random.NextUInt();
             cellularAutomataJob.map = map;
             cellularAutomataJob.particles = particles;
             cellularAutomataJob.nativeParticleSpawners = nativeParticleSpawners;
-            cellularAutomataJob.random = new Unity.Mathematics.Random(seed);
-            cellularAutomataJob.Schedule().Complete();
+            cellularAutomataJob.random = new Unity.Mathematics.Random(TickSeed);
 
-            gridRenderer.OnUpdate(particles, map, sizes, player);
-        }
-        if(Input.GetKeyDown(KeyCode.X))
-        {
-            Init();
+            //find a way to parralelize
+            //checker pattern?
+            //cellularAutomataJob.Schedule().Complete();
+            cellularAutomataJob.Run();
+            gridRenderer.OnUpdate(particles, map, sprites);
         }
     }
 }

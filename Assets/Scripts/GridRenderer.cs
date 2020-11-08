@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,22 +10,82 @@ public class GridRenderer : MonoBehaviour
 {
     Texture2D texture;
 
-    //todo add enumerated array
 
-    public Color noneColor;
-    public Color waterColor;
-    public Color sandColor;
-    public Color mudColor;
+    public ParticleRendering particleRendering;
+
+    [System.Serializable]
+    public struct ParticleRendering
+    {
+        public Color noneColor;
+        public WaterRendering waterRendering;
+        public SandRendering sandRendering;
+        public Color mudColor;
+    }
+    [System.Serializable]
+    public struct WaterRendering
+    {
+        public float bubbleInnerThreshold;
+        public float bubbleOuterThreshold;
+        public float scaling;
+        public Color waterColor;
+        public Color bubbleOuterColor;
+        public Color bubbleInnerColor;
+        public float2 speed;
+    }
+
+    [System.Serializable]
+    public struct SandRendering
+    {
+        public float shimmerThreshold;
+        public Color sandColor;
+        public Color shimmerColor;
+    }
 
     public RawImage renderer;
+    private Color32[] colors;
 
-    public void OnUpdate(NativeArray<Particle> particles, Map map, int2 sizes, PlayerCellularAutomata player)
+    public void OnUpdate(NativeArray<Particle> particles, Map map, PixelSprite[] pixelSprites)
     {
-        GetTextureFromMap(particles, texture, map, sizes);
-        AddPixelSprite(texture, player);
-        texture.Apply();
+        int size = map.ArrayLenght;
+        EnsureColorArray(size);
 
+        NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+
+        new GridRendererJob()
+        {
+            colorArray = outputColor,
+            map = map,
+            particleRendering = particleRendering,
+            particles = particles,
+            tick = CellularAutomata.Tick,
+            random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)      
+        }.Schedule(size, 1).Complete();
+
+
+        for (int i = 0; i < pixelSprites.Length; i++)
+        {
+            AddPixelSprite(outputColor, map, pixelSprites[i]);
+        }
+
+        //Copy NativeArray to ColorArray
+        for (int i = 0; i < size; i++)
+        {
+            colors[i] = outputColor[i];
+        }
+
+        outputColor.Dispose();
+        texture.SetPixels32(colors);
+
+        texture.Apply();
         renderer.texture = texture;
+    }
+
+    void EnsureColorArray(int size)
+    {
+        if (colors == null || colors.Length != size)
+        {
+            colors = new Color32[size];
+        }
     }
 
     public void Init(int2 sizes)
@@ -33,53 +94,21 @@ public class GridRenderer : MonoBehaviour
         texture.filterMode = FilterMode.Point;
     }
 
-    void GetTextureFromMap(NativeArray<Particle> particles, Texture2D texture, Map map, int2 sizes)
+    //This is going to be cancer to burst lol
+    void AddPixelSprite(NativeArray<Color32> outputColor, Map map, PixelSprite sprite)
     {
-        for (int x = 0; x < sizes.x; x++)
-        {
-            for (int y = 0; y < sizes.y; y++)
-            {
-                int i = map.PosToIndex(x, y);
-                texture.SetPixel(x, y, GetColorForType(particles[i].type));
-            }
-        }
-    }
-
-    //TODO convert player cellulara automata to a more generic sprite methode
-    void AddPixelSprite(Texture2D texture, PlayerCellularAutomata player)
-    {
-        PixelSprite sprite = player.sprite;
-
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
-                int2 texturePos = new int2(x, y) + player.topLeftPosition;
+                int2 texturePos = new int2(x, y) + sprite.position;
                 if(sprite.collisions[x,y])
                 {
-                    texture.SetPixel(texturePos.x, texturePos.y, sprite.pixels[x,y]);
+                    int index = map.PosToIndex(texturePos);
+                    outputColor[index] = sprite.pixels[x, y];
+                    //texture.SetPixel(texturePos.x, texturePos.y, sprite.pixels[x,y]);
                 }
             }
-        }
-    }
-
-    Color GetColorForType(ParticleType type)
-    {
-        switch (type)
-        {
-            case ParticleType.None:
-                return noneColor;
-            case ParticleType.Water:
-                return waterColor;
-            case ParticleType.Sand:
-                return sandColor;
-            case ParticleType.Mud:
-                return mudColor;
-            case ParticleType.Player:
-                //Gets overriden when trying the sprite
-                return Color.clear;
-            default:
-                return Color.black;
         }
     }
 }

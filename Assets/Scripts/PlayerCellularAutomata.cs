@@ -10,13 +10,13 @@ public class PlayerCellularAutomata : MonoBehaviour
     readonly KeyCode[] inputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S };
 
     public PixelSprite sprite;
-    public int2 topLeftPosition;
 
     [SerializeField] Texture2D baseSprite;
 
-    public void Init(int2 position)
+    public void Init(int2 position, NativeArray<Particle> particles, Map map)
     {
         sprite = new PixelSprite(position, baseSprite);
+        map.SetSpriteAtPosition(particles, sprite.position, position, ref sprite);
     }
 
     public bool TryUpdate(NativeArray<Particle> particles, Map map)
@@ -26,9 +26,9 @@ public class PlayerCellularAutomata : MonoBehaviour
             if(Input.GetKey(inputs[i]))
             {
                 int2 direction = directions[i];
-                int2 previousPos = topLeftPosition;
+                int2 previousPos = sprite.position;
                 MovePlayer(map, direction);
-                map.SetSpriteAtPosition(particles, previousPos, topLeftPosition, ref sprite);
+                map.SetSpriteAtPosition(particles, previousPos, sprite.position, ref sprite);
                 return true;
             }
         }
@@ -38,10 +38,10 @@ public class PlayerCellularAutomata : MonoBehaviour
 
     void MovePlayer(Map map, int2 direction)
     {
-        int2 newPosition = topLeftPosition + direction;
+        int2 newPosition = sprite.position + direction;
         if(IsPlayerInBound(map, newPosition))
         {
-            topLeftPosition = newPosition;
+            sprite.position = newPosition;
         }
     }
 
