@@ -1,31 +1,49 @@
 ﻿
+using System;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 
-public struct Map
+public unsafe struct Map
 {
-    //public NativeArray<Particle> map;
+    [NativeDisableUnsafePtrRestriction]
+    public void* buffer;
     public int2 sizes;
     public int ArrayLenght => sizes.x * sizes.y;
     public Map(int2 sizes)
     {
-        //map = new NativeArray<Particle>(sizes.x * sizes.y, Allocator.Persistent);
+        int size = (sizes.x * sizes.y) * sizeof(Particle);
+        buffer = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<Particle>(), Allocator.Persistent);
+        UnsafeUtility.MemClear(buffer, size);
         this.sizes = sizes;
     }
 
     public void Dispose()
     {
-        //if (map.IsCreated)
-        //    map.Dispose();
+        UnsafeUtility.Free(buffer, Allocator.Persistent);
+        buffer = null;
     }
 
-    //public Particle this[int2 pos]
-    //{
-    //    get { return map[pos.y * sizes.x + pos.x]; }
-    //    set { map[pos.y * sizes.x + pos.x] = value; }
-    //}
+    public unsafe Particle this[int2 index2]
+    {
+        get
+        {
+            if(!InBound(index2))
+                throw new ArgumentOutOfRangeException("Don't you ever try to go out of bound again, this is unsafe :@");
 
+            int index = PosToIndex(index2) * sizeof(Particle);
+            return UnsafeUtility.ReadArrayElement<Particle>(buffer, index);
+        }
+        set
+        {
+            if (!InBound(index2))
+                throw new ArgumentOutOfRangeException("Don't you ever try to go out of bound again, this is unsafe :@");
 
+            int index = PosToIndex(index2) * sizeof(Particle);
+            UnsafeUtility.WriteArrayElement(buffer, index, value);
+        }
+    }
+    
     public void MoveParticle(NativeArray<Particle> particles, Particle particle, int2 from, int2 to)
     {
         int fromI = PosToIndex(from);

@@ -51,6 +51,7 @@ public class CellularAutomata : MonoBehaviour
             particles.Dispose();
             nativeParticleSpawners.Dispose();
         }
+        map.Dispose();
     }
 
     private void Init()
@@ -94,16 +95,22 @@ public class CellularAutomata : MonoBehaviour
             //Recopy player sprites in native array
             sprites[0] = player.sprite;
 
-            CellularAutomataJob cellularAutomataJob = new CellularAutomataJob();
-            cellularAutomataJob.map = map;
-            cellularAutomataJob.particles = particles;
-            cellularAutomataJob.nativeParticleSpawners = nativeParticleSpawners;
-            cellularAutomataJob.random = new Unity.Mathematics.Random(TickSeed);
+            new CellularAutomataJob()
+            {
+                map = map,
+                particles = particles,
+                nativeParticleSpawners = nativeParticleSpawners,
+                random = new Unity.Mathematics.Random(TickSeed)
+            }.Run();
+            //cellularAutomataJob.map = map;
+            //cellularAutomataJob.particles = particles;
+            //cellularAutomataJob.nativeParticleSpawners = nativeParticleSpawners;
+            //cellularAutomataJob.random = new Unity.Mathematics.Random(TickSeed);
 
             //find a way to parralelize
             //checker pattern?
             //cellularAutomataJob.Schedule().Complete();
-            cellularAutomataJob.Run();
+            //cellularAutomataJob.Run();
             gridRenderer.OnUpdate(particles, map, sprites);
         }
     }

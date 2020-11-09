@@ -49,8 +49,9 @@ public struct GridRendererJob : IJobParallelFor
     {
         WaterRendering waterRendering = particleRendering.waterRendering;
         float2 pos = new float2(position.x, position.y) + waterRendering.speed * tick;
-        float value = (noise.snoise(pos * waterRendering.scaling) + 1) * 0.5f;
-        if (value > waterRendering.bubbleInnerThreshold)
+        float value = noise.snoise(pos * waterRendering.scaling);
+        float valueNormalized = (value + 1) * 0.5f;
+        if (valueNormalized > waterRendering.bubbleInnerThreshold)
         {
             return waterRendering.bubbleInnerColor;
         }
@@ -76,7 +77,21 @@ public struct GridRendererJob : IJobParallelFor
         }
         else
         {
-            return sandRendering.sandColor;
+            float2 noiseOffset = noise.snoise(tick * sandRendering.waveSpeed);
+            float2 scrollOffset = tick * sandRendering.waveScrollSpeed;
+            float2 offset = noiseOffset + scrollOffset;
+
+            float xOffset = math.sin(position.x * sandRendering.waveScale.x + offset.x);
+            float ySin = math.sin(position.y * sandRendering.waveScale.y + xOffset + offset.y);
+            float sinNormalized = (ySin + 1) * 0.5f;
+            if (sinNormalized > particleRendering.sandRendering.waveThreshold)
+            {
+                return sandRendering.waveColor;
+            }
+            else
+            {
+                return sandRendering.sandColor;
+            }
         }
     }
 

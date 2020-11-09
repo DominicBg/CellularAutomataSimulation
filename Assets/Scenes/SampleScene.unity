@@ -498,7 +498,7 @@ MonoBehaviour:
       x: 33
       y: 99
     particleType: 2
-  desiredFPS: 120
+  desiredFPS: 240
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0
@@ -545,36 +545,31 @@ MonoBehaviour:
   particleRendering:
     noneColor: {r: 0, g: 0, b: 0, a: 1}
     waterRendering:
-      bubbleInnerThreshold: 0.97
-      bubbleOuterThreshold: 9
+      bubbleInnerThreshold: 0.95
+      bubbleOuterThreshold: 0.9
       scaling: 0.1
       waterColor: {r: 0, g: 0.54901963, b: 1, a: 1}
-      bubbleOuterColor: {r: 0.4117647, g: 0.73333335, b: 1, a: 1}
-      bubbleInnerColor: {r: 0.79607844, g: 0.8862745, b: 1, a: 1}
+      bubbleOuterColor: {r: 0.21960661, g: 0.6410644, b: 0.990566, a: 1}
+      bubbleInnerColor: {r: 0.4009434, g: 0.72631925, b: 1, a: 1}
       speed:
         x: 0
         y: -0.1
     sandRendering:
       shimmerThreshold: 0.98
+      waveThreshold: 0.8
+      waveScale:
+        x: 1
+        y: 1
+      waveSpeed:
+        x: 0.005
+        y: 0.005
+      waveScrollSpeed:
+        x: 0
+        y: 0.05
       sandColor: {r: 1, g: 0.95686275, b: 0.34509805, a: 1}
       shimmerColor: {r: 1, g: 0.99215686, b: 0.8627451, a: 1}
+      waveColor: {r: 1, g: 0.77324754, b: 0.34509802, a: 1}
     mudColor: {r: 0.58431375, g: 0.20784314, b: 0.007843138, a: 1}
-  noneColor: {r: 0, g: 0, b: 0, a: 1}
-  waterRendering:
-    bubbleInnerThreshold: 0.97
-    bubbleOuterThreshold: 0.9
-    scaling: 0.1
-    waterColor: {r: 0, g: 0.54709077, b: 1, a: 1}
-    bubbleOuterColor: {r: 0.41037738, g: 0.7340916, b: 1, a: 1}
-    bubbleInnerColor: {r: 0.7971698, g: 0.8870842, b: 1, a: 1}
-    speed:
-      x: 0
-      y: -0.1
-  sandRendering:
-    shimmerThreshold: 0.98
-    sandColor: {r: 1, g: 0.95686275, b: 0.34509805, a: 1}
-    shimmerColor: {r: 1, g: 0.9909897, b: 0.8632076, a: 1}
-  mudColor: {r: 0.5849056, g: 0.20727038, b: 0.0082769515, a: 1}
   renderer: {fileID: 412216246}
 --- !u!4 &1286533893
 Transform:

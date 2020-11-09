@@ -37,8 +37,13 @@ public class GridRenderer : MonoBehaviour
     public struct SandRendering
     {
         public float shimmerThreshold;
+        public float waveThreshold;
+        public float2 waveScale;
+        public float2 waveSpeed;
+        public float2 waveScrollSpeed;
         public Color sandColor;
         public Color shimmerColor;
+        public Color waveColor;
     }
 
     public RawImage renderer;
@@ -106,7 +111,6 @@ public class GridRenderer : MonoBehaviour
                 {
                     int index = map.PosToIndex(texturePos);
                     outputColor[index] = sprite.pixels[x, y];
-                    //texture.SetPixel(texturePos.x, texturePos.y, sprite.pixels[x,y]);
                 }
             }
         }
