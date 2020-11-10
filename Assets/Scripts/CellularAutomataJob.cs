@@ -9,7 +9,6 @@ public struct CellularAutomataJob : IJob
     public NativeArray<ParticleSpawner> nativeParticleSpawners;
 
     public Map map;
-    //public NativeArray<Particle> particles;
     public Random random;
 
     public void Execute()
@@ -25,9 +24,7 @@ public struct CellularAutomataJob : IJob
             var spawner = nativeParticleSpawners[i];
             if (random.NextFloat() <= spawner.chanceSpawn)
             {
-                int index = map.PosToIndex(spawner.spawnPosition);
-                //map[spawner.spawnPosition] = new Particle() { type = spawner.particleType };
-                map[index] = new Particle() { type = spawner.particleType };
+                map[spawner.spawnPosition] = new Particle() { type = spawner.particleType };
             }
         }
     }
@@ -56,9 +53,7 @@ public struct CellularAutomataJob : IJob
     void UpdateParticleBehaviour(int2 pos)
     {
 
-        //Particle particle = map[pos];
-        int index = map.PosToIndex(pos);
-        Particle particle = map[index];
+        Particle particle = map[pos];
         switch (particle.type)
         {
             case ParticleType.None:
@@ -118,13 +113,9 @@ public struct CellularAutomataJob : IJob
             }
             else if (SurroundedByCount2(pos, ParticleType.Sand, ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
             {
-
-                particle.type = ParticleType.None;
                 //Dry up                
-                int index = map.PosToIndex(pos);
-
-                //map[pos] = particle;
-                map[index] = particle;
+                particle.type = ParticleType.None;
+                map[pos] = particle;
             }
         }
     }
@@ -156,9 +147,7 @@ public struct CellularAutomataJob : IJob
             else if (IsSurroundedBy(pos, ParticleType.Water, 1))
             {   //Sand is touching water, becomes mud
                 particle.type = ParticleType.Mud;
-                int index = map.PosToIndex(pos);
-                map[index] = particle;
-                //map[pos] = particle;
+                map[pos] = particle;
             }
         }
     }
@@ -181,12 +170,8 @@ public struct CellularAutomataJob : IJob
         else if (!IsSurroundedBy(pos, ParticleType.Water, 1))
         {   //Mud is not touching water, becomes sand
             particle.type = ParticleType.Sand;
-            int index = map.PosToIndex(pos);
-
-            //map[pos] = particle;
-            map[index] = particle;
+            map[pos] = particle;
         }
-
     }
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
@@ -201,10 +186,7 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if(map.InBound(adjacentPos))
                 {
-                    int index = map.PosToIndex(adjacentPos);
-
-                    if (map[index].type == type)
-                    // (map[adjacentPos].type == type)
+                    if(map[adjacentPos].type == type)
                     {
                         return true;
                     }
@@ -227,9 +209,7 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    int index = map.PosToIndex(adjacentPos);
-                    if (map[index].type == type)
-                    //if (map[adjacentPos].type == type)
+                    if (map[adjacentPos].type == type)
                     {
                         count++;
                     }
@@ -253,10 +233,7 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    int index = map.PosToIndex(adjacentPos);
-
-                    //if (map[adjacentPos].type == type || map[adjacentPos].type == type2)
-                    if (map[index].type == type || map[index].type == type2)
+                    if (map[adjacentPos].type == type || map[adjacentPos].type == type2)
                     {
                         count++;
                     }
