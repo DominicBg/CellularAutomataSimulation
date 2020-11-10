@@ -9,8 +9,8 @@ using UnityEngine;
 public unsafe struct NativeGrid<T> : IDisposable where T : struct
 {
     [NativeDisableUnsafePtrRestriction]
-    public void* particlesBuffer;
-    public int2 sizes;
+    public void* m_buffer;
+    public int2 m_sizes;
 
     Allocator m_Allocator;
     internal AtomicSafetyHandle m_Safety;
@@ -19,15 +19,16 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
     internal DisposeSentinel m_DisposeSentinel;
 
     private static int s_staticSafetyId;
+    private int m_binarySize;
 
     public NativeGrid(int2 sizes, Allocator allocator)
     {
-        int size = (sizes.x * sizes.y) * UnsafeUtility.SizeOf<T>();
-        this.sizes = sizes;
+        m_binarySize = (sizes.x * sizes.y) * UnsafeUtility.SizeOf<T>();
+        this.m_sizes = sizes;
         m_Allocator = allocator;
 
-        particlesBuffer = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<T>(), allocator);
-        UnsafeUtility.MemClear(particlesBuffer, size);
+        m_buffer = UnsafeUtility.Malloc(m_binarySize, UnsafeUtility.AlignOf<T>(), allocator);
+        UnsafeUtility.MemClear(m_buffer, m_binarySize);
 
         //Copy pasted stuff from NativeArray
         DisposeSentinel.Create(out m_Safety, out m_DisposeSentinel, 1, allocator);
@@ -38,6 +39,11 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
     }
 
+    public void Clear()
+    {
+        UnsafeUtility.MemClear(m_buffer, m_binarySize);
+    }
+
     public void Dispose()
     {
         if (!UnsafeUtility.IsValidAllocator(m_Allocator))
@@ -45,8 +51,8 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
             throw new InvalidOperationException("The NativeArray can not be Disposed because it was not allocated with a valid allocator.");
         }
         DisposeSentinel.Dispose(ref m_Safety, ref m_DisposeSentinel);
-        UnsafeUtility.Free(particlesBuffer, m_Allocator);
-        particlesBuffer = null;
+        UnsafeUtility.Free(m_buffer, m_Allocator);
+        m_buffer = null;
     }
 
     public unsafe T this[int x, int y]
@@ -68,21 +74,21 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException("Don't you ever try to read out of bound again, this is unsafe :@ " + index2);
 
-            int index = ArrayHelper.PosToIndex(index2, sizes);
-            return UnsafeUtility.ReadArrayElement<T>(particlesBuffer, index);
+            int index = ArrayHelper.PosToIndex(index2, m_sizes);
+            return UnsafeUtility.ReadArrayElement<T>(m_buffer, index);
         }
         set
         {
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException("Don't you ever try to write out of bound again, this is unsafe :@ at " + index2);
 
-            int index = ArrayHelper.PosToIndex(index2, sizes);
-            UnsafeUtility.WriteArrayElement(particlesBuffer, index, value);
+            int index = ArrayHelper.PosToIndex(index2, m_sizes);
+            UnsafeUtility.WriteArrayElement(m_buffer, index, value);
         }
     }
 
     public bool InBound(int2 pos)
     {
-        return pos.x >= 0 && pos.y >= 0 && pos.x < sizes.x && pos.y < sizes.y;
+        return pos.x >= 0 && pos.y >= 0 && pos.x < m_sizes.x && pos.y < m_sizes.y;
     }
 }

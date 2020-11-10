@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 public unsafe struct Map
 {
-    public int2 Sizes => particleGrid.sizes;
+    public int2 Sizes => particleGrid.m_sizes;
     public int ArrayLength => Sizes.x * Sizes.y;
 
     NativeGrid<Particle> particleGrid;
@@ -24,23 +24,21 @@ public unsafe struct Map
         dirtyGrid.Dispose();
     }
 
-    //public unsafe Particle this[int2 index2]
-    //{
-    //    get
-    //    {
-    //        return particleGrid[index2];
-    //    }
-    //    set
-    //    {
-    //        particleGrid[index2] = value;
-    //    }
-    //}
+    public void ClearDirtyGrid()
+    {
+        dirtyGrid.Clear();
+    }
 
     public void SetParticleType(int2 pos, ParticleType type, bool setDirty = true)
     {
         particleGrid[pos] = new Particle() { type = type };
         if(setDirty)
             dirtyGrid[pos] = true;
+    }
+
+    public bool IsParticleDirty(int2 pos)
+    {
+        return dirtyGrid[pos];
     }
 
     public Particle GetParticle(int2 pos)

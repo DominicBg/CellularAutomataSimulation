@@ -488,12 +488,12 @@ MonoBehaviour:
   gridRenderer: {fileID: 1286533892}
   player: {fileID: 291513216}
   particleSpawners:
-  - chanceSpawn: 0.3
+  - chanceSpawn: 1
     spawnPosition:
       x: 66
       y: 99
     particleType: 1
-  - chanceSpawn: 0.3
+  - chanceSpawn: 1
     spawnPosition:
       x: 33
       y: 99

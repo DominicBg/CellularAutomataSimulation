@@ -13,8 +13,9 @@ public struct CellularAutomataJob : IJob
 
     public void Execute()
     {
-        SpawnParticles();
+        map.ClearDirtyGrid();
         UpdateSimulation();
+        SpawnParticles();
     }
 
     void SpawnParticles()
@@ -31,27 +32,29 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
-        for (int x = 0; x < map.Sizes.x; x++)
-        {
-            for (int y = 0; y < map.Sizes.y; y++)
-            {
-                int2 pos = new int2(x, y);
-                UpdateParticleBehaviour(pos);
-            }
-        }
-
-        //for (int x = map.sizes.x - 1; x >= 0; x--)
+        //for (int x = 0; x < map.Sizes.x; x++)
         //{
-        //    for (int y = map.sizes.y - 1; y >= 0; y--)
+        //    for (int y = 0; y < map.Sizes.y; y++)
         //    {
         //        int2 pos = new int2(x, y);
         //        UpdateParticleBehaviour(pos);
         //    }
         //}
+
+        for (int x = map.Sizes.x - 1; x >= 0; x--)
+        {
+            for (int y = map.Sizes.y - 1; y >= 0; y--)
+            {
+                UpdateParticleBehaviour(new int2(x, y));
+            }
+        }
     }
 
     void UpdateParticleBehaviour(int2 pos)
     {
+        if (map.IsParticleDirty(pos))
+            return;
+
         Particle particle = map.GetParticle(pos);
         switch (particle.type)
         {
@@ -83,34 +86,21 @@ public struct CellularAutomataJob : IJob
         {
             int2 left = new int2(pos.x - 1, pos.y);
             int2 right = new int2(pos.x + 1, pos.y);
-            int2 left2 = new int2(pos.x - 2, pos.y);
-            int2 right2 = new int2(pos.x + 2, pos.y);
 
             bool goingLeft = random.NextBool();
 
-            int2 dir1 = (goingLeft) ? left2 : right2;
-            int2 dir2 = (goingLeft) ? right2 : left2;
-            int2 dir3 = (goingLeft) ? left : right;
-            int2 dir4 = (goingLeft) ? right : left;
-
-            //Try go 2 steps only if its not blocked by 1 step
-            if (map.IsFreePosition(dir1) && map.IsFreePosition(dir3))
+            int2 dir1 = (goingLeft) ? left : right;
+            int2 dir2 = (goingLeft) ? right : left;
+  
+            if (map.IsFreePosition(dir1))
             {
                 map.MoveParticle(particle, pos, dir1);
             }
-            else if (map.IsFreePosition(dir2) && map.IsFreePosition(dir4))
+            else if (map.IsFreePosition(dir2))
             {
                 map.MoveParticle(particle, pos, dir2);
             }
-            else if (map.IsFreePosition(dir3))
-            {
-                map.MoveParticle(particle, pos, dir3);
-            }
-            else if (map.IsFreePosition(dir4))
-            {
-                map.MoveParticle(particle, pos, dir4);
-            }
-            else if (SurroundedByCount(pos, ParticleType.Sand | ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
+            else if (SurroundedByCount(pos, (int)ParticleType.Sand | (int)ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
             {
                 //Dry up                
                 map.SetParticleType(pos, ParticleType.None, setDirty: false);
@@ -174,10 +164,33 @@ public struct CellularAutomataJob : IJob
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
     {
-        return SurroundedByCount(pos, type, range) > 0;
+        for (int x = -range; x <= range; x++)
+        {
+            for (int y = -range; y <= range; y++)
+            {
+                if (x == y)
+                    continue;
+
+                int2 adjacentPos = pos + new int2(x, y);
+                if (map.InBound(adjacentPos))
+                {
+                    if (type == map.GetParticleType(adjacentPos))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
+
     int SurroundedByCount(int2 pos, ParticleType type, int range = 1)
+    {
+        return SurroundedByCount(pos, (int)type, range);
+    }
+
+    int SurroundedByCount(int2 pos, int type, int range = 1)
     {
         int count = 0;
         for (int x = -range; x <= range; x++)
@@ -190,7 +203,7 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    if ((type & map.GetParticleType(adjacentPos)) == type)
+                    if ((type & (int)map.GetParticleType(adjacentPos)) != 0)
                     {
                         count++;
                     }
