@@ -31,9 +31,9 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
-        for (int x = 0; x < map.sizes.x; x++)
+        for (int x = 0; x < map.Sizes.x; x++)
         {
-            for (int y = 0; y < map.sizes.y; y++)
+            for (int y = 0; y < map.Sizes.y; y++)
             {
                 int2 pos = new int2(x, y);
                 UpdateParticleBehaviour(pos);

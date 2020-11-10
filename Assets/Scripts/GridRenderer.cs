@@ -109,7 +109,7 @@ public class GridRenderer : MonoBehaviour
                 int2 texturePos = new int2(x, y) + sprite.position;
                 if(sprite.collisions[x,y])
                 {
-                    int index = ArrayHelper.PosToIndex(texturePos, map.sizes);
+                    int index = ArrayHelper.PosToIndex(texturePos, map.Sizes);
                     outputColor[index] = sprite.pixels[x, y];
                 }
             }

@@ -20,7 +20,7 @@ public struct GridRendererJob : IJobParallelFor
 
     public void Execute(int i)
     {
-        int2 pos = new int2(i % map.sizes.x, i / map.sizes.y);
+        int2 pos = new int2(i % map.Sizes.x, i / map.Sizes.y);
         Color32 color = GetColorForType(pos, map[pos].type);
         colorArray[i] = color;
     }

@@ -6,62 +6,30 @@ using Unity.Mathematics;
 
 public unsafe struct Map
 {
-    [NativeDisableUnsafePtrRestriction]
-    public void* particlesBuffer;
-    public int2 sizes;
-    public int ArrayLength => sizes.x * sizes.y;
+    public int2 Sizes => particleGrid.sizes;
+    public int ArrayLength => Sizes.x * Sizes.y;
+
+    NativeGrid<Particle> particleGrid;
 
     public Map(int2 sizes)
     {
-        int size = (sizes.x * sizes.y) * sizeof(Particle);
-        this.sizes = sizes;
-
-        particlesBuffer = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<Particle>(), Allocator.Persistent);
-        UnsafeUtility.MemClear(particlesBuffer, size);
+        particleGrid = new NativeGrid<Particle>(sizes, Allocator.Persistent);
     }
 
     public void Dispose()
     {
-        UnsafeUtility.Free(particlesBuffer, Allocator.Persistent);
-        particlesBuffer = null;
+        particleGrid.Dispose();
     }
-
-    public unsafe Particle this[int index]
-    {
-        get
-        {
-            if (index < 0 || index >= ArrayLength)
-                throw new ArgumentOutOfRangeException("Don't you ever try to write out of bound again, this is unsafe :@ at " + index);
-
-            return UnsafeUtility.ReadArrayElement<Particle>(particlesBuffer, index);
-        }
-        set
-        {
-            if (index < 0 || index >= ArrayLength)
-                throw new ArgumentOutOfRangeException("Don't you ever try to write out of bound again, this is unsafe :@ at " + index);
-
-            UnsafeUtility.WriteArrayElement(particlesBuffer, index, value);
-        }
-    }
-
 
     public unsafe Particle this[int2 index2]
     {
         get
         {
-            if (!InBound(index2))
-                throw new ArgumentOutOfRangeException("Don't you ever try to read out of bound again, this is unsafe :@ " + index2);
-
-            int index = ArrayHelper.PosToIndex(index2, sizes);
-            return UnsafeUtility.ReadArrayElement<Particle>(particlesBuffer, index);
+            return particleGrid[index2];
         }
         set
         {
-            if (!InBound(index2))
-                throw new ArgumentOutOfRangeException("Don't you ever try to write out of bound again, this is unsafe :@ at " + index2);
-
-            int index = ArrayHelper.PosToIndex(index2, sizes);
-            UnsafeUtility.WriteArrayElement(particlesBuffer, index, value);
+            particleGrid[index2] = value;
         }
     }
 
@@ -87,7 +55,6 @@ public unsafe struct Map
     {
         return this[pos].type;
     }
-
 
     public void SetSpriteAtPosition(int2 previousPosition, int2 position, ref PixelSprite sprite)
     {
@@ -147,6 +114,6 @@ public unsafe struct Map
 
     public bool InBound(int2 pos)
     {
-        return pos.x >= 0 && pos.y >= 0 && pos.x < sizes.x && pos.y < sizes.y;
+        return pos.x >= 0 && pos.y >= 0 && pos.x < Sizes.x && pos.y < Sizes.y;
     }
 }
