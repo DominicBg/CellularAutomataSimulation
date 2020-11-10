@@ -10,62 +10,79 @@ public unsafe struct Map
     public int ArrayLength => Sizes.x * Sizes.y;
 
     NativeGrid<Particle> particleGrid;
+    NativeGrid<bool> dirtyGrid;
 
     public Map(int2 sizes)
     {
         particleGrid = new NativeGrid<Particle>(sizes, Allocator.Persistent);
+        dirtyGrid = new NativeGrid<bool>(sizes, Allocator.Persistent);
     }
 
     public void Dispose()
     {
         particleGrid.Dispose();
+        dirtyGrid.Dispose();
     }
 
-    public unsafe Particle this[int2 index2]
+    //public unsafe Particle this[int2 index2]
+    //{
+    //    get
+    //    {
+    //        return particleGrid[index2];
+    //    }
+    //    set
+    //    {
+    //        particleGrid[index2] = value;
+    //    }
+    //}
+
+    public void SetParticleType(int2 pos, ParticleType type, bool setDirty = true)
     {
-        get
-        {
-            return particleGrid[index2];
-        }
-        set
-        {
-            particleGrid[index2] = value;
-        }
+        particleGrid[pos] = new Particle() { type = type };
+        if(setDirty)
+            dirtyGrid[pos] = true;
+    }
+
+    public Particle GetParticle(int2 pos)
+    {
+        return particleGrid[pos];
     }
 
     public void MoveParticle(Particle particle, int2 from, int2 to)
     {
-        this[from] = new Particle() { type = ParticleType.None };
-        this[to] = particle;
+        particleGrid[from] = new Particle() { type = ParticleType.None };
+        particleGrid[to] = particle;
+        dirtyGrid[to] = true;
     }
 
     public void SwapParticles(int2 from, int2 to)
     {
-        Particle temp = this[from];
-        this[from] = this[to];
-        this[to] = temp;
+        Particle temp = particleGrid[from];
+        particleGrid[from] = particleGrid[to];
+        particleGrid[to] = temp;
+        dirtyGrid[to] = true;
     }
 
     public bool IsFreePosition(int2 pos)
     {
-        return InBound(pos) && this[pos].type == ParticleType.None;
+        return InBound(pos) && particleGrid[pos].type == ParticleType.None;
     }
 
-    public ParticleType ParticleTypeAtPosition(int2 pos)
+    public ParticleType GetParticleType(int2 pos)
     {
-        return this[pos].type;
+        return particleGrid[pos].type;
     }
 
-    public void SetSpriteAtPosition(int2 previousPosition, int2 position, ref PixelSprite sprite)
+    public void SetSpriteAtPosition(int2 previousPosition, ref PixelSprite sprite)
     {
         //Cleanup old position
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
-                int2 newPos = new int2(previousPosition.x + x, previousPosition.y + y);
+                int2 newPos = previousPosition + new int2(x, y);
                 if (sprite.collisions[x, y])
-                    this[newPos] = new Particle() { type = ParticleType.None };
+                    particleGrid[newPos] = new Particle() { type = ParticleType.None };
             }
         }
 
@@ -78,13 +95,17 @@ public unsafe struct Map
                 if (sprite.collisions[x, y])
                 {
                     //Throw particle in the air
-                    ParticleType previousType = this[nextPosition].type;
+                    ParticleType previousType = particleGrid[nextPosition].type;
                     if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(nextPosition, new int2(0, -1), out int2 newPosition))
                     {
-                        this[newPosition] = new Particle() { type = previousType };
+                        particleGrid[newPosition] = new Particle() { type = previousType };
+                        dirtyGrid[newPosition] = true;
+
                     }
 
-                    this[nextPosition] = new Particle() { type = ParticleType.Player };
+                    particleGrid[nextPosition] = new Particle() { type = ParticleType.Player };
+                    dirtyGrid[nextPosition] = true;
+
                 }
             }
         }
@@ -97,7 +118,7 @@ public unsafe struct Map
             position += direction;
             if (InBound(position))
             {
-                if (this[position].type == ParticleType.None)
+                if (particleGrid[position].type == ParticleType.None)
                 {
                     newPosition = position;
                     return true;

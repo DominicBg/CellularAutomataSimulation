@@ -16,7 +16,7 @@ public class PlayerCellularAutomata : MonoBehaviour
     public void Init(int2 position, Map map)
     {
         sprite = new PixelSprite(position, baseSprite);
-        map.SetSpriteAtPosition(sprite.position, position, ref sprite);
+        map.SetSpriteAtPosition(sprite.position, ref sprite);
     }
 
     public bool TryUpdate(Map map)
@@ -28,7 +28,7 @@ public class PlayerCellularAutomata : MonoBehaviour
                 int2 direction = directions[i];
                 int2 previousPos = sprite.position;
                 MovePlayer(map, direction);
-                map.SetSpriteAtPosition(previousPos, sprite.position, ref sprite);
+                map.SetSpriteAtPosition(previousPos, ref sprite);
                 return true;
             }
         }

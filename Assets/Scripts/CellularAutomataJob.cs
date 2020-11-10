@@ -24,7 +24,7 @@ public struct CellularAutomataJob : IJob
             var spawner = nativeParticleSpawners[i];
             if (random.NextFloat() <= spawner.chanceSpawn)
             {
-                map[spawner.spawnPosition] = new Particle() { type = spawner.particleType };
+                map.SetParticleType(spawner.spawnPosition, spawner.particleType);
             }
         }
     }
@@ -52,8 +52,7 @@ public struct CellularAutomataJob : IJob
 
     void UpdateParticleBehaviour(int2 pos)
     {
-
-        Particle particle = map[pos];
+        Particle particle = map.GetParticle(pos);
         switch (particle.type)
         {
             case ParticleType.None:
@@ -111,11 +110,10 @@ public struct CellularAutomataJob : IJob
             {
                 map.MoveParticle(particle, pos, dir4);
             }
-            else if (SurroundedByCount2(pos, ParticleType.Sand, ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
+            else if (SurroundedByCount(pos, ParticleType.Sand | ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
             {
                 //Dry up                
-                particle.type = ParticleType.None;
-                map[pos] = particle;
+                map.SetParticleType(pos, ParticleType.None, setDirty: false);
             }
         }
     }
@@ -145,9 +143,9 @@ public struct CellularAutomataJob : IJob
                 map.MoveParticle(particle, pos, secondDir);
             }
             else if (IsSurroundedBy(pos, ParticleType.Water, 1))
-            {   //Sand is touching water, becomes mud
-                particle.type = ParticleType.Mud;
-                map[pos] = particle;
+            {   
+                //Sand is touching water, becomes mud
+                map.SetParticleType(pos, ParticleType.Mud);
             }
         }
     }
@@ -162,38 +160,21 @@ public struct CellularAutomataJob : IJob
         {
             map.MoveParticle(particle, pos, bottom);
         }
-        else if(map.ParticleTypeAtPosition(bottom) == ParticleType.Water)
+        else if(map.GetParticleType(bottom) == ParticleType.Water)
         {
             //Mud will sink
             map.SwapParticles(pos, bottom);
         }
         else if (!IsSurroundedBy(pos, ParticleType.Water, 1))
-        {   //Mud is not touching water, becomes sand
-            particle.type = ParticleType.Sand;
-            map[pos] = particle;
+        {   
+            //Mud is not touching water, becomes sand
+            map.SetParticleType(pos, ParticleType.Sand);
         }
     }
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
     {
-        for (int x = -range; x <= range; x++)
-        {
-            for (int y = -range; y <= range; y++)
-            {
-                if (x == y)
-                    continue;
-
-                int2 adjacentPos = pos + new int2(x, y);
-                if(map.InBound(adjacentPos))
-                {
-                    if(map[adjacentPos].type == type)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return SurroundedByCount(pos, type, range) > 0;
     }
 
     int SurroundedByCount(int2 pos, ParticleType type, int range = 1)
@@ -209,31 +190,7 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    if (map[adjacentPos].type == type)
-                    {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    //eww lol
-    int SurroundedByCount2(int2 pos, ParticleType type, ParticleType type2, int range = 1)
-    {
-        int count = 0;
-        for (int x = -range; x <= range; x++)
-        {
-            for (int y = -range; y <= range; y++)
-            {
-                if (x == y)
-                    continue;
-
-                int2 adjacentPos = pos + new int2(x, y);
-                if (map.InBound(adjacentPos))
-                {
-                    if (map[adjacentPos].type == type || map[adjacentPos].type == type2)
+                    if ((type & map.GetParticleType(adjacentPos)) == type)
                     {
                         count++;
                     }

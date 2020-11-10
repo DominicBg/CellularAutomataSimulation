@@ -33,7 +33,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         DisposeSentinel.Create(out m_Safety, out m_DisposeSentinel, 1, allocator);
         if (s_staticSafetyId == 0)
         {
-            s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeArray<T>>();
+            s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeGrid<T>>();
         }
         AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
     }
@@ -49,7 +49,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         particlesBuffer = null;
     }
 
-    public unsafe Particle this[int x, int y]
+    public unsafe T this[int x, int y]
     {
         get
         {
@@ -61,7 +61,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         }
     }
 
-    public unsafe Particle this[int2 index2]
+    public unsafe T this[int2 index2]
     {
         get
         {
@@ -69,7 +69,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
                 throw new ArgumentOutOfRangeException("Don't you ever try to read out of bound again, this is unsafe :@ " + index2);
 
             int index = ArrayHelper.PosToIndex(index2, sizes);
-            return UnsafeUtility.ReadArrayElement<Particle>(particlesBuffer, index);
+            return UnsafeUtility.ReadArrayElement<T>(particlesBuffer, index);
         }
         set
         {
