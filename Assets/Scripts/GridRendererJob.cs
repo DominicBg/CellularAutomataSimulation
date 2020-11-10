@@ -9,7 +9,7 @@ using static GridRenderer;
 [BurstCompile]
 public struct GridRendererJob : IJobParallelFor
 {
-    [ReadOnly] public NativeArray<Particle> particles;
+    //[ReadOnly] public NativeArray<Particle> particles;
     public NativeArray<Color32> colorArray;
     public Map map;
 
@@ -21,7 +21,10 @@ public struct GridRendererJob : IJobParallelFor
     public void Execute(int i)
     {
         int2 pos = new int2(i % map.sizes.x, i / map.sizes.y);
-        Color32 color = GetColorForType(pos, particles[i].type);
+        int index = map.PosToIndex(pos);
+
+        Color32 color = GetColorForType(pos, map[index].type);
+        //Color32 color = GetColorForType(pos, map[pos].type);
         colorArray[i] = color;
     }
 

@@ -13,13 +13,13 @@ public class PlayerCellularAutomata : MonoBehaviour
 
     [SerializeField] Texture2D baseSprite;
 
-    public void Init(int2 position, NativeArray<Particle> particles, Map map)
+    public void Init(int2 position, Map map)
     {
         sprite = new PixelSprite(position, baseSprite);
-        map.SetSpriteAtPosition(particles, sprite.position, position, ref sprite);
+        map.SetSpriteAtPosition(sprite.position, position, ref sprite);
     }
 
-    public bool TryUpdate(NativeArray<Particle> particles, Map map)
+    public bool TryUpdate(Map map)
     {
         for (int i = 0; i < inputs.Length; i++)
         {
@@ -28,7 +28,7 @@ public class PlayerCellularAutomata : MonoBehaviour
                 int2 direction = directions[i];
                 int2 previousPos = sprite.position;
                 MovePlayer(map, direction);
-                map.SetSpriteAtPosition(particles, previousPos, sprite.position, ref sprite);
+                map.SetSpriteAtPosition(previousPos, sprite.position, ref sprite);
                 return true;
             }
         }

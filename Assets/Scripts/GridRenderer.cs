@@ -49,9 +49,9 @@ public class GridRenderer : MonoBehaviour
     public RawImage renderer;
     private Color32[] colors;
 
-    public void OnUpdate(NativeArray<Particle> particles, Map map, PixelSprite[] pixelSprites)
+    public void OnUpdate(Map map, PixelSprite[] pixelSprites)
     {
-        int size = map.ArrayLenght;
+        int size = map.ArrayLength;
         EnsureColorArray(size);
 
         NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
@@ -61,9 +61,9 @@ public class GridRenderer : MonoBehaviour
             colorArray = outputColor,
             map = map,
             particleRendering = particleRendering,
-            particles = particles,
+            //particles = particles,
             tick = CellularAutomata.Tick,
-            random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)      
+            random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)
         }.Schedule(size, 1).Complete();
 
 
@@ -109,7 +109,7 @@ public class GridRenderer : MonoBehaviour
                 int2 texturePos = new int2(x, y) + sprite.position;
                 if(sprite.collisions[x,y])
                 {
-                    int index = map.PosToIndex(texturePos);
+                    int index = ArrayHelper.PosToIndex(texturePos, map.sizes);
                     outputColor[index] = sprite.pixels[x, y];
                 }
             }

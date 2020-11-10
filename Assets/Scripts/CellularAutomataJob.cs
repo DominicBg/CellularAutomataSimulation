@@ -9,7 +9,7 @@ public struct CellularAutomataJob : IJob
     public NativeArray<ParticleSpawner> nativeParticleSpawners;
 
     public Map map;
-    public NativeArray<Particle> particles;
+    //public NativeArray<Particle> particles;
     public Random random;
 
     public void Execute()
@@ -26,7 +26,8 @@ public struct CellularAutomataJob : IJob
             if (random.NextFloat() <= spawner.chanceSpawn)
             {
                 int index = map.PosToIndex(spawner.spawnPosition);
-                particles[index] = new Particle() { type = spawner.particleType };
+                //map[spawner.spawnPosition] = new Particle() { type = spawner.particleType };
+                map[index] = new Particle() { type = spawner.particleType };
             }
         }
     }
@@ -54,8 +55,10 @@ public struct CellularAutomataJob : IJob
 
     void UpdateParticleBehaviour(int2 pos)
     {
+
+        //Particle particle = map[pos];
         int index = map.PosToIndex(pos);
-        Particle particle = particles[index];
+        Particle particle = map[index];
         switch (particle.type)
         {
             case ParticleType.None:
@@ -78,9 +81,9 @@ public struct CellularAutomataJob : IJob
     void UpdateWaterParticle(Particle particle, int2 pos)
     {
         int2 bottom = new int2(pos.x, pos.y - 1);
-        if (map.IsFreePosition(particles, bottom))
+        if (map.IsFreePosition(bottom))
         {
-            map.MoveParticle(particles, particle, pos, bottom);
+            map.MoveParticle(particle, pos, bottom);
         }
         else
         {
@@ -97,28 +100,31 @@ public struct CellularAutomataJob : IJob
             int2 dir4 = (goingLeft) ? right : left;
 
             //Try go 2 steps only if its not blocked by 1 step
-            if (map.IsFreePosition(particles, dir1) && map.IsFreePosition(particles, dir3))
+            if (map.IsFreePosition(dir1) && map.IsFreePosition(dir3))
             {
-                map.MoveParticle(particles, particle, pos, dir1);
+                map.MoveParticle(particle, pos, dir1);
             }
-            else if (map.IsFreePosition(particles, dir2) && map.IsFreePosition(particles, dir4))
+            else if (map.IsFreePosition(dir2) && map.IsFreePosition(dir4))
             {
-                map.MoveParticle(particles, particle, pos, dir2);
+                map.MoveParticle(particle, pos, dir2);
             }
-            else if (map.IsFreePosition(particles, dir3))
+            else if (map.IsFreePosition(dir3))
             {
-                map.MoveParticle(particles, particle, pos, dir3);
+                map.MoveParticle(particle, pos, dir3);
             }
-            else if (map.IsFreePosition(particles, dir4))
+            else if (map.IsFreePosition(dir4))
             {
-                map.MoveParticle(particles, particle, pos, dir4);
+                map.MoveParticle(particle, pos, dir4);
             }
             else if (SurroundedByCount2(pos, ParticleType.Sand, ParticleType.Mud, 1) > SurroundedByCount(pos, ParticleType.Water, 1) + 2)
             {
-                //Dry up
-                int index = map.PosToIndex(pos);
+
                 particle.type = ParticleType.None;
-                particles[index] = particle;
+                //Dry up                
+                int index = map.PosToIndex(pos);
+
+                //map[pos] = particle;
+                map[index] = particle;
             }
         }
     }
@@ -126,9 +132,9 @@ public struct CellularAutomataJob : IJob
     void UpdateSandParticle(Particle particle, int2 pos)
     {
         int2 bottom = new int2(pos.x, pos.y - 1);
-        if (map.IsFreePosition(particles, bottom))
+        if (map.IsFreePosition(bottom))
         {
-            map.MoveParticle(particles, particle, pos, bottom);
+            map.MoveParticle(particle, pos, bottom);
         }
         else
         {
@@ -139,19 +145,20 @@ public struct CellularAutomataJob : IJob
             int2 firstDir = (goingLeft) ? bottomLeft : bottomRight;
             int2 secondDir = (goingLeft) ? bottomRight : bottomLeft;
 
-            if (map.IsFreePosition(particles, firstDir))
+            if (map.IsFreePosition(firstDir))
             {
-                map.MoveParticle(particles, particle, pos, firstDir);
+                map.MoveParticle(particle, pos, firstDir);
             }
-            else if (map.IsFreePosition(particles, secondDir))
+            else if (map.IsFreePosition(secondDir))
             {
-                map.MoveParticle(particles, particle, pos, secondDir);
+                map.MoveParticle(particle, pos, secondDir);
             }
             else if (IsSurroundedBy(pos, ParticleType.Water, 1))
             {   //Sand is touching water, becomes mud
-                int index = map.PosToIndex(pos);
                 particle.type = ParticleType.Mud;
-                particles[index] = particle;
+                int index = map.PosToIndex(pos);
+                map[index] = particle;
+                //map[pos] = particle;
             }
         }
     }
@@ -162,22 +169,24 @@ public struct CellularAutomataJob : IJob
         if (!map.InBound(bottom))
             return;
 
-        if (map.IsFreePosition(particles, bottom))
+        if (map.IsFreePosition(bottom))
         {
-            map.MoveParticle(particles, particle, pos, bottom);
+            map.MoveParticle(particle, pos, bottom);
         }
-        else if(map.ParticleTypeAtPosition(particles, bottom) == ParticleType.Water)
+        else if(map.ParticleTypeAtPosition(bottom) == ParticleType.Water)
         {
             //Mud will sink
-            map.SwapParticles(particles, pos, bottom);
+            map.SwapParticles(pos, bottom);
         }
         else if (!IsSurroundedBy(pos, ParticleType.Water, 1))
         {   //Mud is not touching water, becomes sand
-            int index = map.PosToIndex(pos);
             particle.type = ParticleType.Sand;
-            particles[index] = particle;
+            int index = map.PosToIndex(pos);
+
+            //map[pos] = particle;
+            map[index] = particle;
         }
-      
+
     }
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
@@ -193,7 +202,9 @@ public struct CellularAutomataJob : IJob
                 if(map.InBound(adjacentPos))
                 {
                     int index = map.PosToIndex(adjacentPos);
-                    if (particles[index].type == type)
+
+                    if (map[index].type == type)
+                    // (map[adjacentPos].type == type)
                     {
                         return true;
                     }
@@ -217,7 +228,8 @@ public struct CellularAutomataJob : IJob
                 if (map.InBound(adjacentPos))
                 {
                     int index = map.PosToIndex(adjacentPos);
-                    if (particles[index].type == type)
+                    if (map[index].type == type)
+                    //if (map[adjacentPos].type == type)
                     {
                         count++;
                     }
@@ -242,7 +254,9 @@ public struct CellularAutomataJob : IJob
                 if (map.InBound(adjacentPos))
                 {
                     int index = map.PosToIndex(adjacentPos);
-                    if (particles[index].type == type || particles[index].type == type2)
+
+                    //if (map[adjacentPos].type == type || map[adjacentPos].type == type2)
+                    if (map[index].type == type || map[index].type == type2)
                     {
                         count++;
                     }
