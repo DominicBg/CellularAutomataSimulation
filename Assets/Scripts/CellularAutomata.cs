@@ -19,6 +19,8 @@ public class CellularAutomata : MonoBehaviour
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
+    public ParticleBehaviour behaviour; 
+
     Map map;
     Unity.Mathematics.Random m_random;
 
@@ -45,7 +47,6 @@ public class CellularAutomata : MonoBehaviour
         if (nativeParticleSpawners.IsCreated)
         {
             nativeParticleSpawners.Dispose();
-            //sprites.Dispose();
             map.Dispose();
         }
     }
@@ -56,7 +57,6 @@ public class CellularAutomata : MonoBehaviour
 
         map = new Map(sizes);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(particleSpawners, Allocator.Persistent);
-        //sprites = new NativeArray<PixelSprite>(1, Allocator.Persistent);
 
         player.Init(5, map);
         gridRenderer.Init(sizes);
@@ -88,16 +88,15 @@ public class CellularAutomata : MonoBehaviour
     {
         if (player.TryUpdate(map) || Input.GetKey(KeyCode.Space))
         {
-            //Recopy player sprites in native array
-            //sprites[0] = player.sprite;
-
             new CellularAutomataJob()
             {
                 tick = Tick,
+                behaviour = behaviour,
                 map = map,
                 nativeParticleSpawners = nativeParticleSpawners,
                 random = new Unity.Mathematics.Random(TickSeed)
             }.Run();
+
             //find a way to parralelize
             //checker pattern?
             //cellularAutomataJob.Schedule().Complete();

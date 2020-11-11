@@ -9,8 +9,6 @@ using UnityEngine.UI;
 public class GridRenderer : MonoBehaviour
 {
     Texture2D texture;
-
-
     public ParticleRendering particleRendering;
 
     [System.Serializable]
@@ -19,9 +17,9 @@ public class GridRenderer : MonoBehaviour
         public Color noneColor;
         public WaterRendering waterRendering;
         public SandRendering sandRendering;
+        public IceRendering iceRendering;
         public Color mudColor;
         public Color snowColor;
-        public Color iceColor;
     }
 
     [System.Serializable]
@@ -58,6 +56,18 @@ public class GridRenderer : MonoBehaviour
         public Color shimmerColor;
         public Color waveColor;
     }
+
+    [System.Serializable]
+    public struct IceRendering
+    {
+        public float thresholdShineReflection;
+        public float reflectionShineSpeed;
+        public Color reflectionShineColor;
+        public Color iceColor;
+        public float reflectionXDifference;
+        public float reflectionShineAngle;
+    }
+
 
     public RawImage renderer;
     private Color32[] colors;

@@ -34,7 +34,7 @@ public struct GridRendererJob : IJobParallelFor
             case ParticleType.Water:
                 return GetWaterColor(position);
             case ParticleType.Sand:
-                return GetSandcolor(position);
+                return GetSandColor(position);
             case ParticleType.Mud:
                 return particleRendering.mudColor;
             case ParticleType.Player:
@@ -43,7 +43,7 @@ public struct GridRendererJob : IJobParallelFor
             case ParticleType.Snow:
                 return particleRendering.snowColor;
             case ParticleType.Ice:
-                return particleRendering.iceColor;
+                return GetIceColor(position);
             default:
                 return Color.black;
         }
@@ -76,7 +76,7 @@ public struct GridRendererJob : IJobParallelFor
         }
     }
 
-    Color32 GetSandcolor(int2 position)
+    Color32 GetSandColor(int2 position)
     {
         SandRendering sandRendering = particleRendering.sandRendering;
 
@@ -104,6 +104,19 @@ public struct GridRendererJob : IJobParallelFor
                 return sandRendering.sandColor;
             }
         }
+    }
+
+    Color32 GetIceColor(int2 position)
+    {
+        IceRendering iceRendering = particleRendering.iceRendering;
+
+        float noiseSeed = tick * iceRendering.reflectionShineSpeed + position.x * iceRendering.reflectionXDifference + position.y * iceRendering.reflectionShineAngle;
+        float noiseValue = noise.snoise(new float2(0, noiseSeed));
+        if(noiseValue > iceRendering.thresholdShineReflection)
+        {
+            return iceRendering.reflectionShineColor;
+        }
+        return iceRendering.iceColor;
     }
 
 }

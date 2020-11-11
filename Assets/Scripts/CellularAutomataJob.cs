@@ -11,7 +11,7 @@ public struct CellularAutomataJob : IJob
     public int tick;
     public Map map;
     public Random random;
-
+    public ParticleBehaviour behaviour;
     public void Execute()
     {
         map.ClearDirtyGrid();
@@ -33,8 +33,8 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
-        if(tick % 2 == 0)
-        {
+        //if(tick % 2 == 0)
+        //{
             for (int x = 0; x < map.Sizes.x; x++)
             {
                 for (int y = 0; y < map.Sizes.y; y++)
@@ -43,17 +43,17 @@ public struct CellularAutomataJob : IJob
                     UpdateParticleBehaviour(pos);
                 }
             }
-        }
-        else
-        {
-            for (int x = map.Sizes.x - 1; x >= 0; x--)
-            {
-                for (int y = map.Sizes.y - 1; y >= 0; y--)
-                {
-                    UpdateParticleBehaviour(new int2(x, y));
-                }
-            }
-        }
+        //}
+        //else
+        //{
+        //    for (int x = map.Sizes.x - 1; x >= 0; x--)
+        //    {
+        //        for (int y = map.Sizes.y - 1; y >= 0; y--)
+        //        {
+        //            UpdateParticleBehaviour(new int2(x, y));
+        //        }
+        //    }
+        //}
     }
 
     void UpdateParticleBehaviour(int2 pos)
@@ -87,72 +87,88 @@ public struct CellularAutomataJob : IJob
         }
     }
 
-    bool TryUpdateFluidParticle(Particle particle, int2 pos)
+    bool TryStraightFalling(Particle particle, int2 pos)
     {
         int2 bottom = new int2(pos.x, pos.y - 1);
         if (map.IsFreePosition(bottom))
         {
             map.MoveParticle(particle, pos, bottom);
             return true;
-        }
-        else
-        {
-            int2 left = new int2(pos.x - 1, pos.y);
-            int2 right = new int2(pos.x + 1, pos.y);
-
-            bool goingLeft = random.NextBool();
-
-            int2 dir1 = (goingLeft) ? left : right;
-            int2 dir2 = (goingLeft) ? right : left;
-
-            if (map.IsFreePosition(dir1))
-            {
-                map.MoveParticle(particle, pos, dir1);
-                return true;
-            }
-            else if (map.IsFreePosition(dir2))
-            {
-                map.MoveParticle(particle, pos, dir2);
-                return true;
-
-            }
         }
         return false;
     }
 
-    bool TryUpdateGranularParticle(Particle particle, int2 pos)
+    bool TryFloatyFalling(Particle particle, int2 pos)
     {
-        int2 bottom = new int2(pos.x, pos.y - 1);
-        if (map.IsFreePosition(bottom))
+        var floaty = behaviour.floatyBehaviour;
+        bool willFloat = random.NextFloat() < floaty.ratioFloat;
+        if(willFloat)
         {
-            map.MoveParticle(particle, pos, bottom);
+            float2 offset = pos * floaty.sinOffset;
+            float sin = math.sin(tick * floaty.sinSpeed + offset.x + offset.y);
+            bool goingLeft = math.sign(sin) == -1;
+
+            int2 left = new int2(pos.x - 1, pos.y);
+            int2 right = new int2(pos.x + 1, pos.y);
+            int2 dir = (goingLeft) ? left : right;
+
+            if (map.IsFreePosition(dir))
+            {
+                map.MoveParticle(particle, pos, dir);
+                return true;
+            }
+        }
+        else 
+        {
+            return TryStraightFalling(particle, pos);
+        }
+        return false;
+    }
+
+
+    bool TryUpdateFluidParticle(Particle particle, int2 pos)
+    {
+        int2 left = new int2(pos.x - 1, pos.y);
+        int2 right = new int2(pos.x + 1, pos.y);
+
+        bool goingLeft = random.NextBool();
+
+        int2 dir1 = (goingLeft) ? left : right;
+        int2 dir2 = (goingLeft) ? right : left;
+
+        if (map.IsFreePosition(dir1))
+        {
+            map.MoveParticle(particle, pos, dir1);
             return true;
         }
-        else
+        else if (map.IsFreePosition(dir2))
         {
-            //randomize gauche droite
-            int2 bottomLeft = new int2(bottom.x - 1, bottom.y);
-            int2 bottomRight = new int2(bottom.x + 1, bottom.y);
-            bool goingLeft = random.NextBool();
-            int2 firstDir = (goingLeft) ? bottomLeft : bottomRight;
-            int2 secondDir = (goingLeft) ? bottomRight : bottomLeft;
+            map.MoveParticle(particle, pos, dir2);
+            return true;
+        }    
+        return false;
+    }
 
-            if (map.IsFreePosition(firstDir))
-            {
-                map.MoveParticle(particle, pos, firstDir);
-                return true;
-            }
-            else if (map.IsFreePosition(secondDir))
-            {
-                map.MoveParticle(particle, pos, secondDir);
-                return true;
-            }
-            else if (IsSurroundedBy(pos, ParticleType.Water))
-            {
-                //Sand is touching water, becomes mud
-                map.SetParticleType(pos, ParticleType.Mud);
-                return true;
-            }
+    bool TryUpdatePilingUpParticle(Particle particle, int2 pos)
+    {
+        int2 bottom = new int2(pos.x, pos.y - 1);
+
+        //randomize gauche droite
+        int2 bottomLeft = new int2(bottom.x - 1, bottom.y);
+        int2 bottomRight = new int2(bottom.x + 1, bottom.y);
+        bool goingLeft = random.NextBool();
+        int2 firstDir = (goingLeft) ? bottomLeft : bottomRight;
+        int2 secondDir = (goingLeft) ? bottomRight : bottomLeft;
+
+        if (map.IsFreePosition(firstDir))
+        {
+            map.MoveParticle(particle, pos, firstDir);
+            return true;
+        }
+        else if (map.IsFreePosition(secondDir))
+        {
+            map.MoveParticle(particle, pos, secondDir);
+            return true;
         }
         return false;
     }
@@ -163,14 +179,8 @@ public struct CellularAutomataJob : IJob
         if (!map.InBound(bottom))
             return false;
 
-        if (map.IsFreePosition(bottom))
+        if (map.GetParticleType(bottom) == ParticleType.Water)
         {
-            map.MoveParticle(particle, pos, bottom);
-            return true;
-        }
-        else if (map.GetParticleType(bottom) == ParticleType.Water)
-        {
-            //Mud will sink
             map.SwapParticles(pos, bottom);
             return true;
         }
@@ -179,55 +189,84 @@ public struct CellularAutomataJob : IJob
 
     void UpdateWaterParticle(Particle particle, int2 pos)
     {
-        if(TryUpdateFluidParticle(particle, pos))
+        bool updateFalling = TryStraightFalling(particle, pos);
+        if (updateFalling)
+            return;
+        bool updateFluid = TryUpdateFluidParticle(particle, pos);
+        if (updateFluid)
+            return;
+
+        int sandMudCount = SurroundedByCount(pos, (int)ParticleType.Sand | (int)ParticleType.Mud);
+        int waterCount = SurroundedByCount(pos, ParticleType.Water);
+        //Unique water behaviour
+        if (sandMudCount > waterCount + behaviour.waterBehaviour.diffWaterSandToDry)
         {
-            if (SurroundedByCount(pos, (int)ParticleType.Sand | (int)ParticleType.Mud) > SurroundedByCount(pos, ParticleType.Water) + 2)
-            {
-                //Dry up                
-                map.SetParticleType(pos, ParticleType.None, setDirty: false);
-            }
-        }
+            //Dry up                
+            map.SetParticleType(pos, ParticleType.None, setDirty: false);
+        }    
     }
 
     void UpdateSandParticle(Particle particle, int2 pos)
     {
-        if(TryUpdateGranularParticle(particle ,pos))
+        bool falling = TryStraightFalling(particle, pos);
+        if (falling)
+            return;
+        bool updateGranular = TryUpdatePilingUpParticle(particle, pos);
+        if (updateGranular)
+            return;
+        
+        //Unique sand behaviour
+        if (IsSurroundedBy(pos, ParticleType.Water))
         {
-            if (IsSurroundedBy(pos, ParticleType.Water))
-            {
-                //Sand is touching water, becomes mud
-                map.SetParticleType(pos, ParticleType.Mud);
-            }
-        }        
+            //Sand is touching water, becomes mud
+            map.SetParticleType(pos, ParticleType.Mud);
+        }
     }
 
     void UpdateSnowParticle(Particle particle, int2 pos)
     {
-        //todo falling snow
-        if(IsSurroundedBy(pos, ParticleType.Water))
+        bool falling = TryFloatyFalling(particle, pos);
+        if (falling)
+            return;
+        bool updateGranular = TryUpdatePilingUpParticle(particle, pos);
+        if (updateGranular)
+            return;
+
+        //Unique Snow behaviour
+        if (IsSurroundedBy(pos, ParticleType.Water))
         {
             map.SetParticleType(pos, ParticleType.Ice);
             return;
         }
-        TryUpdateGranularParticle(particle, pos);
     }
     void UpdateIceParticle(Particle particle, int2 pos)
     {
-        TryUpdateSinkingParticle(particle, pos);
+        bool falling = TryStraightFalling(particle, pos);
+        if (falling)
+            return;
+        bool updateSinking = TryUpdateSinkingParticle(particle, pos);
+        if (updateSinking)
+            return;
+        
+        //Add melting
     }
-
 
 
     void UpdateMudParticle(Particle particle, int2 pos)
     {
-        if(TryUpdateSinkingParticle(particle, pos))
-        {
-            if (!IsSurroundedBy(pos, ParticleType.Water, 1))
-            {   
-                //Mud is not touching water, becomes sand
-                map.SetParticleType(pos, ParticleType.Sand);
-            }
-        }
+        bool falling = TryStraightFalling(particle, pos);
+        if (falling)
+            return;
+        bool updateSinking = TryUpdateSinkingParticle(particle, pos);
+        if (updateSinking)
+            return;
+
+        //Unique mud behaviour
+        if (!IsSurroundedBy(pos, ParticleType.Water, 1))
+        {   
+            //Mud is not touching water, becomes sand
+            map.SetParticleType(pos, ParticleType.Sand);
+        }       
     }
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)

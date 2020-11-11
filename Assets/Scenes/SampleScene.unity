@@ -488,21 +488,25 @@ MonoBehaviour:
   gridRenderer: {fileID: 1286533892}
   player: {fileID: 291513216}
   particleSpawners:
-  - chanceSpawn: 1
+  - chanceSpawn: 0.373
     spawnPosition:
       x: 25
       y: 99
     particleType: 1
-  - chanceSpawn: 1
+  - chanceSpawn: 0.148
     spawnPosition:
       x: 70
       y: 99
-    particleType: 2
-  - chanceSpawn: 1
-    spawnPosition:
-      x: 75
-      y: 99
     particleType: 4
+  behaviour:
+    floatyBehaviour:
+      sinSpeed: 0.1
+      sinOffset:
+        x: 0.5
+        y: 2
+      ratioFloat: 0.6
+    waterBehaviour:
+      diffWaterSandToDry: 2
   desiredFPS: 240
 --- !u!4 &726109844
 Transform:
@@ -583,9 +587,15 @@ MonoBehaviour:
       sandColor: {r: 1, g: 0.95686275, b: 0.34509805, a: 1}
       shimmerColor: {r: 1, g: 0.99215686, b: 0.8627451, a: 1}
       waveColor: {r: 1, g: 0.77324754, b: 0.34509802, a: 1}
+    iceRendering:
+      thresholdShineReflection: 0.8
+      reflectionShineSpeed: -0.05
+      reflectionShineColor: {r: 1, g: 1, b: 1, a: 1}
+      iceColor: {r: 0.7028302, g: 0.9301313, b: 1, a: 1}
+      reflectionXDifference: 0.05
+      reflectionShineAngle: -0.005
     mudColor: {r: 0.58431375, g: 0.20784314, b: 0.007843138, a: 1}
-    snowColor: {r: 0.8349056, g: 0.925885, b: 1, a: 1}
-    iceColor: {r: 0.6556604, g: 0.9241821, b: 1, a: 1}
+    snowColor: {r: 0.8726415, g: 0.94381243, b: 1, a: 1}
   renderer: {fileID: 412216246}
 --- !u!4 &1286533893
 Transform:
