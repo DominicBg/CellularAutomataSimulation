@@ -17,11 +17,7 @@ public class CellularAutomata : MonoBehaviour
 
     [SerializeField] ParticleSpawner[] particleSpawners;
 
-    //NativeArray<Particle> particles;
     NativeArray<ParticleSpawner> nativeParticleSpawners;
-
-    //NativeArray<PixelSprite> sprites; cancer a rendre burstable lol
-    PixelSprite[] sprites = new PixelSprite[1];
 
     Map map;
     Unity.Mathematics.Random m_random;
@@ -49,6 +45,7 @@ public class CellularAutomata : MonoBehaviour
         if (nativeParticleSpawners.IsCreated)
         {
             nativeParticleSpawners.Dispose();
+            //sprites.Dispose();
             map.Dispose();
         }
     }
@@ -58,8 +55,8 @@ public class CellularAutomata : MonoBehaviour
         Dispose();
 
         map = new Map(sizes);
-        //particles = new NativeArray<Particle>(sizes.x * sizes.y, Allocator.Persistent);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(particleSpawners, Allocator.Persistent);
+        //sprites = new NativeArray<PixelSprite>(1, Allocator.Persistent);
 
         player.Init(5, map);
         gridRenderer.Init(sizes);
@@ -92,24 +89,19 @@ public class CellularAutomata : MonoBehaviour
         if (player.TryUpdate(map) || Input.GetKey(KeyCode.Space))
         {
             //Recopy player sprites in native array
-            sprites[0] = player.sprite;
+            //sprites[0] = player.sprite;
 
             new CellularAutomataJob()
             {
+                tick = Tick,
                 map = map,
                 nativeParticleSpawners = nativeParticleSpawners,
                 random = new Unity.Mathematics.Random(TickSeed)
             }.Run();
-            //cellularAutomataJob.map = map;
-            //cellularAutomataJob.particles = particles;
-            //cellularAutomataJob.nativeParticleSpawners = nativeParticleSpawners;
-            //cellularAutomataJob.random = new Unity.Mathematics.Random(TickSeed);
-
             //find a way to parralelize
             //checker pattern?
             //cellularAutomataJob.Schedule().Complete();
-            //cellularAutomataJob.Run();
-            gridRenderer.OnUpdate(map, sprites);
+            gridRenderer.OnUpdate(map, player.sprite);
         }
     }
 }

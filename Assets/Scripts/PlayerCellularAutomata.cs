@@ -19,6 +19,11 @@ public class PlayerCellularAutomata : MonoBehaviour
         map.SetSpriteAtPosition(sprite.position, ref sprite);
     }
 
+    public void OnDestroy()
+    {
+        sprite.Dispose();
+    }
+
     public bool TryUpdate(Map map)
     {
         for (int i = 0; i < inputs.Length; i++)

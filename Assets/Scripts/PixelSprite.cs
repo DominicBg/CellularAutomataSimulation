@@ -1,14 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
 
-public struct PixelSprite
+public struct PixelSprite : IDisposable
 {
-    public Color32[,] pixels { get; private set; }
-    public bool[,] collisions { get; private set; }
-    public int2 sizes { get; private set; }
+    public NativeGrid<Color32> pixels;
+    public NativeGrid<bool> collisions;
+    public int2 sizes;
 
     public int2 position;
 
@@ -17,8 +19,8 @@ public struct PixelSprite
         Color32[] colors = baseTexture.GetPixels32(0);
 
         sizes = new int2(baseTexture.width, baseTexture.height);
-        pixels = new Color32[sizes.x, sizes.y];
-        collisions = new bool[sizes.x, sizes.y];
+        pixels = new NativeGrid<Color32>(sizes, Allocator.Persistent);
+        collisions = new NativeGrid<bool>(sizes, Allocator.Persistent);
 
         for (int x = 0; x < sizes.x; x++)
         {
@@ -30,5 +32,11 @@ public struct PixelSprite
         }
 
         this.position = position;
+    }
+
+    public void Dispose()
+    {
+        pixels.Dispose();
+        collisions.Dispose();
     }
 }

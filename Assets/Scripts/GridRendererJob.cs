@@ -40,6 +40,10 @@ public struct GridRendererJob : IJobParallelFor
             case ParticleType.Player:
                 //Gets overriden when trying the sprite
                 return Color.clear;
+            case ParticleType.Snow:
+                return particleRendering.snowColor;
+            case ParticleType.Ice:
+                return particleRendering.iceColor;
             default:
                 return Color.black;
         }
@@ -48,9 +52,16 @@ public struct GridRendererJob : IJobParallelFor
     Color32 GetWaterColor(int2 position)
     {
         WaterRendering waterRendering = particleRendering.waterRendering;
-        float2 pos = new float2(position.x, position.y) + waterRendering.speed * tick;
+        float2 sineNoiseValue = tick * waterRendering.bubbleSineNoiseSpeed;
+        float sinNoise = math.remap(0, 1, waterRendering.bubbleSineNoiseAmplitude, 1, noise.snoise(sineNoiseValue));
+
+        float2 offSynch = position * waterRendering.bubbleSineOffSynch;
+        float sin = math.sin(waterRendering.bubbleSineSpeed * tick + offSynch.x + offSynch.y);
+        float posX = position.x + (sinNoise * waterRendering.bubbleSineAmplitude * sin);
+        float2 pos = new float2(posX, position.y) + waterRendering.speed * tick;
         float value = noise.snoise(pos * waterRendering.scaling);
         float valueNormalized = (value + 1) * 0.5f;
+        
         if (valueNormalized > waterRendering.bubbleInnerThreshold)
         {
             return waterRendering.bubbleInnerColor;

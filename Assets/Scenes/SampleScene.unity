@@ -490,14 +490,19 @@ MonoBehaviour:
   particleSpawners:
   - chanceSpawn: 1
     spawnPosition:
-      x: 66
+      x: 25
       y: 99
     particleType: 1
   - chanceSpawn: 1
     spawnPosition:
-      x: 33
+      x: 70
       y: 99
     particleType: 2
+  - chanceSpawn: 1
+    spawnPosition:
+      x: 75
+      y: 99
+    particleType: 4
   desiredFPS: 240
 --- !u!4 &726109844
 Transform:
@@ -545,12 +550,21 @@ MonoBehaviour:
   particleRendering:
     noneColor: {r: 0, g: 0, b: 0, a: 1}
     waterRendering:
-      bubbleInnerThreshold: 0.95
-      bubbleOuterThreshold: 0.9
+      bubbleSineAmplitude: 1
+      bubbleSineSpeed: 0.01
+      bubbleSineNoiseAmplitude: 0.8
+      bubbleSineOffSynch:
+        x: 1
+        y: 1
+      bubbleSineNoiseSpeed:
+        x: 1
+        y: 0
+      bubbleOuterColor: {r: 0.19999999, g: 0.6331879, b: 1, a: 1}
+      bubbleInnerColor: {r: 0.100000024, g: 0.58719003, b: 1, a: 1}
+      bubbleInnerThreshold: 0.9
+      bubbleOuterThreshold: 0.8
       scaling: 0.1
       waterColor: {r: 0, g: 0.54901963, b: 1, a: 1}
-      bubbleOuterColor: {r: 0.21960661, g: 0.6410644, b: 0.990566, a: 1}
-      bubbleInnerColor: {r: 0.4009434, g: 0.72631925, b: 1, a: 1}
       speed:
         x: 0
         y: -0.1
@@ -570,6 +584,8 @@ MonoBehaviour:
       shimmerColor: {r: 1, g: 0.99215686, b: 0.8627451, a: 1}
       waveColor: {r: 1, g: 0.77324754, b: 0.34509802, a: 1}
     mudColor: {r: 0.58431375, g: 0.20784314, b: 0.007843138, a: 1}
+    snowColor: {r: 0.8349056, g: 0.925885, b: 1, a: 1}
+    iceColor: {r: 0.6556604, g: 0.9241821, b: 1, a: 1}
   renderer: {fileID: 412216246}
 --- !u!4 &1286533893
 Transform:

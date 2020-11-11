@@ -20,16 +20,29 @@ public class GridRenderer : MonoBehaviour
         public WaterRendering waterRendering;
         public SandRendering sandRendering;
         public Color mudColor;
+        public Color snowColor;
+        public Color iceColor;
     }
+
     [System.Serializable]
     public struct WaterRendering
     {
-        public float bubbleInnerThreshold;
-        public float bubbleOuterThreshold;
-        public float scaling;
-        public Color waterColor;
+        [Header("Bubble Sin")]
+        public float bubbleSineAmplitude;
+        public float bubbleSineSpeed;
+        public float bubbleSineNoiseAmplitude;
+        public float2 bubbleSineOffSynch;
+        public float2 bubbleSineNoiseSpeed;
+
+        [Header("Bubble Color")]
         public Color bubbleOuterColor;
         public Color bubbleInnerColor;
+        public float bubbleInnerThreshold;
+        public float bubbleOuterThreshold;
+
+        [Header("Other")]
+        public float scaling;
+        public Color waterColor;
         public float2 speed;
     }
 
@@ -49,7 +62,7 @@ public class GridRenderer : MonoBehaviour
     public RawImage renderer;
     private Color32[] colors;
 
-    public void OnUpdate(Map map, PixelSprite[] pixelSprites)
+    public void OnUpdate(Map map, PixelSprite pixelSprite)
     {
         int size = map.ArrayLength;
         EnsureColorArray(size);
@@ -66,11 +79,12 @@ public class GridRenderer : MonoBehaviour
             random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)
         }.Schedule(size, 1).Complete();
 
+        AddPixelSprite(outputColor, map, pixelSprite);
 
-        for (int i = 0; i < pixelSprites.Length; i++)
-        {
-            AddPixelSprite(outputColor, map, pixelSprites[i]);
-        }
+        //for (int i = 0; i < pixelSprites.Length; i++)
+        //{
+        //    AddPixelSprite(outputColor, map, pixelSprites[i]);
+        //}
 
         //Copy NativeArray to ColorArray
         for (int i = 0; i < size; i++)

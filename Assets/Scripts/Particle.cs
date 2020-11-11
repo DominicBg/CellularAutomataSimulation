@@ -6,6 +6,7 @@ public struct Particle
 {
     public ParticleType type;
     //velocity?
+    //turn idle?
 }
 
 public enum ParticleType
@@ -14,5 +15,7 @@ public enum ParticleType
     Water,
     Sand,
     Mud,
+    Snow,
+    Ice,
     Player
 }
