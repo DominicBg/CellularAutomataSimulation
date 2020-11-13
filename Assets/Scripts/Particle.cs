@@ -17,5 +17,6 @@ public enum ParticleType
     Mud,
     Snow,
     Ice,
+    Rock,
     Player
 }

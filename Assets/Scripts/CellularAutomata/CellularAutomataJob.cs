@@ -12,11 +12,14 @@ public struct CellularAutomataJob : IJob
     public Map map;
     public Random random;
     public ParticleBehaviour behaviour;
+    public bool emitParticle;
     public void Execute()
     {
         map.ClearDirtyGrid();
         UpdateSimulation();
-        SpawnParticles();
+
+        if(emitParticle)
+            SpawnParticles();
     }
 
     void SpawnParticles()
@@ -102,7 +105,14 @@ public struct CellularAutomataJob : IJob
     {
         var floaty = behaviour.floatyBehaviour;
         bool willFloat = random.NextFloat() < floaty.ratioFloat;
-        if(willFloat)
+
+        int2 bottom = new int2(pos.x, pos.y - 1);
+        int2 bottomLeft = new int2(pos.x - 1, pos.y - 1);
+        int2 bottomRight = new int2(pos.x + 1, pos.y - 1);
+        if (!map.IsFreePosition(bottom) && !map.IsFreePosition(bottomLeft) && !map.IsFreePosition(bottomRight))
+            return false;
+
+        if (willFloat)
         {
             float2 offset = pos * floaty.sinOffset;
             float sin = math.sin(tick * floaty.sinSpeed + offset.x + offset.y);
@@ -211,8 +221,8 @@ public struct CellularAutomataJob : IJob
         bool falling = TryStraightFalling(particle, pos);
         if (falling)
             return;
-        bool updateGranular = TryUpdatePilingUpParticle(particle, pos);
-        if (updateGranular)
+        bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
+        if (updatePiling)
             return;
         
         //Unique sand behaviour
@@ -228,8 +238,8 @@ public struct CellularAutomataJob : IJob
         bool falling = TryFloatyFalling(particle, pos);
         if (falling)
             return;
-        bool updateGranular = TryUpdatePilingUpParticle(particle, pos);
-        if (updateGranular)
+        bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
+        if (updatePiling)
             return;
 
         //Unique Snow behaviour

@@ -44,6 +44,8 @@ public struct GridRendererJob : IJobParallelFor
                 return particleRendering.snowColor;
             case ParticleType.Ice:
                 return GetIceColor(position);
+            case ParticleType.Rock:
+                return GetRockColor(position);
             default:
                 return Color.black;
         }
@@ -119,4 +121,19 @@ public struct GridRendererJob : IJobParallelFor
         return iceRendering.iceColor;
     }
 
+    Color32 GetRockColor(int2 position)
+    {
+        RockRendering rockRendering = particleRendering.rockRendering;
+        float2 positionScaled = new float2(position.x * rockRendering.noiseScale, position.y * rockRendering.noiseScale);
+        float noiseValue = noise.cellular(positionScaled).x;
+        float noiseValueNormalized = (noiseValue + 1) * 0.5f;
+        if(noiseValueNormalized > rockRendering.noiseCrackThreshold)
+        {
+            return rockRendering.crackColor;
+        }
+        else
+        {
+            return rockRendering.rockColor;
+        }
+    }
 }

@@ -18,6 +18,7 @@ public class GridRenderer : MonoBehaviour
         public WaterRendering waterRendering;
         public SandRendering sandRendering;
         public IceRendering iceRendering;
+        public RockRendering rockRendering;
         public Color mudColor;
         public Color snowColor;
     }
@@ -68,6 +69,14 @@ public class GridRenderer : MonoBehaviour
         public float reflectionShineAngle;
     }
 
+    [System.Serializable]
+    public struct RockRendering
+    {
+        public Color rockColor;
+        public Color crackColor;
+        public float noiseCrackThreshold;
+        public float noiseScale;
+    }
 
     public RawImage renderer;
     private Color32[] colors;
@@ -84,7 +93,6 @@ public class GridRenderer : MonoBehaviour
             colorArray = outputColor,
             map = map,
             particleRendering = particleRendering,
-            //particles = particles,
             tick = CellularAutomata.Tick,
             random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)
         }.Schedule(size, 1).Complete();

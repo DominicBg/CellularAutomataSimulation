@@ -11,8 +11,16 @@ public struct PixelSprite : IDisposable
     public NativeGrid<Color32> pixels;
     public NativeGrid<bool> collisions;
     public int2 sizes;
-
     public int2 position;
+
+    //Position is bottomLeft
+
+    public Bound Bound => new Bound(position, sizes);
+
+    public Bound MovingBound(int2 newPosition)
+    {
+        return new Bound(newPosition, sizes);
+    }
 
     public PixelSprite(int2 position, Texture2D baseTexture)
     {

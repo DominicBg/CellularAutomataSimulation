@@ -19,9 +19,10 @@ public class CellularAutomata : MonoBehaviour
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
-    public ParticleBehaviour behaviour; 
+    public ParticleBehaviour behaviour;
+    public bool emitParticle;
 
-    Map map;
+    public Map map;
     Unity.Mathematics.Random m_random;
 
     public float desiredFPS = 60;
@@ -86,10 +87,12 @@ public class CellularAutomata : MonoBehaviour
 
     void FrameUpdate()
     {
-        if (player.TryUpdate(map) || Input.GetKey(KeyCode.Space))
+        player.OnUpdate(map);
+        //if (player.TryUpdate(map) || Input.GetKey(KeyCode.Space))
         {
             new CellularAutomataJob()
             {
+                emitParticle = emitParticle,
                 tick = Tick,
                 behaviour = behaviour,
                 map = map,
