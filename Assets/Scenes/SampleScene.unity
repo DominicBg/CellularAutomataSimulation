@@ -123,6 +123,80 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &24019100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 24019102}
+  - component: {fileID: 24019103}
+  - component: {fileID: 24019101}
+  m_Layer: 0
+  m_Name: MapEditor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &24019101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24019100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 391bc99de930ad34ab888226e7e126e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEditing: 0
+  type: 3
+  brushSize: 2
+  cellularAutomata: {fileID: 726109843}
+  gridPicker: {fileID: 24019103}
+  gridRenderer: {fileID: 1286533892}
+  levelData:
+    levelName: 
+    playerPosition:
+      x: 0
+      y: 0
+    playerTexture: {fileID: 2800000, guid: bbf99f75a4f83c24e8d50eebf958def2, type: 3}
+    sizes:
+      x: 0
+      y: 0
+    particleSpawners: []
+  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+--- !u!4 &24019102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24019100}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 316.25452, y: 118.63255, z: 40.12179}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &24019103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24019100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4328d686e08f3f74ea7f53a14c8f3a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 577035209}
 --- !u!1 &259331590
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,22 +556,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be3e52a54ed745419bcd3daa101f42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+  levelData:
+    levelName: 
+    playerPosition:
+      x: 0
+      y: 0
+    playerTexture: {fileID: 0}
+    sizes:
+      x: 0
+      y: 0
+    particleSpawners: []
   sizes:
     x: 100
     y: 100
   gridRenderer: {fileID: 1286533892}
   player: {fileID: 291513216}
-  particleSpawners:
-  - chanceSpawn: 0
-    spawnPosition:
-      x: 25
-      y: 99
-    particleType: 0
-  - chanceSpawn: 1
-    spawnPosition:
-      x: 70
-      y: 99
-    particleType: 2
   behaviour:
     floatyBehaviour:
       sinSpeed: 0.1
@@ -627,13 +701,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1526308770}
   - component: {fileID: 1526308769}
+  - component: {fileID: 1526308771}
   m_Layer: 0
   m_Name: MapDrawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1526308769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,11 +722,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 6
-  cellularAutomata: {fileID: 726109843}
-  renderer: {fileID: 412216245}
-  camera: {fileID: 259331593}
-  canvas: {fileID: 577035209}
   brushSize: 2
+  cellularAutomata: {fileID: 726109843}
+  gridPicker: {fileID: 1526308771}
 --- !u!4 &1526308770
 Transform:
   m_ObjectHideFlags: 0
@@ -666,6 +739,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1526308771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526308768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4328d686e08f3f74ea7f53a14c8f3a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 577035209}
 --- !u!1 &1920512392
 GameObject:
   m_ObjectHideFlags: 0

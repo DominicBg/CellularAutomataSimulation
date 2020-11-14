@@ -79,12 +79,50 @@ public class GridRenderer : MonoBehaviour
     }
 
     public RawImage renderer;
-    private Color32[] colors;
+    private Color32[] m_colors;
 
-    public void OnUpdate(Map map, PixelSprite pixelSprite)
+    public void OnUpdate(Map map, PixelSprite pixelSprite, int tick, uint tickSeed)
+    {
+        //int size = map.ArrayLength;
+        //EnsureColorArray(size);
+
+        //NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+
+        //new GridRendererJob()
+        //{
+        //    colorArray = outputColor,
+        //    map = map,
+        //    particleRendering = particleRendering,
+        //    tick = tick,
+        //    random = new Unity.Mathematics.Random(TickSeed)
+        //}.Schedule(size, 1).Complete();
+
+        //AddPixelSprite(outputColor, map, pixelSprite);
+
+        ////for (int i = 0; i < pixelSprites.Length; i++)
+        ////{
+        ////    AddPixelSprite(outputColor, map, pixelSprites[i]);
+        ////}
+
+        ////Copy NativeArray to ColorArray
+        //for (int i = 0; i < size; i++)
+        //{
+        //    colors[i] = outputColor[i];
+        //}
+        //outputColor.Dispose();
+
+        FillColorArray(map, pixelSprite, tick, tickSeed, ref m_colors);
+        RenderToScreen(m_colors);
+        //texture.SetPixels32(colors);
+
+        //texture.Apply();
+        //renderer.texture = texture;
+    }
+
+    public void FillColorArray(Map map, PixelSprite pixelSprite, int tick, uint TickSeed, ref Color32[] colors)
     {
         int size = map.ArrayLength;
-        EnsureColorArray(size);
+        EnsureColorArray(ref colors, size);
 
         NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
 
@@ -93,8 +131,8 @@ public class GridRenderer : MonoBehaviour
             colorArray = outputColor,
             map = map,
             particleRendering = particleRendering,
-            tick = CellularAutomata.Tick,
-            random = new Unity.Mathematics.Random(CellularAutomata.TickSeed)
+            tick = tick,
+            random = new Unity.Mathematics.Random(TickSeed)
         }.Schedule(size, 1).Complete();
 
         AddPixelSprite(outputColor, map, pixelSprite);
@@ -109,15 +147,17 @@ public class GridRenderer : MonoBehaviour
         {
             colors[i] = outputColor[i];
         }
-
         outputColor.Dispose();
-        texture.SetPixels32(colors);
+    }
 
+    public void RenderToScreen(Color32[] colors)
+    {
+        texture.SetPixels32(colors);
         texture.Apply();
         renderer.texture = texture;
     }
 
-    void EnsureColorArray(int size)
+    void EnsureColorArray(ref Color32[] colors, int size)
     {
         if (colors == null || colors.Length != size)
         {

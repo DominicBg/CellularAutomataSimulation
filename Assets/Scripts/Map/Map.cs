@@ -12,6 +12,20 @@ public unsafe struct Map
     NativeGrid<Particle> particleGrid;
     NativeGrid<bool> dirtyGrid;
 
+    public Map(ParticleType[,] grid, int2 sizes)
+    {
+        particleGrid = new NativeGrid<Particle>(sizes, Allocator.Persistent);
+        dirtyGrid = new NativeGrid<bool>(sizes, Allocator.Persistent);
+        for (int x = 0; x < sizes.x; x++)
+        {
+            for (int y = 0; y < sizes.y; y++)
+            {
+                int2 pos = new int2(x, y);
+                SetParticleType(pos, grid[x, y]);
+            }
+        }
+    }
+
     public Map(int2 sizes)
     {
         particleGrid = new NativeGrid<Particle>(sizes, Allocator.Persistent);
@@ -243,11 +257,13 @@ public unsafe struct Map
 
     public bool InBound(int2 pos)
     {
-        return pos.x >= 0 && pos.y >= 0 && pos.x < Sizes.x && pos.y < Sizes.y;
+        return ArrayHelper.InBound(pos, Sizes);
+        //return pos.x >= 0 && pos.y >= 0 && pos.x < Sizes.x && pos.y < Sizes.y;
     }
 
     public bool InBound(Bound bound)
     {
-        return InBound(bound.topLeft) && InBound(bound.topRight) && InBound(bound.bottomLeft) && InBound(bound.bottomRight);
+        return ArrayHelper.InBound(bound, Sizes);
+        //return InBound(bound.topLeft) && InBound(bound.topRight) && InBound(bound.bottomLeft) && InBound(bound.bottomRight);
     }
 }

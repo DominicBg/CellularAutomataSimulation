@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class CellularAutomata : MonoBehaviour
 {
+    //Put from another function
+    public LevelDataScriptable levelDataScriptable;
+    public LevelData levelData;
+
     public static int Tick { get; private set; }
     public static uint TickSeed { get; private set; }
 
@@ -15,7 +19,8 @@ public class CellularAutomata : MonoBehaviour
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
 
-    [SerializeField] ParticleSpawner[] particleSpawners;
+    //Set inside levelData
+    //[SerializeField] ParticleSpawner[] particleSpawners;
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
@@ -36,7 +41,7 @@ public class CellularAutomata : MonoBehaviour
 
     private void Awake()
     {
-        Init();
+        LoadLevel(levelDataScriptable);
     }
     private void OnDestroy()
     {
@@ -52,12 +57,13 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    private void Init()
+    private void LoadLevel(LevelDataScriptable levelDataScriptable)
     {
         Dispose();
 
-        map = new Map(sizes);
-        nativeParticleSpawners = new NativeArray<ParticleSpawner>(particleSpawners, Allocator.Persistent);
+        levelData = levelDataScriptable.LoadLevel();
+        map = new Map(levelData.grid, levelData.sizes);
+        nativeParticleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
 
         player.Init(5, map);
         gridRenderer.Init(sizes);
@@ -81,7 +87,7 @@ public class CellularAutomata : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            Init();
+            LoadLevel(levelDataScriptable);
         }
     }
 
@@ -103,7 +109,7 @@ public class CellularAutomata : MonoBehaviour
             //find a way to parralelize
             //checker pattern?
             //cellularAutomataJob.Schedule().Complete();
-            gridRenderer.OnUpdate(map, player.sprite);
+            gridRenderer.OnUpdate(map, player.sprite, Tick, TickSeed);
         }
     }
 }
