@@ -21,9 +21,4 @@ public class GridPicker : MonoBehaviour
         int y = (int)math.remap(0, resolution.y, 0, gridsizes.y, result.y);
         return new int2(x, y);
     }
-
-    private void OnValidate()
-    {
-        canvas = FindObjectOfType<CanvasScaler>();
-    }
 }

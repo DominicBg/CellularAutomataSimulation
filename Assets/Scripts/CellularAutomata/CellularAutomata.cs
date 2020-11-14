@@ -7,20 +7,14 @@ using UnityEngine;
 
 public class CellularAutomata : MonoBehaviour
 {
-    //Put from another function
-    public LevelDataScriptable levelDataScriptable;
-    public LevelData levelData;
-
     public static int Tick { get; private set; }
     public static uint TickSeed { get; private set; }
 
+    public LevelData levelData;
     public int2 sizes = 100;
 
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
-
-    //Set inside levelData
-    //[SerializeField] ParticleSpawner[] particleSpawners;
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
@@ -39,10 +33,7 @@ public class CellularAutomata : MonoBehaviour
         frameDuration = 1f / desiredFPS;
     }
 
-    private void Awake()
-    {
-        LoadLevel(levelDataScriptable);
-    }
+
     private void OnDestroy()
     {
         Dispose();
@@ -57,7 +48,7 @@ public class CellularAutomata : MonoBehaviour
         }
     }
 
-    private void LoadLevel(LevelDataScriptable levelDataScriptable)
+    public void LoadLevel(LevelDataScriptable levelDataScriptable)
     {
         Dispose();
 
@@ -70,7 +61,7 @@ public class CellularAutomata : MonoBehaviour
         m_random.InitState();
     }
 
-    public void Update()
+    public void OnUpdate()
     {
         //Force correct fps
         currentDeltaTime += Time.deltaTime;
@@ -82,34 +73,25 @@ public class CellularAutomata : MonoBehaviour
 
             FrameUpdate();
             currentDeltaTime -= frameDuration;
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            LoadLevel(levelDataScriptable);
         }
     }
 
     void FrameUpdate()
     {
-        player.OnUpdate(map);
-        //if (player.TryUpdate(map) || Input.GetKey(KeyCode.Space))
+        player.OnUpdate(map);      
+        new CellularAutomataJob()
         {
-            new CellularAutomataJob()
-            {
-                emitParticle = emitParticle,
-                tick = Tick,
-                behaviour = behaviour,
-                map = map,
-                nativeParticleSpawners = nativeParticleSpawners,
-                random = new Unity.Mathematics.Random(TickSeed)
-            }.Run();
+            emitParticle = emitParticle,
+            tick = Tick,
+            behaviour = behaviour,
+            map = map,
+            nativeParticleSpawners = nativeParticleSpawners,
+            random = new Unity.Mathematics.Random(TickSeed)
+        }.Run();
 
-            //find a way to parralelize
-            //checker pattern?
-            //cellularAutomataJob.Schedule().Complete();
-            gridRenderer.OnUpdate(map, player.sprite, Tick, TickSeed);
-        }
+        //find a way to parralelize
+        //checker pattern?
+        //cellularAutomataJob.Schedule().Complete();
+        gridRenderer.OnUpdate(map, player.sprite, Tick, TickSeed);        
     }
 }

@@ -22,6 +22,8 @@ public class LevelEditor : MonoBehaviour
     public LevelData levelData;
     public LevelDataScriptable levelDataScriptable;
 
+    private Color32[] m_colors;
+
     private void OnValidate()
     {
         gridPicker = GetComponent<GridPicker>();
@@ -29,7 +31,13 @@ public class LevelEditor : MonoBehaviour
         gridRenderer = FindObjectOfType<GridRenderer>();
     }
 
-    void Update()
+    public void OnStart()
+    {
+        levelData = levelDataScriptable.LoadLevel();
+        Render();
+    }
+
+    public void OnUpdate()
     {
         if (isEditing && Input.GetMouseButton(0))
         {
@@ -59,7 +67,15 @@ public class LevelEditor : MonoBehaviour
 
         gridRenderer.Init(cellularAutomata.sizes);
         //lol
-        gridRenderer.OnUpdate(map, pixelSprite, 0, 1851936439u);
+        gridRenderer.FillColorArray(map, pixelSprite, 0, 1851936439u, ref m_colors);
+        for (int i = 0; i < levelData.particleSpawners.Length; i++)
+        {
+            var spawner = levelData.particleSpawners[i];
+            int index = ArrayHelper.PosToIndex(spawner.spawnPosition, levelData.sizes);
+            m_colors[index] = Color.white;
+        }
+        gridRenderer.RenderToScreen(m_colors);
+
 
         pixelSprite.Dispose();
         map.Dispose();
