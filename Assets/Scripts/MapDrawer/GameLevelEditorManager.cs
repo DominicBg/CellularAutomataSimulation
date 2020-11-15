@@ -6,7 +6,7 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(GridPicker))]
-public class LevelEditor : MonoBehaviour
+public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 {
     [Header("Editing")]
     public bool isEditing;
@@ -14,26 +14,28 @@ public class LevelEditor : MonoBehaviour
     public int brushSize = 2;
 
     [Header("Managers")]
-    public CellularAutomata cellularAutomata;
+    public GameLevelManager cellularAutomata;
     public GridPicker gridPicker;
     public GridRenderer gridRenderer;
 
     [Header("LevelData")]
     public LevelData levelData;
-    public LevelDataScriptable levelDataScriptable;
 
     private Color32[] m_colors;
     private PixelSprite[] m_sprites;
 
+    public LevelDataScriptable levelDataScriptable;
+
     private void OnValidate()
     {
         gridPicker = GetComponent<GridPicker>();
-        cellularAutomata = FindObjectOfType<CellularAutomata>();
+        cellularAutomata = FindObjectOfType<GameLevelManager>();
         gridRenderer = FindObjectOfType<GridRenderer>();
     }
 
     public void OnStart()
     {
+        GameManager.Instance.currentLevel = levelDataScriptable;
         levelData = levelDataScriptable.LoadLevel();
         Render();
     }
@@ -107,6 +109,10 @@ public class LevelEditor : MonoBehaviour
         levelData.particleSpawners = new ParticleSpawner[0];
         levelData.grid = new ParticleType[sizes.x, sizes.y];
         levelData.sizes = sizes;
+    }
+
+    public void OnEnd()
+    {
     }
 }
 

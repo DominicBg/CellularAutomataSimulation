@@ -155,26 +155,57 @@ public unsafe struct Map
         int y = bound.bottomLeft.y;
         int xMin = bound.bottomLeft.x;
         int xMax = bound.bottomRight.x;
+
+        int countAtFeet = 0;
+        int countUnderFeet = 0;
+
         for (int x = xMin; x <= xMax; x++)
         {
-            int2 position = new int2(x, y - 1);
-            if(InBound(position))
+            int2 feetPosition = new int2(x, y);
+            int2 positionBottom = new int2(x, y - 1);
+
+            if (HasParticleCollision(GetParticleType(feetPosition)))
+            {
+                countAtFeet++;
+                //Go up a little when things like sand builds on your feet
+                //test if head is not out of bound lol
+                //return sprite.position + new int2(0, 1);
+            }
+            else if (InBound(positionBottom))
             {
                 //At least one collision
-                if(HasParticleCollision(GetParticleType(position)))
+                if(HasParticleCollision(GetParticleType(positionBottom)))
                 {
-                    return sprite.position;
+                    countUnderFeet++;
+                    //return sprite.position;
                 }
             }
             else 
             {
                 //bottom of the map
                 //return normal position
-                return sprite.position;
+                //return sprite.position;
             }
         }
-        //Drop one pixel
-        return sprite.position - new int2(0, 1);
+
+        //todo dont hardcode
+        if(countAtFeet >= 2)
+        {
+            //Apply ground normal force
+            return sprite.position + new int2(0, 1);
+        }
+        else if(countUnderFeet > 0)
+        {
+            //Stays
+            return sprite.position;
+        }
+        else if(countAtFeet == 0 && countUnderFeet == 0 && y != 0)
+        {
+            //Apply gravity
+            return sprite.position - new int2(0, 1);
+        }
+
+        return sprite.position;
     }
 
     public int2 HandlePhysics(ref PixelSprite sprite, int2 from, int2 to)

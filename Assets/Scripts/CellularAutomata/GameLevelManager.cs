@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class CellularAutomata : MonoBehaviour
+public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
     public static int Tick { get; private set; }
     public static uint TickSeed { get; private set; }
@@ -37,7 +37,7 @@ public class CellularAutomata : MonoBehaviour
     }
 
 
-    private void OnDestroy()
+    public void OnEnd()
     {
         Dispose();
     }
@@ -104,5 +104,10 @@ public class CellularAutomata : MonoBehaviour
         //checker pattern?
         //cellularAutomataJob.Schedule().Complete();
         gridRenderer.OnUpdate(map, pixelSprites, Tick, TickSeed);        
+    }
+
+    public void OnStart()
+    {
+        LoadLevel(GameManager.Instance.currentLevel);
     }
 }

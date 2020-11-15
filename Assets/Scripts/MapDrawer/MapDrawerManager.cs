@@ -6,7 +6,7 @@ public class MapDrawerManager : MonoBehaviour
     public ParticleType type;
     public int brushSize = 2;
 
-    public CellularAutomata cellularAutomata;
+    public GameLevelManager cellularAutomata;
     public GridPicker gridPicker;
 
     // Update is called once per frame

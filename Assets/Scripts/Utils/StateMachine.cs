@@ -3,56 +3,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine<T>
+namespace FiniteStateMachine
 {
-    private State<T> currentState = null;
-    private Dictionary<T, State<T>> dictionary = new Dictionary<T, State<T>>();
-
-    private T currentStateEnum;
-
-    public void AddState(Action onStart, Action onUpdate, Action onEnd, T enumState)
+    public class StateMachine<T>
     {
-        State<T> state = new State<T>(onStart, onUpdate, onEnd, enumState);
-        dictionary.Add(enumState, state);
+        private State currentState = null;
+        private Dictionary<T, State> dictionary = new Dictionary<T, State>();
+
+        private T currentStateEnum;
+
+        Action<State> m_onStartCallback;
+        Action<State> m_onUpdateCallback;
+        Action<State> m_onEndCallback; 
+
+        public void AddState(State state, T enumState, Action<State> OnStartCallback = null, Action<State> OnUpdateCallback = null, Action<State> OnEndCallback = null)
+        {
+            dictionary.Add(enumState, state);
+            m_onStartCallback = OnStartCallback;
+            m_onUpdateCallback = OnUpdateCallback;
+            m_onEndCallback = OnEndCallback;
+        }
+
+        public void Update()
+        {
+            currentState.OnUpdate();
+            m_onUpdateCallback?.Invoke(currentState);
+        }
+
+        public void SetState(T enumState)
+        {
+            State state = dictionary[enumState];
+
+            currentState?.OnEnd();
+            m_onEndCallback?.Invoke(currentState);
+
+            currentState = state;
+
+            currentState?.OnStart();
+            m_onStartCallback?.Invoke(currentState);
+
+            currentStateEnum = enumState;
+        }
+
+        public void ResetState()
+        {
+            SetState(currentStateEnum);
+        }
     }
 
-    public void Update()
+    public interface State
     {
-        currentState.OnUpdate?.Invoke();
-    }
-
-    public void SetState(T nextState)
-    {
-        SetState(dictionary[nextState]);
-    }
-
-    void SetState(State<T> nextState)
-    {
-        currentState?.OnEnd?.Invoke();
-        currentState = nextState;
-        currentState?.OnStart?.Invoke();
-
-        currentStateEnum = nextState.enumState;
-    }
-
-    public void ResetState()
-    {
-        SetState(currentState);
+        void OnStart();
+        void OnUpdate();
+        void OnEnd();
     }
 }
-
-public class State<T>
-{
-    public State(Action onStart, Action onUpdate, Action onEnd, T enumState)
-    {
-        OnStart = onStart;
-        OnUpdate = onUpdate;
-        OnEnd = onEnd;
-        this.enumState = enumState;
-    }
-    public Action OnStart;
-    public Action OnUpdate;
-    public Action OnEnd;
-    public T enumState;
-}
-

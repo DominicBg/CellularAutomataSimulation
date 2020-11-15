@@ -1,12 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(LevelEditor))]
+[CustomEditor(typeof(GameLevelEditorManager))]
 public class LevelEditorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        LevelEditor levelEditor = (LevelEditor)target;
+        GameLevelEditorManager levelEditor = (GameLevelEditorManager)target;
 
         DrawDefaultInspector();
         if (GUILayout.Button("Create new LevelDataScriptable"))
