@@ -31,15 +31,25 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     float currentDeltaTime;
     float frameDuration;
 
+    //TEMP
+    public PixelSortingRenderingSettings[] pixelSortingRenderingSettings;
+
     private void OnValidate()
     {
         frameDuration = 1f / desiredFPS;
     }
 
 
+    public void OnStart()
+    {
+        LoadLevel(GameManager.Instance.currentLevel);
+        gridRenderer.OnStart();
+    }
+
     public void OnEnd()
     {
         Dispose();
+        gridRenderer.OnEnd();
     }
 
     void Dispose()
@@ -103,11 +113,15 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         //find a way to parralelize
         //checker pattern?
         //cellularAutomataJob.Schedule().Complete();
+
+
+        //todo make this less ugly
+        for (int i = 0; i < pixelSortingRenderingSettings.Length; i++)
+        {
+            gridRenderer.postProcess.pixelSortingRequestQueue.Enqueue(pixelSortingRenderingSettings[i]);
+        }
+
         gridRenderer.OnUpdate(map, pixelSprites, Tick, TickSeed);        
     }
 
-    public void OnStart()
-    {
-        LoadLevel(GameManager.Instance.currentLevel);
-    }
 }

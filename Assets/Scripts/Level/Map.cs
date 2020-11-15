@@ -167,9 +167,6 @@ public unsafe struct Map
             if (HasParticleCollision(GetParticleType(feetPosition)))
             {
                 countAtFeet++;
-                //Go up a little when things like sand builds on your feet
-                //test if head is not out of bound lol
-                //return sprite.position + new int2(0, 1);
             }
             else if (InBound(positionBottom))
             {
@@ -177,14 +174,7 @@ public unsafe struct Map
                 if(HasParticleCollision(GetParticleType(positionBottom)))
                 {
                     countUnderFeet++;
-                    //return sprite.position;
                 }
-            }
-            else 
-            {
-                //bottom of the map
-                //return normal position
-                //return sprite.position;
             }
         }
 
@@ -234,7 +224,6 @@ public unsafe struct Map
             ParticleType type = GetParticleType(pos);
             if (HasParticleCollision(type))
             {
-                //if(y == minY || y == minY + 1)
                 if(y >= minY && y <= minY + 2)
                 {
                     //blocked from the bottom, walk ontop

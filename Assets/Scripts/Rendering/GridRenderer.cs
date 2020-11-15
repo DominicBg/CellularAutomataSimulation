@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -78,8 +79,25 @@ public class GridRenderer : MonoBehaviour
         public float noiseScale;
     }
 
-    public RawImage renderer;
+    public GridPostProcess postProcess;
+    [SerializeField] RawImage renderer;
     private Color32[] m_colors;
+
+    static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
+    static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");
+    static ProfilerMarker s_PostProcessRender = new ProfilerMarker("GridRenderer.PostProcessRender");
+
+
+    //todo this is a bit mehh
+    public void OnStart()
+    {
+        postProcess = new GridPostProcess();
+        postProcess.OnStart();
+    }
+    public void OnEnd()
+    {
+        postProcess.OnEnd();
+    }
 
     public void OnUpdate(Map map, PixelSprite[] pixelSprites, int tick, uint tickSeed)
     {   
@@ -94,20 +112,29 @@ public class GridRenderer : MonoBehaviour
 
         NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
 
-        new GridRendererJob()
+        using (S_SimulationRender.Auto())
         {
-            colorArray = outputColor,
-            map = map,
-            particleRendering = particleRendering,
-            tick = tick,
-            random = new Unity.Mathematics.Random(TickSeed)
-        }.Schedule(size, 1).Complete();
+            new GridRendererJob()
+            {
+                colorArray = outputColor,
+                map = map,
+                particleRendering = particleRendering,
+                tick = tick,
+                random = new Unity.Mathematics.Random(TickSeed)
+            }.Schedule(size, 1).Complete();
+        }
 
-        //AddPixelSprite(outputColor, map, pixelSprite);
+        using(s_SpriteRender.Auto())
+        { 
+            for (int i = 0; i < pixelSprites.Length; i++)
+            {
+                AddPixelSprite(outputColor, map, pixelSprites[i]);
+            }   
+        }
 
-        for (int i = 0; i < pixelSprites.Length; i++)
+        using(s_PostProcessRender.Auto())
         {
-            AddPixelSprite(outputColor, map, pixelSprites[i]);
+            postProcess.ApplyPostProcess(ref outputColor, map.Sizes);
         }
 
         //Copy NativeArray to ColorArray

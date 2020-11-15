@@ -219,7 +219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &259331591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,6 +767,15 @@ MonoBehaviour:
       diffWaterSandToDry: 2
   emitParticle: 1
   desiredFPS: 60
+  pixelSortingRenderingSettings:
+  - order: 0
+    bound:
+      position:
+        x: 25
+        y: 25
+      sizes:
+        x: 1
+        y: 10
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0
@@ -1101,8 +1110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5f794e4ee61bf41a843d44cf8a134d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameLevelManager: {fileID: 0}
-  gameLevelEditorManager: {fileID: 0}
+  gameLevelManager: {fileID: 726109843}
+  gameLevelEditorManager: {fileID: 24019101}
   currentLevel: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
 --- !u!4 &1372262967
 Transform:
