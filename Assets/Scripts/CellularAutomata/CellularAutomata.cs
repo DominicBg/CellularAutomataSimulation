@@ -18,6 +18,9 @@ public class CellularAutomata : MonoBehaviour
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
+    //todo generalize this
+    PixelSprite[] pixelSprites = new PixelSprite[2];
+
     public ParticleBehaviour behaviour;
     public bool emitParticle;
 
@@ -45,6 +48,11 @@ public class CellularAutomata : MonoBehaviour
         {
             nativeParticleSpawners.Dispose();
             map.Dispose();
+
+            for (int i = 0; i < pixelSprites.Length; i++)
+            {
+                pixelSprites[i].Dispose();
+            }
         }
     }
 
@@ -56,7 +64,10 @@ public class CellularAutomata : MonoBehaviour
         map = new Map(levelData.grid, levelData.sizes);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
 
-        player.Init(5, map);
+        pixelSprites[0] = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
+        pixelSprites[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
+
+        player.Init(ref pixelSprites[0], map);
         gridRenderer.Init(sizes);
         m_random.InitState();
     }
@@ -78,7 +89,7 @@ public class CellularAutomata : MonoBehaviour
 
     void FrameUpdate()
     {
-        player.OnUpdate(map);      
+        player.OnUpdate(ref pixelSprites[0], map);      
         new CellularAutomataJob()
         {
             emitParticle = emitParticle,
@@ -92,6 +103,6 @@ public class CellularAutomata : MonoBehaviour
         //find a way to parralelize
         //checker pattern?
         //cellularAutomataJob.Schedule().Complete();
-        gridRenderer.OnUpdate(map, player.sprite, Tick, TickSeed);        
+        gridRenderer.OnUpdate(map, pixelSprites, Tick, TickSeed);        
     }
 }

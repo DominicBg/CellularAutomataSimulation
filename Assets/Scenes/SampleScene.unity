@@ -165,10 +165,14 @@ MonoBehaviour:
       x: 0
       y: 0
     playerTexture: {fileID: 2800000, guid: bbf99f75a4f83c24e8d50eebf958def2, type: 3}
+    shuttlePosition:
+      x: 0
+      y: 0
+    shuttleTexture: {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
+    particleSpawners: []
     sizes:
       x: 0
       y: 0
-    particleSpawners: []
   levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
 --- !u!4 &24019102
 Transform:
@@ -341,7 +345,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b71b69a8394ae0409c54bcb1f1ba254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseSprite: {fileID: 2800000, guid: bbf99f75a4f83c24e8d50eebf958def2, type: 3}
 --- !u!4 &291513217
 Transform:
   m_ObjectHideFlags: 0
@@ -740,10 +743,14 @@ MonoBehaviour:
       x: 0
       y: 0
     playerTexture: {fileID: 0}
+    shuttlePosition:
+      x: 0
+      y: 0
+    shuttleTexture: {fileID: 0}
+    particleSpawners: []
     sizes:
       x: 0
       y: 0
-    particleSpawners: []
   sizes:
     x: 100
     y: 100

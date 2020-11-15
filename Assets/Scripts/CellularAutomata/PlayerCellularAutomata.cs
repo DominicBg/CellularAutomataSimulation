@@ -9,22 +9,15 @@ public class PlayerCellularAutomata : MonoBehaviour
     readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0), new int2(0, 1), new int2(0, -1)};
     readonly KeyCode[] inputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S };
 
-    public PixelSprite sprite;
+    //public PixelSprite sprite;
 
-    [SerializeField] Texture2D baseSprite;
-
-    public void Init(int2 position, Map map)
+    public void Init(ref PixelSprite sprite, Map map)
     {
-        sprite = new PixelSprite(position, baseSprite);
+        //sprite = new PixelSprite(position, baseSprite);
         map.SetSpriteAtPosition(sprite.position, ref sprite);
     }
 
-    public void OnDestroy()
-    {
-        sprite.Dispose();
-    }
-
-    public void OnUpdate(Map map)
+    public void OnUpdate(ref PixelSprite sprite, Map map)
     {
         int2 previousPos = sprite.position;
         //sprite.position = map.ApplyGravity(ref sprite);
@@ -35,7 +28,7 @@ public class PlayerCellularAutomata : MonoBehaviour
             {
                 int2 direction = directions[i];
                 nextPosition = nextPosition + direction;
-                if (IsPlayerInBound(map, nextPosition))
+                if (IsPlayerInBound(ref sprite, map, nextPosition))
                 {
                     nextPosition = map.HandlePhysics(ref sprite, sprite.position, nextPosition);
                 }
@@ -49,7 +42,7 @@ public class PlayerCellularAutomata : MonoBehaviour
     }
 
 
-    bool IsPlayerInBound(Map map, int2 newPosition)
+    bool IsPlayerInBound(ref PixelSprite sprite, Map map, int2 newPosition)
     {
         Bound newBound = sprite.MovingBound(newPosition);
         return map.InBound(newBound);

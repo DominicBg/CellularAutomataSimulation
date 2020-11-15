@@ -23,6 +23,7 @@ public class LevelEditor : MonoBehaviour
     public LevelDataScriptable levelDataScriptable;
 
     private Color32[] m_colors;
+    private PixelSprite[] m_sprites;
 
     private void OnValidate()
     {
@@ -62,12 +63,12 @@ public class LevelEditor : MonoBehaviour
 
     public void Render()
     {
-        GetPixelSprite(out PixelSprite pixelSprite);
+        GetPixelSprite(ref m_sprites);
         GetMap(out Map map);
 
         gridRenderer.Init(cellularAutomata.sizes);
         //lol
-        gridRenderer.FillColorArray(map, pixelSprite, 0, 1851936439u, ref m_colors);
+        gridRenderer.FillColorArray(map, m_sprites, 0, 1851936439u, ref m_colors);
         for (int i = 0; i < levelData.particleSpawners.Length; i++)
         {
             var spawner = levelData.particleSpawners[i];
@@ -76,14 +77,20 @@ public class LevelEditor : MonoBehaviour
         }
         gridRenderer.RenderToScreen(m_colors);
 
-
-        pixelSprite.Dispose();
+        for (int i = 0; i < m_sprites.Length; i++)
+        {
+            m_sprites[i].Dispose();
+        }
         map.Dispose();
     }
 
-    void GetPixelSprite(out PixelSprite pixelSprite)
+    void GetPixelSprite(ref PixelSprite[] pixelSprite)
     {
-        pixelSprite = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
+        if (pixelSprite == null || pixelSprite.Length != 2)
+            pixelSprite = new PixelSprite[2];
+
+        pixelSprite[0] = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
+        pixelSprite[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
     }
 
     void GetMap(out Map map)
