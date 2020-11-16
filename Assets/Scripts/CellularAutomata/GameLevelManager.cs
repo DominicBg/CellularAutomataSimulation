@@ -10,8 +10,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public static int Tick { get; private set; }
     public static uint TickSeed { get; private set; }
 
-    public LevelData levelData;
-    public int2 sizes = 100;
+    //public int2 sizes = 100;
 
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
@@ -22,12 +21,12 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     PixelSprite[] pixelSprites = new PixelSprite[2];
 
     public ParticleBehaviour behaviour;
-    public bool emitParticle;
 
     public Map map;
     Unity.Mathematics.Random m_random;
 
     public float desiredFPS = 60;
+    LevelData levelData;
     float currentDeltaTime;
     float frameDuration;
 
@@ -39,17 +38,14 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         frameDuration = 1f / desiredFPS;
     }
 
-
     public void OnStart()
     {
         LoadLevel(GameManager.Instance.currentLevel);
-        gridRenderer.OnStart();
     }
 
     public void OnEnd()
     {
         Dispose();
-        gridRenderer.OnEnd();
     }
 
     void Dispose()
@@ -78,7 +74,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         pixelSprites[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
 
         player.Init(ref pixelSprites[0], map);
-        gridRenderer.Init(sizes);
         m_random.InitState();
     }
 
@@ -102,7 +97,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         player.OnUpdate(ref pixelSprites[0], map);      
         new CellularAutomataJob()
         {
-            emitParticle = emitParticle,
             tick = Tick,
             behaviour = behaviour,
             map = map,
@@ -115,13 +109,13 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         //cellularAutomataJob.Schedule().Complete();
 
 
-        //todo make this less ugly
+        //todo make this less ugly lol
         for (int i = 0; i < pixelSortingRenderingSettings.Length; i++)
         {
-            gridRenderer.postProcess.pixelSortingRequestQueue.Enqueue(pixelSortingRenderingSettings[i]);
+            GridRenderer.postProcess.pixelSortingRequestQueue.Enqueue(pixelSortingRenderingSettings[i]);
         }
 
-        gridRenderer.OnUpdate(map, pixelSprites, Tick, TickSeed);        
+        GridRenderer.RenderMapAndSprites(map, pixelSprites, Tick, TickSeed);        
     }
 
 }

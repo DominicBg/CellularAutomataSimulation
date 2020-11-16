@@ -49,6 +49,11 @@ namespace FiniteStateMachine
         {
             SetState(currentStateEnum);
         }
+
+        public void ForceClose()
+        {
+            currentState?.OnEnd();
+        }
     }
 
     public interface State

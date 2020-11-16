@@ -12,14 +12,12 @@ public struct CellularAutomataJob : IJob
     public Map map;
     public Random random;
     public ParticleBehaviour behaviour;
-    public bool emitParticle;
     public void Execute()
     {
         map.ClearDirtyGrid();
         UpdateSimulation();
 
-        if(emitParticle)
-            SpawnParticles();
+        SpawnParticles();
     }
 
     void SpawnParticles()
@@ -27,7 +25,9 @@ public struct CellularAutomataJob : IJob
         for (int i = 0; i < nativeParticleSpawners.Length; i++)
         {
             var spawner = nativeParticleSpawners[i];
-            if (random.NextFloat() <= spawner.chanceSpawn)
+            bool canEmit = spawner.notTickBounded || (tick >= spawner.startTick && tick <= spawner.endTick);
+
+            if (canEmit && random.NextFloat() <= spawner.chanceSpawn)
             {
                 map.SetParticleType(spawner.spawnPosition, spawner.particleType);
             }

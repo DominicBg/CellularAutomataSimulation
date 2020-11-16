@@ -9,165 +9,107 @@ using UnityEngine.UI;
 
 public class GridRenderer : MonoBehaviour
 {
-    Texture2D texture;
-    public ParticleRendering particleRendering;
-
-    [System.Serializable]
-    public struct ParticleRendering
-    {
-        public Color noneColor;
-        public WaterRendering waterRendering;
-        public SandRendering sandRendering;
-        public IceRendering iceRendering;
-        public RockRendering rockRendering;
-        public Color mudColor;
-        public Color snowColor;
-    }
-
-    [System.Serializable]
-    public struct WaterRendering
-    {
-        [Header("Bubble Sin")]
-        public float bubbleSineAmplitude;
-        public float bubbleSineSpeed;
-        public float bubbleSineNoiseAmplitude;
-        public float2 bubbleSineOffSynch;
-        public float2 bubbleSineNoiseSpeed;
-
-        [Header("Bubble Color")]
-        public Color bubbleOuterColor;
-        public Color bubbleInnerColor;
-        public float bubbleInnerThreshold;
-        public float bubbleOuterThreshold;
-
-        [Header("Other")]
-        public float scaling;
-        public Color waterColor;
-        public float2 speed;
-    }
-
-    [System.Serializable]
-    public struct SandRendering
-    {
-        public float shimmerThreshold;
-        public float waveThreshold;
-        public float2 waveScale;
-        public float2 waveSpeed;
-        public float2 waveScrollSpeed;
-        public Color sandColor;
-        public Color shimmerColor;
-        public Color waveColor;
-    }
-
-    [System.Serializable]
-    public struct IceRendering
-    {
-        public float thresholdShineReflection;
-        public float reflectionShineSpeed;
-        public Color reflectionShineColor;
-        public Color iceColor;
-        public float reflectionXDifference;
-        public float reflectionShineAngle;
-    }
-
-    [System.Serializable]
-    public struct RockRendering
-    {
-        public Color rockColor;
-        public Color crackColor;
-        public float noiseCrackThreshold;
-        public float noiseScale;
-    }
-
-    public GridPostProcess postProcess;
-    [SerializeField] RawImage renderer;
-    private Color32[] m_colors;
+    public static GridRenderer Instance { get; private set; }
+    [SerializeField] ParticleRendering particleRendering;
 
     static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
     static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");
     static ProfilerMarker s_PostProcessRender = new ProfilerMarker("GridRenderer.PostProcessRender");
 
+    [SerializeField] RawImage m_renderer;
+    public static GridPostProcess postProcess;
+    private static Texture2D m_texture;
+    private static Color32[] m_colors;
 
-    //todo this is a bit mehh
-    public void OnStart()
+    public const uint randomTick = 1851936439u;
+
+
+    //Consider getting init by GameManager
+    void Awake()
     {
+        Instance = this;
+
+        int2 sizes = GameManager.GridSizes;
+        m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
+        m_texture.filterMode = FilterMode.Point;
+        m_colors = new Color32[GameManager.GridLength];
+
         postProcess = new GridPostProcess();
         postProcess.OnStart();
     }
-    public void OnEnd()
+
+    void OnDestroy()
     {
         postProcess.OnEnd();
     }
 
-    public void OnUpdate(Map map, PixelSprite[] pixelSprites, int tick, uint tickSeed)
+    public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, int tick = 0, uint tickSeed = randomTick)
     {   
-        FillColorArray(map, pixelSprites, tick, tickSeed, ref m_colors);
-        RenderToScreen(m_colors);
+        FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tick, tickSeed);
+        RenderToScreen(outputColor);
     }
 
-    public void FillColorArray(Map map, PixelSprite[] pixelSprites, int tick, uint TickSeed, ref Color32[] colors)
+    public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, int tick = 0, uint tickSeed = randomTick)
     {
-        int size = map.ArrayLength;
-        EnsureColorArray(ref colors, size);
+        outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+        ApplyMapPixels(ref outputColor, map, tick, tickSeed);
+        ApplyPixelSprites(ref outputColor, pixelSprites);
+        ApplyPostProcess(ref outputColor);
+    }
 
-        NativeArray<Color32> outputColor = new NativeArray<Color32>(size, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-
+    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, int tick = 0, uint tickSeed = randomTick)
+    {
         using (S_SimulationRender.Auto())
         {
             new GridRendererJob()
             {
                 colorArray = outputColor,
                 map = map,
-                particleRendering = particleRendering,
+                particleRendering = Instance.particleRendering,
                 tick = tick,
-                random = new Unity.Mathematics.Random(TickSeed)
-            }.Schedule(size, 1).Complete();
+                random = new Unity.Mathematics.Random(tickSeed)
+            }.Schedule(GameManager.GridLength, 1).Complete();
         }
+    }
 
-        using(s_SpriteRender.Auto())
-        { 
+    public static void ApplyPixelSprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)
+    {
+        using (s_SpriteRender.Auto())
+        {
             for (int i = 0; i < pixelSprites.Length; i++)
             {
-                AddPixelSprite(outputColor, map, pixelSprites[i]);
-            }   
+                AddPixelSprite(outputColor, pixelSprites[i]);
+            }
         }
+    }
 
-        using(s_PostProcessRender.Auto())
+    public static void ApplyPostProcess(ref NativeArray<Color32> outputColor)
+    {
+        using (s_PostProcessRender.Auto())
         {
-            postProcess.ApplyPostProcess(ref outputColor, map.Sizes);
+            postProcess.ApplyPostProcess(ref outputColor);
         }
+    }
 
+    /// <summary>
+    /// Render the outputColor to the screen and dispose the array
+    /// </summary>
+    public static void RenderToScreen(NativeArray<Color32> outputColor)
+    {
         //Copy NativeArray to ColorArray
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < outputColor.Length; i++)
         {
-            colors[i] = outputColor[i];
+            m_colors[i] = outputColor[i];
         }
         outputColor.Dispose();
-    }
 
-    public void RenderToScreen(Color32[] colors)
-    {
-        texture.SetPixels32(colors);
-        texture.Apply();
-        renderer.texture = texture;
-    }
-
-    void EnsureColorArray(ref Color32[] colors, int size)
-    {
-        if (colors == null || colors.Length != size)
-        {
-            colors = new Color32[size];
-        }
-    }
-
-    public void Init(int2 sizes)
-    {
-        texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
-        texture.filterMode = FilterMode.Point;
+        m_texture.SetPixels32(m_colors);
+        m_texture.Apply();
+        Instance.m_renderer.texture = m_texture;
     }
 
     //This is going to be cancer to burst lol
-    void AddPixelSprite(NativeArray<Color32> outputColor, Map map, PixelSprite sprite)
+    static void AddPixelSprite(NativeArray<Color32> outputColor, PixelSprite sprite)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
         {
@@ -176,7 +118,7 @@ public class GridRenderer : MonoBehaviour
                 int2 texturePos = new int2(x, y) + sprite.position;
                 if(sprite.collisions[x,y])
                 {
-                    int index = ArrayHelper.PosToIndex(texturePos, map.Sizes);
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
                     outputColor[index] = sprite.pixels[x, y];
                 }
             }

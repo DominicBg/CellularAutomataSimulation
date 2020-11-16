@@ -21,7 +21,7 @@ public class GridPostProcess
         pixelSortingRequestQueue.Dispose();
     }
 
-    public void ApplyPostProcess(ref NativeArray<Color32> colors, int2 sizes)
+    public void ApplyPostProcess(ref NativeArray<Color32> colors)
     {
         using (s_PixelSorting.Auto())
         { 
@@ -29,7 +29,7 @@ public class GridPostProcess
             {
                 colorArray = colors,
                 requestQueue = pixelSortingRequestQueue,
-                mapSizes = sizes
+                mapSizes = GameManager.GridSizes
             }.Run();
         }
 

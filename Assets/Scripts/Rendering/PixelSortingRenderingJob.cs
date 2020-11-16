@@ -33,7 +33,6 @@ public struct PixelSortingRenderingJob : IJob
         else
             bound.GetPositionsIndexArrayXY(out positions, mapSizes, Allocator.Temp);
 
-
         NativeArray<Color32> boundColorArray = new NativeArray<Color32>(positions.Length, Allocator.Temp);
 
         for (int i = 0; i < boundColorArray.Length; i++)
