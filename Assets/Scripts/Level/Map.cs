@@ -63,6 +63,14 @@ public unsafe struct Map
         return particleGrid[pos];
     }
 
+    public void MoveParticle(int2 from, int2 to)
+    {
+        Particle temp = particleGrid[from];
+        particleGrid[from] = new Particle() { type = ParticleType.None };
+        particleGrid[to] = temp;
+        dirtyGrid[to] = true;
+    }
+
     public void MoveParticle(Particle particle, int2 from, int2 to)
     {
         particleGrid[from] = new Particle() { type = ParticleType.None };
@@ -110,12 +118,13 @@ public unsafe struct Map
                 int2 pixelPosition = nextPosition + new int2(x, y);
                 if (sprite.collisions[x, y])
                 {
-                    //Throw particle in the air
-                    ParticleType previousType = particleGrid[pixelPosition].type;
-                    if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(pixelPosition, new int2(0, 1), out int2 newPosition))
-                    {
-                        SetParticleType(newPosition, previousType);
-                    }
+                    //TODO handle in physic
+                    ////Throw particle in the air
+                    //ParticleType previousType = particleGrid[pixelPosition].type;
+                    //if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(pixelPosition, new int2(0, 1), out int2 newPosition))
+                    //{
+                    //    SetParticleType(newPosition, previousType);
+                    //}
 
                     SetParticleType(pixelPosition, ParticleType.Player);
                 }
@@ -193,7 +202,8 @@ public unsafe struct Map
         if (math.all(from == to))
             return to;
 
-        bool goingLeft = (from.x - to.x) == 1;
+        int direction = (to.x - from.x);
+        bool goingLeft = direction == -1;
 
         Bound directionBound;
         if(goingLeft)
@@ -210,11 +220,15 @@ public unsafe struct Map
         directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
 
         int2 finalPosition = to;
+
+        bool canPush = true;
+        int2 pushDirection = new int2(0, direction);
+        NativeList < int2> pushedParticles = new NativeList<int2>(directionBound.sizes.y, allocator);
+
         for (int i = 0; i < directionPositions.Length; i++)
         {
             int2 pos = directionPositions[i];
-            ParticleType type = GetParticleType(pos);
-            if (HasParticleCollision(type))
+            if (HasCollision(pos))
             {
                 if (pos.y >= minY && pos.y <= minY + 2)
                 {
@@ -229,14 +243,39 @@ public unsafe struct Map
                 }
                 else
                 {
-                    //Slope too high, can't move
-                    finalPosition = from;
-                    break;
+                    //Try push, if one particle can't be pushed, block
+                    if(CanPush(pos) && IsFreePosition(pos + pushDirection))
+                    {
+                        pushedParticles.Add(pos);
+                    }
+                    else
+                    {
+                        //Slope too high, can't move
+                        canPush = false;
+                        finalPosition = from;
+                        break;
+                    }
                 }
             }
         }
+
+        if(canPush)
+        {
+            for (int i = 0; i < pushedParticles.Length; i++)
+            {
+                int2 particlePos = pushedParticles[i];
+                MoveParticle(particlePos, particlePos + pushDirection);
+            }
+        }
+
+        pushedParticles.Dispose();
         directionPositions.Dispose();
         return finalPosition;
+    }
+
+    public bool HasCollision(int2 position)
+    {
+        return HasParticleCollision(GetParticleType(position));
     }
 
     public bool HasParticleCollision(ParticleType type)
@@ -258,6 +297,10 @@ public unsafe struct Map
         return false;
     }
 
+    public bool CanPush(int2 position)
+    {
+        return CanPush(GetParticleType(position));
+    }
     public bool CanPush(ParticleType type)
     {
         switch (type)
