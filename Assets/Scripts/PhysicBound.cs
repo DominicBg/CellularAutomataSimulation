@@ -7,6 +7,29 @@ public struct PhysicBound
 {
     public Bound localCollisionBound;
 
+    public PhysicBound(Texture2D collisionTexture)
+    {
+        int width = collisionTexture.width;
+        int height = collisionTexture.height;
+
+        int2 min = new int2(width, height);
+        int2 max = new int2(0, 0);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if(collisionTexture.GetPixel(x, y).a > 0.5f)
+                {
+                    min.x = math.min(min.x, x);
+                    min.y = math.min(min.y, y);
+                    max.x = math.max(max.x, x);
+                    max.y = math.max(max.y, y);
+                }
+            }
+        }
+        Debug.Log($"min {min}, max {max}");
+        localCollisionBound = new Bound(min, max - min);
+    }
     public PhysicBound(Bound localCollisionBound)
     {
         this.localCollisionBound = localCollisionBound;

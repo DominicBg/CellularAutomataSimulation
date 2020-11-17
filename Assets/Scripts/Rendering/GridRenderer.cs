@@ -19,7 +19,6 @@ public class GridRenderer : MonoBehaviour
     [SerializeField] RawImage m_renderer;
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
-    private static Color32[] m_colors;
 
     public const uint randomTick = 1851936439u;
 
@@ -32,8 +31,6 @@ public class GridRenderer : MonoBehaviour
         int2 sizes = GameManager.GridSizes;
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
         m_texture.filterMode = FilterMode.Point;
-        m_colors = new Color32[GameManager.GridLength];
-
         postProcess = new GridPostProcess();
         postProcess.OnStart();
     }
@@ -96,14 +93,8 @@ public class GridRenderer : MonoBehaviour
     /// </summary>
     public static void RenderToScreen(NativeArray<Color32> outputColor)
     {
-        //Copy NativeArray to ColorArray
-        for (int i = 0; i < outputColor.Length; i++)
-        {
-            m_colors[i] = outputColor[i];
-        }
+        m_texture.SetPixelData(outputColor, 0);
         outputColor.Dispose();
-
-        m_texture.SetPixels32(m_colors);
         m_texture.Apply();
         Instance.m_renderer.texture = m_texture;
     }

@@ -148,20 +148,14 @@ public unsafe struct Map
     }
 
 
-    public int2 ApplyGravity(int2 position, ref PhysicBound physicBound)
+    public int2 ApplyGravity(ref PhysicBound physicBound, int2 position, Allocator allocator = Allocator.Temp)
     {
         Bound feetBound = physicBound.GetFeetCollisionBound(position);
         Bound underfeetBound = physicBound.GetUnderFeetCollisionBound(position);
-        
-        feetBound.GetPositionsGrid(out NativeArray<int2> feetPositions);
-        underfeetBound.GetPositionsGrid(out NativeArray<int2> underfeetPositions);
-
-        int countAtFeet = CountCollision(ref feetBound);
-        int countUnderFeet = CountCollision(ref underfeetBound);
-
-        feetPositions.Dispose();
-        underfeetPositions.Dispose();
-
+       
+        int countAtFeet = CountCollision(ref feetBound, allocator);
+        int countUnderFeet = CountCollision(ref underfeetBound, allocator);
+   
         //todo dont hardcode
         if (countAtFeet >= 2)
         {
@@ -182,8 +176,23 @@ public unsafe struct Map
         return position;
     }
 
-    public int2 HandlePhysics(ref PhysicBound physicBound, int2 from, int2 to)
+    public int2 Jump(ref PhysicBound physicBound, int2 position, Allocator allocator = Allocator.Temp)
     {
+        int2 jumpPosition = position + new int2(0, 1);
+        Bound headBound = physicBound.GetTopCollisionBound(jumpPosition);
+        if (!HasCollision(ref headBound, allocator))
+        {
+            return jumpPosition;
+        }
+        return position;
+    }
+
+    public int2 HandlePhysics(ref PhysicBound physicBound, int2 from, int2 to, Allocator allocator = Allocator.Temp)
+    {
+        //Didnt move
+        if (math.all(from == to))
+            return to;
+
         bool goingLeft = (from.x - to.x) == 1;
 
         Bound directionBound;
@@ -198,7 +207,7 @@ public unsafe struct Map
 
         int minY = directionBound.min.y;
 
-        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, Allocator.Temp);
+        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
 
         int2 finalPosition = to;
         for (int i = 0; i < directionPositions.Length; i++)
@@ -212,7 +221,7 @@ public unsafe struct Map
                     //blocked from the bottom, walk ontop
                     int2 newPosition = new int2(to.x, pos.y + 1);
                     Bound headBound = physicBound.GetTopCollisionBound(newPosition);
-                    if(!HasCollision(ref headBound))
+                    if(!HasCollision(ref headBound, allocator))
                     {
                         finalPosition = newPosition;
                         break;
@@ -267,14 +276,14 @@ public unsafe struct Map
         return true;
     }
 
-    public bool HasCollision(ref Bound bound)
+    public bool HasCollision(ref Bound bound, Allocator allocator = Allocator.Temp)
     {
-        return CountCollision(ref bound) > 0;
+        return CountCollision(ref bound, allocator) > 0;
     }
 
-    public int CountCollision(ref Bound bound)
+    public int CountCollision(ref Bound bound, Allocator allocator = Allocator.Temp)
     {
-        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
+        bound.GetPositionsGrid(out NativeArray<int2> positions, allocator);
         int count = CountCollision(ref positions);
         positions.Dispose();
         return count;

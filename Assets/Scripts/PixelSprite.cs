@@ -8,6 +8,7 @@ using UnityEngine;
 
 public struct PixelSprite : IDisposable
 {
+    
     public NativeGrid<Color32> pixels;
     public NativeGrid<bool> collisions;
     public int2 sizes;

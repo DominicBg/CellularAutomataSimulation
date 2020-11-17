@@ -556,6 +556,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b71b69a8394ae0409c54bcb1f1ba254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
+  jumpHeight: 5
 --- !u!4 &291513217
 Transform:
   m_ObjectHideFlags: 0
