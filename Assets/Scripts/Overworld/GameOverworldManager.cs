@@ -25,8 +25,7 @@ public class GameOverworldManager : MonoBehaviour, State
 
     public void OnStart()
     {
-        m_currentOverworld = overworlds[currentOverworld];
-        
+        m_currentOverworld = overworlds[currentOverworld];    
 
         Level[] levels = m_currentOverworld.levels;
         m_pixelSprites = new PixelSprite[levels.Length];
@@ -45,6 +44,6 @@ public class GameOverworldManager : MonoBehaviour, State
 
     public void OnUpdate()
     {
-    }
 
+    }
 }

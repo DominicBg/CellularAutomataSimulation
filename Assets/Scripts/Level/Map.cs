@@ -148,95 +148,86 @@ public unsafe struct Map
     }
 
 
-    public int2 ApplyGravity(ref PixelSprite sprite)
+    public int2 ApplyGravity(int2 position, ref PhysicBound physicBound)
     {
-        Bound bound = sprite.Bound;
-        //same for left right
-        int y = bound.bottomLeft.y;
-        int xMin = bound.bottomLeft.x;
-        int xMax = bound.bottomRight.x;
+        Bound feetBound = physicBound.GetFeetCollisionBound(position);
+        Bound underfeetBound = physicBound.GetUnderFeetCollisionBound(position);
+        
+        feetBound.GetPositionsGrid(out NativeArray<int2> feetPositions);
+        underfeetBound.GetPositionsGrid(out NativeArray<int2> underfeetPositions);
 
-        int countAtFeet = 0;
-        int countUnderFeet = 0;
+        int countAtFeet = CountCollision(ref feetBound);
+        int countUnderFeet = CountCollision(ref underfeetBound);
 
-        for (int x = xMin; x <= xMax; x++)
-        {
-            int2 feetPosition = new int2(x, y);
-            int2 positionBottom = new int2(x, y - 1);
-
-            if (HasParticleCollision(GetParticleType(feetPosition)))
-            {
-                countAtFeet++;
-            }
-            else if (InBound(positionBottom))
-            {
-                //At least one collision
-                if(HasParticleCollision(GetParticleType(positionBottom)))
-                {
-                    countUnderFeet++;
-                }
-            }
-        }
+        feetPositions.Dispose();
+        underfeetPositions.Dispose();
 
         //todo dont hardcode
-        if(countAtFeet >= 2)
+        if (countAtFeet >= 2)
         {
             //Apply ground normal force
-            return sprite.position + new int2(0, 1);
+            return position + new int2(0, 1);
         }
         else if(countUnderFeet > 0)
         {
             //Stays
-            return sprite.position;
+            return position;
         }
-        else if(countAtFeet == 0 && countUnderFeet == 0 && y != 0)
+        else if(countAtFeet == 0 && countUnderFeet == 0 && feetBound.min.y != 0)
         {
             //Apply gravity
-            return sprite.position - new int2(0, 1);
+            return position - new int2(0, 1);
         }
 
-        return sprite.position;
+        return position;
     }
 
-    public int2 HandlePhysics(ref PixelSprite sprite, int2 from, int2 to)
+    public int2 HandlePhysics(ref PhysicBound physicBound, int2 from, int2 to)
     {
-        Bound bound = sprite.MovingBound(to);
-
         bool goingLeft = (from.x - to.x) == 1;
 
-        //same for left or right
-        int minY = bound.bottomLeft.y;
-        int maxY = bound.topLeft.y;
-        int x;
+        Bound directionBound;
         if(goingLeft)
         {
-            x = bound.bottomLeft.x;
+            directionBound = physicBound.GetLeftCollisionBound(to);
         }
         else
         {
-            x = bound.bottomRight.x;
+            directionBound = physicBound.GetRightCollisionBound(to);
         }
 
-        //Scan from top to bottom
-        for (int y = maxY; y >= minY; y--)
+        int minY = directionBound.min.y;
+
+        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, Allocator.Temp);
+
+        int2 finalPosition = to;
+        for (int i = 0; i < directionPositions.Length; i++)
         {
-            int2 pos = new int2(x, y);
+            int2 pos = directionPositions[i];
             ParticleType type = GetParticleType(pos);
             if (HasParticleCollision(type))
             {
-                if(y >= minY && y <= minY + 2)
+                if (pos.y >= minY && pos.y <= minY + 2)
                 {
                     //blocked from the bottom, walk ontop
-                    return new int2(to.x, y + 1);
+                    int2 newPosition = new int2(to.x, pos.y + 1);
+                    Bound headBound = physicBound.GetTopCollisionBound(newPosition);
+                    if(!HasCollision(ref headBound))
+                    {
+                        finalPosition = newPosition;
+                        break;
+                    }
                 }
                 else
                 {
-                    //Blocked from top
-                    return from;
+                    //Slope too high, can't move
+                    finalPosition = from;
+                    break;
                 }
             }
         }
-        return to;
+        directionPositions.Dispose();
+        return finalPosition;
     }
 
     public bool HasParticleCollision(ParticleType type)
@@ -269,21 +260,51 @@ public unsafe struct Map
                 return true;
 
             case ParticleType.Mud:
+            case ParticleType.Rock:
             case ParticleType.Ice:
                 return false;
         }
         return true;
     }
 
+    public bool HasCollision(ref Bound bound)
+    {
+        return CountCollision(ref bound) > 0;
+    }
+
+    public int CountCollision(ref Bound bound)
+    {
+        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
+        int count = CountCollision(ref positions);
+        positions.Dispose();
+        return count;
+    }
+
+    public bool HasCollision(ref NativeArray<int2> positions)
+    {
+        return CountCollision(ref positions) > 0;
+    }
+
+    public int CountCollision(ref NativeArray<int2> positions)
+    {
+        int count = 0;
+        for (int i = 0; i < positions.Length; i++)
+        {
+            if (InBound(positions[i]) && HasParticleCollision(GetParticleType(positions[i])))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public bool InBound(int2 pos)
     {
         return ArrayHelper.InBound(pos, Sizes);
-        //return pos.x >= 0 && pos.y >= 0 && pos.x < Sizes.x && pos.y < Sizes.y;
     }
 
     public bool InBound(Bound bound)
     {
         return ArrayHelper.InBound(bound, Sizes);
-        //return InBound(bound.topLeft) && InBound(bound.topRight) && InBound(bound.bottomLeft) && InBound(bound.bottomRight);
     }
 }
