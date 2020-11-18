@@ -1,12 +1,11 @@
 ﻿using Unity.Mathematics;
 
-//todo add scriptable
-
 [System.Serializable]
 public struct ParticleBehaviour
 {
     public FloatyBehaviour floatyBehaviour;
     public WaterBehaviour waterBehaviour;
+    public TitleDisentegrateBehaviour titleDisentegrateBehaviour;
     
     [System.Serializable]
     public struct FloatyBehaviour
@@ -22,4 +21,10 @@ public struct ParticleBehaviour
         public int diffWaterSandToDry;
     }
 
+    [System.Serializable]
+    public struct TitleDisentegrateBehaviour
+    {
+        public float chanceMove;
+        public float chanceDespawn;
+    }
 }

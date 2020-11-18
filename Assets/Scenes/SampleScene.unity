@@ -1007,6 +1007,10 @@ MonoBehaviour:
       ratioFloat: 0.6
     waterBehaviour:
       diffWaterSandToDry: 2
+    titleDisentegrateBehaviour:
+      chanceMove: 0.1
+      chanceDespawn: 0.01
+  particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   pixelSortingRenderingSettings: []
 --- !u!4 &726109844
 Transform:
@@ -1073,6 +1077,7 @@ MonoBehaviour:
   title: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
   randomSpeed: 1
   lightThreshold: 0.8
+  partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   mainMenuLevel: {fileID: 11400000, guid: 3f07da40657218a48929a070a6011d04, type: 2}
 --- !u!1 &1122140263
 GameObject:

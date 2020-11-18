@@ -20,9 +20,6 @@ public class GridRenderer : MonoBehaviour
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 
-    public const uint randomTick = 1851936439u;
-
-
     //Consider getting init by GameManager
     void Awake()
     {
@@ -40,21 +37,21 @@ public class GridRenderer : MonoBehaviour
         postProcess.OnEnd();
     }
 
-    public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, int tick = 0, uint tickSeed = randomTick)
+    public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
     {   
-        FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tick, tickSeed);
+        FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tickBlock);
         RenderToScreen(outputColor);
     }
 
-    public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, int tick = 0, uint tickSeed = randomTick)
+    public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-        ApplyMapPixels(ref outputColor, map, tick, tickSeed);
+        ApplyMapPixels(ref outputColor, map, tickBlock);
         ApplyPixelSprites(ref outputColor, pixelSprites);
         ApplyPostProcess(ref outputColor);
     }
 
-    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, int tick = 0, uint tickSeed = randomTick)
+    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, TickBlock tickBlock)
     {
         using (S_SimulationRender.Auto())
         {
@@ -63,8 +60,8 @@ public class GridRenderer : MonoBehaviour
                 colorArray = outputColor,
                 map = map,
                 particleRendering = Instance.particleRendering,
-                tick = tick,
-                random = new Unity.Mathematics.Random(tickSeed)
+                tick = tickBlock.tick,
+                random = new Unity.Mathematics.Random(tickBlock.tickSeed)
             }.Schedule(GameManager.GridLength, 1).Complete();
         }
     }

@@ -26,6 +26,8 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public LevelDataScriptable levelDataScriptable;
 
+    TickBlock tickBlock;
+
     private void OnValidate()
     {
         gridPicker = GetComponent<GridPicker>();
@@ -37,7 +39,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     {
         GameManager.Instance.currentLevel = levelDataScriptable;
         levelData = levelDataScriptable.LoadLevel();
-
+        tickBlock.Init();
         Render();
     }
 
@@ -66,10 +68,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void Render()
     {
+        tickBlock.UpdateTick();
+
         GetPixelSprite(ref m_sprites);
         GetMap(out Map map);
 
-        GridRenderer.FillColorArray(out NativeArray<Color32> outputColor, map, m_sprites);
+        GridRenderer.FillColorArray(out NativeArray<Color32> outputColor, map, m_sprites, tickBlock);
 
         for (int i = 0; i < levelData.particleSpawners.Length; i++)
         {

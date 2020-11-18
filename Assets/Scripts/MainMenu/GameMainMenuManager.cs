@@ -8,6 +8,7 @@ using Unity.Jobs;
 
 public class GameMainMenuManager : MonoBehaviour, State
 {
+    [Header("Textures")]
     public Texture2D darkBackground;
     public Texture2D darkAstronaut;
     public Texture2D lightBackground;
@@ -15,20 +16,23 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public Texture2D title;
 
+    NativeArray<Color32> nativeDarkBackground;
+    NativeArray<Color32> nativeDarkAstronaut;
+    NativeArray<Color32> nativeLightBackground;
+    NativeArray<Color32> nativeLightAstronaut;
+    NativeArray<Color32> nativeTitle;
 
-    public NativeArray<Color32> nativeDarkBackground;
-    public NativeArray<Color32> nativeDarkAstronaut;
-    public NativeArray<Color32> nativeLightBackground;
-    public NativeArray<Color32> nativeLightAstronaut;
-    public NativeArray<Color32> nativeTitle;
-
+    [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
+
+    [Header("References")]
+    public ParticleBehaviourScriptable partaicleBehaviour;
     public LevelDataScriptable mainMenuLevel;
 
     LevelData levelData;
     Map m_map;
-    Unity.Mathematics.Random m_random;
+    TickBlock tickBlock;
     NativeArray<ParticleSpawner> particleSpawners;
 
     public void OnEnd()
@@ -45,33 +49,36 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public void OnStart()
     {
-        nativeDarkBackground = GetNativeArray(darkBackground, Allocator.Persistent);
-        nativeDarkAstronaut = GetNativeArray(darkAstronaut, Allocator.Persistent);
-        nativeLightBackground = GetNativeArray(lightBackground, Allocator.Persistent);
-        nativeLightAstronaut = GetNativeArray(lightAstronaut, Allocator.Persistent);
-        nativeTitle = GetNativeArray(title, Allocator.Persistent);
+        tickBlock.Init();
 
+        //Load textures
+        nativeDarkBackground = RenderingUtils.GetNativeArray(darkBackground, Allocator.Persistent);
+        nativeDarkAstronaut = RenderingUtils.GetNativeArray(darkAstronaut, Allocator.Persistent);
+        nativeLightBackground = RenderingUtils.GetNativeArray(lightBackground, Allocator.Persistent);
+        nativeLightAstronaut = RenderingUtils.GetNativeArray(lightAstronaut, Allocator.Persistent);
+        nativeTitle = RenderingUtils.GetNativeArray(title, Allocator.Persistent);
+
+        //Load simulation
         levelData = mainMenuLevel.LoadLevel();
         m_map = new Map(levelData.grid, levelData.sizes);
         particleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
-        m_random.InitState();
     }
 
     public void OnUpdate()
     {
+        tickBlock.UpdateTick();
         NativeArray<Color32> colorArray = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
 
         new CellularAutomataJob()
         {
-            tick = 0,
-            behaviour = new ParticleBehaviour(),
+            behaviour = partaicleBehaviour.particleBehaviour,
             map = m_map,
             nativeParticleSpawners = particleSpawners,
-            random = new Unity.Mathematics.Random(GridRenderer.randomTick)
+            tickBlock = tickBlock
         }.Run();
 
         ShowTextures(ref colorArray);
-        GridRenderer.ApplyMapPixels(ref colorArray, m_map);
+        GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
         GridRenderer.RenderToScreen(colorArray);
     }
 
@@ -92,11 +99,4 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeTitle, ApplyTextureJob.Blending.OverrideAlpha);
     }
-
-
-    public NativeArray<Color32> GetNativeArray(Texture2D texture, Allocator allocator)
-    {
-        return new NativeArray<Color32>(texture.GetPixels32(), allocator);
-    }
-
 }

@@ -12,22 +12,23 @@ public struct GridRendererJob : IJobParallelFor
 
     public ParticleRendering particleRendering;
 
+    //use tickblock
     public Unity.Mathematics.Random random;
     public int tick;
 
     public void Execute(int i)
     {
         int2 pos = new int2(i % map.Sizes.x, i / map.Sizes.y);
-        Color32 color = GetColorForType(pos, map.GetParticleType(pos));
+        Color32 color = GetColorForType(pos, map.GetParticleType(pos), i);
         colorArray[i] = color;
     }
 
-    Color32 GetColorForType(int2 position, ParticleType type)
+    Color32 GetColorForType(int2 position, ParticleType type, int index)
     {
         switch (type)
         {
             case ParticleType.None:
-                return particleRendering.noneColor;
+                return colorArray[index];
             case ParticleType.Water:
                 return GetWaterColor(position);
             case ParticleType.Sand:

@@ -8,9 +8,10 @@ public struct CellularAutomataJob : IJob
 {
     public NativeArray<ParticleSpawner> nativeParticleSpawners;
 
-    public int tick;
+    public TickBlock tickBlock;
+    //public int tick;
     public Map map;
-    public Random random;
+    //public Random random;
     public ParticleBehaviour behaviour;
     public void Execute()
     {
@@ -25,9 +26,9 @@ public struct CellularAutomataJob : IJob
         for (int i = 0; i < nativeParticleSpawners.Length; i++)
         {
             var spawner = nativeParticleSpawners[i];
-            bool canEmit = spawner.notTickBounded || (tick >= spawner.startTick && tick <= spawner.endTick);
+            bool canEmit = spawner.notTickBounded || (tickBlock.tick >= spawner.startTick && tickBlock.tick <= spawner.endTick);
 
-            if (canEmit && random.NextFloat() <= spawner.chanceSpawn)
+            if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn)
             {
                 map.SetParticleType(spawner.spawnPosition, spawner.particleType);
             }
@@ -109,7 +110,7 @@ public struct CellularAutomataJob : IJob
     bool TryFloatyFalling(Particle particle, int2 pos)
     {
         var floaty = behaviour.floatyBehaviour;
-        bool willFloat = random.NextFloat() < floaty.ratioFloat;
+        bool willFloat = tickBlock.random.NextFloat() < floaty.ratioFloat;
 
         int2 bottom = new int2(pos.x, pos.y - 1);
         int2 bottomLeft = new int2(pos.x - 1, pos.y - 1);
@@ -120,7 +121,7 @@ public struct CellularAutomataJob : IJob
         if (willFloat)
         {
             float2 offset = pos * floaty.sinOffset;
-            float sin = math.sin(tick * floaty.sinSpeed + offset.x + offset.y);
+            float sin = math.sin(tickBlock.tick * floaty.sinSpeed + offset.x + offset.y);
             bool goingLeft = math.sign(sin) == -1;
 
             int2 left = new int2(pos.x - 1, pos.y);
@@ -146,7 +147,7 @@ public struct CellularAutomataJob : IJob
         int2 left = new int2(pos.x - 1, pos.y);
         int2 right = new int2(pos.x + 1, pos.y);
 
-        bool goingLeft = random.NextBool();
+        bool goingLeft = tickBlock.random.NextBool();
 
         int2 dir1 = (goingLeft) ? left : right;
         int2 dir2 = (goingLeft) ? right : left;
@@ -171,7 +172,7 @@ public struct CellularAutomataJob : IJob
         //randomize gauche droite
         int2 bottomLeft = new int2(bottom.x - 1, bottom.y);
         int2 bottomRight = new int2(bottom.x + 1, bottom.y);
-        bool goingLeft = random.NextBool();
+        bool goingLeft = tickBlock.random.NextBool();
         int2 firstDir = (goingLeft) ? bottomLeft : bottomRight;
         int2 secondDir = (goingLeft) ? bottomRight : bottomLeft;
 
@@ -287,10 +288,10 @@ public struct CellularAutomataJob : IJob
     void UpdateTitleDisintegrationPartaicle(Particle particle, int2 pos)
     {
         //todo put in behaviour
-        bool willUpdate = random.NextFloat() < 0.1f;
-        bool willDisapear = random.NextFloat() < 0.005f;
+        bool willUpdate = tickBlock.random.NextFloat() < behaviour.titleDisentegrateBehaviour.chanceMove;
+        bool willDisapear = tickBlock.random.NextFloat() < behaviour.titleDisentegrateBehaviour.chanceDespawn;
 
-        if(willDisapear)
+        if (willDisapear)
         {
             map.SetParticleType(pos, ParticleType.None);
             return;

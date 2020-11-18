@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71f2f61e85ccf184da061c46af1c8f70, type: 3}
+  m_Name: ParticleBehaviour
+  m_EditorClassIdentifier: 
+  particleBehaviour:
+    floatyBehaviour:
+      sinSpeed: 0.1
+      sinOffset:
+        x: 0.5
+        y: 2
+      ratioFloat: 0.6
+    waterBehaviour:
+      diffWaterSandToDry: 2
+    titleDisentegrateBehaviour:
+      chanceMove: 0.1
+      chanceDespawn: 0.01

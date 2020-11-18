@@ -18,11 +18,10 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     //todo generalize this
     PixelSprite[] pixelSprites = new PixelSprite[2];
 
-    public ParticleBehaviour behaviour;
+    public ParticleBehaviourScriptable particleBehaviour;
 
     public Map map;
-    Unity.Mathematics.Random m_random;
-
+    TickBlock tickBlock;
     LevelData levelData;
 
     //TEMP
@@ -31,6 +30,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public void OnStart()
     {
         LoadLevel(GameManager.Instance.currentLevel);
+        tickBlock.Init();
     }
 
     public void OnEnd()
@@ -64,32 +64,19 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         pixelSprites[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
 
         player.Init(ref pixelSprites[0], map);
-        m_random.InitState();
     }
 
     public void OnUpdate()
     {
-        Tick++;
-        TickSeed = m_random.NextUInt();
-        FrameUpdate();
-    }
-
-    void FrameUpdate()
-    {
-        player.OnUpdate(ref pixelSprites[0], map);      
+        tickBlock.UpdateTick();
+        player.OnUpdate(ref pixelSprites[0], map);
         new CellularAutomataJob()
         {
-            tick = Tick,
-            behaviour = behaviour,
+            behaviour = particleBehaviour.particleBehaviour,
             map = map,
             nativeParticleSpawners = nativeParticleSpawners,
-            random = new Unity.Mathematics.Random(TickSeed)
+            tickBlock = tickBlock
         }.Run();
-
-        //find a way to parralelize
-        //checker pattern?
-        //cellularAutomataJob.Schedule().Complete();
-
 
         //todo make this less ugly lol
         for (int i = 0; i < pixelSortingRenderingSettings.Length; i++)
@@ -97,7 +84,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             GridRenderer.postProcess.pixelSortingRequestQueue.Enqueue(pixelSortingRenderingSettings[i]);
         }
 
-        GridRenderer.RenderMapAndSprites(map, pixelSprites, Tick, TickSeed);        
+        GridRenderer.RenderMapAndSprites(map, pixelSprites, tickBlock);
     }
+
 
 }
