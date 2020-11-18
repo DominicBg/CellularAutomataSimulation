@@ -10,8 +10,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public static int Tick { get; private set; }
     public static uint TickSeed { get; private set; }
 
-    //public int2 sizes = 100;
-
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
 
@@ -25,18 +23,10 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public Map map;
     Unity.Mathematics.Random m_random;
 
-    public float desiredFPS = 60;
     LevelData levelData;
-    float currentDeltaTime;
-    float frameDuration;
 
     //TEMP
     public PixelSortingRenderingSettings[] pixelSortingRenderingSettings;
-
-    private void OnValidate()
-    {
-        frameDuration = 1f / desiredFPS;
-    }
 
     public void OnStart()
     {
@@ -79,17 +69,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnUpdate()
     {
-        //Force correct fps
-        currentDeltaTime += Time.deltaTime;
-        while(currentDeltaTime >= frameDuration)
-        {
-            Tick++;
-            TickSeed = m_random.NextUInt();
-            //Store tick to Ctrl+Z?
-
-            FrameUpdate();
-            currentDeltaTime -= frameDuration;
-        }
+        Tick++;
+        TickSeed = m_random.NextUInt();
+        FrameUpdate();
     }
 
     void FrameUpdate()

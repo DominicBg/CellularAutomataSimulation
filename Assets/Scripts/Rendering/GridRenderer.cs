@@ -80,6 +80,28 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, ApplyTextureJob.Blending blending)
+    {
+        NativeArray<Color32> nativeTexture = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
+        new ApplyTextureJob()
+        {
+            outputColor = outputColor,
+            texture = nativeTexture,
+            blending = blending,
+        }.Schedule(GameManager.GridLength, 1).Complete();
+        nativeTexture.Dispose();
+    }
+
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, ApplyTextureJob.Blending blending)
+    {
+        new ApplyTextureJob()
+        {
+            outputColor = outputColor,
+            texture = texture,
+            blending = blending,
+        }.Schedule(GameManager.GridLength, 1).Complete();
+    }
+
     public static void ApplyPostProcess(ref NativeArray<Color32> outputColor)
     {
         using (s_PostProcessRender.Auto())

@@ -1,10 +1,8 @@
-﻿
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using static GridRenderer;
 
 [BurstCompile]
 public struct GridRendererJob : IJobParallelFor
@@ -45,6 +43,8 @@ public struct GridRendererJob : IJobParallelFor
                 return GetIceColor(position);
             case ParticleType.Rock:
                 return GetRockColor(position);
+            case ParticleType.TitleDisintegration:
+                return particleRendering.titleDisintegration;
             default:
                 return Color.black;
         }

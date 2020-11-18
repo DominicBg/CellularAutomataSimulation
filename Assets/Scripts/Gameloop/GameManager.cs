@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
-    public enum GameStateEnum { Menu, Overworld, Level, LevelEditor }
+    public enum GameStateEnum { MainMenu, Overworld, Level, LevelEditor }
 
     StateMachine<GameStateEnum> m_stateMachine;
 
@@ -22,8 +22,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameLevelManager gameLevelManager;
     [SerializeField] GameLevelEditorManager gameLevelEditorManager;
     [SerializeField] GameOverworldManager gameOverworldManager;
+    [SerializeField] GameMainMenuManager gameMainMenuManager;
 
+    public int desiredFPS;
     public LevelDataScriptable currentLevel;
+
+    float currentDeltaTime;
+    float frameDuration;
+
+    private void OnValidate()
+    {
+        frameDuration = 1f / desiredFPS;
+    }
 
     private void Awake()
     {
@@ -40,13 +50,19 @@ public class GameManager : MonoBehaviour
         m_stateMachine.AddState(gameLevelManager, GameStateEnum.Level, EditorPingManager);
         m_stateMachine.AddState(gameLevelEditorManager, GameStateEnum.LevelEditor, EditorPingManager);
         m_stateMachine.AddState(gameOverworldManager, GameStateEnum.Overworld, EditorPingManager);
+        m_stateMachine.AddState(gameMainMenuManager, GameStateEnum.MainMenu, EditorPingManager);
 
         m_stateMachine.SetState(GameStateEnum.Level);
     }
 
     private void Update()
     {
-        m_stateMachine.Update();
+        currentDeltaTime += Time.deltaTime;
+        while (currentDeltaTime >= frameDuration)
+        {
+            m_stateMachine.Update();
+            currentDeltaTime -= frameDuration;
+        }
     }
 
     //API
@@ -65,7 +81,7 @@ public class GameManager : MonoBehaviour
     }
     public void SetMainMenu()
     {
-        SetState(GameStateEnum.Menu);
+        SetState(GameStateEnum.MainMenu);
     }
 
     public void SetState(GameStateEnum state)

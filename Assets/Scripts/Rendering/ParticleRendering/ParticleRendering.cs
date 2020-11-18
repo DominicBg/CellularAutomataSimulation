@@ -9,4 +9,5 @@ public struct ParticleRendering
     public RockRendering rockRendering;
     public Color mudColor;
     public Color snowColor;
+    public Color titleDisintegration;
 }

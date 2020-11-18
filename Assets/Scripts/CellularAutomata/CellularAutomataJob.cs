@@ -87,6 +87,11 @@ public struct CellularAutomataJob : IJob
             case ParticleType.Player:
                 //nada
                 break;
+            case ParticleType.Rock:
+                break;
+            case ParticleType.TitleDisintegration:
+                UpdateTitleDisintegrationPartaicle(particle, pos);
+                break;
         }
     }
 
@@ -277,6 +282,26 @@ public struct CellularAutomataJob : IJob
             //Mud is not touching water, becomes sand
             map.SetParticleType(pos, ParticleType.Sand);
         }       
+    }
+
+    void UpdateTitleDisintegrationPartaicle(Particle particle, int2 pos)
+    {
+        //todo put in behaviour
+        bool willUpdate = random.NextFloat() < 0.1f;
+        bool willDisapear = random.NextFloat() < 0.005f;
+
+        if(willDisapear)
+        {
+            map.SetParticleType(pos, ParticleType.None);
+            return;
+        }
+
+        int2 floatingDirection = new int2(-1, 0);
+        int2 newPosition = pos + floatingDirection;
+        if (willUpdate && map.IsFreePosition(newPosition))
+        {
+            map.MoveParticle(pos, newPosition);
+        }
     }
 
     bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
