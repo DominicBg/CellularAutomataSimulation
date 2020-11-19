@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public enum BlendingMode { Normal, Additive, Multiply, Screen, Overlay, HardLight, SoftLight }
+public enum BlendingMode { Normal, Transparency, Additive, Multiply, Screen, Overlay, HardLight, SoftLight }
 public static class RenderingUtils
 {
     public static Color Blend(Color color1, Color color2, BlendingMode blending)
@@ -13,6 +13,8 @@ public static class RenderingUtils
         {
             case BlendingMode.Normal:
                 return Color.Lerp(color1, color2, color2.a);
+            case BlendingMode.Transparency:
+                return Transparency(color1, color2, color2.a);
             case BlendingMode.Additive:
                 return (color1 + color2).Clamp01();
             case BlendingMode.Multiply:
@@ -29,6 +31,20 @@ public static class RenderingUtils
         }
         //TODO finish the rest lol
         return color2;
+    }
+
+    public static float Transparency(float a, float b, float t)
+    {
+        return (1 - t) * a + t * b;
+    }
+    public static Color Transparency(Color color1, Color color2, float t)
+    {
+        return new Color(
+            Transparency(color1.r, color2.r, t),
+            Transparency(color1.g, color2.g, t),
+            Transparency(color1.b, color2.b, t),
+            1
+            ).Clamp01();
     }
 
     public static float Overlay(float a, float b)

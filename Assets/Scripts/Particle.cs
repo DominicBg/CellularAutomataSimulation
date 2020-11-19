@@ -19,7 +19,7 @@ public enum ParticleType
     Ice,
     Rock,
     Player,
+
     //Misc
     TitleDisintegration
-
 }

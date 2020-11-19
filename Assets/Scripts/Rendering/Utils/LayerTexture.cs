@@ -9,7 +9,7 @@ public struct LayerTexture : IRenderable, IDisposable
     public Texture2D texture;
     public BlendingMode blending;
 
-    private NativeArray<Color32> nativeTexture;
+    public NativeArray<Color32> nativeTexture;
 
     public void Dispose()
     {

@@ -20,5 +20,6 @@ public struct TickBlock
     {
         tick++;
         tickSeed = random.NextUInt();
+        random.InitState(tickSeed);
     }
 }

@@ -56,15 +56,14 @@ public class GridRenderer : MonoBehaviour
     {
         using (S_SimulationRender.Auto())
         {
-            new GridRendererJob()
-            {
-                colorArray = outputColor,
-                map = map,
-                particleRendering = Instance.particleRendering,
-                tick = tickBlock.tick,
-                random = new Unity.Mathematics.Random(tickBlock.tickSeed)
-            }.Schedule(GameManager.GridLength, 1).Complete();
+            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock).Schedule(GameManager.GridLength, 1).Complete();
         }
+    }
+
+    public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, ParticleType particleType)
+    {
+        //todo profile
+        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, particleType).Schedule(GameManager.GridLength, 1).Complete();
     }
 
     public static void ApplyPixelSprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)

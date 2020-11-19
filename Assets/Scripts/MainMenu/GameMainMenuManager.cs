@@ -8,17 +8,23 @@ using Unity.Jobs;
 
 public class GameMainMenuManager : MonoBehaviour, State
 {
-    [Header("Textures")]
+    public LayerTexture title;
+
+    [Header("Dark Textures")]
     public LayerTexture darkBackground;
     public LayerTexture darkAstronaut;
-    public LayerTexture lightBackground;
+
+    [Header("Light Textures")]
+    public LayerTexture lightSandBackground;
+    public LayerTexture lightCampFire;
+
     public LayerTexture lightAstronaut;
-    public LayerTexture title;
 
     [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
     public FireRendering fireRendering;
+    public int2 particleDestroyerPosition;
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
@@ -33,7 +39,8 @@ public class GameMainMenuManager : MonoBehaviour, State
     {
         darkBackground.Dispose();
         darkAstronaut.Dispose();
-        lightBackground.Dispose();
+        lightCampFire.Dispose();
+        lightSandBackground.Dispose();
         lightAstronaut.Dispose();
         title.Dispose();
 
@@ -48,7 +55,8 @@ public class GameMainMenuManager : MonoBehaviour, State
         //Load textures
         darkBackground.Init();
         darkAstronaut.Init();
-        lightBackground.Init();
+        lightCampFire.Init();
+        lightSandBackground.Init();
         lightAstronaut.Init();
         title.Init();
 
@@ -70,9 +78,9 @@ public class GameMainMenuManager : MonoBehaviour, State
             nativeParticleSpawners = particleSpawners,
             tickBlock = tickBlock
         }.Run();
+        m_map.SetParticleType(particleDestroyerPosition, ParticleType.None);
 
         ShowTextures(ref colorArray);
-        //GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
         GridRenderer.RenderToScreen(colorArray);
     }
 
@@ -87,8 +95,9 @@ public class GameMainMenuManager : MonoBehaviour, State
         }
         else
         {
-            lightBackground.Render(ref colorArray);
-            fireRendering.Render(ref colorArray);
+            GridRenderer.ApplyParticleRenderToTexture(ref colorArray, ref lightSandBackground.nativeTexture, m_map, tickBlock, ParticleType.Sand);
+            lightCampFire.Render(ref colorArray);
+            fireRendering.Render(ref colorArray, tickBlock.tick);
             lightAstronaut.Render(ref colorArray);
             GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
         }
@@ -96,18 +105,22 @@ public class GameMainMenuManager : MonoBehaviour, State
     }
 
     [System.Serializable]
-    public struct FireRendering : IRenderable
+    public struct FireRendering : IRenderableAnimated
     {
         public int2 firePosition;
         public Color32[] fireColors;
-        public int[] fireRadius;
+        public int[] fireRadiusMin;
+        public int[] fireRadiusMax;
+        public float speed;
         public BlendingMode fireBlending;
 
-        public void Render(ref NativeArray<Color32> colorArray)
+        public void Render(ref NativeArray<Color32> colorArray, int tick)
         {
-            for (int i = 0; i < fireRadius.Length; i++)
+            for (int i = 0; i < fireColors.Length; i++)
             {
-                GridRenderer.RenderCircle(ref colorArray, firePosition, fireRadius[i], fireColors[i], fireBlending);
+                float sin = math.sin(tick * speed) * 0.5f + 0.5f;
+                int radius = (int)math.lerp(fireRadiusMin[i], fireRadiusMax[i], sin);
+                GridRenderer.RenderCircle(ref colorArray, firePosition, radius, fireColors[i], fireBlending);
             }
         }
     }

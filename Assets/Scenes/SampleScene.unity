@@ -1059,20 +1059,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0ad253c5c2b494085eb0fef0fd312c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  title:
+    texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+    blending: 0
   darkBackground:
     texture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
     blending: 0
   darkAstronaut:
     texture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
     blending: 0
-  lightBackground:
-    texture: {fileID: 2800000, guid: 7c7aeebd9b996f5458b1546613201267, type: 3}
+  lightSandBackground:
+    texture: {fileID: 2800000, guid: dd094682700529548b7aea1c26d66588, type: 3}
+    blending: 0
+  lightCampFire:
+    texture: {fileID: 2800000, guid: 2ddfbee23f22ffc499882eb68437184c, type: 3}
     blending: 0
   lightAstronaut:
     texture: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
-    blending: 0
-  title:
-    texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
     blending: 0
   randomSpeed: 1
   lightThreshold: 0.8
@@ -1082,11 +1085,18 @@ MonoBehaviour:
       y: 25
     fireColors:
     - serializedVersion: 2
-      rgba: 1025872383
+      rgba: 640011775
     - serializedVersion: 2
-      rgba: 1694558719
-    fireRadius: 0c00000008000000
-    fireBlending: 0
+      rgba: 639996159
+    - serializedVersion: 2
+      rgba: 671125247
+    fireRadiusMin: 14000000100000000c000000
+    fireRadiusMax: 1e0000001800000012000000
+    speed: 0.03
+    fireBlending: 1
+  particleDestroyerPosition:
+    x: 90
+    y: 45
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   mainMenuLevel: {fileID: 11400000, guid: 3f07da40657218a48929a070a6011d04, type: 2}
 --- !u!1 &1122140263
@@ -1362,9 +1372,9 @@ MonoBehaviour:
       waveScrollSpeed:
         x: 0
         y: 0.05
-      sandColor: {r: 1, g: 0.95686275, b: 0.34509805, a: 1}
+      sandColor: {r: 1, g: 0.9692407, b: 0.5330188, a: 1}
       shimmerColor: {r: 1, g: 0.99215686, b: 0.8627451, a: 1}
-      waveColor: {r: 1, g: 0.77324754, b: 0.34509802, a: 1}
+      waveColor: {r: 1, g: 0.92721975, b: 0.5137255, a: 1}
     iceRendering:
       thresholdShineReflection: 0.8
       reflectionShineSpeed: -0.05

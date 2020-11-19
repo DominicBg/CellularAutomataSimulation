@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 [System.Serializable]
 public struct ParticleRendering
 {
@@ -10,4 +11,9 @@ public struct ParticleRendering
     public Color mudColor;
     public Color snowColor;
     public Color titleDisintegration;
+}
+
+public interface IParticleRenderer
+{
+    Color32 GetColor(int2 position, ref TickBlock tickBlock);
 }
