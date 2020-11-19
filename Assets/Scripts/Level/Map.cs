@@ -275,7 +275,7 @@ public unsafe struct Map
 
     public bool HasCollision(int2 position)
     {
-        return HasParticleCollision(GetParticleType(position));
+        return InBound(position) && HasParticleCollision(GetParticleType(position));
     }
 
     public bool HasParticleCollision(ParticleType type)
