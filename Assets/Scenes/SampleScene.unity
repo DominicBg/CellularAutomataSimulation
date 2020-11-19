@@ -1059,24 +1059,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0ad253c5c2b494085eb0fef0fd312c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  darkBackground: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
-  darkAstronaut: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
-  lightBackground: {fileID: 2800000, guid: 7c7aeebd9b996f5458b1546613201267, type: 3}
-  lightAstronaut: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
-  title: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+  darkBackground:
+    texture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
+    blending: 0
+  darkAstronaut:
+    texture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
+    blending: 0
+  lightBackground:
+    texture: {fileID: 2800000, guid: 7c7aeebd9b996f5458b1546613201267, type: 3}
+    blending: 0
+  lightAstronaut:
+    texture: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
+    blending: 0
+  title:
+    texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+    blending: 0
   randomSpeed: 1
   lightThreshold: 0.8
-  firePosition:
-    x: 41
-    y: 25
-  fireColors:
-  - serializedVersion: 2
-    rgba: 643425533
-  - serializedVersion: 2
-    rgba: 643425533
-  - serializedVersion: 2
-    rgba: 643425533
-  fireRadius: 0f0000000a00000005000000
+  fireRendering:
+    firePosition:
+      x: 41
+      y: 25
+    fireColors:
+    - serializedVersion: 2
+      rgba: 1025872383
+    - serializedVersion: 2
+      rgba: 1694558719
+    fireRadius: 0c00000008000000
+    fireBlending: 0
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   mainMenuLevel: {fileID: 11400000, guid: 3f07da40657218a48929a070a6011d04, type: 2}
 --- !u!1 &1122140263

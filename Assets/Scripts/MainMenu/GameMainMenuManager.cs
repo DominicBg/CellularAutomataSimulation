@@ -9,25 +9,16 @@ using Unity.Jobs;
 public class GameMainMenuManager : MonoBehaviour, State
 {
     [Header("Textures")]
-    public Texture2D darkBackground;
-    public Texture2D darkAstronaut;
-    public Texture2D lightBackground;
-    public Texture2D lightAstronaut;
-
-    public Texture2D title;
-
-    NativeArray<Color32> nativeDarkBackground;
-    NativeArray<Color32> nativeDarkAstronaut;
-    NativeArray<Color32> nativeLightBackground;
-    NativeArray<Color32> nativeLightAstronaut;
-    NativeArray<Color32> nativeTitle;
+    public LayerTexture darkBackground;
+    public LayerTexture darkAstronaut;
+    public LayerTexture lightBackground;
+    public LayerTexture lightAstronaut;
+    public LayerTexture title;
 
     [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
-    public int2 firePosition;
-    public Color32[] fireColors;
-    public int[] fireRadius;
+    public FireRendering fireRendering;
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
@@ -40,11 +31,11 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public void OnEnd()
     {
-        nativeDarkBackground.Dispose();
-        nativeDarkAstronaut.Dispose();
-        nativeLightBackground.Dispose();
-        nativeLightAstronaut.Dispose();
-        nativeTitle.Dispose();
+        darkBackground.Dispose();
+        darkAstronaut.Dispose();
+        lightBackground.Dispose();
+        lightAstronaut.Dispose();
+        title.Dispose();
 
         m_map.Dispose();
         particleSpawners.Dispose();
@@ -55,11 +46,11 @@ public class GameMainMenuManager : MonoBehaviour, State
         tickBlock.Init();
 
         //Load textures
-        nativeDarkBackground = RenderingUtils.GetNativeArray(darkBackground, Allocator.Persistent);
-        nativeDarkAstronaut = RenderingUtils.GetNativeArray(darkAstronaut, Allocator.Persistent);
-        nativeLightBackground = RenderingUtils.GetNativeArray(lightBackground, Allocator.Persistent);
-        nativeLightAstronaut = RenderingUtils.GetNativeArray(lightAstronaut, Allocator.Persistent);
-        nativeTitle = RenderingUtils.GetNativeArray(title, Allocator.Persistent);
+        darkBackground.Init();
+        darkAstronaut.Init();
+        lightBackground.Init();
+        lightAstronaut.Init();
+        title.Init();
 
         //Load simulation
         levelData = mainMenuLevel.LoadLevel();
@@ -81,7 +72,7 @@ public class GameMainMenuManager : MonoBehaviour, State
         }.Run();
 
         ShowTextures(ref colorArray);
-        GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
+        //GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
         GridRenderer.RenderToScreen(colorArray);
     }
 
@@ -91,21 +82,33 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         if (showDark)
         {
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkBackground);
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkAstronaut);
+            darkBackground.Render(ref colorArray);
+            darkAstronaut.Render(ref colorArray);
         }
         else
         {
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightBackground);
+            lightBackground.Render(ref colorArray);
+            fireRendering.Render(ref colorArray);
+            lightAstronaut.Render(ref colorArray);
+            GridRenderer.ApplyMapPixels(ref colorArray, m_map, tickBlock);
+        }
+        title.Render(ref colorArray);
+    }
 
+    [System.Serializable]
+    public struct FireRendering : IRenderable
+    {
+        public int2 firePosition;
+        public Color32[] fireColors;
+        public int[] fireRadius;
+        public BlendingMode fireBlending;
+
+        public void Render(ref NativeArray<Color32> colorArray)
+        {
             for (int i = 0; i < fireRadius.Length; i++)
             {
-                GridRenderer.RenderCircle(ref colorArray, firePosition, fireRadius[i], fireColors[i]);
+                GridRenderer.RenderCircle(ref colorArray, firePosition, fireRadius[i], fireColors[i], fireBlending);
             }
-
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightAstronaut);
         }
-
-        GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeTitle);
     }
 }

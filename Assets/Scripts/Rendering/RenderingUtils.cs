@@ -4,22 +4,50 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public enum BlendingMode { Normal, Additive }
+public enum BlendingMode { Normal, Additive, Multiply, Screen, Overlay, HardLight, SoftLight }
 public static class RenderingUtils
 {
-
-    public static Color32 Blend(Color32 color1, Color32 color2, BlendingMode blending)
+    public static Color Blend(Color color1, Color color2, BlendingMode blending)
     {
         switch (blending)
         {
             case BlendingMode.Normal:
-                return Color32.Lerp(color1, color2, color2.a / 255f);
+                return Color.Lerp(color1, color2, color2.a);
             case BlendingMode.Additive:
-                //return new Color32((int)color1.r + (int)color2.r, color1.g + color2.g, color1.b + color2.b, color1.a + color2.a);
+                return (color1 + color2).Clamp01();
+            case BlendingMode.Multiply:
+                return (color1 * color2).Clamp01();
+            case BlendingMode.Screen:
+                return Screen(color1, color2);
+            case BlendingMode.Overlay:
+                return Overlay(color1, color2);
+
+            case BlendingMode.HardLight:
+                break;
+            case BlendingMode.SoftLight:
                 break;
         }
         //TODO finish the rest lol
         return color2;
+    }
+
+    public static float Overlay(float a, float b)
+    {
+        return (a < 0.5f) ? a * b : Screen(a, b);
+    }
+
+    public static Color Overlay(Color color1, Color color2)
+    {
+        return new Color(Overlay(color1.r, color2.r), Overlay(color1.g, color2.g), Overlay(color1.b, color2.b), Overlay(color1.a, color2.a)).Clamp01();
+    }
+
+    public static float Screen(float a, float b)
+    {
+        return 1 - (1 - a) * (1 - b);
+    }
+    public static Color Screen(Color color1, Color color2)
+    {
+        return new Color(Screen(color1.r, color2.r), Screen(color1.g, color2.g), Screen(color1.b, color2.b), Screen(color1.a, color2.a)).Clamp01();
     }
 
     public static float Luminance(Color32 color)
@@ -43,5 +71,10 @@ public static class RenderingUtils
     public static NativeArray<Color32> GetNativeArray(Texture2D texture, Allocator allocator)
     {
         return new NativeArray<Color32>(texture.GetPixels32(), allocator);
+    }
+
+    public static Color Clamp01(this Color color)
+    {
+        return new Color(math.saturate(color.r), math.saturate(color.g), math.saturate(color.b), math.saturate(color.a));
     }
 }

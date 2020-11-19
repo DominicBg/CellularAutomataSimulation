@@ -75,7 +75,9 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         GetMap(out Map map);
 
         GridRenderer.FillColorArray(out NativeArray<Color32> outputColor, map, m_sprites, tickBlock);
-        GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
+        
+        if(debugTexture != null)
+            GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
 
         for (int i = 0; i < levelData.particleSpawners.Length; i++)
         {
