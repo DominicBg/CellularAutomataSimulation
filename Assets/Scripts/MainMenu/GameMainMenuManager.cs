@@ -25,6 +25,9 @@ public class GameMainMenuManager : MonoBehaviour, State
     [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
+    public int2 firePosition;
+    public Color32[] fireColors;
+    public int[] fireRadius;
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
@@ -88,15 +91,21 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         if (showDark)
         {
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkBackground, ApplyTextureJob.Blending.OverrideAlpha);
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkAstronaut, ApplyTextureJob.Blending.OverrideAlpha);
+            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkBackground);
+            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeDarkAstronaut);
         }
         else
         {
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightBackground, ApplyTextureJob.Blending.OverrideAlpha);
-            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightAstronaut, ApplyTextureJob.Blending.OverrideAlpha);
+            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightBackground);
+
+            for (int i = 0; i < fireRadius.Length; i++)
+            {
+                GridRenderer.RenderCircle(ref colorArray, firePosition, fireRadius[i], fireColors[i]);
+            }
+
+            GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeLightAstronaut);
         }
 
-        GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeTitle, ApplyTextureJob.Blending.OverrideAlpha);
+        GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeTitle);
     }
 }

@@ -25,6 +25,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     private PixelSprite[] m_sprites;
 
     public LevelDataScriptable levelDataScriptable;
+    public Texture2D debugTexture;
 
     TickBlock tickBlock;
 
@@ -56,7 +57,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 for (int y = -halfSize; y <= halfSize; y++)
                 {
                     int2 pixelPos = new int2(pos.x + x, pos.y + y);
-                    if(ArrayHelper.InBound(pixelPos, sizes))
+                    if(GridHelper.InBound(pixelPos, sizes))
                     {
                         levelData.grid[pixelPos.x, pixelPos.y] = type;
                     }
@@ -74,6 +75,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         GetMap(out Map map);
 
         GridRenderer.FillColorArray(out NativeArray<Color32> outputColor, map, m_sprites, tickBlock);
+        GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
 
         for (int i = 0; i < levelData.particleSpawners.Length; i++)
         {

@@ -13,24 +13,6 @@ public static class ArrayHelper
     {
         return y * sizes.x + x;
     }
-    public static bool InBound(int x, int y, int2 sizes)
-    {
-        return InBound(new int2(x,y), sizes);
-    }
-
-    public static bool InBound(int2 pos, int2 sizes)
-    {
-        return pos.x >= 0 && pos.y >= 0 && pos.x < sizes.x && pos.y < sizes.y;
-    }
-
-    public static bool InBound(Bound bound, int2 sizes)
-    {
-        return 
-            InBound(bound.topLeft, sizes) && 
-            InBound(bound.topRight, sizes) && 
-            InBound(bound.bottomLeft, sizes) && 
-            InBound(bound.bottomRight, sizes);
-    }
 
     public static T[,] GetGridFromArray<T>(T[] array, int2 sizes)
     {

@@ -22,5 +22,5 @@ MonoBehaviour:
     waterBehaviour:
       diffWaterSandToDry: 2
     titleDisentegrateBehaviour:
-      chanceMove: 0.1
-      chanceDespawn: 0.01
+      chanceMove: 0.01
+      chanceDespawn: 0.001

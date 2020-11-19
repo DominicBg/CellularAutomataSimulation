@@ -352,11 +352,11 @@ public unsafe struct Map
 
     public bool InBound(int2 pos)
     {
-        return ArrayHelper.InBound(pos, Sizes);
+        return GridHelper.InBound(pos, Sizes);
     }
 
     public bool InBound(Bound bound)
     {
-        return ArrayHelper.InBound(bound, Sizes);
+        return GridHelper.InBound(bound, Sizes);
     }
 }

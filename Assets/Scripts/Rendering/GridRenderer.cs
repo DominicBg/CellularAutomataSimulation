@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
+using static RenderingUtils;
 
 public class GridRenderer : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class GridRenderer : MonoBehaviour
 
     public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
     {
-        outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+        outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         ApplyMapPixels(ref outputColor, map, tickBlock);
         ApplyPixelSprites(ref outputColor, pixelSprites);
         ApplyPostProcess(ref outputColor);
@@ -77,26 +78,32 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, ApplyTextureJob.Blending blending)
+    public static void RenderCircle(ref NativeArray<Color32> outputColor, int2 position, int radius, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    {
+        GetColoredCircle(position, radius,
+                    GameManager.GridSizes, color, Allocator.TempJob,
+                    out NativeArray<int2> positions, out NativeArray<Color32> colors);
+
+        ApplyPixels(ref outputColor, ref positions, ref colors, blending);
+        positions.Dispose();
+        colors.Dispose();
+    }
+
+    public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
+    {
+        new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, GameManager.GridSizes, blending).Run();
+    }
+
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, BlendingMode blending = BlendingMode.Normal)
     {
         NativeArray<Color32> nativeTexture = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
-        new ApplyTextureJob()
-        {
-            outputColor = outputColor,
-            texture = nativeTexture,
-            blending = blending,
-        }.Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyTextureJob(outputColor, nativeTexture, blending).Schedule(GameManager.GridLength, 1).Complete();
         nativeTexture.Dispose();
     }
 
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, ApplyTextureJob.Blending blending)
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal)
     {
-        new ApplyTextureJob()
-        {
-            outputColor = outputColor,
-            texture = texture,
-            blending = blending,
-        }.Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyTextureJob(outputColor, texture, blending).Schedule(GameManager.GridLength, 1).Complete();
     }
 
     public static void ApplyPostProcess(ref NativeArray<Color32> outputColor)
