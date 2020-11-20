@@ -119,11 +119,10 @@ public class GameMainMenuManager : MonoBehaviour, State
             GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref lightSandBackground.nativeTexture, m_map, tickBlock, lightSandBackground.blending, ParticleType.Sand);
             lightCampFire.Render(ref pass2);
             shadowRendering.Render(ref pass2, tickBlock.tick);
+            GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref lightCampFireFlame.nativeTexture, m_map, tickBlock, lightCampFireFlame.blending, ParticleType.Fire);
 
             var pass3 = GridRenderer.CombineColors(ref pass1, ref pass2);
 
-            //var pass3 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            GridRenderer.ApplyParticleRenderToTexture(ref pass3, ref lightCampFireFlame.nativeTexture, m_map, tickBlock, lightCampFireFlame.blending, ParticleType.Fire);
             fireRendering.Render(ref pass3, tickBlock.tick);
             lightAstronaut.Render(ref pass3);
 

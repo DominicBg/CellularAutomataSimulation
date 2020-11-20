@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -7,17 +8,34 @@ using UnityEngine;
 
 public class PlayerCellularAutomata : MonoBehaviour
 {
-    readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0), new int2(0, 1), new int2(0, -1) };
-    readonly KeyCode[] inputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S };
+
     public PhysicBound physicBound;
     public Texture2D collisionTexture;
 
-    public int jumpHeight = 3;
+    InputCommand input;
 
-    int jumpLeft = 0;
+    int[] jumpHeight = {
+        1, 1, 1,
+        1, 0, 1, 0, 1, 0,
+        1, 0, 0, 1, 0, 0,
+        -1, 0, 0, -1, 0, 0,
+        -1, 0, -1, 0, -1, 0,
+        -1, -1, -1
+        };
+
+    int jumpIndex = 0;
+    bool wasGrounded;
+
+    NativeArray<int> nativeJumpArray;
+
+    private void OnDestroy()
+    {
+        nativeJumpArray.Dispose();
+    }
 
     public void Init(ref PixelSprite sprite, Map map)
     {
+        nativeJumpArray = new NativeArray<int>(jumpHeight, Allocator.Persistent);
         //todo beautify this
         //physicBound = new PhysicBound(new Bound(new int2(1, 0), new int2(7, 8)));
         physicBound = new PhysicBound(collisionTexture);
@@ -26,23 +44,20 @@ public class PlayerCellularAutomata : MonoBehaviour
 
     public void OnUpdate(ref PixelSprite sprite, Map map)
     {
-        int2 direction = 0;
-        for (int i = 0; i < inputs.Length; i++)
+        input.Update();
+
+        int2 direction = input.direction;
+
+        bool isGrounded = IsGrounded(map, sprite.position);
+        if (input.spaceInput.IsButtonDown() && (wasGrounded || isGrounded))
         {
-            if (Input.GetKey(inputs[i]))
-            {
-                direction = directions[i];
-                break;
-            }
-        }
-        if(Input.GetKey(KeyCode.Space) && IsGrounded(map, sprite.position))
-        {
-            jumpLeft = jumpHeight;
+            jumpIndex = 0;
         }
         else
         {
-            jumpLeft = math.max(jumpLeft - 1, 0);
+            jumpIndex++;
         }
+        wasGrounded = isGrounded;
 
         NativeReference<int2> positionOutput = new NativeReference<int2>(Allocator.TempJob);
         new HandlePlayerJob()
@@ -51,7 +66,8 @@ public class PlayerCellularAutomata : MonoBehaviour
             sprite = sprite,
             map = map,
             physicBound = physicBound,
-            jumpLeft = jumpLeft,
+            jumpIndex = jumpIndex,
+            jumpArray = nativeJumpArray,
             output = positionOutput
         }.Run();
         sprite.position = positionOutput.Value;
@@ -68,23 +84,34 @@ public class PlayerCellularAutomata : MonoBehaviour
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
 
+
+    [BurstCompile]
     public struct HandlePlayerJob : IJob
     {
         public PixelSprite sprite;
         public Map map;
         public PhysicBound physicBound;
         public int2 direction;
-        public int jumpLeft;
+        public int jumpIndex;
+        public NativeArray<int> jumpArray;
 
         public NativeReference<int2> output;
         public void Execute()
         {
             int2 previousPos = sprite.position;
-            int2 nextPosition;
+            int2 nextPosition = previousPos;
 
-            if (jumpLeft > 0)
+            if(jumpIndex < jumpArray.Length)
             {
-                nextPosition = map.Jump(ref physicBound, sprite.position);
+                int jumpDirection = jumpArray[jumpIndex];
+                if (jumpDirection == 1)
+                {
+                    nextPosition = map.Jump(ref physicBound, sprite.position);
+                }
+                else if(jumpDirection == -1)
+                {
+                    nextPosition = map.ApplyGravity(ref physicBound, sprite.position);
+                }
             }
             else
             {

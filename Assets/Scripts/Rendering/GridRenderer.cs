@@ -119,9 +119,8 @@ public class GridRenderer : MonoBehaviour
     }
 
     /// <summary>
-    /// Apply colors to output colors and dispose colors
+    /// Apply colorsB ontop colorsA
     /// </summary>
-
     public static NativeArray<Color32> CombineColors(ref NativeArray<Color32> colorsA, ref NativeArray<Color32> colorsB, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
         new ApplyTextureJob(colorsA, colorsB, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();

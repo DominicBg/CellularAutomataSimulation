@@ -235,7 +235,7 @@ public unsafe struct Map
                     //blocked from the bottom, walk ontop
                     int2 newPosition = new int2(to.x, pos.y + 1);
                     Bound headBound = physicBound.GetTopCollisionBound(newPosition);
-                    if(!HasCollision(ref headBound, allocator))
+                    if(InBound(newPosition) && !HasCollision(ref headBound, allocator))
                     {
                         finalPosition = newPosition;
                         break;
