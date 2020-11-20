@@ -23,6 +23,8 @@ public class GameOverworldManager : MonoBehaviour, State
         m_map.Dispose();
     }
 
+ 
+
     public void OnStart()
     {
         m_currentOverworld = overworlds[currentOverworld];    
@@ -38,8 +40,13 @@ public class GameOverworldManager : MonoBehaviour, State
         m_map = new Map(GameManager.GridSizes);
 
         m_currentOverworld.GetBackgroundColors(out NativeArray<Color32> pixels);
-        GridRenderer.ApplyPixelSprites(ref pixels, m_pixelSprites);
+
+        GridRenderer.ApplySprites(ref pixels, m_pixelSprites);  
         GridRenderer.RenderToScreen(pixels);
+    }
+
+    public void OnRender()
+    {
     }
 
     public void OnUpdate()

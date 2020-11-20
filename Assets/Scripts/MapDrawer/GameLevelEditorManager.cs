@@ -27,7 +27,14 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public LevelDataScriptable levelDataScriptable;
     public Texture2D debugTexture;
 
+    InputCommand input = new InputCommand();
+
     TickBlock tickBlock;
+
+    Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
+    List<ParticleChange> currentList;
+    HashSet<int2> dirtyPixels = new HashSet<int2>();
+    bool isRecording;
 
     private void OnValidate()
     {
@@ -41,12 +48,26 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         GameManager.Instance.currentLevel = levelDataScriptable;
         levelData = levelDataScriptable.LoadLevel();
         tickBlock.Init();
-        Render();
+        input.CreateInput(KeyCode.Z);
     }
 
     public void OnUpdate()
     {
-        if (isEditing && Input.GetMouseButton(0))
+        input.Update();
+
+        if (!isRecording && Input.GetMouseButton(0))
+        {
+            currentList = new List<ParticleChange>(50);
+            isRecording = true;
+        }
+        else if(isRecording && !Input.GetMouseButton(0))
+        {
+            controlZ.Push(currentList);
+            dirtyPixels.Clear();
+            isRecording = false;
+        }
+
+        if (isEditing && isRecording)
         {
             int2 sizes = GameManager.GridSizes;
             int2 pos = gridPicker.GetGridPosition(sizes);
@@ -57,26 +78,52 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 for (int y = -halfSize; y <= halfSize; y++)
                 {
                     int2 pixelPos = new int2(pos.x + x, pos.y + y);
-                    if(GridHelper.InBound(pixelPos, sizes))
-                    {
-                        levelData.grid[pixelPos.x, pixelPos.y] = type;
-                    }
+                    DrawPixel(sizes, pixelPos);
                 }
             }
-            Render();
+        }
+        else if(input.IsButtonDown(KeyCode.Z))
+        {
+            var changes = controlZ.Pop();
+            for (int i = changes.Count - 1; i >= 0; i--)
+            {
+                ParticleChange change = changes[i];
+                levelData.grid[change.position.x, change.position.y] = change.previousType;
+            }
         }
     }
 
-    public void Render()
+    private void DrawPixel(int2 sizes, int2 pixelPos)
+    {
+        if (GridHelper.InBound(pixelPos, sizes))
+        {
+            ParticleChange particleChange = new ParticleChange()
+            {
+                position = pixelPos,
+                previousType = levelData.grid[pixelPos.x, pixelPos.y],
+            };
+
+            if(!dirtyPixels.Contains(pixelPos))
+            {
+                dirtyPixels.Add(pixelPos);
+                currentList.Add(particleChange);
+            }
+            levelData.grid[pixelPos.x, pixelPos.y] = type;
+        }
+    }
+
+    public void OnRender()
     {
         tickBlock.UpdateTick();
 
         GetPixelSprite(ref m_sprites);
         GetMap(out Map map);
 
-        GridRenderer.FillColorArray(out NativeArray<Color32> outputColor, map, m_sprites, tickBlock);
-        
-        if(debugTexture != null)
+        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColor);
+        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
+        GridRenderer.ApplySprites(ref outputColor, m_sprites);
+
+        if (debugTexture != null)
             GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
 
         for (int i = 0; i < levelData.particleSpawners.Length; i++)
@@ -120,6 +167,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnEnd()
     {
+    }
+
+    public struct ParticleChange
+    {
+        public int2 position;
+        public ParticleType previousType;
     }
 }
 

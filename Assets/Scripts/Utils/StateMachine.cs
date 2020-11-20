@@ -8,6 +8,7 @@ namespace FiniteStateMachine
     public class StateMachine<T>
     {
         private State currentState = null;
+        private State previousState = null;
         private Dictionary<T, State> dictionary = new Dictionary<T, State>();
 
         private T currentStateEnum;
@@ -28,6 +29,15 @@ namespace FiniteStateMachine
         {
             currentState.OnUpdate();
             m_onUpdateCallback?.Invoke(currentState);
+
+            previousState = currentState;
+        }
+
+        public void Render()
+        {
+            //If state changed in gameplay, don't render it
+            if(currentState == previousState)
+                currentState.OnRender();
         }
 
         public void SetState(T enumState)
@@ -60,6 +70,7 @@ namespace FiniteStateMachine
     {
         void OnStart();
         void OnUpdate();
+        void OnRender();
         void OnEnd();
     }
 }

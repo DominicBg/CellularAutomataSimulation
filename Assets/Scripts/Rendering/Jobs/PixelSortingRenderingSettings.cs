@@ -1,5 +1,5 @@
 ﻿[System.Serializable]
-public struct PixelSortingRenderingSettings
+public struct PixelSortingSettings
 {
     public enum Order { Luminance, Addition /* RGB, RBG, GRB, GBR, BRG, BGR */ }
 

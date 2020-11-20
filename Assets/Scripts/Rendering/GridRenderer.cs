@@ -31,27 +31,26 @@ public class GridRenderer : MonoBehaviour
         int2 sizes = GameManager.GridSizes;
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
         m_texture.filterMode = FilterMode.Point;
-        postProcess = new GridPostProcess();
-        postProcess.OnStart();
     }
 
-    void OnDestroy()
-    {
-        postProcess.OnEnd();
-    }
 
-    public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
-    {   
-        FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tickBlock);
-        RenderToScreen(outputColor);
-    }
+    //public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
+    //{   
+    //    FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tickBlock);
+    //    RenderToScreen(outputColor);
+    //}
 
-    public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
+    //public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
+    //{
+    //    outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+    //    ApplyMapPixels(ref outputColor, map, tickBlock);
+    //    ApplyPixelSprites(ref outputColor, pixelSprites);
+    //    ApplyPostProcess(ref outputColor);
+    //}
+
+    public static void GetBlankTexture(out NativeArray<Color32> outputColor)
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        ApplyMapPixels(ref outputColor, map, tickBlock);
-        ApplyPixelSprites(ref outputColor, pixelSprites);
-        ApplyPostProcess(ref outputColor);
     }
 
     public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, TickBlock tickBlock)
@@ -66,17 +65,6 @@ public class GridRenderer : MonoBehaviour
     {
         //todo profile
         new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, 1).Complete();
-    }
-
-    public static void ApplyPixelSprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)
-    {
-        using (s_SpriteRender.Auto())
-        {
-            for (int i = 0; i < pixelSprites.Length; i++)
-            {
-                AddPixelSprite(outputColor, pixelSprites[i]);
-            }
-        }
     }
 
     public static void RenderCircle(ref NativeArray<Color32> outputColor, int2 position, int radius, Color32 color, BlendingMode blending = BlendingMode.Normal)
@@ -128,11 +116,31 @@ public class GridRenderer : MonoBehaviour
         return colorsA;
     }
 
-    public static void ApplyPostProcess(ref NativeArray<Color32> outputColor)
+    public static void ApplySprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)
     {
-        using (s_PostProcessRender.Auto())
+        using (s_SpriteRender.Auto())
         {
-            postProcess.ApplyPostProcess(ref outputColor);
+            for (int i = 0; i < pixelSprites.Length; i++)
+            {
+                ApplySprite(ref outputColor, pixelSprites[i]);
+            }
+        }
+    }
+
+    //This is going to be cancer to burst lol
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, PixelSprite sprite)
+    {
+        for (int x = 0; x < sprite.sizes.x; x++)
+        {
+            for (int y = 0; y < sprite.sizes.y; y++)
+            {
+                int2 texturePos = new int2(x, y) + sprite.position;
+                if(GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.collisions[x,y])
+                {
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
+                    outputColor[index] = sprite.pixels[x, y];
+                }
+            }
         }
     }
 
@@ -145,22 +153,5 @@ public class GridRenderer : MonoBehaviour
         outputColor.Dispose();
         m_texture.Apply();
         Instance.m_renderer.texture = m_texture;
-    }
-
-    //This is going to be cancer to burst lol
-    static void AddPixelSprite(NativeArray<Color32> outputColor, PixelSprite sprite)
-    {
-        for (int x = 0; x < sprite.sizes.x; x++)
-        {
-            for (int y = 0; y < sprite.sizes.y; y++)
-            {
-                int2 texturePos = new int2(x, y) + sprite.position;
-                if(sprite.collisions[x,y])
-                {
-                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
-                    outputColor[index] = sprite.pixels[x, y];
-                }
-            }
-        }
     }
 }

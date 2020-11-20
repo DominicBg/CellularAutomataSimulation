@@ -12,15 +12,24 @@ public class PlayerCellularAutomata : MonoBehaviour
     public PhysicBound physicBound;
     public Texture2D collisionTexture;
 
-    InputCommand input;
+    InputCommand input = new InputCommand();
+
+    //int[] jumpHeight = {
+    //    1, 1, 1,
+    //    1, 0, 1, 0, 1, 0,
+    //    1, 0, 0, 1, 0, 0,
+    //    -1, 0, 0, -1, 0, 0,
+    //    -1, 0, -1, 0, -1, 0,
+    //    -1, -1, -1
+    //    };
 
     int[] jumpHeight = {
-        1, 1, 1,
-        1, 0, 1, 0, 1, 0,
-        1, 0, 0, 1, 0, 0,
-        -1, 0, 0, -1, 0, 0,
-        -1, 0, -1, 0, -1, 0,
-        -1, -1, -1
+        1, 1,
+        1, 0, 1, 0, 
+        1, 0, 0, 
+        -1, 0, 0, 
+        -1, 0, -1, 0, 
+        -1, -1
         };
 
     int jumpIndex = 0;
@@ -40,6 +49,8 @@ public class PlayerCellularAutomata : MonoBehaviour
         //physicBound = new PhysicBound(new Bound(new int2(1, 0), new int2(7, 8)));
         physicBound = new PhysicBound(collisionTexture);
         map.SetSpriteAtPosition(sprite.position, ref sprite);
+
+        input.CreateInput(KeyCode.Space);
     }
 
     public void OnUpdate(ref PixelSprite sprite, Map map)
@@ -49,7 +60,7 @@ public class PlayerCellularAutomata : MonoBehaviour
         int2 direction = input.direction;
 
         bool isGrounded = IsGrounded(map, sprite.position);
-        if (input.spaceInput.IsButtonDown() && (wasGrounded || isGrounded))
+        if (input.IsButtonDown(KeyCode.Space) && (wasGrounded || isGrounded))
         {
             jumpIndex = 0;
         }
@@ -121,6 +132,7 @@ public class PlayerCellularAutomata : MonoBehaviour
             nextPosition = map.HandlePhysics(ref physicBound, nextPosition, nextPosition + direction);
             if (math.any(previousPos != nextPosition))
             {
+                map.RemoveSpriteAtPosition(ref sprite);
                 map.SetSpriteAtPosition(nextPosition, ref sprite);
             }
             output.Value = sprite.position;

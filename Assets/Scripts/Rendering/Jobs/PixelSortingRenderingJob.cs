@@ -9,22 +9,12 @@ using UnityEngine;
 [BurstCompile]
 public struct PixelSortingRenderingJob : IJob
 {
-    public NativeQueue<PixelSortingRenderingSettings> requestQueue;
     public NativeArray<Color32> colorArray;
     public int2 mapSizes;
+    public PixelSortingSettings settings;
     public void Execute()
     {
-        while(requestQueue.Count > 0)
-        {
-            PixelSortingRenderingSettings settings = requestQueue.Dequeue();
-            ApplyPixelSorting(ref settings);
-        }
-    }
-
-    void ApplyPixelSorting(ref PixelSortingRenderingSettings settings)
-    {
         ref Bound bound = ref settings.bound;
-
         NativeArray<int> positions;
 
         //Rotate the sorting 
@@ -52,7 +42,7 @@ public struct PixelSortingRenderingJob : IJob
         boundColorArray.Dispose();
     }
 
-    void Sort(NativeArray<Color32> boundColorArray, bool isDescending, PixelSortingRenderingSettings.Order order)
+    void Sort(NativeArray<Color32> boundColorArray, bool isDescending, PixelSortingSettings.Order order)
     {
         //todo implement more than selection sort lol
         for (int i = 0; i < boundColorArray.Length; i++)
@@ -91,13 +81,13 @@ public struct PixelSortingRenderingJob : IJob
         }
     }
 
-    float GetValue(Color32 color, PixelSortingRenderingSettings.Order order)
+    float GetValue(Color32 color, PixelSortingSettings.Order order)
     {
         switch (order)
         {
-            case PixelSortingRenderingSettings.Order.Addition:
+            case PixelSortingSettings.Order.Addition:
                 return color.r + color.b + color.g;
-            case PixelSortingRenderingSettings.Order.Luminance:
+            case PixelSortingSettings.Order.Luminance:
                 return RenderingUtils.Luminance(color);
         }
         //default is luminance

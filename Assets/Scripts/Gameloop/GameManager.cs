@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
         while (currentDeltaTime >= frameDuration)
         {
             m_stateMachine.Update();
+            m_stateMachine.Render();
             currentDeltaTime -= frameDuration;
         }
     }

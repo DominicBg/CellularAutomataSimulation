@@ -96,21 +96,36 @@ public unsafe struct Map
         return particleGrid[pos].type;
     }
 
-    public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite)
+    public void RemoveSpriteAtPosition(ref PixelSprite sprite)
     {
-        int2 previousPosition = sprite.position;
-        //Cleanup old position
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
-                int2 newPos = previousPosition + new int2(x, y);
+                int2 newPos = sprite.position + new int2(x, y);
                 if (sprite.collisions[x, y])
-                    particleGrid[newPos] = new Particle() { type = ParticleType.None };
+                {
+                    SetParticleType(newPos, ParticleType.None);
+                }
             }
         }
+    }
 
-        //Place new pixels
+    public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite)
+    {
+        //int2 previousPosition = sprite.position;
+        ////Cleanup old position
+        //for (int x = 0; x < sprite.sizes.x; x++)
+        //{
+        //    for (int y = 0; y < sprite.sizes.y; y++)
+        //    {
+        //        int2 newPos = previousPosition + new int2(x, y);
+        //        if (sprite.collisions[x, y])
+        //            particleGrid[newPos] = new Particle() { type = ParticleType.None };
+        //    }
+        //}
+
+        ////Place new pixels
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)

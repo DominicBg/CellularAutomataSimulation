@@ -7,16 +7,13 @@ using UnityEngine;
 
 public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
-    public static int Tick { get; private set; }
-    public static uint TickSeed { get; private set; }
-
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
-    //todo generalize this
-    PixelSprite[] pixelSprites = new PixelSprite[2];
+    PixelSprite playerSprite;
+    PixelSprite shuttleSprite;
 
     public ParticleBehaviourScriptable particleBehaviour;
 
@@ -24,11 +21,17 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     TickBlock tickBlock;
     LevelData levelData;
 
+    public enum LevelPhase { into, gameplay, ending}
+    LevelPhase m_levelPhase;
+    int tickAtPhase;
+
     //TEMP
-    public PixelSortingRenderingSettings[] pixelSortingRenderingSettings;
+    public PixelSortingSettings[] pixelSortingSettings;
 
     public void OnStart()
     {
+        m_levelPhase = LevelPhase.gameplay;
+        tickAtPhase = 0;
         LoadLevel(GameManager.Instance.currentLevel);
         tickBlock.Init();
     }
@@ -45,10 +48,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             nativeParticleSpawners.Dispose();
             map.Dispose();
 
-            for (int i = 0; i < pixelSprites.Length; i++)
-            {
-                pixelSprites[i].Dispose();
-            }
+            playerSprite.Dispose();
+            shuttleSprite.Dispose();
         }
     }
 
@@ -60,16 +61,22 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         map = new Map(levelData.grid, levelData.sizes);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
 
-        pixelSprites[0] = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
-        pixelSprites[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
+        playerSprite = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
+        shuttleSprite = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
 
-        player.Init(ref pixelSprites[0], map);
+        player.Init(ref playerSprite, map);
     }
 
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
-        player.OnUpdate(ref pixelSprites[0], map);
+        tickAtPhase++;
+
+        if (m_levelPhase == LevelPhase.gameplay)
+        {
+            player.OnUpdate(ref playerSprite, map);
+        }
+
         new CellularAutomataJob()
         {
             behaviour = particleBehaviour.particleBehaviour,
@@ -78,14 +85,41 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             tickBlock = tickBlock
         }.Run();
 
-        //todo make this less ugly lol
-        for (int i = 0; i < pixelSortingRenderingSettings.Length; i++)
+        if (m_levelPhase == LevelPhase.gameplay && PlayerFinishedLevel())
         {
-            GridRenderer.postProcess.pixelSortingRequestQueue.Enqueue(pixelSortingRenderingSettings[i]);
+            Debug.Log("BRAVO");
+            map.RemoveSpriteAtPosition(ref playerSprite);
+            m_levelPhase = LevelPhase.ending;
+            tickAtPhase = 0;
         }
-
-        GridRenderer.RenderMapAndSprites(map, pixelSprites, tickBlock);
+        else if (m_levelPhase == LevelPhase.ending)
+        {
+            shuttleSprite.position += new int2(0, 1);
+            if(tickAtPhase > 60)
+            {
+                GameManager.Instance.SetOverworld();
+            }
+        }
     }
 
+    public void OnRender()
+    {
+        var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
+        if(m_levelPhase == LevelPhase.gameplay)
+            GridRenderer.ApplySprite(ref outputColor, playerSprite);
+
+        GridRenderer.ApplySprite(ref outputColor, shuttleSprite);
+
+        for (int i = 0; i < pixelSortingSettings.Length; i++)
+            GridPostProcess.ApplyPixelSorting(ref outputColor, ref pixelSortingSettings[i]);
+
+        GridRenderer.RenderToScreen(outputColor);
+    }
+
+    bool PlayerFinishedLevel()
+    {
+        return playerSprite.Bound.IntersectWith(shuttleSprite.Bound);
+    }
 }

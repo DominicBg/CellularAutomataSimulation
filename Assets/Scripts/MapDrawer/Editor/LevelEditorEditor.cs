@@ -26,12 +26,10 @@ public class LevelEditorEditor : Editor
         if (GUILayout.Button("Load level"))
         {
             levelEditor.levelData = levelEditor.levelDataScriptable.LoadLevel();
-            levelEditor.Render();
         }
         if (GUILayout.Button("Reset level"))
         {
             levelEditor.ResetLevelData();
-            levelEditor.Render();
         }
 
     }

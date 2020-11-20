@@ -87,11 +87,9 @@ public class GameMainMenuManager : MonoBehaviour, State
             tickBlock = tickBlock
         }.Run();
         m_map.SetParticleType(particleDestroyerPosition, ParticleType.None);
-
-        ShowTextures();
     }
 
-    void ShowTextures()
+    public void OnRender()
     {
         bool showDark = (noise.cnoise(new float2(Time.time * randomSpeed, 0) * 0.5f + 0.5f)) > lightThreshold;
 
@@ -105,11 +103,6 @@ public class GameMainMenuManager : MonoBehaviour, State
         }
         else
         {
-            //GenerateDarkBackground(out NativeArray<Color32> background);
-            //GenerateDarkforeground(out NativeArray<Color32> foreground);
-            //var output = GridRenderer.CombineColors(ref background, ref foreground);
-            //GridRenderer.RenderToScreen(output);
-
             var pass1 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
             starBackground.Render(ref pass1, tickBlock.tick);
             GridRenderer.ApplyMapPixels(ref pass1, m_map, tickBlock);
@@ -129,27 +122,6 @@ public class GameMainMenuManager : MonoBehaviour, State
             GridRenderer.RenderToScreen(pass3);
         }
     }
-    
-    
-    void GenerateDarkBackground(out NativeArray<Color32> background)
-    {
-        background = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        starBackground.Render(ref background, tickBlock.tick);
-        GridRenderer.ApplyMapPixels(ref background, m_map, tickBlock);
-        title.Render(ref background);
-    }
-    void GenerateDarkforeground(out NativeArray<Color32> foreGround)
-    {
-        foreGround = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        GridRenderer.ApplyParticleRenderToTexture(ref foreGround, ref lightSandBackground.nativeTexture, m_map, tickBlock, lightSandBackground.blending, ParticleType.Sand);
-        lightCampFire.Render(ref foreGround);
-        shadowRendering.Render(ref foreGround, tickBlock.tick);
-        GridRenderer.ApplyParticleRenderToTexture(ref foreGround, ref lightCampFireFlame.nativeTexture, m_map, tickBlock, lightCampFireFlame.blending, ParticleType.Fire);
-        fireRendering.Render(ref foreGround, tickBlock.tick);
-        lightAstronaut.Render(ref foreGround);
-    }
-
-
 
     [System.Serializable]
     public struct FireRendering : IRenderableAnimated
