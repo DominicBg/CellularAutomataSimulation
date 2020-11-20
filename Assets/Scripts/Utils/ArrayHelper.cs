@@ -13,6 +13,10 @@ public static class ArrayHelper
     {
         return y * sizes.x + x;
     }
+    public static int2 IndexToPos(int i, int2 sizes)
+    {
+        return new int2(i % sizes.x, i / sizes.y);
+    }
 
     public static T[,] GetGridFromArray<T>(T[] array, int2 sizes)
     {

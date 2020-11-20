@@ -65,4 +65,31 @@ public abstract class GridHelper
         positionList.Dispose();
         return positions;
     }
+
+    public static NativeArray<int2> GetEllipseAtPosition(int2 centerPosition, int2 radius, int2 mapSizes, Allocator allocator)
+    {
+        NativeList<int2> positionList = new NativeList<int2>(2 * radius.x * radius.y, Allocator.Temp);
+
+        float2 inverseRadius = 1f / (float2)(radius * radius);
+        for (int x = -radius.x; x <= radius.x; x++)
+        {
+            for (int y = -radius.y; y <= radius.y; y++)
+            {
+                int2 position = centerPosition + new int2(x, y);
+                float currentRadius = x * x * inverseRadius.x + y * y * inverseRadius.y;
+                if (InBound(position, mapSizes) && math.length(currentRadius) < 1)
+                {
+                    positionList.Add(position);
+                }
+            }
+        }
+
+        NativeArray<int2> positions = new NativeArray<int2>(positionList.Length, allocator);
+        for (int i = 0; i < positions.Length; i++)
+        {
+            positions[i] = positionList[i];
+        }
+        positionList.Dispose();
+        return positions;
+    }
 }

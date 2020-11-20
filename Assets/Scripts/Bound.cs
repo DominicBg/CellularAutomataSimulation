@@ -62,4 +62,12 @@ public struct Bound
         }
     }
 
+    public int2 RandomPointInBound(ref TickBlock tickblock)
+    {
+        return tickblock.random.NextInt2(min, max + 1);
+    }
+    public int2 RandomPointInBound(ref Random random)
+    {
+        return random.NextInt2(min, max + 1);
+    }
 }

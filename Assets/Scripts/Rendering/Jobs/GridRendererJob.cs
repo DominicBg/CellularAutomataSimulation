@@ -23,7 +23,7 @@ public struct GridRendererJob : IJobParallelFor
 
     public void Execute(int i)
     {
-        int2 pos = new int2(i % map.Sizes.x, i / map.Sizes.y);
+        int2 pos = ArrayHelper.IndexToPos(i, map.Sizes);
         if (map.GetParticleType(pos) != ParticleType.None)
         {
             Color32 color = ParticleRenderUtil.GetColorForType(pos, map.GetParticleType(pos), ref particleRendering, ref tickBlock);

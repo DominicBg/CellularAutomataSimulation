@@ -21,6 +21,8 @@ public class GridRenderer : MonoBehaviour
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 
+    public int innerLoopBatchCount = 10;
+
     //Consider getting init by GameManager
     void Awake()
     {
@@ -60,10 +62,10 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, ParticleType particleType)
+    public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, BlendingMode blending, ParticleType particleType)
     {
         //todo profile
-        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, particleType).Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, 1).Complete();
     }
 
     public static void ApplyPixelSprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)
@@ -88,21 +90,43 @@ public class GridRenderer : MonoBehaviour
         colors.Dispose();
     }
 
+    public static void RenderEllipseMask(ref NativeArray<Color32> outputColor, int2 position, int2 radius, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    {
+        GetEllipseMask(position, radius,
+                    GameManager.GridSizes, color, Allocator.TempJob,
+                    out NativeArray<Color32> colors);
+
+        ApplyTextureToColor(ref outputColor, ref colors, blending, useAlphaMask: true);
+        colors.Dispose();
+    }
+
+
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {
         new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, GameManager.GridSizes, blending).Run();
     }
 
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, BlendingMode blending = BlendingMode.Normal)
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
         NativeArray<Color32> nativeTexture = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
-        new ApplyTextureJob(outputColor, nativeTexture, blending).Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyTextureJob(outputColor, nativeTexture, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
         nativeTexture.Dispose();
     }
 
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal)
+    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
-        new ApplyTextureJob(outputColor, texture, blending).Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyTextureJob(outputColor, texture, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+    }
+
+    /// <summary>
+    /// Apply colors to output colors and dispose colors
+    /// </summary>
+
+    public static NativeArray<Color32> CombineColors(ref NativeArray<Color32> colorsA, ref NativeArray<Color32> colorsB, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
+    {
+        new ApplyTextureJob(colorsA, colorsB, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        colorsB.Dispose();
+        return colorsA;
     }
 
     public static void ApplyPostProcess(ref NativeArray<Color32> outputColor)

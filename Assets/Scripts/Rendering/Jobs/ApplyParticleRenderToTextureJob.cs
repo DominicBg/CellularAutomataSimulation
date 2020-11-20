@@ -12,6 +12,7 @@ public struct ApplyParticleRenderToTextureJob : IJobParallelFor
     public Map map;
     public ParticleRendering particleRendering;
     public TickBlock tickBlock;
+    public BlendingMode blending;
     public ParticleType particleType;
 
     public ApplyParticleRenderToTextureJob(
@@ -19,7 +20,8 @@ public struct ApplyParticleRenderToTextureJob : IJobParallelFor
         NativeArray<Color32> textureColor,
         Map map,
         ParticleRendering particleRendering,
-        TickBlock tickBlock, 
+        TickBlock tickBlock,
+        BlendingMode blending,
         ParticleType particleType)
     {
         this.colorArray = colorArray;
@@ -27,16 +29,17 @@ public struct ApplyParticleRenderToTextureJob : IJobParallelFor
         this.map = map;
         this.particleRendering = particleRendering;
         this.tickBlock = tickBlock;
+        this.blending = blending;
         this.particleType = particleType;
     }
 
     public void Execute(int i)
     {
-        int2 pos = new int2(i % map.Sizes.x, i / map.Sizes.y);
+        int2 pos = ArrayHelper.IndexToPos(i, map.Sizes);
         if (textureColor[i].a > 0)
         {
             Color32 color = ParticleRenderUtil.GetColorForType(pos, particleType, ref particleRendering, ref tickBlock);
-            colorArray[i] = color;
+            colorArray[i] = RenderingUtils.Blend(colorArray[i], color, blending);
         }
     }
 }

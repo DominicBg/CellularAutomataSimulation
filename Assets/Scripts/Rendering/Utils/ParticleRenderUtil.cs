@@ -26,6 +26,8 @@ public static class ParticleRenderUtil
                 return particleRendering.rockRendering.GetColor(position, ref tickBlock);
             case ParticleType.TitleDisintegration:
                 return particleRendering.titleDisintegration;
+            case ParticleType.Fire:
+                return particleRendering.fireRendering.GetColor(position, ref tickBlock);
             default:
                 return Color.black;
         }
