@@ -1146,8 +1146,17 @@ MonoBehaviour:
       maxDistance: 20
       step: 15
       inverted: 0
+    title:
+      texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+      blending: 0
   randomSpeed: 1
-  lightThreshold: 3.63
+  lightThreshold: 0.8
+  glitchThreshold: 0.5
+  glitchSettings:
+    stride:
+      x: 2
+      y: 2
+    inverted: 0
   particleDestroyerPosition:
     x: 90
     y: 45

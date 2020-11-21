@@ -30,6 +30,10 @@ public class GameMainMenuManager : MonoBehaviour, State
     [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
+    public float glitchThreshold = 0.5f;
+    public int glitchSpeed;
+    public int2 minStride;
+    public int2 maxStride;
     public int2 particleDestroyerPosition;
 
     [Header("References")]
@@ -45,16 +49,6 @@ public class GameMainMenuManager : MonoBehaviour, State
     {
         lightRender.Dispose();
         darkRender.Dispose();
-        //darkBackground.Dispose();
-        //darkAstronaut.Dispose();
-
-        //lightCampFire.Dispose();
-        //lightCampFireFlame.Dispose();
-        //lightSandBackground.Dispose();
-        //lightAstronaut.Dispose();
-
-
-        //title.Dispose();
 
         m_map.Dispose();
         particleSpawners.Dispose();
@@ -65,16 +59,6 @@ public class GameMainMenuManager : MonoBehaviour, State
         tickBlock.Init();
         lightRender.Init();
         darkRender.Init();
-        ////Load textures
-        //darkBackground.Init();
-        //darkAstronaut.Init();
-
-        //lightCampFire.Init();
-        //lightCampFireFlame.Init();
-        //lightSandBackground.Init();
-        //lightAstronaut.Init();
-
-        //title.Init();
 
         //Load simulation
         levelData = mainMenuLevel.LoadLevel();
@@ -98,80 +82,35 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public void OnRender()
     {
-        bool showDark = MathUtils.unorm(noise.cnoise(new float2(Time.time * randomSpeed, 0))) > lightThreshold;
+        float noiseValue = noise.cnoise((float2)(tickBlock.tick * randomSpeed));
+        noiseValue = MathUtils.unorm(noiseValue);
 
-        if (showDark)
+        bool showlight = noiseValue < lightThreshold;
+        bool showGlitch = noiseValue > lightThreshold && noiseValue < glitchThreshold;
+
+        if(showGlitch)
         {
-            darkRender.Render(ref tickBlock);
-            //NativeArray<Color32> darkness = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            //darkBackground.Render(ref darkness);
-            //voronoiBackground.Render(ref darkness, tickBlock.tick);
-            //darkAstronaut.Render(ref darkness);
-            //GridRenderer.RenderToScreen(darkness);
+            var lightTexture = lightRender.Render(ref tickBlock, ref m_map);
+            var darkTexture = darkRender.Render(ref tickBlock);
+
+            InterlaceTextureSettings glitchSettings = new InterlaceTextureSettings();
+            glitchSettings.stride = tickBlock.random.NextInt2(minStride, maxStride);
+            glitchSettings.inverted = tickBlock.tick % glitchSpeed * 2 < glitchSpeed;
+
+            var result = GridRenderer.InteraceColors(ref lightTexture, ref darkTexture, ref glitchSettings);
+            GridRenderer.RenderToScreen(result);
+
+        }
+        else if (showlight)
+        {
+            var lightTexture =lightRender.Render(ref tickBlock, ref m_map);
+            GridRenderer.RenderToScreen(lightTexture);
         }
         else
         {
-            lightRender.Render(ref tickBlock, ref m_map);
-
-            //var pass1 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            //starBackground.Render(ref pass1, tickBlock.tick);
-            //GridRenderer.ApplyMapPixels(ref pass1, m_map, tickBlock);
-            //title.Render(ref pass1);
-
-            //var pass2 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            //GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref lightSandBackground.nativeTexture, m_map, tickBlock, lightSandBackground.blending, ParticleType.Sand);
-            //lightCampFire.Render(ref pass2);
-            //shadowRendering.Render(ref pass2, tickBlock.tick);
-            //GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref lightCampFireFlame.nativeTexture, m_map, tickBlock, lightCampFireFlame.blending, ParticleType.Fire);
-
-            //var pass3 = GridRenderer.CombineColors(ref pass1, ref pass2);
-
-            //fireRendering.Render(ref pass3, tickBlock.tick);
-            //lightAstronaut.Render(ref pass3);
-
-            //GridRenderer.RenderToScreen(pass3);
+            var darkTexture = darkRender.Render(ref tickBlock);
+            GridRenderer.RenderToScreen(darkTexture);
         }
     }
 
-    //[System.Serializable]
-    //public struct FireRendering : IRenderableAnimated
-    //{
-    //    public int2 position;
-    //    public Color32[] colors;
-    //    public int[] radiusMin;
-    //    public int[] radiusMax;
-    //    public float speed;
-    //    public BlendingMode blending;
-
-    //    public void Render(ref NativeArray<Color32> colorArray, int tick)
-    //    {
-    //        for (int i = 0; i < colors.Length; i++)
-    //        {
-    //            float sin = math.sin(tick * speed) * 0.5f + 0.5f;
-    //            int radius = (int)math.lerp(radiusMin[i], radiusMax[i], sin);
-    //            GridRenderer.RenderCircle(ref colorArray, position, radius, colors[i], blending);
-    //        }
-    //    }
-    //}
-
-    //[System.Serializable]
-    //public struct ShadowRendering : IRenderableAnimated
-    //{
-    //    public int2 position;
-    //    public Color32[] colors;
-    //    public int2[] radiusMin;
-    //    public int2[] radiusMax;
-    //    public float speed;
-    //    public BlendingMode blending;
-
-    //    public void Render(ref NativeArray<Color32> colorArray, int tick)
-    //    {
-    //        for (int i = 0; i < colors.Length; i++)
-    //        {
-    //            float sin = math.sin(tick * speed) * 0.5f + 0.5f;
-    //            int2 radius = (int2)math.lerp(radiusMin[i], radiusMax[i], sin);
-    //            GridRenderer.RenderEllipseMask(ref colorArray, position, radius, colors[i], blending);
-    //        }
-    //    }
-    //}
 }

@@ -33,12 +33,12 @@ public class MainMenuLightRender : IDisposable
         title.Dispose();
     }
 
-    public void Render(ref TickBlock tickBlock, ref Map map)
+    public NativeArray<Color32> Render(ref TickBlock tickBlock, ref Map map)
     {
         var pass1 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         starBackground.Render(ref pass1, tickBlock.tick);
         GridRenderer.ApplyMapPixels(ref pass1, map, tickBlock);
-        //title.Render(ref pass1);
+        title.Render(ref pass1);
 
         var pass2 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref sandBackground.nativeTexture, map, tickBlock, sandBackground.blending, ParticleType.Sand);
@@ -51,7 +51,7 @@ public class MainMenuLightRender : IDisposable
         fireRendering.Render(ref pass3, tickBlock.tick);
         astronaut.Render(ref pass3);
 
-        GridRenderer.RenderToScreen(pass3);
+        return pass3;
     }
 
     [System.Serializable]

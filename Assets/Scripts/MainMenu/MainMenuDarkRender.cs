@@ -10,27 +10,34 @@ public class MainMenuDarkRender : IDisposable
     public LayerTexture campFire;
     public LayerTexture astronaut;
     public VoronoiRendering voronoiBackground;
+    public LayerTexture title;
 
     public void Init()
     {
         background.Init();
         campFire.Init();
         astronaut.Init();
+        title.Init();
+
     }
     public void Dispose()
     {
         background.Dispose();
         campFire.Dispose();
         astronaut.Dispose();
+        title.Dispose();
+
     }
 
-    public void Render(ref TickBlock tickBlock)
+    public NativeArray<Color32> Render(ref TickBlock tickBlock)
     {
         NativeArray<Color32> darkness = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         voronoiBackground.Render(ref darkness, tickBlock.tick);
+        title.Render(ref darkness);
         background.Render(ref darkness);
         campFire.Render(ref darkness);
         astronaut.Render(ref darkness);
-        GridRenderer.RenderToScreen(darkness);
+        return darkness;
+        //GridRenderer.RenderToScreen(darkness);
     }
 }

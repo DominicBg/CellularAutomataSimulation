@@ -15,15 +15,13 @@ public class GridRenderer : MonoBehaviour
 
     static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
     static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");
-    static ProfilerMarker s_PostProcessRender = new ProfilerMarker("GridRenderer.PostProcessRender");
 
     [SerializeField] RawImage m_renderer;
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 
-    public int innerLoopBatchCount = 10;
+    public int innerLoopBatchCount = 100;
 
-    //Consider getting init by GameManager
     void Awake()
     {
         Instance = this;
@@ -32,21 +30,6 @@ public class GridRenderer : MonoBehaviour
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
         m_texture.filterMode = FilterMode.Point;
     }
-
-
-    //public static void RenderMapAndSprites(Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
-    //{   
-    //    FillColorArray(out NativeArray<Color32> outputColor, map, pixelSprites, tickBlock);
-    //    RenderToScreen(outputColor);
-    //}
-
-    //public static void FillColorArray(out NativeArray<Color32> outputColor, Map map, PixelSprite[] pixelSprites, TickBlock tickBlock)
-    //{
-    //    outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-    //    ApplyMapPixels(ref outputColor, map, tickBlock);
-    //    ApplyPixelSprites(ref outputColor, pixelSprites);
-    //    ApplyPostProcess(ref outputColor);
-    //}
 
     public static void GetBlankTexture(out NativeArray<Color32> outputColor)
     {
@@ -114,6 +97,19 @@ public class GridRenderer : MonoBehaviour
         new ApplyTextureJob(colorsA, colorsB, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
         colorsB.Dispose();
         return colorsA;
+    }
+
+    public static NativeArray<Color32> InteraceColors(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> colors, ref InterlaceTextureSettings settings)
+    {
+        new InterlaceTextureJob()
+        {
+            settings = settings,
+            colors = colors,
+            outputColor = outputColor,
+            mapSizes = GameManager.GridSizes
+        }.Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        colors.Dispose();
+        return outputColor;
     }
 
     public static void ApplySprites(ref NativeArray<Color32> outputColor, PixelSprite[] pixelSprites)
