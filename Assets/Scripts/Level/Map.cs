@@ -98,55 +98,55 @@ public unsafe struct Map
 
     public void RemoveSpriteAtPosition(ref PixelSprite sprite)
     {
-        for (int x = 0; x < sprite.sizes.x; x++)
+        sprite.Bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+        for (int i = 0; i < positions.Length; i++)
         {
-            for (int y = 0; y < sprite.sizes.y; y++)
-            {
-                int2 newPos = sprite.position + new int2(x, y);
-                if (sprite.collisions[x, y])
-                {
-                    SetParticleType(newPos, ParticleType.None);
-                }
-            }
+            SetParticleType(positions[i], ParticleType.None);
         }
-    }
+        positions.Dispose();
 
-    public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite)
-    {
-        //int2 previousPosition = sprite.position;
-        ////Cleanup old position
         //for (int x = 0; x < sprite.sizes.x; x++)
         //{
         //    for (int y = 0; y < sprite.sizes.y; y++)
         //    {
-        //        int2 newPos = previousPosition + new int2(x, y);
+        //        int2 newPos = sprite.position + new int2(x, y);
         //        if (sprite.collisions[x, y])
-        //            particleGrid[newPos] = new Particle() { type = ParticleType.None };
+        //        {
+        //            SetParticleType(newPos, ParticleType.None);
+        //        }
+        //    }
+        //}
+    }
+
+    public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite)
+    {
+        sprite.Bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+        for (int i = 0; i < positions.Length; i++)
+        {
+            SetParticleType(positions[i], ParticleType.Player);
+        }
+        //for (int x = 0; x < sprite.sizes.x; x++)
+        //{
+        //    for (int y = 0; y < sprite.sizes.y; y++)
+        //    {
+        //        int2 pixelPosition = nextPosition + new int2(x, y);
+        //        if (sprite.collisions[x, y])
+        //        {
+        //            //TODO handle in physic
+        //            ////Throw particle in the air
+        //            //ParticleType previousType = particleGrid[pixelPosition].type;
+        //            //if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(pixelPosition, new int2(0, 1), out int2 newPosition))
+        //            //{
+        //            //    SetParticleType(newPosition, previousType);
+        //            //}
+
+        //            SetParticleType(pixelPosition, ParticleType.Player);
+        //        }
         //    }
         //}
 
-        ////Place new pixels
-        for (int x = 0; x < sprite.sizes.x; x++)
-        {
-            for (int y = 0; y < sprite.sizes.y; y++)
-            {
-                int2 pixelPosition = nextPosition + new int2(x, y);
-                if (sprite.collisions[x, y])
-                {
-                    //TODO handle in physic
-                    ////Throw particle in the air
-                    //ParticleType previousType = particleGrid[pixelPosition].type;
-                    //if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(pixelPosition, new int2(0, 1), out int2 newPosition))
-                    //{
-                    //    SetParticleType(newPosition, previousType);
-                    //}
-
-                    SetParticleType(pixelPosition, ParticleType.Player);
-                }
-            }
-        }
-
         sprite.position = nextPosition;
+        positions.Dispose();
     }
 
     public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition)

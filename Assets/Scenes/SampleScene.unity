@@ -558,7 +558,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
-  jumpHeight: 5
 --- !u!4 &291513217
 Transform:
   m_ObjectHideFlags: 0
@@ -1000,7 +999,7 @@ MonoBehaviour:
   gridRenderer: {fileID: 1286533892}
   player: {fileID: 291513216}
   particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
-  pixelSortingRenderingSettings: []
+  pixelSortingSettings: []
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0
@@ -1059,82 +1058,96 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d0ad253c5c2b494085eb0fef0fd312c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title:
-    texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
-    blending: 0
-  starBackground:
-    density:
-      x: 5
-      y: 5
-    radius: 3
-    seed: 0
-    speed: 0.02
-    sinOffsetScale:
-      x: 5
-      y: 8.14
-    sinOffsetAmplitude: 25
-  darkBackground:
-    texture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
-    blending: 0
-  darkAstronaut:
-    texture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
-    blending: 0
-  lightSandBackground:
-    texture: {fileID: 2800000, guid: dd094682700529548b7aea1c26d66588, type: 3}
-    blending: 0
-  lightCampFire:
-    texture: {fileID: 2800000, guid: 2ddfbee23f22ffc499882eb68437184c, type: 3}
-    blending: 0
-  lightCampFireFlame:
-    texture: {fileID: 2800000, guid: a8b1f2e93b5749d4a87e390a54c1c5ac, type: 3}
-    blending: 0
-  fireRendering:
-    position:
-      x: 42
-      y: 28
-    colors:
-    - serializedVersion: 2
-      rgba: 369140735
-    - serializedVersion: 2
-      rgba: 688969983
-    - serializedVersion: 2
-      rgba: 674684159
-    radiusMin: 0f0000000a00000005000000
-    radiusMax: 1e000000140000000a000000
-    speed: 0.02
-    blending: 1
-  shadowRendering:
-    position:
-      x: 42
-      y: 15
-    colors:
-    - serializedVersion: 2
-      rgba: 3892314112
-    - serializedVersion: 2
-      rgba: 3372220416
-    - serializedVersion: 2
-      rgba: 3892314112
-    radiusMin:
-    - x: 20
-      y: 10
-    - x: 30
-      y: 20
-    - x: 40
-      y: 30
-    radiusMax:
-    - x: 30
-      y: 15
-    - x: 45
-      y: 30
-    - x: 60
-      y: 45
-    speed: 0.02
-    blending: 0
-  lightAstronaut:
-    texture: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
-    blending: 0
+  lightRender:
+    sandBackground:
+      texture: {fileID: 2800000, guid: dd094682700529548b7aea1c26d66588, type: 3}
+      blending: 0
+    campFire:
+      texture: {fileID: 2800000, guid: 2ddfbee23f22ffc499882eb68437184c, type: 3}
+      blending: 0
+    campFireFlame:
+      texture: {fileID: 2800000, guid: a8b1f2e93b5749d4a87e390a54c1c5ac, type: 3}
+      blending: 0
+    astronaut:
+      texture: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
+      blending: 0
+    fireRendering:
+      position:
+        x: 42
+        y: 28
+      colors:
+      - serializedVersion: 2
+        rgba: 251661311
+      - serializedVersion: 2
+        rgba: 755012863
+      - serializedVersion: 2
+        rgba: 822132991
+      radiusMin: 050000000a0000000f000000
+      radiusMax: 0a0000000f00000014000000
+      speed: 0.02
+      blending: 1
+    shadowRendering:
+      position:
+        x: 42
+        y: 15
+      colors:
+      - serializedVersion: 2
+        rgba: 2483027968
+      - serializedVersion: 2
+        rgba: 2550136832
+      - serializedVersion: 2
+        rgba: 2432696320
+      radiusMin:
+      - x: 20
+        y: 10
+      - x: 30
+        y: 20
+      - x: 40
+        y: 30
+      radiusMax:
+      - x: 30
+        y: 15
+      - x: 45
+        y: 30
+      - x: 60
+        y: 45
+      speed: 0.02
+      blending: 0
+    starBackground:
+      density:
+        x: 5
+        y: 5
+      radius: 3
+      seed: 0
+      speed: 0.02
+      sinOffsetScale:
+        x: 5
+        y: 8
+      sinOffsetAmplitude: 25
+    title:
+      texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+      blending: 0
+  darkRender:
+    background:
+      texture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
+      blending: 0
+    campFire:
+      texture: {fileID: 2800000, guid: d24c711f6f16b7041925fcb9c79b264f, type: 3}
+      blending: 0
+    astronaut:
+      texture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
+      blending: 0
+    voronoiBackground:
+      density:
+        x: 5
+        y: 5
+      seed: 0
+      speed: 0.02
+      maxDistance: 20
+      step: 15
+      inverted: 0
   randomSpeed: 1
-  lightThreshold: 0.8
+  lightThreshold: 3.63
   particleDestroyerPosition:
     x: 90
     y: 45

@@ -23,6 +23,6 @@ MonoBehaviour:
       x: 75
       y: 75
     icon: {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
-    levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+    levelDataScriptable: {fileID: 11400000, guid: f00273859e28c7c42931faa12a0b3e30, type: 2}
     connectionIndex: 00000000
-  backgroundTexture: {fileID: 2800000, guid: e0bf7b7370731184fa0f3d81dede74b5, type: 3}
+  backgroundTexture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}

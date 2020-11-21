@@ -3,20 +3,22 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using static GameMainMenuManager;
+
 
 [System.Serializable]
-public struct StarBackgroundRendering : IRenderableAnimated
+public struct VoronoiRendering : IRenderableAnimated
 {
     public int2 density;
-    public int radius;
     public uint seed;
     public float speed;
-    public float2 sinOffsetScale;
-    public float sinOffsetAmplitude;
+    public float maxDistance;
+    public float step;
+    public bool inverted;
 
     public void Render(ref NativeArray<Color32> colorArray, int tick)
     {
-        new ShiningStarBackgroundJob()
+        new VoronoiBackgroundJob()
         {
             colors = colorArray,
             maxSizes = GameManager.GridSizes,
@@ -27,12 +29,12 @@ public struct StarBackgroundRendering : IRenderableAnimated
 }
 
 [BurstCompile]
-public struct ShiningStarBackgroundJob : IJobParallelFor
+public struct VoronoiBackgroundJob : IJobParallelFor
 {
     public NativeArray<Color32> colors;
     public int2 maxSizes;
     public int tick;
-    public StarBackgroundRendering settings;
+    public VoronoiRendering settings;
 
     public void Execute(int index)
     {
@@ -42,7 +44,8 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
         int2 position = ArrayHelper.IndexToPos(index, maxSizes);
         int2 cellIndex = MathUtils.quantize(position, cellSize);
 
-        float alpha = 0;
+        float minDistance = int.MaxValue;
+        //float maxDistance = int.MinValue;
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -58,33 +61,25 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 //Generate a random point in this cell
                 var random = MathUtils.CreateRandomAtPosition(currentCellIndex, settings.seed);
 
-                //Find closest star
-                int2 starPosition = gridBound.RandomPointInBound(ref random);
-                float starDistance = random.NextFloat();
+                //Find closest point
+                int2 point = gridBound.RandomPointInBound(ref random);
+                float distance = math.distance(position, point);
 
-                if (math.all(position == starPosition))
-                {
-                    //This pixel is a star
-                    colors[index] = Color.white * starDistance;
-                    return;
-                }
-                else
-                {
-                    float distance = math.distance(position, starPosition);
-                    if (distance < settings.radius)
-                    {
-                        //Fade out of light
-                        float ratioLight = 1 - math.saturate(distance / settings.radius);
-                        float noiseSinOffset = settings.sinOffsetAmplitude * noise.cnoise(starPosition * settings.sinOffsetScale);
-                        float sinValue = MathUtils.unorm(math.sin(tick * settings.speed + noiseSinOffset));
-                        alpha += sinValue * ratioLight * starDistance;
-                    }
-                }
+                minDistance = math.min(minDistance, distance);
             }
 
         }
 
+        float ratio = minDistance / settings.maxDistance;
+        float step = math.floor(ratio * settings.step) / settings.step;
 
-        colors[index] = Color.white * math.saturate(alpha);
+        if(settings.inverted)
+        {
+            colors[index] = Color.white - Color.white * math.saturate(step);
+        }
+        else
+        {
+            colors[index] = Color.white * math.saturate(step);
+        }
     }
 }
