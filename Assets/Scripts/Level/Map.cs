@@ -105,18 +105,6 @@ public unsafe struct Map
             SetParticleType(positions[i], ParticleType.None);
         }
         positions.Dispose();
-
-        //for (int x = 0; x < sprite.sizes.x; x++)
-        //{
-        //    for (int y = 0; y < sprite.sizes.y; y++)
-        //    {
-        //        int2 newPos = sprite.position + new int2(x, y);
-        //        if (sprite.collisions[x, y])
-        //        {
-        //            SetParticleType(newPos, ParticleType.None);
-        //        }
-        //    }
-        //}
     }
 
     public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite, ref PhysicBound physicBound)
@@ -129,26 +117,6 @@ public unsafe struct Map
         {
             SetParticleType(positions[i], ParticleType.Player);
         }
-        //for (int x = 0; x < sprite.sizes.x; x++)
-        //{
-        //    for (int y = 0; y < sprite.sizes.y; y++)
-        //    {
-        //        int2 pixelPosition = nextPosition + new int2(x, y);
-        //        if (sprite.collisions[x, y])
-        //        {
-        //            //TODO handle in physic
-        //            ////Throw particle in the air
-        //            //ParticleType previousType = particleGrid[pixelPosition].type;
-        //            //if (previousType != ParticleType.None && previousType != ParticleType.Player && TryFindEmptyPosition(pixelPosition, new int2(0, 1), out int2 newPosition))
-        //            //{
-        //            //    SetParticleType(newPosition, previousType);
-        //            //}
-
-        //            SetParticleType(pixelPosition, ParticleType.Player);
-        //        }
-        //    }
-        //}
-
         positions.Dispose();
     }
 
@@ -216,97 +184,17 @@ public unsafe struct Map
 
     public int2 HandlePhysics(ref PhysicBound physicBound, int2 from, int2 to, Allocator allocator = Allocator.Temp)
     {
-        //Didnt move
-        if (math.all(from == to))
-            return to;
-
-        int direction = (to.x - from.x);
-        bool goingLeft = direction == -1;
-
-        Bound directionBound;
-        if(goingLeft)
+        int2 desiredPosition = FindDesiredMovePosition(ref physicBound, from, to, allocator);
+        if (TryGoPosition(ref physicBound, from, desiredPosition))
         {
-            directionBound = physicBound.GetLeftCollisionBound(to);
-        }
-        else
-        {
-            directionBound = physicBound.GetRightCollisionBound(to);
+            return desiredPosition;
         }
 
-        int minY = directionBound.min.y;
-
-        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
-
-        int2 finalPosition = to;
-
-        bool canPush = true;
-        int2 pushDirection = new int2(0, direction);
-        NativeList < int2> pushedParticles = new NativeList<int2>(directionBound.sizes.y, allocator);
-
-        for (int i = 0; i < directionPositions.Length; i++)
-        {
-            int2 pos = directionPositions[i];
-            if (HasCollision(pos))
-            {
-                if (pos.y >= minY && pos.y <= minY + 2)
-                {
-                    //blocked from the bottom, walk ontop
-                    int2 newPosition = new int2(to.x, pos.y + 1);
-                    Bound headBound = physicBound.GetTopCollisionBound(newPosition);
-                    Bound newDirectionBound;
-                    if (goingLeft)
-                    {
-                        newDirectionBound = physicBound.GetLeftCollisionBound(newPosition);
-                    }
-                    else
-                    {
-                        newDirectionBound = physicBound.GetRightCollisionBound(newPosition);
-                    }
-
-                    if (InBound(newPosition) && !HasCollision(ref headBound, allocator)/* && InBound(newDirectionBound) && !HasCollision(ref newDirectionBound, allocator)*/)
-                    {
-                        finalPosition = newPosition;
-                        break;
-                    }
-                }
-                else
-                {
-                    //Try push, if one particle can't be pushed, block
-                    if(CanPush(pos) && IsFreePosition(pos + pushDirection))
-                    {
-                        //pushedParticles.Add(pos);
-                    }
-                    else
-                    {
-                        //Slope too high, can't move
-                        canPush = false;
-                        finalPosition = from;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if(canPush)
-        {
-            for (int i = 0; i < pushedParticles.Length; i++)
-            {
-                int2 particlePos = pushedParticles[i];
-                MoveParticle(particlePos, particlePos + pushDirection);
-            }
-        }
-
-        pushedParticles.Dispose();
-        directionPositions.Dispose();
-        return finalPosition;
+        return from;
     }
 
-    public int2 HandlePhysics2(ref PhysicBound physicBound, int2 from, int2 to, Allocator allocator = Allocator.Temp)
+    int2 FindDesiredMovePosition(ref PhysicBound physicBound, int2 from, int2 to, Allocator allocator)
     {
-        //Didnt move
-        if (math.all(from == to))
-            return to;
-
         int direction = (to.x - from.x);
         bool goingLeft = direction == -1;
 
@@ -322,7 +210,7 @@ public unsafe struct Map
 
         int minY = directionBound.min.y;
         directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
-        int2 finalPosition = to;
+        int2 desiredPosition = to;
 
         int slopeLimit = 2;
         bool canClimb = false;
@@ -340,19 +228,11 @@ public unsafe struct Map
             }
         }
 
-        if(canClimb)
+        if (canClimb)
         {
-            finalPosition.y = highestClimbY;
+            desiredPosition.y = highestClimbY;
         }
-
-        directionPositions.Dispose();
-
-        if(TryGoPosition(ref physicBound, from, finalPosition))
-        {
-            return finalPosition;
-        }
-
-        return from;
+        return desiredPosition;
     }
 
     bool TryGoPosition(ref PhysicBound physicBound, int2 from, int2 to)
@@ -361,14 +241,43 @@ public unsafe struct Map
         Bound bound = physicBound.GetCollisionBound(to);
         //Add push particles
 
-        return !HasCollision(ref bound);
+        NativeList<int2> pushedParticlePositions = new NativeList<int2>(Allocator.Temp);
+        bool isBlocked = false;
+        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+        for (int i = 0; i < positions.Length; i++)
+        {
+            int2 position = positions[i];
+            int2 pusedPosition = position + pushDirection;
+
+            if(HasCollision(positions[i]))
+            {
+                bool canPush = CanPush(positions[i]) && IsFreePosition(pusedPosition);
+                if (canPush)
+                {
+                    pushedParticlePositions.Add(positions[i]);
+                }
+                else 
+                {
+                    isBlocked = true;
+                    break;
+                }
+            }
+        }
+
+        if(!isBlocked)
+        {
+            for (int i = 0; i < pushedParticlePositions.Length; i++)
+            {
+                int2 position = pushedParticlePositions[i];
+                int2 pusedPosition = position + pushDirection;
+                MoveParticle(position, pusedPosition);
+            }
+        }
+
+        positions.Dispose();
+        pushedParticlePositions.Dispose();
+        return !isBlocked;
     }
-
-    //public HandlePhysic
-
-    //private LookForPosition
-    //try go and move particles, confirm position
-
 
     public bool HasCollision(int2 position)
     {

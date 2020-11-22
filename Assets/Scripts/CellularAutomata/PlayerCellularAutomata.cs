@@ -130,7 +130,7 @@ public class PlayerCellularAutomata : MonoBehaviour
                 nextPosition = map.ApplyGravity(ref physicBound, sprite.position);
             }
 
-            nextPosition = map.HandlePhysics2(ref physicBound, nextPosition, nextPosition + direction);
+            nextPosition = map.HandlePhysics(ref physicBound, nextPosition, nextPosition + direction);
             if (math.any(previousPos != nextPosition))
             {
                 map.RemoveSpriteAtPosition(ref sprite, ref physicBound);
