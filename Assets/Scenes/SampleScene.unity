@@ -1149,14 +1149,16 @@ MonoBehaviour:
     title:
       texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
       blending: 0
-  randomSpeed: 1
-  lightThreshold: 0.8
-  glitchThreshold: 0.5
-  glitchSettings:
-    stride:
-      x: 2
-      y: 2
-    inverted: 0
+  randomSpeed: 0.01
+  lightThreshold: 0.6
+  glitchThreshold: 0.7
+  glitchSpeed: 5
+  minStride:
+    x: 25
+    y: 2
+  maxStride:
+    x: 50
+    y: 5
   particleDestroyerPosition:
     x: 90
     y: 45

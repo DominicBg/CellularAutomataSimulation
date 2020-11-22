@@ -35,20 +35,18 @@ public class PlayerCellularAutomata : MonoBehaviour
     int jumpIndex = 0;
     bool wasGrounded;
 
-    NativeArray<int> nativeJumpArray;
 
     private void OnDestroy()
     {
-        nativeJumpArray.Dispose();
+        Debug.Log("Disposed jump array");
     }
 
     public void Init(ref PixelSprite sprite, Map map)
     {
-        nativeJumpArray = new NativeArray<int>(jumpHeight, Allocator.Persistent);
         //todo beautify this
         //physicBound = new PhysicBound(new Bound(new int2(1, 0), new int2(7, 8)));
         physicBound = new PhysicBound(collisionTexture);
-        map.SetSpriteAtPosition(sprite.position, ref sprite);
+        map.SetSpriteAtPosition(sprite.position, ref sprite, ref physicBound);
 
         input.CreateInput(KeyCode.Space);
     }
@@ -71,6 +69,7 @@ public class PlayerCellularAutomata : MonoBehaviour
         wasGrounded = isGrounded;
 
         NativeReference<int2> positionOutput = new NativeReference<int2>(Allocator.TempJob);
+        var jumpArray = new NativeArray<int>(jumpHeight, Allocator.TempJob);
         new HandlePlayerJob()
         {
             direction = direction,
@@ -78,10 +77,12 @@ public class PlayerCellularAutomata : MonoBehaviour
             map = map,
             physicBound = physicBound,
             jumpIndex = jumpIndex,
-            jumpArray = nativeJumpArray,
+            jumpArray = jumpArray,
             output = positionOutput
         }.Run();
+
         sprite.position = positionOutput.Value;
+        jumpArray.Dispose();
         positionOutput.Dispose();
     }
 
@@ -129,11 +130,11 @@ public class PlayerCellularAutomata : MonoBehaviour
                 nextPosition = map.ApplyGravity(ref physicBound, sprite.position);
             }
 
-            nextPosition = map.HandlePhysics(ref physicBound, nextPosition, nextPosition + direction);
+            nextPosition = map.HandlePhysics2(ref physicBound, nextPosition, nextPosition + direction);
             if (math.any(previousPos != nextPosition))
             {
-                map.RemoveSpriteAtPosition(ref sprite);
-                map.SetSpriteAtPosition(nextPosition, ref sprite);
+                map.RemoveSpriteAtPosition(ref sprite, ref physicBound);
+                map.SetSpriteAtPosition(nextPosition, ref sprite, ref physicBound);
             }
             output.Value = sprite.position;
         }

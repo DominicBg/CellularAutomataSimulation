@@ -10,10 +10,10 @@ public struct Bound
     public int2 min => position;
     public int2 max => position + (sizes - 1);
 
-    public int2 topLeft => new int2(position.x, position.y + sizes.y);
-    public int2 topRight => new int2(position.x + sizes.x, position.y + sizes.y);
+    public int2 topLeft => new int2(position.x, position.y + sizes.y - 1);
+    public int2 topRight => new int2(position.x + sizes.x, position.y + sizes.y - 1);
     public int2 bottomLeft => position;
-    public int2 bottomRight => new int2(position.x + sizes.x, position.y);
+    public int2 bottomRight => new int2(position.x + sizes.x - 1, position.y);
 
     public Bound(int2 position, int2 sizes)
     {

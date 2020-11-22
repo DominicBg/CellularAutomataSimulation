@@ -5,6 +5,17 @@ using UnityEngine;
 
 public struct PhysicBound
 {
+    [System.Flags]
+    public enum BoundFlag
+    {
+        Feet = 1 << 0,
+        UnderFeet = 1 << 1,
+        Top = 1 << 2,
+        Left = 1 << 3,
+        Right = 1 << 4,
+        All = 1 << 5
+    }
+
     public Bound localCollisionBound;
 
     public PhysicBound(Texture2D collisionTexture)
@@ -28,7 +39,7 @@ public struct PhysicBound
             }
         }
         Debug.Log($"min {min}, max {max}");
-        localCollisionBound = new Bound(min, max - min);
+        localCollisionBound = new Bound(min, max - min + 1);
     }
     public PhysicBound(Bound localCollisionBound)
     {
