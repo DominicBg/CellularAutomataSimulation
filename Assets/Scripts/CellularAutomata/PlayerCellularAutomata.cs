@@ -36,15 +36,9 @@ public class PlayerCellularAutomata : MonoBehaviour
     bool wasGrounded;
 
 
-    private void OnDestroy()
-    {
-        Debug.Log("Disposed jump array");
-    }
-
     public void Init(ref PixelSprite sprite, Map map)
     {
         //todo beautify this
-        //physicBound = new PhysicBound(new Bound(new int2(1, 0), new int2(7, 8)));
         physicBound = new PhysicBound(collisionTexture);
         map.SetSpriteAtPosition(sprite.position, ref sprite, ref physicBound);
 

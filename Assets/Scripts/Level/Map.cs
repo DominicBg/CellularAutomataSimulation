@@ -48,10 +48,36 @@ public unsafe struct Map
         if (!InBound(pos))
             return;
 
-        particleGrid[pos] = new Particle() { type = type };
+        particleGrid[pos] = new Particle() { type = type, velocity = 0 };
         if(setDirty)
             dirtyGrid[pos] = true;
     }
+
+    public void AddParticleVelocity(int2 pos, float2 velocity, bool setDirty = true)
+    {
+        if (!InBound(pos))
+            return;
+
+        var particle = particleGrid[pos];
+        particle.velocity += velocity;
+        particleGrid[pos] = particle;
+
+        if (setDirty)
+            dirtyGrid[pos] = true;
+    }
+    public void SetParticleVelocity(int2 pos, float2 velocity, bool setDirty = true)
+    {
+        if (!InBound(pos))
+            return;
+
+        var particle = particleGrid[pos];
+        particle.velocity = velocity;
+        particleGrid[pos] = particle;
+
+        if (setDirty)
+            dirtyGrid[pos] = true;
+    }
+
 
     public bool IsParticleDirty(int2 pos)
     {
@@ -62,18 +88,50 @@ public unsafe struct Map
     {
         return particleGrid[pos];
     }
+    
+    public int2 SlideParticle(int2 from, int2 to)
+    {
+        to = math.clamp(to, 0, GameManager.GridSizes);
+
+        int2 diff = to - from;
+        int distance = math.abs(diff.x) + math.abs(diff.y);
+
+        int2 currentPosition = from;
+        for (int i = 0; i < distance; i++)
+        {
+            diff = to - currentPosition;
+            int2 step = math.clamp(diff, -1, 1);
+
+            //Make sure we dont step in diagonals
+            if(math.all(math.abs(step) == 1))
+            {
+                if (i % 2 == 0)
+                    step.y = 0;
+                else
+                    step.x = 0;
+            }
+
+            int2 nextPosition = currentPosition + step;
+            if (HasCollision(nextPosition))
+            {
+                return currentPosition;
+            }
+            currentPosition = nextPosition;
+        }
+        return currentPosition;
+    }
 
     public void MoveParticle(int2 from, int2 to)
     {
         Particle temp = particleGrid[from];
-        particleGrid[from] = new Particle() { type = ParticleType.None };
+        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0 };
         particleGrid[to] = temp;
         dirtyGrid[to] = true;
     }
 
     public void MoveParticle(Particle particle, int2 from, int2 to)
     {
-        particleGrid[from] = new Particle() { type = ParticleType.None };
+        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0 };
         particleGrid[to] = particle;
         dirtyGrid[to] = true;
     }

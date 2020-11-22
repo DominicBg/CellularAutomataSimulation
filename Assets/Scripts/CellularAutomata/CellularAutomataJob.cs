@@ -2,17 +2,16 @@
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using static ParticleBehaviour;
 
 [BurstCompile]
 public struct CellularAutomataJob : IJob
 {
     public NativeArray<ParticleSpawner> nativeParticleSpawners;
-
     public TickBlock tickBlock;
-    //public int tick;
     public Map map;
-    //public Random random;
     public ParticleBehaviour behaviour;
+
     public void Execute()
     {
         map.ClearDirtyGrid();
@@ -28,7 +27,7 @@ public struct CellularAutomataJob : IJob
             var spawner = nativeParticleSpawners[i];
             bool canEmit = spawner.notTickBounded || (tickBlock.tick >= spawner.startTick && tickBlock.tick <= spawner.endTick);
 
-            if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn)
+            if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
             {
                 map.SetParticleType(spawner.spawnPosition, spawner.particleType);
             }
@@ -96,12 +95,29 @@ public struct CellularAutomataJob : IJob
         }
     }
 
-    bool TryStraightFalling(Particle particle, int2 pos)
+    bool TryFreeFalling(Particle particle, int2 pos)
     {
-        int2 bottom = new int2(pos.x, pos.y - 1);
-        if (map.IsFreePosition(bottom))
+        GravityBehaviour gravity = behaviour.gravity;
+        particle.velocity += gravity.accelerationPerFrame;
+
+        //int yVelo = ((int2)(particle.velocity / gravity.gridScale)).y;
+        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity / gravity.gridScale);
+        //TODO check line of collision
+        //TODO remove gravity on collision or reflect?
+
+        bool samePosition = math.all(pos == desiredPosition);
+        if(samePosition)
         {
-            map.MoveParticle(particle, pos, bottom);
+            //used to update the velocity
+            map.MoveParticle(particle, pos, desiredPosition);
+            return true;
+        }
+
+        int2 slidePosition = map.SlideParticle(pos, desiredPosition);
+
+        if (!math.all(pos == slidePosition))
+        {
+            map.MoveParticle(particle, pos, slidePosition);
             return true;
         }
         return false;
@@ -109,7 +125,7 @@ public struct CellularAutomataJob : IJob
 
     bool TryFloatyFalling(Particle particle, int2 pos)
     {
-        var floaty = behaviour.floatyBehaviour;
+        var floaty = behaviour.floaty;
         bool willFloat = tickBlock.random.NextFloat() < floaty.ratioFloat;
 
         int2 bottom = new int2(pos.x, pos.y - 1);
@@ -136,7 +152,7 @@ public struct CellularAutomataJob : IJob
         }
         else 
         {
-            return TryStraightFalling(particle, pos);
+            return TryFreeFalling(particle, pos);
         }
         return false;
     }
@@ -205,7 +221,7 @@ public struct CellularAutomataJob : IJob
 
     void UpdateWaterParticle(Particle particle, int2 pos)
     {
-        bool updateFalling = TryStraightFalling(particle, pos);
+        bool updateFalling = TryFreeFalling(particle, pos);
         if (updateFalling)
             return;
         bool updateFluid = TryUpdateFluidParticle(particle, pos);
@@ -215,7 +231,7 @@ public struct CellularAutomataJob : IJob
         int sandMudCount = SurroundedByCount(pos, (int)ParticleType.Sand | (int)ParticleType.Mud);
         int waterCount = SurroundedByCount(pos, ParticleType.Water);
         //Unique water behaviour
-        if (sandMudCount > waterCount + behaviour.waterBehaviour.diffWaterSandToDry)
+        if (sandMudCount > waterCount + behaviour.water.diffWaterSandToDry)
         {
             //Dry up                
             map.SetParticleType(pos, ParticleType.None, setDirty: false);
@@ -224,9 +240,10 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSandParticle(Particle particle, int2 pos)
     {
-        bool falling = TryStraightFalling(particle, pos);
+        bool falling = TryFreeFalling(particle, pos);
         if (falling)
             return;
+
         bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
         if (updatePiling)
             return;
@@ -257,7 +274,7 @@ public struct CellularAutomataJob : IJob
     }
     void UpdateIceParticle(Particle particle, int2 pos)
     {
-        bool falling = TryStraightFalling(particle, pos);
+        bool falling = TryFreeFalling(particle, pos);
         if (falling)
             return;
         bool updateSinking = TryUpdateSinkingParticle(particle, pos);
@@ -270,7 +287,7 @@ public struct CellularAutomataJob : IJob
 
     void UpdateMudParticle(Particle particle, int2 pos)
     {
-        bool falling = TryStraightFalling(particle, pos);
+        bool falling = TryFreeFalling(particle, pos);
         if (falling)
             return;
         bool updateSinking = TryUpdateSinkingParticle(particle, pos);
@@ -288,8 +305,8 @@ public struct CellularAutomataJob : IJob
     void UpdateTitleDisintegrationPartaicle(Particle particle, int2 pos)
     {
         //todo put in behaviour
-        bool willUpdate = tickBlock.random.NextFloat() < behaviour.titleDisentegrateBehaviour.chanceMove;
-        bool willDisapear = tickBlock.random.NextFloat() < behaviour.titleDisentegrateBehaviour.chanceDespawn;
+        bool willUpdate = tickBlock.random.NextFloat() < behaviour.titleDisentegrate.chanceMove;
+        bool willDisapear = tickBlock.random.NextFloat() < behaviour.titleDisentegrate.chanceDespawn;
 
         if (willDisapear)
         {

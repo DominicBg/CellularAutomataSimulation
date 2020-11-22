@@ -3,10 +3,19 @@
 [System.Serializable]
 public struct ParticleBehaviour
 {
-    public FloatyBehaviour floatyBehaviour;
-    public WaterBehaviour waterBehaviour;
-    public TitleDisentegrateBehaviour titleDisentegrateBehaviour;
-    
+    public GravityBehaviour gravity;
+    public FloatyBehaviour floaty;
+    public WaterBehaviour water;
+    public TitleDisentegrateBehaviour titleDisentegrate;
+
+
+    [System.Serializable]
+    public struct GravityBehaviour
+    {
+        public float2 accelerationPerFrame;
+        public float2 gridScale;
+    }
+
     [System.Serializable]
     public struct FloatyBehaviour
     {
@@ -27,4 +36,6 @@ public struct ParticleBehaviour
         public float chanceMove;
         public float chanceDespawn;
     }
+
+
 }
