@@ -16,7 +16,7 @@ MonoBehaviour:
     gravity:
       accelerationPerFrame:
         x: 0
-        y: -0.5
+        y: -0.2
       gridScale:
         x: 3
         y: 3

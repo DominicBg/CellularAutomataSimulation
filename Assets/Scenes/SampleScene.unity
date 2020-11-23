@@ -1001,8 +1001,8 @@ MonoBehaviour:
   particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   pixelSortingSettings: []
   explosiveSettings:
-    radius: 15
-    strength: 5
+    radius: 25
+    strength: 0.5
   debugBound: 0
   debugBoundFlag: 0
 --- !u!4 &726109844
@@ -1071,7 +1071,15 @@ MonoBehaviour:
       texture: {fileID: 2800000, guid: 2ddfbee23f22ffc499882eb68437184c, type: 3}
       blending: 0
     campFireFlame:
-      texture: {fileID: 2800000, guid: a8b1f2e93b5749d4a87e390a54c1c5ac, type: 3}
+      textures:
+      - {fileID: 2800000, guid: 0372aff7a3dd36c44b629ff13c5dd34f, type: 3}
+      - {fileID: 2800000, guid: 4bbd36fe593d8ea4b863f65888ccc948, type: 3}
+      - {fileID: 2800000, guid: 8d2fb18b699818e4ba523eca20627480, type: 3}
+      - {fileID: 2800000, guid: d856faca62403974ab407bd902ca71b0, type: 3}
+      tickPerTexture: 6
+      position:
+        x: 35
+        y: 16
       blending: 0
     astronaut:
       texture: {fileID: 2800000, guid: 97053fa1f2d0b924992c84b0850ee4f6, type: 3}
@@ -1079,7 +1087,7 @@ MonoBehaviour:
     fireRendering:
       position:
         x: 42
-        y: 28
+        y: 23
       colors:
       - serializedVersion: 2
         rgba: 251661311
@@ -1166,7 +1174,7 @@ MonoBehaviour:
     y: 5
   particleDestroyerPosition:
     x: 90
-    y: 45
+    y: 44
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   mainMenuLevel: {fileID: 11400000, guid: 3f07da40657218a48929a070a6011d04, type: 2}
 --- !u!1 &1122140263

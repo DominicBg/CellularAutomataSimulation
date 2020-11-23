@@ -9,7 +9,7 @@ public class MainMenuLightRender : IDisposable
     [Header("Light Textures")]
     public LayerTexture sandBackground;
     public LayerTexture campFire;
-    public LayerTexture campFireFlame;
+    public LayerTextureSheet campFireFlame;
     public LayerTexture astronaut;
     public FireRendering fireRendering;
     public ShadowRendering shadowRendering;
@@ -44,11 +44,11 @@ public class MainMenuLightRender : IDisposable
         GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref sandBackground.nativeTexture, map, tickBlock, sandBackground.blending, ParticleType.Sand);
         campFire.Render(ref pass2);
         shadowRendering.Render(ref pass2, tickBlock.tick);
-        GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref campFireFlame.nativeTexture, map, tickBlock, campFireFlame.blending, ParticleType.Fire);
 
         var pass3 = GridRenderer.CombineColors(ref pass1, ref pass2);
 
         fireRendering.Render(ref pass3, tickBlock.tick);
+        campFireFlame.Render(ref pass3, tickBlock.tick);
         astronaut.Render(ref pass3);
 
         return pass3;

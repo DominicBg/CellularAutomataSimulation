@@ -131,7 +131,7 @@ public class GridRenderer : MonoBehaviour
             for (int y = 0; y < sprite.sizes.y; y++)
             {
                 int2 texturePos = new int2(x, y) + sprite.position;
-                if(GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.collisions[x,y])
+                if(GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[x,y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
                     outputColor[index] = sprite.pixels[x, y];
