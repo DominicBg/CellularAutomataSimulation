@@ -22,4 +22,42 @@ public static class MathUtils
         uint randomCellSeed = (uint)(position.x + position.y * 100) + seed;
         return Random.CreateFromIndex(randomCellSeed);
     }
+
+    public static void CartesianToPolar(float2 pos, out float r, out float a)
+    {
+        r = math.length(pos);
+        a = math.atan2(pos.y, pos.x);
+    }
+    public static float2 PolarToCartesian(float r, float a)
+    {
+        math.sincos(a, out float sin, out float cos);
+        return new float2(r * cos, r * sin);
+    }
+
+
+    public static float2 Spherize(int2 center, int2 position, float radius)
+    {
+        float2 uv = (float2)(position - center) / radius;
+        return center + Spherize(uv) * radius;
+    }
+
+    public static float2 Spherize(float2 center, float2 position, float radius)
+    {
+        float2 uv = (position - center) / radius;
+        return center + Spherize(uv) * radius;
+    }
+
+    public static float2 Spherize(float2 uv)
+    {
+        float r2 = math.length(uv);
+        if(r2 > 1)
+        {
+            return uv;
+        }
+
+        float theta = math.atan2(uv.y, uv.x);
+        float r1 = math.asin(r2) / (math.PI / 2);
+        return new float2(r1 * math.cos(theta), r1 * math.sin(theta));
+    }
+
 }

@@ -11,7 +11,7 @@ using static RenderingUtils;
 public class GridRenderer : MonoBehaviour
 {
     public static GridRenderer Instance { get; private set; }
-    [SerializeField] ParticleRendering particleRendering;
+    public ParticleRendering particleRendering;
 
     static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
     static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");

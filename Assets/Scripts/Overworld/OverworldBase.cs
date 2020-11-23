@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class OverworldBase : ScriptableObject
 {
-    public abstract void GetBackgroundColors(out NativeArray<Color32> backgroundColors);
+    public abstract void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock);
 
     public Level[] levels;
 

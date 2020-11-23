@@ -73,9 +73,11 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             int2 pos = gridPicker.GetGridPosition(sizes);
 
             int halfSize = brushSize / 2;
-            for (int x = -halfSize; x <= halfSize; x++)
+            int extra = brushSize % 2 == 0 ? 0 : 1;
+
+            for (int x = -halfSize; x < halfSize + extra; x++)
             {
-                for (int y = -halfSize; y <= halfSize; y++)
+                for (int y = -halfSize; y < halfSize + extra; y++)
                 {
                     int2 pixelPos = new int2(pos.x + x, pos.y + y);
                     DrawPixel(sizes, pixelPos);

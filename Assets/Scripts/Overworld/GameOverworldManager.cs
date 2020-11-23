@@ -12,7 +12,7 @@ public class GameOverworldManager : MonoBehaviour, State
 
     OverworldBase m_currentOverworld;
     PixelSprite[] m_pixelSprites;
-    Map m_map;
+    TickBlock tickBlock;
 
     public void OnEnd()
     {
@@ -20,14 +20,14 @@ public class GameOverworldManager : MonoBehaviour, State
         {
             m_pixelSprites[i].Dispose();
         }
-        m_map.Dispose();
     }
 
  
 
     public void OnStart()
     {
-        m_currentOverworld = overworlds[currentOverworld];    
+        tickBlock.Init();
+        m_currentOverworld = overworlds[currentOverworld];
 
         Level[] levels = m_currentOverworld.levels;
         m_pixelSprites = new PixelSprite[levels.Length];
@@ -36,21 +36,18 @@ public class GameOverworldManager : MonoBehaviour, State
         {
             m_pixelSprites[i] = new PixelSprite(levels[i].position, levels[i].icon);
         }
-
-        m_map = new Map(GameManager.GridSizes);
-
-        m_currentOverworld.GetBackgroundColors(out NativeArray<Color32> pixels);
-
-        GridRenderer.ApplySprites(ref pixels, m_pixelSprites);  
-        GridRenderer.RenderToScreen(pixels);
     }
 
     public void OnRender()
     {
+        m_currentOverworld.GetBackgroundColors(out NativeArray<Color32> pixels, ref tickBlock);
+        GridRenderer.ApplySprites(ref pixels, m_pixelSprites);
+
+        GridRenderer.RenderToScreen(pixels);
     }
 
     public void OnUpdate()
     {
-
+        tickBlock.UpdateTick();
     }
 }
