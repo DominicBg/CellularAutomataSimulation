@@ -26,3 +26,41 @@ MonoBehaviour:
     levelDataScriptable: {fileID: 11400000, guid: f00273859e28c7c42931faa12a0b3e30, type: 2}
     connectionIndex: 00000000
   backgroundTexture: {fileID: 2800000, guid: 9e05c1b3b4abcf044bfcc679f16543b0, type: 3}
+  planetMiddle:
+    x: 50
+    y: 50
+  planetRadius: 20
+  spherizeIntensity: 1
+  rotationSpeed:
+    x: 0.02
+    y: 0.01
+  rockScaling: 0.18
+  floatingSandRadius: 25
+  minSandRatio: 0.01
+  maxSandRatio: 0.76
+  sandRatioRadiusOffset: 1.36
+  sandScaling: -0.07
+  sandRotationSpeed:
+    x: 0.01
+    y: 0.005
+  sandSpherizeIntensity: 1
+  planetSettings:
+    position:
+      x: 50
+      y: 50
+    radius: 20
+    spherizeIntensity: 1
+    rotationSpeed:
+      x: 0.02
+      y: 0.01
+    rockScaling: 0.18
+  sandSettings:
+    radius: 25
+    minSandRatio: 0.01
+    maxSandRatio: 0.76
+    sandRatioRadiusOffset: 1.36
+    scaling: -0.07
+    rotationSpeed:
+      x: 0.01
+      y: 0.005
+    spherizeIntensity: 1

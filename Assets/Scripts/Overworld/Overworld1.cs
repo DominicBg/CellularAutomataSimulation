@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,37 +11,119 @@ public class Overworld1 : OverworldBase
 {
     public Texture2D backgroundTexture;
 
-    public int2 planetMiddle = 50;
-    public int planetRadius = 10;
-    public float fishEyeIntensity;
-    public float2 rotationSpeed;
-    public float rockScaling;
-    public float2 noiseRep;
+    public PlanetSettings planetSettings;
+    public SandSettings sandSettings;
+
+    [System.Serializable]
+    public struct PlanetSettings
+    {
+        public int2 position;
+        public int radius;
+        public float spherizeIntensity;
+        public float2 rotationSpeed;
+        public float rockScaling;
+    }
+
+    [System.Serializable]
+    public struct SandSettings
+    {
+        public int radius;
+        public float minSandRatio;
+        public float maxSandRatio;
+        public float sandRatioRadiusOffset;
+        public float scaling;
+        public float2 rotationSpeed;
+        public float spherizeIntensity;
+        public float backShadow;
+
+        //test
+        public float2 periodicity;
+        public float rotSpeed;
+    }
 
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
         GridRenderer.GetBlankTexture(out backgroundColors);
 
-        var circlePositions = GridHelper.GetCircleAtPosition(planetMiddle, planetRadius, GameManager.GridSizes, Allocator.TempJob);
-        NativeArray<Color32> circleColors = new NativeArray<Color32>(circlePositions.Length, Allocator.TempJob);
-        RockRendering rockRendering = GridRenderer.Instance.particleRendering.rockRendering;
-
-        for (int i = 0; i < circlePositions.Length; i++)
+        new RenderPlanetJob()
         {
-            float2 rotation = rotationSpeed * tickBlock.tick;
+            outputColor = backgroundColors,
+            planetSettings = planetSettings,
+            sandSettings = sandSettings,
+            rockRendering = GridRenderer.Instance.particleRendering.rockRendering,
+            sandRendering = GridRenderer.Instance.particleRendering.sandRendering,
+            sizes = GameManager.GridSizes,
+            tickBlock = tickBlock
+        }.Schedule(GameManager.GridLength, 100).Complete();
+    }
+ 
+    [BurstCompile]
+    public struct RenderPlanetJob : IJobParallelFor
+    {
+        public NativeArray<Color32> outputColor;
 
-            float2 position = MathUtils.Spherize(planetMiddle, circlePositions[i], planetRadius);
-            float2 finalPos = math.lerp(circlePositions[i], position, fishEyeIntensity);
+        public PlanetSettings planetSettings;
+        public SandSettings sandSettings;
+        public int2 sizes;
 
-            float2 noisePosition = finalPos * rockScaling + rotation;
-            float noiseValue = MathUtils.unorm(noise.cnoise(noisePosition));
+        public RockRendering rockRendering;
+        public SandRendering sandRendering;
+        public TickBlock tickBlock;
 
-            circleColors[i] = rockRendering.GetColorWithNoiseValue(noiseValue);
+        public void Execute(int index)
+        {
+            int2 pos = ArrayHelper.IndexToPos(index, sizes);
+            GenerateFloatingSand(index, sizes - pos, sandSettings.backShadow);
+            GenerateMainPlanet(index, pos);
+            GenerateFloatingSand(index, pos, 1);
         }
 
-        GridRenderer.ApplyPixels(ref backgroundColors, ref circlePositions, ref circleColors);
+        void GenerateMainPlanet(int index, int2 position)
+        {
+            //Outside of the sphere
+            if (math.distancesq(position, planetSettings.position) > planetSettings.radius * planetSettings.radius)
+                return;
 
-        circlePositions.Dispose();
-        circleColors.Dispose();
+            float2 spherizePosition = MathUtils.Spherize(planetSettings.rotationSpeed, position, planetSettings.radius);
+            float2 finalPos = math.lerp(position, spherizePosition, planetSettings.spherizeIntensity);
+
+            float2 rotation = planetSettings.rotationSpeed * tickBlock.tick;
+            float2 noisePosition = finalPos * planetSettings.rockScaling + rotation;
+            float noiseValue = MathUtils.unorm(noise.cnoise(noisePosition));
+
+            outputColor[index] = rockRendering.GetColorWithNoiseValue(noiseValue);
+        }
+
+        void GenerateFloatingSand(int index, int2 position, float alpha)
+        {
+            int2 planetCenter = planetSettings.position;
+
+            //Outside of the sphere
+            if (math.distancesq(position, planetCenter) > sandSettings.radius * sandSettings.radius)
+                return;
+
+            float2 rotation = sandSettings.rotationSpeed * tickBlock.tick;
+            float distance = math.distance(position, planetCenter);
+            float ratio = distance / sandSettings.radius;
+            float threshold = math.remap(0, sandSettings.sandRatioRadiusOffset, sandSettings.minSandRatio, sandSettings.maxSandRatio, ratio);
+
+            float2 spherizePos = MathUtils.Spherize(planetCenter, position, sandSettings.radius);
+            float2 finalPosition = math.lerp(position, spherizePos, sandSettings.spherizeIntensity);
+
+            float2 noisePosition = finalPosition * sandSettings.scaling + rotation;
+            //float noiseValue = MathUtils.unorm(noise.snoise(noisePosition));
+
+            float noiseRot = sandSettings.rotSpeed * tickBlock.tick;
+            float noiseValue = MathUtils.unorm(noise.psrnoise(noisePosition, sandSettings.periodicity, noiseRot));
+            bool canShow = noiseValue < threshold;
+
+            if (!canShow)
+                return;
+
+            Color color = sandRendering.GetColor(position, ref tickBlock);
+            color.a = alpha;
+            outputColor[index] = color;
+        }
+
     }
 }
