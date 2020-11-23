@@ -4,20 +4,20 @@ using Unity.Collections;
 public static class Explosive
 {
     [System.Serializable]
-    public struct ExplosiveSettings
+    public struct Settings
     {
         public int radius;
         public float strength;
     }
 
-    public static void SetExplosive(int2 position, ref ExplosiveSettings settings, Map map)
+    public static void SetExplosive(int2 position, ref Settings settings, Map map)
     {
         new ExplosiveJob() { position = position, map = map, settings = settings }.Run();
     }
 
     public struct ExplosiveJob : IJob
     {
-        public ExplosiveSettings settings;
+        public Settings settings;
         public Map map;
         public int2 position;
 

@@ -28,8 +28,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     //TEMP
     public PixelSortingSettings[] pixelSortingSettings;
-    public Explosive.ExplosiveSettings explosiveSettings;
-    
+    public Explosive.Settings explosiveSettings;
+    public MandlebrotBackground.Settings mandlebrotSettings;
+
     [Header("Debug")]
     public bool debugBound;
     public PhysicBound.BoundFlag debugBoundFlag;
@@ -121,6 +122,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public void OnRender()
     {
         var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+
+        //new MandlebrotBackground() { outputColor = outputColor, settings = mandlebrotSettings, sizes = GameManager.GridSizes }.Schedule(100, (GameManager.GridLength).Complete();
+
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
         if(m_levelPhase == LevelPhase.gameplay)
