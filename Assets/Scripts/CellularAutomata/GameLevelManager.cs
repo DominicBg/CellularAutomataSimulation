@@ -28,8 +28,13 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     //TEMP
     public PixelSortingSettings[] pixelSortingSettings;
+    public Explosive.ExplosiveSettings explosiveSettings;
+    
+    [Header("Debug")]
     public bool debugBound;
     public PhysicBound.BoundFlag debugBoundFlag;
+
+    InputCommand inputCommand = new InputCommand();
 
     public void OnStart()
     {
@@ -37,6 +42,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         tickAtPhase = 0;
         LoadLevel(GameManager.Instance.currentLevel);
         tickBlock.Init();
+
+        inputCommand.CreateInput(KeyCode.X);
     }
 
     public void OnEnd()
@@ -102,6 +109,12 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             {
                 GameManager.Instance.SetOverworld();
             }
+        }
+
+        inputCommand.Update();
+        if (inputCommand.IsButtonDown(KeyCode.X))
+        {
+            Explosive.SetExplosive(playerSprite.position, ref explosiveSettings, map);
         }
     }
 

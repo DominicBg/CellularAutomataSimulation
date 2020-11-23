@@ -53,35 +53,17 @@ public unsafe struct Map
             dirtyGrid[pos] = true;
     }
 
-    public void AddParticleVelocity(int2 pos, float2 velocity, bool setDirty = true)
-    {
-        if (!InBound(pos))
-            return;
-
-        var particle = particleGrid[pos];
-        particle.velocity += velocity;
-        particleGrid[pos] = particle;
-
-        if (setDirty)
-            dirtyGrid[pos] = true;
-    }
-    public void SetParticleVelocity(int2 pos, float2 velocity, bool setDirty = true)
-    {
-        if (!InBound(pos))
-            return;
-
-        var particle = particleGrid[pos];
-        particle.velocity = velocity;
-        particleGrid[pos] = particle;
-
-        if (setDirty)
-            dirtyGrid[pos] = true;
-    }
-
 
     public bool IsParticleDirty(int2 pos)
     {
         return dirtyGrid[pos];
+    }
+
+    public void SetParticle(int2 pos, Particle particle, bool setDirty = true)
+    {
+        particleGrid[pos] = particle;
+        if (setDirty)
+            dirtyGrid[pos] = true;
     }
 
     public Particle GetParticle(int2 pos)
@@ -112,7 +94,7 @@ public unsafe struct Map
             }
 
             int2 nextPosition = currentPosition + step;
-            if (HasCollision(nextPosition))
+            if (!InBound(nextPosition) || HasCollision(nextPosition))
             {
                 return currentPosition;
             }
@@ -347,18 +329,10 @@ public unsafe struct Map
         switch (type)
         {
             case ParticleType.None:
+            case ParticleType.Player:
                 return false;
-
-            case ParticleType.Water:
-            case ParticleType.Sand:
-            case ParticleType.Snow:
-            case ParticleType.Mud:
-            case ParticleType.Ice:
-            case ParticleType.Rock:
-                return true;
- 
         }
-        return false;
+        return true;
     }
 
     public bool CanPush(int2 position)

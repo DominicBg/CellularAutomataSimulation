@@ -13,14 +13,21 @@ MonoBehaviour:
   m_Name: ParticleBehaviour
   m_EditorClassIdentifier: 
   particleBehaviour:
-    floatyBehaviour:
-      sinSpeed: 0.1
+    gravity:
+      accelerationPerFrame:
+        x: 0
+        y: -0.5
+      gridScale:
+        x: 3
+        y: 3
+    floaty:
+      sinSpeed: 0
       sinOffset:
-        x: 0.5
-        y: 2
-      ratioFloat: 0.6
-    waterBehaviour:
+        x: 0
+        y: 0
+      ratioFloat: 0
+    water:
       diffWaterSandToDry: 2
-    titleDisentegrateBehaviour:
-      chanceMove: 0.01
-      chanceDespawn: 0.001
+    titleDisentegrate:
+      chanceMove: 0.001
+      chanceDespawn: 0.0001

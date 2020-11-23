@@ -8,6 +8,7 @@ public struct ParticleRendering
     public SandRendering sandRendering;
     public IceRendering iceRendering;
     public RockRendering rockRendering;
+    public RubbleRendering rubbleColor;
     public FireRendering fireRendering;
     public Color mudColor;
     public Color snowColor;

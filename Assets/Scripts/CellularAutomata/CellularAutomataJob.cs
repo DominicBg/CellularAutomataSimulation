@@ -89,6 +89,9 @@ public struct CellularAutomataJob : IJob
                 break;
             case ParticleType.Rock:
                 break;
+            case ParticleType.Rubble:
+                UpdateRubbleParticle(particle, pos);
+                break;
             case ParticleType.TitleDisintegration:
                 UpdateTitleDisintegrationPartaicle(particle, pos);
                 break;
@@ -99,10 +102,7 @@ public struct CellularAutomataJob : IJob
     {
         GravityBehaviour gravity = behaviour.gravity;
         particle.velocity += gravity.accelerationPerFrame;
-
-        //int yVelo = ((int2)(particle.velocity / gravity.gridScale)).y;
         int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity / gravity.gridScale);
-        //TODO check line of collision
         //TODO remove gravity on collision or reflect?
 
         bool samePosition = math.all(pos == desiredPosition);
@@ -254,6 +254,17 @@ public struct CellularAutomataJob : IJob
             //Sand is touching water, becomes mud
             map.SetParticleType(pos, ParticleType.Mud);
         }
+    }
+
+    void UpdateRubbleParticle(Particle particle, int2 pos)
+    {
+        bool falling = TryFreeFalling(particle, pos);
+        if (falling)
+            return;
+
+        bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
+        if (updatePiling)
+            return;
     }
 
     void UpdateSnowParticle(Particle particle, int2 pos)

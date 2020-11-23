@@ -24,6 +24,8 @@ public static class ParticleRenderUtil
                 return particleRendering.iceRendering.GetColor(position, ref tickBlock);
             case ParticleType.Rock:
                 return particleRendering.rockRendering.GetColor(position, ref tickBlock);
+            case ParticleType.Rubble:
+                return particleRendering.rubbleColor.GetColor(position, ref tickBlock);
             case ParticleType.TitleDisintegration:
                 return particleRendering.titleDisintegration;
             case ParticleType.Fire:

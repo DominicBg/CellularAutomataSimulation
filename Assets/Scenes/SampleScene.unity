@@ -1000,6 +1000,11 @@ MonoBehaviour:
   player: {fileID: 291513216}
   particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   pixelSortingSettings: []
+  explosiveSettings:
+    radius: 15
+    strength: 5
+  debugBound: 0
+  debugBoundFlag: 0
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0
@@ -1452,6 +1457,9 @@ MonoBehaviour:
       crackColor: {r: 0.19508722, g: 0.20843716, b: 0.3018868, a: 1}
       noiseCrackThreshold: 0.76
       noiseScale: 0.32
+    rubbleColor:
+      rockColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+      crackColor: {r: 0.19607843, g: 0.20784314, b: 0.3019608, a: 1}
     fireRendering:
       flameColor1:
         serializedVersion: 2
