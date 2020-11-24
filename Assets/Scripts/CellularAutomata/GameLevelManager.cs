@@ -9,11 +9,13 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
     public GridRenderer gridRenderer;
     public PlayerCellularAutomata player;
+    public GridPicker gridPicker;
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
     PixelSprite playerSprite;
     PixelSprite shuttleSprite;
+    PixelSprite aimSprite;
 
     public ParticleBehaviourScriptable particleBehaviour;
 
@@ -30,6 +32,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public PixelSortingSettings[] pixelSortingSettings;
     public Explosive.Settings explosiveSettings;
     public MandlebrotBackground.Settings mandlebrotSettings;
+    public Texture2D aimTexture;
+    public WorldWeapon worldWeapon;
+    public WeaponBase equipedWeapon;
 
     [Header("Debug")]
     public bool debugBound;
@@ -61,6 +66,10 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
             playerSprite.Dispose();
             shuttleSprite.Dispose();
+
+            //TEMP
+            aimSprite.Dispose();
+            worldWeapon.Dispose();
         }
     }
 
@@ -74,6 +83,10 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
         playerSprite = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
         shuttleSprite = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
+
+        //TEMP
+        worldWeapon.Init();
+        aimSprite = new PixelSprite(0, aimTexture);
 
         player.Init(ref playerSprite, map);
     }
@@ -112,6 +125,21 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             }
         }
 
+
+        //TEMP
+        if (playerSprite.Bound.IntersectWith(worldWeapon.pixelSprite.Bound))
+        {
+            equipedWeapon = worldWeapon.GetWeapon();
+        }
+
+        if(equipedWeapon != null && Input.GetMouseButton(0))
+        {
+            int2 startPosition = playerSprite.position + 10;
+            float2 aimDirection = math.normalize(new float2(aimSprite.position - startPosition));
+            equipedWeapon.OnShoot(startPosition, aimDirection, map);
+        }
+
+
         inputCommand.Update();
         if (inputCommand.IsButtonDown(KeyCode.X))
         {
@@ -123,8 +151,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
 
-        //new MandlebrotBackground() { outputColor = outputColor, settings = mandlebrotSettings, sizes = GameManager.GridSizes }.Schedule(100, (GameManager.GridLength).Complete();
-
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
         if(m_levelPhase == LevelPhase.gameplay)
@@ -135,8 +161,14 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         for (int i = 0; i < pixelSortingSettings.Length; i++)
             GridPostProcess.ApplyPixelSorting(ref outputColor, ref pixelSortingSettings[i]);
 
+
         if (debugBound)
             DebugAllPhysicBound(ref outputColor);
+
+        aimSprite.position = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
+        GridRenderer.ApplySprite(ref outputColor, aimSprite);
+        GridRenderer.ApplySprite(ref outputColor, worldWeapon.pixelSprite);
+
 
         GridRenderer.RenderToScreen(outputColor);
     }

@@ -9,8 +9,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Overworld1", menuName = "Overworlds/Overworld 1", order = 1)]
 public class Overworld1 : OverworldBase
 {
-    public Texture2D backgroundTexture;
-
     public PlanetSettings planetSettings;
     public SandSettings sandSettings;
 
@@ -111,10 +109,10 @@ public class Overworld1 : OverworldBase
             float2 finalPosition = math.lerp(position, spherizePos, sandSettings.spherizeIntensity);
 
             float2 noisePosition = finalPosition * sandSettings.scaling + rotation;
-            //float noiseValue = MathUtils.unorm(noise.snoise(noisePosition));
+            float noiseValue = MathUtils.unorm(noise.snoise(noisePosition));
 
-            float noiseRot = sandSettings.rotSpeed * tickBlock.tick;
-            float noiseValue = MathUtils.unorm(noise.psrnoise(noisePosition, sandSettings.periodicity, noiseRot));
+            //float noiseRot = sandSettings.rotSpeed * tickBlock.tick;
+            //float noiseValue = MathUtils.unorm(noise.psrnoise(noisePosition, sandSettings.periodicity, noiseRot));
             bool canShow = noiseValue < threshold;
 
             if (!canShow)

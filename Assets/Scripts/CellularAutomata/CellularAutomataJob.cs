@@ -36,8 +36,8 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
-        //if(tick % 2 == 0)
-        //{
+        if(tickBlock.tick % 2 == 0)
+        {
             for (int x = 0; x < map.Sizes.x; x++)
             {
                 for (int y = 0; y < map.Sizes.y; y++)
@@ -46,17 +46,17 @@ public struct CellularAutomataJob : IJob
                     UpdateParticleBehaviour(pos);
                 }
             }
-        //}
-        //else
-        //{
-        //    for (int x = map.Sizes.x - 1; x >= 0; x--)
-        //    {
-        //        for (int y = map.Sizes.y - 1; y >= 0; y--)
-        //        {
-        //            UpdateParticleBehaviour(new int2(x, y));
-        //        }
-        //    }
-        //}
+        }
+        else
+        {
+            for (int x = map.Sizes.x - 1; x >= 0; x--)
+            {
+                for (int y = map.Sizes.y - 1; y >= 0; y--)
+                {
+                    UpdateParticleBehaviour(new int2(x, y));
+                }
+            }
+        }
     }
 
     void UpdateParticleBehaviour(int2 pos)

@@ -5,8 +5,6 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(GridPicker))]
 public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 {
     [Header("Editing")]
@@ -38,7 +36,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     private void OnValidate()
     {
-        gridPicker = GetComponent<GridPicker>();
+        gridPicker = FindObjectOfType<GridPicker>();
         cellularAutomata = FindObjectOfType<GameLevelManager>();
         gridRenderer = FindObjectOfType<GridRenderer>();
     }

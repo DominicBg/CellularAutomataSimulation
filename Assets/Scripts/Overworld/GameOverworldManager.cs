@@ -14,19 +14,27 @@ public class GameOverworldManager : MonoBehaviour, State
     PixelSprite[] m_pixelSprites;
     TickBlock tickBlock;
 
+    InputCommand inputCommand = new InputCommand();
+
     public void OnEnd()
     {
-        for (int i = 0; i < m_pixelSprites.Length; i++)
-        {
-            m_pixelSprites[i].Dispose();
-        }
+        Dispose();
     }
 
- 
 
     public void OnStart()
     {
         tickBlock.Init();
+        inputCommand.CreateInput(KeyCode.A);
+        inputCommand.CreateInput(KeyCode.D);
+        inputCommand.CreateInput(KeyCode.Space);
+
+        SetCurrentLevel(currentOverworld);
+    }
+
+    void SetCurrentLevel(int level)
+    {
+        currentOverworld = level;
         m_currentOverworld = overworlds[currentOverworld];
 
         Level[] levels = m_currentOverworld.levels;
@@ -49,5 +57,39 @@ public class GameOverworldManager : MonoBehaviour, State
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
+        inputCommand.Update();
+        if (inputCommand.IsButtonDown(KeyCode.A))
+        {
+            RotateLevel(-1);
+        }
+        else if(inputCommand.IsButtonDown(KeyCode.D))
+        {
+            RotateLevel(1);
+        }
+        else if(inputCommand.IsButtonDown(KeyCode.Space))
+        {
+            SelectLevel();
+        }
+    }
+
+    void SelectLevel()
+    {
+        GameManager.Instance.SetLevel();
+    }
+
+    void RotateLevel(int direction)
+    {
+        Dispose();
+        currentOverworld = (int)Mathf.Repeat(currentOverworld + direction, overworlds.Length);
+        SetCurrentLevel(currentOverworld);
+    }
+
+    void Dispose()
+    {
+        for (int i = 0; i < m_pixelSprites.Length; i++)
+        {
+            m_pixelSprites[i].Dispose();
+        }
+
     }
 }

@@ -132,7 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 24019102}
-  - component: {fileID: 24019103}
   - component: {fileID: 24019101}
   m_Layer: 0
   m_Name: GameLevelEditorManager
@@ -157,7 +156,7 @@ MonoBehaviour:
   type: 0
   brushSize: 2
   cellularAutomata: {fileID: 726109843}
-  gridPicker: {fileID: 24019103}
+  gridPicker: {fileID: 577035212}
   gridRenderer: {fileID: 1286533892}
   levelData:
     levelName: 
@@ -174,7 +173,7 @@ MonoBehaviour:
       x: 0
       y: 0
   levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
-  debugTexture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
+  debugTexture: {fileID: 0}
 --- !u!4 &24019102
 Transform:
   m_ObjectHideFlags: 0
@@ -189,19 +188,6 @@ Transform:
   m_Father: {fileID: 1372262967}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &24019103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 24019100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4328d686e08f3f74ea7f53a14c8f3a2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 577035209}
 --- !u!1 &29838630
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,6 +854,7 @@ MonoBehaviour:
   currentOverworld: 0
   overworlds:
   - {fileID: 11400000, guid: c12d4c5a31679ae48884b8ed7efa4c6d, type: 2}
+  - {fileID: 11400000, guid: 76c179573f36cbb49b3d31af04630326, type: 2}
 --- !u!1 &577035207
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,6 +867,7 @@ GameObject:
   - component: {fileID: 577035210}
   - component: {fileID: 577035209}
   - component: {fileID: 577035208}
+  - component: {fileID: 577035212}
   m_Layer: 5
   m_Name: GameCanvas
   m_TagString: Untagged
@@ -967,6 +955,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &577035212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 577035207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4328d686e08f3f74ea7f53a14c8f3a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 577035209}
 --- !u!1 &726109842
 GameObject:
   m_ObjectHideFlags: 0
@@ -998,11 +999,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridRenderer: {fileID: 1286533892}
   player: {fileID: 291513216}
+  gridPicker: {fileID: 577035212}
   particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
   pixelSortingSettings: []
   explosiveSettings:
     radius: 25
     strength: 0.5
+  mandlebrotSettings:
+    zoom: 0
+    center:
+      x: 0
+      y: 0
+    maxIteration: 0
+    color1: {r: 0, g: 0, b: 0, a: 0}
+    color2: {r: 0, g: 0, b: 0, a: 0}
+    color3: {r: 0, g: 0, b: 0, a: 0}
+    color4: {r: 0, g: 0, b: 0, a: 0}
+  aimTexture: {fileID: 2800000, guid: 5a67219fa44cc7a4c8eaba58db4f912c, type: 3}
   debugBound: 0
   debugBoundFlag: 0
 --- !u!4 &726109844
