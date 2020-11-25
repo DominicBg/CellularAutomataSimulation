@@ -1016,6 +1016,7 @@ MonoBehaviour:
     color3: {r: 0, g: 0, b: 0, a: 0}
     color4: {r: 0, g: 0, b: 0, a: 0}
   aimTexture: {fileID: 2800000, guid: 5a67219fa44cc7a4c8eaba58db4f912c, type: 3}
+  worldWeapon: {fileID: 11400000, guid: 47a38771e32f8424e957f9f529b4c3e3, type: 2}
   debugBound: 0
   debugBoundFlag: 0
 --- !u!4 &726109844

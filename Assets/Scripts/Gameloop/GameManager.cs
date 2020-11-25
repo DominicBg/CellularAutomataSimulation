@@ -9,8 +9,20 @@ using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// The resolution of the game
+    /// </summary>
     public static readonly int2 GridSizes = new int2(100, 100);
+
+    /// <summary>
+    /// Correspond to the GridSizes.x * GridSizes.y
+    /// </summary>
     public static readonly int GridLength = GridSizes.x * GridSizes.y;
+
+    /// <summary>
+    /// Correspond to the float size of one grid cell
+    /// </summary>
+    public static readonly float2 GridScale = 3;
 
     public static GameManager Instance;
 

@@ -8,20 +8,14 @@ using UnityEngine;
 
 public class PlayerCellularAutomata : MonoBehaviour
 {
-
     public PhysicBound physicBound;
     public Texture2D collisionTexture;
 
-    InputCommand input = new InputCommand();
+    float2 position;
+    public int2 SpritePosition => (int2)(position / GameManager.GridScale);
 
-    //int[] jumpHeight = {
-    //    1, 1, 1,
-    //    1, 0, 1, 0, 1, 0,
-    //    1, 0, 0, 1, 0, 0,
-    //    -1, 0, 0, -1, 0, 0,
-    //    -1, 0, -1, 0, -1, 0,
-    //    -1, -1, -1
-    //    };
+
+    InputCommand input = new InputCommand();
 
     int[] jumpHeight = {
         1, 1,
@@ -40,7 +34,7 @@ public class PlayerCellularAutomata : MonoBehaviour
     {
         //todo beautify this
         physicBound = new PhysicBound(collisionTexture);
-        map.SetSpriteAtPosition(sprite.position, ref sprite, ref physicBound);
+        map.SetSpriteAtPosition(sprite.position, ref physicBound);
 
         input.CreateInput(KeyCode.Space);
     }
@@ -127,8 +121,8 @@ public class PlayerCellularAutomata : MonoBehaviour
             nextPosition = map.HandlePhysics(ref physicBound, nextPosition, nextPosition + direction);
             if (math.any(previousPos != nextPosition))
             {
-                map.RemoveSpriteAtPosition(ref sprite, ref physicBound);
-                map.SetSpriteAtPosition(nextPosition, ref sprite, ref physicBound);
+                map.RemoveSpriteAtPosition(sprite.position, ref physicBound);
+                map.SetSpriteAtPositionOld(nextPosition, ref sprite, ref physicBound);
             }
             output.Value = sprite.position;
         }

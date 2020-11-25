@@ -136,9 +136,9 @@ public unsafe struct Map
         return particleGrid[pos].type;
     }
 
-    public void RemoveSpriteAtPosition(ref PixelSprite sprite, ref PhysicBound physicBound)
+    public void RemoveSpriteAtPosition(int2 position, ref PhysicBound physicBound)
     {
-        Bound boundPosition = physicBound.GetCollisionBound(sprite.position);
+        Bound boundPosition = physicBound.GetCollisionBound(position);
         boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
         for (int i = 0; i < positions.Length; i++)
         {
@@ -147,7 +147,7 @@ public unsafe struct Map
         positions.Dispose();
     }
 
-    public void SetSpriteAtPosition(int2 nextPosition, ref PixelSprite sprite, ref PhysicBound physicBound)
+    public void SetSpriteAtPositionOld(int2 nextPosition, ref PixelSprite sprite, ref PhysicBound physicBound)
     {
         Bound boundPosition = physicBound.GetCollisionBound(nextPosition);
 
@@ -159,6 +159,19 @@ public unsafe struct Map
         }
         positions.Dispose();
     }
+
+
+    public void SetSpriteAtPosition(int2 nextPosition, ref PhysicBound physicBound)
+    {
+        Bound boundPosition = physicBound.GetCollisionBound(nextPosition);
+        boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+        for (int i = 0; i < positions.Length; i++)
+        {
+            SetParticleType(positions[i], ParticleType.Player);
+        }
+        positions.Dispose();
+    }
+
 
     public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition)
     {

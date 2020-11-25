@@ -17,9 +17,6 @@ MonoBehaviour:
       accelerationPerFrame:
         x: 0
         y: -0.2
-      gridScale:
-        x: 3
-        y: 3
     floaty:
       sinSpeed: 0
       sinOffset:

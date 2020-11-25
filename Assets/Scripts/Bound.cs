@@ -14,6 +14,8 @@ public struct Bound
     public int2 topRight => new int2(position.x + sizes.x, position.y + sizes.y - 1);
     public int2 bottomLeft => position;
     public int2 bottomRight => new int2(position.x + sizes.x - 1, position.y);
+    public int2 center => new int2(position.x + sizes.x / 2, position.y + sizes.y / 2);
+
 
     public Bound(int2 position, int2 sizes)
     {

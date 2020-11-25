@@ -27,7 +27,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     LevelPhase m_levelPhase;
     int tickAtPhase;
 
-
     //TEMP
     public PixelSortingSettings[] pixelSortingSettings;
     public Explosive.Settings explosiveSettings;
@@ -112,7 +111,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         if (m_levelPhase == LevelPhase.gameplay && PlayerFinishedLevel())
         {
             Debug.Log("BRAVO");
-            map.RemoveSpriteAtPosition(ref playerSprite, ref player.physicBound);
+            map.RemoveSpriteAtPosition(playerSprite.position, ref player.physicBound);
             m_levelPhase = LevelPhase.ending;
             tickAtPhase = 0;
         }
@@ -125,7 +124,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             }
         }
 
-
         //TEMP
         if (playerSprite.Bound.IntersectWith(worldWeapon.pixelSprite.Bound))
         {
@@ -134,7 +132,10 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
         if(equipedWeapon != null && Input.GetMouseButton(0))
         {
-            int2 startPosition = playerSprite.position + 10;
+            //todo add middle position in bound
+            //use map.TryFindEmptyPosition to spawn the particle around the player
+
+            int2 startPosition = playerSprite.position + new int2(9, 3);
             float2 aimDirection = math.normalize(new float2(aimSprite.position - startPosition));
             equipedWeapon.OnShoot(startPosition, aimDirection, map);
         }

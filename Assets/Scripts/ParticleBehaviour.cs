@@ -13,7 +13,6 @@ public struct ParticleBehaviour
     public struct GravityBehaviour
     {
         public float2 accelerationPerFrame;
-        public float2 gridScale;
     }
 
     [System.Serializable]

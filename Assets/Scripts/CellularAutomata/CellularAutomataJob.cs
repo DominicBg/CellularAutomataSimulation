@@ -102,7 +102,7 @@ public struct CellularAutomataJob : IJob
     {
         GravityBehaviour gravity = behaviour.gravity;
         particle.velocity += gravity.accelerationPerFrame;
-        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity / gravity.gridScale);
+        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity / GameManager.GridScale);
         //TODO remove gravity on collision or reflect?
 
         bool samePosition = math.all(pos == desiredPosition);
