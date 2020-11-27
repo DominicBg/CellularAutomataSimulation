@@ -35,6 +35,6 @@ public struct LayerTextureSheet : IRenderableAnimated, IDisposable
         int i = (tick / tickPerTexture) % sprites.Length;
         sprites[i].position = position;
 
-        GridRenderer.ApplySprite(ref colorArray, sprites[i]);
+        GridRenderer.ApplySprite(ref colorArray, sprites[i], sprites[i].position);
     }
 }

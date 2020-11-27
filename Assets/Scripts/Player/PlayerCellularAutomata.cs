@@ -6,13 +6,14 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerCellularAutomata : MonoBehaviour
+public class PlayerCellularAutomata : MonoBehaviour, IRenderableAnimated
 {
     public PhysicBound physicBound;
     public Texture2D collisionTexture;
 
-    float2 position;
-    public int2 SpritePosition => (int2)(position / GameManager.GridScale);
+    public int2 position;
+    //float2 position;
+    //public int2 SpritePosition => (int2)(position / GameManager.GridScale);
 
 
     InputCommand input = new InputCommand();
@@ -30,22 +31,22 @@ public class PlayerCellularAutomata : MonoBehaviour
     bool wasGrounded;
 
 
-    public void Init(ref PixelSprite sprite, Map map)
+    public void Init(int2 startPosition, Map map)
     {
         //todo beautify this
         physicBound = new PhysicBound(collisionTexture);
-        map.SetSpriteAtPosition(sprite.position, ref physicBound);
+        map.SetSpriteAtPosition(startPosition, ref physicBound);
 
         input.CreateInput(KeyCode.Space);
     }
 
-    public void OnUpdate(ref PixelSprite sprite, Map map)
+    public void OnUpdate(Map map)
     {
         input.Update();
 
         int2 direction = input.direction;
 
-        bool isGrounded = IsGrounded(map, sprite.position);
+        bool isGrounded = IsGrounded(map, position);
         if (input.IsButtonDown(KeyCode.Space) && (wasGrounded || isGrounded))
         {
             jumpIndex = 0;
@@ -56,22 +57,28 @@ public class PlayerCellularAutomata : MonoBehaviour
         }
         wasGrounded = isGrounded;
 
-        NativeReference<int2> positionOutput = new NativeReference<int2>(Allocator.TempJob);
+        NativeReference<int2> positionRef = new NativeReference<int2>(Allocator.TempJob);
+        positionRef.Value = position;
+
         var jumpArray = new NativeArray<int>(jumpHeight, Allocator.TempJob);
         new HandlePlayerJob()
         {
             direction = direction,
-            sprite = sprite,
             map = map,
             physicBound = physicBound,
             jumpIndex = jumpIndex,
             jumpArray = jumpArray,
-            output = positionOutput
+            positionRef = positionRef
         }.Run();
 
-        sprite.position = positionOutput.Value;
+        position = positionRef.Value;
         jumpArray.Dispose();
-        positionOutput.Dispose();
+        positionRef.Dispose();
+    }
+
+    public void OnEnd(Map map)
+    {
+        map.RemoveSpriteAtPosition(position, ref physicBound);
     }
 
     public bool IsGrounded(Map map, int2 position)
@@ -84,47 +91,50 @@ public class PlayerCellularAutomata : MonoBehaviour
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
 
+    public void Render(ref NativeArray<Color32> colorArray, int tick)
+    {
+        GridRenderer.ApplySprite(ref colorArray, SpriteRegistry.GetSprite(SpriteEnum.astronaut), position);
+    }
 
     [BurstCompile]
     public struct HandlePlayerJob : IJob
     {
-        public PixelSprite sprite;
         public Map map;
         public PhysicBound physicBound;
         public int2 direction;
         public int jumpIndex;
         public NativeArray<int> jumpArray;
 
-        public NativeReference<int2> output;
+        public NativeReference<int2> positionRef;
         public void Execute()
         {
-            int2 previousPos = sprite.position;
-            int2 nextPosition = previousPos;
+            int2 position = positionRef.Value;
+            int2 nextPosition = position;
 
             if(jumpIndex < jumpArray.Length)
             {
                 int jumpDirection = jumpArray[jumpIndex];
                 if (jumpDirection == 1)
                 {
-                    nextPosition = map.Jump(ref physicBound, sprite.position);
+                    nextPosition = map.Jump(ref physicBound, position);
                 }
                 else if(jumpDirection == -1)
                 {
-                    nextPosition = map.ApplyGravity(ref physicBound, sprite.position);
+                    nextPosition = map.ApplyGravity(ref physicBound, position);
                 }
             }
             else
             {
-                nextPosition = map.ApplyGravity(ref physicBound, sprite.position);
+                nextPosition = map.ApplyGravity(ref physicBound, position);
             }
 
             nextPosition = map.HandlePhysics(ref physicBound, nextPosition, nextPosition + direction);
-            if (math.any(previousPos != nextPosition))
+            if (math.any(position != nextPosition))
             {
-                map.RemoveSpriteAtPosition(sprite.position, ref physicBound);
-                map.SetSpriteAtPositionOld(nextPosition, ref sprite, ref physicBound);
+                map.RemoveSpriteAtPosition(position, ref physicBound);
+                map.SetPlayerAtPosition(nextPosition, ref physicBound);
             }
-            output.Value = sprite.position;
+            positionRef.Value = nextPosition;
         }
     }
 }

@@ -13,10 +13,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
 
-    PixelSprite playerSprite;
-    PixelSprite shuttleSprite;
-    PixelSprite aimSprite;
-
     public ParticleBehaviourScriptable particleBehaviour;
 
     public Map map;
@@ -28,10 +24,11 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     int tickAtPhase;
 
     //TEMP
+    public int2 shuttlePosition;
+
     public PixelSortingSettings[] pixelSortingSettings;
     public Explosive.Settings explosiveSettings;
     public MandlebrotBackground.Settings mandlebrotSettings;
-    public Texture2D aimTexture;
     public WorldWeapon worldWeapon;
     public WeaponBase equipedWeapon;
 
@@ -63,11 +60,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             nativeParticleSpawners.Dispose();
             map.Dispose();
 
-            playerSprite.Dispose();
-            shuttleSprite.Dispose();
-
-            //TEMP
-            aimSprite.Dispose();
+            //temp
             worldWeapon.Dispose();
         }
     }
@@ -80,14 +73,11 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         map = new Map(levelData.grid, levelData.sizes);
         nativeParticleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
 
-        playerSprite = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
-        shuttleSprite = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
+        player.Init(levelData.playerPosition, map);
+        shuttlePosition = levelData.shuttlePosition;
 
         //TEMP
         worldWeapon.Init();
-        aimSprite = new PixelSprite(0, aimTexture);
-
-        player.Init(ref playerSprite, map);
     }
 
     public void OnUpdate()
@@ -97,7 +87,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
         if (m_levelPhase == LevelPhase.gameplay)
         {
-            player.OnUpdate(ref playerSprite, map);
+            player.OnUpdate(map);
         }
 
         new CellularAutomataJob()
@@ -111,32 +101,33 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         if (m_levelPhase == LevelPhase.gameplay && PlayerFinishedLevel())
         {
             Debug.Log("BRAVO");
-            map.RemoveSpriteAtPosition(playerSprite.position, ref player.physicBound);
+            //map.RemoveSpriteAtPosition(playerSprite.position, ref player.physicBound);
             m_levelPhase = LevelPhase.ending;
             tickAtPhase = 0;
         }
         else if (m_levelPhase == LevelPhase.ending)
         {
-            shuttleSprite.position += new int2(0, 1);
+            shuttlePosition += new int2(0, 1);
             if(tickAtPhase > 60)
             {
                 GameManager.Instance.SetOverworld();
             }
         }
 
-        //TEMP
-        if (playerSprite.Bound.IntersectWith(worldWeapon.pixelSprite.Bound))
-        {
-            equipedWeapon = worldWeapon.GetWeapon();
-        }
+        ////TEMP
+        //if (playerSprite.Bound.IntersectWith(worldWeapon.pixelSprite.Bound))
+        //{
+        //    equipedWeapon = worldWeapon.GetWeapon();
+        //}
 
         if(equipedWeapon != null && Input.GetMouseButton(0))
         {
             //todo add middle position in bound
             //use map.TryFindEmptyPosition to spawn the particle around the player
 
-            int2 startPosition = playerSprite.position + new int2(9, 3);
-            float2 aimDirection = math.normalize(new float2(aimSprite.position - startPosition));
+            int2 aimPosition = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
+            int2 startPosition = player.position + new int2(9, 3);
+            float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
             equipedWeapon.OnShoot(startPosition, aimDirection, map);
         }
 
@@ -144,7 +135,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         inputCommand.Update();
         if (inputCommand.IsButtonDown(KeyCode.X))
         {
-            Explosive.SetExplosive(playerSprite.position, ref explosiveSettings, map);
+            Explosive.SetExplosive(player.position, ref explosiveSettings, map);
         }
     }
 
@@ -155,9 +146,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
         if(m_levelPhase == LevelPhase.gameplay)
-            GridRenderer.ApplySprite(ref outputColor, playerSprite);
+            GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.astronaut), player.position);
 
-        GridRenderer.ApplySprite(ref outputColor, shuttleSprite);
+        GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.shuttle), shuttlePosition);
 
         for (int i = 0; i < pixelSortingSettings.Length; i++)
             GridPostProcess.ApplyPixelSorting(ref outputColor, ref pixelSortingSettings[i]);
@@ -166,9 +157,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         if (debugBound)
             DebugAllPhysicBound(ref outputColor);
 
-        aimSprite.position = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
-        GridRenderer.ApplySprite(ref outputColor, aimSprite);
-        GridRenderer.ApplySprite(ref outputColor, worldWeapon.pixelSprite);
+        int2 aimPosition = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
+        GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.aimPosition), aimPosition);
+        GridRenderer.ApplySprite(ref outputColor, worldWeapon.pixelSprite, worldWeapon.worldPosition);
 
 
         GridRenderer.RenderToScreen(outputColor);
@@ -177,7 +168,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     void DebugAllPhysicBound(ref NativeArray<Color32> outputColor)
     {
         PhysicBound physicbound = player.physicBound;
-        int2 position = playerSprite.position;
+        int2 position = player.position;
 
         if((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
             DebugPhysicBound(ref outputColor, physicbound.GetCollisionBound(position), Color.magenta);
@@ -211,6 +202,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     bool PlayerFinishedLevel()
     {
-        return playerSprite.Bound.IntersectWith(shuttleSprite.Bound);
+        return false; // playerSprite.Bound.IntersectWith(shuttleSprite.Bound);
     }
 }

@@ -5,16 +5,14 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-
-public struct PixelSprite : IDisposable
+public struct NativeSprite : IDisposable
 {
     public NativeGrid<Color32> pixels;
     public int2 sizes;
 
-    //TO REMOVE
-    public int2 position;
+    public Bound GetBound(int2 position) => new Bound(position, sizes);
 
-    public PixelSprite(int2 position, Texture2D baseTexture)
+    public NativeSprite(Texture2D baseTexture)
     {
         Color32[] colors = baseTexture.GetPixels32(0);
 
@@ -28,7 +26,6 @@ public struct PixelSprite : IDisposable
                 pixels[x, y] = colors[y * sizes.x + x];
             }
         }
-        this.position = position;
     }
 
     public void Dispose()

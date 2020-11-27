@@ -118,20 +118,36 @@ public class GridRenderer : MonoBehaviour
         {
             for (int i = 0; i < pixelSprites.Length; i++)
             {
-                ApplySprite(ref outputColor, pixelSprites[i]);
+                ApplySprite(ref outputColor, pixelSprites[i], pixelSprites[i].position);
             }
         }
     }
 
     //This is going to be cancer to burst lol
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, PixelSprite sprite)
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, PixelSprite sprite, int2 position)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
-                int2 texturePos = new int2(x, y) + sprite.position;
+                int2 texturePos = new int2(x, y) + position;
                 if(GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[x,y].a != 0)
+                {
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
+                    outputColor[index] = sprite.pixels[x, y];
+                }
+            }
+        }
+    }
+
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, NativeSprite sprite, int2 position)
+    {
+        for (int x = 0; x < sprite.sizes.x; x++)
+        {
+            for (int y = 0; y < sprite.sizes.y; y++)
+            {
+                int2 texturePos = new int2(x, y) + position;
+                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[x, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
                     outputColor[index] = sprite.pixels[x, y];

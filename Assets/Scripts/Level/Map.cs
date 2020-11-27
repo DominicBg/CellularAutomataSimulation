@@ -161,6 +161,20 @@ public unsafe struct Map
     }
 
 
+
+    public void SetPlayerAtPosition(int2 nextPosition, ref PhysicBound physicBound)
+    {
+        Bound boundPosition = physicBound.GetCollisionBound(nextPosition);
+        boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+        for (int i = 0; i < positions.Length; i++)
+        {
+            SetParticleType(positions[i], ParticleType.Player);
+        }
+        positions.Dispose();
+    }
+
+
+
     public void SetSpriteAtPosition(int2 nextPosition, ref PhysicBound physicBound)
     {
         Bound boundPosition = physicBound.GetCollisionBound(nextPosition);

@@ -23,7 +23,6 @@ public class PhysicObject : MonoBehaviour
         }
     }
 
-
     public void HandlePhysic(Map map, float deltaTime)
     {
         NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
