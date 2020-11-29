@@ -25,7 +25,7 @@ public abstract class OverworldBase : ScriptableObject
     {
         public int2 position;
         public Texture2D icon;
-        public LevelDataScriptable levelDataScriptable;
+        public LevelContainer levelContainer;
         public int[] connectionIndex;
     }
 }

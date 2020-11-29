@@ -13,16 +13,14 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public int brushSize = 2;
 
     [Header("Managers")]
-    public GameLevelManager cellularAutomata;
+    public GameLevelManager gameLevelManager;
     public GridPicker gridPicker;
     public GridRenderer gridRenderer;
 
     [Header("LevelData")]
-    public LevelData levelData;
+    public ParticleType[,] grid;
 
-    private PixelSprite[] m_sprites;
-
-    public LevelDataScriptable levelDataScriptable;
+    public LevelContainer currentLevelContainer;
     public Texture2D debugTexture;
 
     InputCommand input = new InputCommand();
@@ -37,16 +35,26 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     private void OnValidate()
     {
         gridPicker = FindObjectOfType<GridPicker>();
-        cellularAutomata = FindObjectOfType<GameLevelManager>();
+        gameLevelManager = FindObjectOfType<GameLevelManager>();
         gridRenderer = FindObjectOfType<GridRenderer>();
     }
 
     public void OnStart()
     {
-        GameManager.Instance.currentLevel = levelDataScriptable;
-        levelData = levelDataScriptable.LoadLevel();
+        GameManager.Instance.currentLevelContainer = currentLevelContainer;
         tickBlock.Init();
         input.CreateInput(KeyCode.Z);
+        Load();
+    }
+
+    public void Load()
+    {
+        grid = currentLevelContainer.LoadGrid();
+
+    }
+    public void Save()
+    {
+        currentLevelContainer.SaveGrid(grid);
     }
 
     public void OnUpdate()
@@ -88,7 +96,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             for (int i = changes.Count - 1; i >= 0; i--)
             {
                 ParticleChange change = changes[i];
-                levelData.grid[change.position.x, change.position.y] = change.previousType;
+                grid[change.position.x, change.position.y] = change.previousType;
             }
         }
     }
@@ -100,7 +108,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             ParticleChange particleChange = new ParticleChange()
             {
                 position = pixelPos,
-                previousType = levelData.grid[pixelPos.x, pixelPos.y],
+                previousType = grid[pixelPos.x, pixelPos.y],
             };
 
             if(!dirtyPixels.Contains(pixelPos))
@@ -108,7 +116,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 dirtyPixels.Add(pixelPos);
                 currentList.Add(particleChange);
             }
-            levelData.grid[pixelPos.x, pixelPos.y] = type;
+            grid[pixelPos.x, pixelPos.y] = type;
         }
     }
 
@@ -116,53 +124,39 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     {
         tickBlock.UpdateTick();
 
-        GetPixelSprite(ref m_sprites);
-        GetMap(out Map map);
-
+        Map map = new Map(grid, GameManager.GridSizes);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColor);
-        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
-        GridRenderer.ApplySprites(ref outputColor, m_sprites);
 
         if (debugTexture != null)
             GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
 
-        for (int i = 0; i < levelData.particleSpawners.Length; i++)
+
+        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
+
+        //Color spawner
+        var particleSpawner = currentLevelContainer.particleSpawnerElements;
+        for (int i = 0; i < particleSpawner.Length; i++)
         {
-            var spawner = levelData.particleSpawners[i];
-            int index = ArrayHelper.PosToIndex(spawner.spawnPosition, levelData.sizes);
+            var spawner = particleSpawner[i].particleSpawner;
+            int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
             outputColor[index] = Color.white;
         }
 
-        GridRenderer.RenderToScreen(outputColor);
-
-        for (int i = 0; i < m_sprites.Length; i++)
+        var levelElements = currentLevelContainer.levelElements;
+        for (int i = 0; i < levelElements.Length; i++)
         {
-            m_sprites[i].Dispose();
+            levelElements[i].OnRender(ref outputColor, ref tickBlock);
         }
+
+        GridRenderer.RenderToScreen(outputColor);
         map.Dispose();
     }
 
-    void GetPixelSprite(ref PixelSprite[] pixelSprite)
-    {
-        if (pixelSprite == null || pixelSprite.Length != 2)
-            pixelSprite = new PixelSprite[2];
-
-        pixelSprite[0] = new PixelSprite(levelData.playerPosition, levelData.playerTexture);
-        pixelSprite[1] = new PixelSprite(levelData.shuttlePosition, levelData.shuttleTexture);
-    }
-
-    void GetMap(out Map map)
-    {
-        map = new Map(levelData.grid, GameManager.GridSizes);
-    }
 
     public void ResetLevelData()
     {
         int2 sizes = GameManager.GridSizes;
-        levelData.playerPosition = 0;
-        levelData.particleSpawners = new ParticleSpawner[0];
-        levelData.grid = new ParticleType[sizes.x, sizes.y];
-        levelData.sizes = sizes;
+        grid = new ParticleType[sizes.x, sizes.y];
     }
 
     public void OnEnd()

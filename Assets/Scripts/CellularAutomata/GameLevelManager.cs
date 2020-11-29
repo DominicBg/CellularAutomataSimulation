@@ -8,7 +8,6 @@ using UnityEngine;
 public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
     public GridRenderer gridRenderer;
-    //public PlayerCellularAutomata player;
     public GridPicker gridPicker;
 
     NativeArray<ParticleSpawner> nativeParticleSpawners;
@@ -17,35 +16,12 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     public Map map;
     TickBlock tickBlock;
-    LevelData levelData;
 
-    //public enum LevelPhase { into, gameplay, ending}
-    //LevelPhase m_levelPhase;
-    //int tickAtPhase;
-    public LevelContainer currentLevel;
-    //LevelBase currentLevel;
-
-    public PixelSortingSettings[] pixelSortingSettings;
-    public Explosive.Settings explosiveSettings;
-    public MandlebrotBackground.Settings mandlebrotSettings;
-
-   // public WorldWeapon worldWeapon;
-   // public WeaponBase equipedWeapon;
-
-    //[Header("Debug")]
-    //public bool debugBound;
-    //public PhysicBound.BoundFlag debugBoundFlag;
-
-    //InputCommand inputCommand = new InputCommand();
+    public LevelContainer currentLevelContainer;
 
     public void OnStart()
     {
-        //m_levelPhase = LevelPhase.gameplay;
-        //tickAtPhase = 0;
-        LoadLevel(GameManager.Instance.currentLevel);
-       // tickBlock.Init();
-
-        //inputCommand.CreateInput(KeyCode.X);
+        LoadLevel(GameManager.Instance.currentLevelContainer);
     }
 
     public void OnEnd()
@@ -59,32 +35,20 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         {
             nativeParticleSpawners.Dispose();
             map.Dispose();
-
-            //temp
-           // worldWeapon.Dispose();
         }
     }
 
-    public void LoadLevel(LevelDataScriptable levelDataScriptable)
+    public void LoadLevel(LevelContainer levelContainer)
     {
         Dispose();
 
-        levelData = levelDataScriptable.LoadLevel();
-        map = new Map(levelData.grid, levelData.sizes);
-        nativeParticleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
+        map = levelContainer.LoadMap();
+        nativeParticleSpawners = levelContainer.GetParticleSpawner();
 
-        //player.Init(levelData.playerPosition, map);
-        //shuttlePosition = levelData.shuttlePosition;
-
-        //currentLevel = new LevelTemplate();
-        //currentLevel.Init(this, map, player);
-
-        currentLevel.Init(this, map);
+        currentLevelContainer = levelContainer;
 
         tickBlock.Init();
-
-        //TEMP
-        //worldWeapon.Init();
+        currentLevelContainer.Init(this, map);
     }
 
     public void UpdateSimulation()
@@ -101,43 +65,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
-        currentLevel.OnUpdate(ref tickBlock);
-        //tickAtPhase++;
-
-
-        //new CellularAutomataJob()
-        //{
-        //    behaviour = particleBehaviour.particleBehaviour,
-        //    map = map,
-        //    nativeParticleSpawners = nativeParticleSpawners,
-        //    tickBlock = tickBlock
-        //}.Run();
-        //if (m_levelPhase == LevelPhase.gameplay)
-        //{
-        //    player.OnUpdate(map);
-        //}
-
-        //if (m_levelPhase == LevelPhase.gameplay && PlayerFinishedLevel())
-        //{
-        //    Debug.Log("BRAVO");
-        //    //map.RemoveSpriteAtPosition(playerSprite.position, ref player.physicBound);
-        //    m_levelPhase = LevelPhase.ending;
-        //    tickAtPhase = 0;
-        //}
-        //else if (m_levelPhase == LevelPhase.ending)
-        //{
-        //    shuttlePosition += new int2(0, 1);
-        //    if(tickAtPhase > 60)
-        //    {
-        //        GameManager.Instance.SetOverworld();
-        //    }
-        //}
-
-        ////TEMP
-        //if (playerSprite.Bound.IntersectWith(worldWeapon.pixelSprite.Bound))
-        //{
-        //    equipedWeapon = worldWeapon.GetWeapon();
-        //}
+        currentLevelContainer.OnUpdate(ref tickBlock);
+       
 
         //if(equipedWeapon != null && Input.GetMouseButton(0))
         //{
@@ -149,13 +78,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         //    float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
         //    equipedWeapon.OnShoot(startPosition, aimDirection, map);
         //}
-
-
-        //inputCommand.Update();
-        //if (inputCommand.IsButtonDown(KeyCode.X))
-        //{
-        //    Explosive.SetExplosive(player.position, ref explosiveSettings, map);
-        //}
     }
 
     public void OnRender()
@@ -163,7 +85,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
 
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
-        currentLevel.OnRender(ref outputColor, ref tickBlock);
+        currentLevelContainer.OnRender(ref outputColor, ref tickBlock);
         
         GridRenderer.RenderToScreen(outputColor);
 
@@ -185,44 +107,4 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
 
     }
-
-    //void DebugAllPhysicBound(ref NativeArray<Color32> outputColor)
-    //{
-    //    PhysicBound physicbound = player.physicBound;
-    //    int2 position = player.position;
-
-    //    if((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
-    //        DebugPhysicBound(ref outputColor, physicbound.GetCollisionBound(position), Color.magenta);
-
-    //    if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
-    //        DebugPhysicBound(ref outputColor, physicbound.GetFeetCollisionBound(position), Color.yellow);
-
-    //    if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
-    //        DebugPhysicBound(ref outputColor, physicbound.GetLeftCollisionBound(position), Color.red);
-
-    //    if ((debugBoundFlag & PhysicBound.BoundFlag.Right) > 0)
-    //        DebugPhysicBound(ref outputColor, physicbound.GetRightCollisionBound(position), Color.blue);
-
-    //    if ((debugBoundFlag & PhysicBound.BoundFlag.Top) > 0)
-    //        DebugPhysicBound(ref outputColor, physicbound.GetTopCollisionBound(position), Color.cyan);
-    //}
-
-    //void DebugPhysicBound(ref NativeArray<Color32> outputColor, Bound bound, Color color)
-    //{
-    //    bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
-    //    NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
-    //    for (int i = 0; i < positions.Length; i++)
-    //    {
-    //        colors[i] = color;
-    //    }
-    //    GridRenderer.ApplyPixels(ref outputColor, ref positions, ref colors);
-    //    positions.Dispose();
-    //    colors.Dispose();
-    //}
-
-
-    //bool PlayerFinishedLevel()
-    //{
-    //    return false; // playerSprite.Bound.IntersectWith(shuttleSprite.Bound);
-    //}
 }

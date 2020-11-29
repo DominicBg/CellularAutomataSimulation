@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameMainMenuManager gameMainMenuManager;
 
     public int desiredFPS;
-    public LevelDataScriptable currentLevel;
+    public LevelContainer currentLevelContainer;
 
     float currentDeltaTime;
     float frameDuration;

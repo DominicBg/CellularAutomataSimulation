@@ -17,15 +17,15 @@ public class LevelEditorEditor : Editor
             AssetDatabase.CreateAsset(levelDataScriptable, "Assets/LevelDatas/levelDataScriptable.asset");
             AssetDatabase.SaveAssets();
 
-            levelEditor.levelDataScriptable = levelDataScriptable;
+            levelEditor.currentLevelContainer.levelDataScriptable = levelDataScriptable;
         }
         if (GUILayout.Button("Save level"))
         {
-            levelEditor.levelDataScriptable.SaveLevel(levelEditor.levelData);
+            levelEditor.Save();
         }
         if (GUILayout.Button("Load level"))
         {
-            levelEditor.levelData = levelEditor.levelDataScriptable.LoadLevel();
+            levelEditor.Load();
         }
         if (GUILayout.Button("Reset level"))
         {

@@ -155,24 +155,10 @@ MonoBehaviour:
   isEditing: 0
   type: 0
   brushSize: 2
-  cellularAutomata: {fileID: 726109843}
+  gameLevelManager: {fileID: 726109843}
   gridPicker: {fileID: 577035212}
   gridRenderer: {fileID: 1286533892}
-  levelData:
-    levelName: 
-    playerPosition:
-      x: 0
-      y: 0
-    playerTexture: {fileID: 0}
-    shuttlePosition:
-      x: 0
-      y: 0
-    shuttleTexture: {fileID: 0}
-    particleSpawners: []
-    sizes:
-      x: 0
-      y: 0
-  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+  currentLevelContainer: {fileID: 606110892}
   debugTexture: {fileID: 0}
 --- !u!4 &24019102
 Transform:
@@ -937,6 +923,7 @@ GameObject:
   - component: {fileID: 606110891}
   - component: {fileID: 606110890}
   - component: {fileID: 606110894}
+  - component: {fileID: 606110895}
   m_Layer: 0
   m_Name: Level1_1
   m_TagString: Untagged
@@ -994,7 +981,8 @@ MonoBehaviour:
   - {fileID: 606110891}
   - {fileID: 606110890}
   - {fileID: 606110894}
-  serializedParticles: 
+  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+  particleSpawnerElements: []
 --- !u!4 &606110893
 Transform:
   m_ObjectHideFlags: 0
@@ -1023,6 +1011,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerElement: {fileID: 606110891}
   goalElement: {fileID: 606110890}
+--- !u!114 &606110895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606110889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e154990af8c05854e92caf625d686bc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleSpawner:
+    chanceSpawn: 0.525
+    spawnPosition:
+      x: 75
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
 --- !u!1 &726109842
 GameObject:
   m_ObjectHideFlags: 0
@@ -1055,21 +1064,7 @@ MonoBehaviour:
   gridRenderer: {fileID: 1286533892}
   gridPicker: {fileID: 577035212}
   particleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
-  currentLevel: {fileID: 606110892}
-  pixelSortingSettings: []
-  explosiveSettings:
-    radius: 25
-    strength: 0.5
-  mandlebrotSettings:
-    zoom: 0
-    center:
-      x: 0
-      y: 0
-    maxIteration: 0
-    color1: {r: 0, g: 0, b: 0, a: 0}
-    color2: {r: 0, g: 0, b: 0, a: 0}
-    color3: {r: 0, g: 0, b: 0, a: 0}
-    color4: {r: 0, g: 0, b: 0, a: 0}
+  currentLevelContainer: {fileID: 606110892}
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0
@@ -1240,7 +1235,7 @@ MonoBehaviour:
     x: 90
     y: 44
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
-  mainMenuLevel: {fileID: 11400000, guid: 3f07da40657218a48929a070a6011d04, type: 2}
+  mainMenuLevel: {fileID: 606110892}
 --- !u!1 &886483091
 GameObject:
   m_ObjectHideFlags: 0
@@ -1781,7 +1776,7 @@ MonoBehaviour:
   gameOverworldManager: {fileID: 494699174}
   gameMainMenuManager: {fileID: 746556379}
   desiredFPS: 60
-  currentLevel: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
+  currentLevelContainer: {fileID: 606110892}
 --- !u!4 &1372262967
 Transform:
   m_ObjectHideFlags: 0

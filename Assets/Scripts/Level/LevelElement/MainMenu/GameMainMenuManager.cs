@@ -11,22 +11,6 @@ public class GameMainMenuManager : MonoBehaviour, State
     public MainMenuLightRender lightRender; 
     public MainMenuDarkRender darkRender; 
 
-    //public LayerTexture title;
-    //public StarBackgroundRendering starBackground;
-    //public VoronoiRendering voronoiBackground;
-
-    //[Header("Dark Textures")]
-    //public LayerTexture darkBackground;
-    //public LayerTexture darkAstronaut;
-
-    //[Header("Light Textures")]
-    //public LayerTexture lightSandBackground;
-    //public LayerTexture lightCampFire;
-    //public LayerTexture lightCampFireFlame;
-    //public FireRendering fireRendering;
-    //public MainMenuLightRender.ShadowRendering shadowRendering;
-    //public LayerTexture lightAstronaut;
-
     [Header("Parameters")]
     public float randomSpeed = 1;
     public float lightThreshold = 0.8f;
@@ -38,9 +22,8 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
-    public LevelDataScriptable mainMenuLevel;
+    public LevelContainer mainMenuLevel;
 
-    LevelData levelData;
     Map m_map;
     TickBlock tickBlock;
     NativeArray<ParticleSpawner> particleSpawners;
@@ -61,9 +44,8 @@ public class GameMainMenuManager : MonoBehaviour, State
         darkRender.Init();
 
         //Load simulation
-        levelData = mainMenuLevel.LoadLevel();
-        m_map = new Map(levelData.grid, levelData.sizes);
-        particleSpawners = new NativeArray<ParticleSpawner>(levelData.particleSpawners, Allocator.Persistent);
+        m_map = mainMenuLevel.LoadMap();
+        particleSpawners = mainMenuLevel.GetParticleSpawner();
     }
 
     public void OnUpdate()
