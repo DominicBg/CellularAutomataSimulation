@@ -70,10 +70,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        InputCommand.Update();
         currentDeltaTime += Time.deltaTime;
         while (currentDeltaTime >= frameDuration)
         {
+            InputCommand.Update();
             m_stateMachine.Update();
             m_stateMachine.Render();
             currentDeltaTime -= frameDuration;

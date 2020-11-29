@@ -11,87 +11,69 @@ public class GameOverworldManager : MonoBehaviour, State
     public int currentOverworld = 0;
     public OverworldBase[] overworlds;
 
+    UINavigationGraph navigationGraph;
     OverworldBase m_currentOverworld;
-    NativeSprite[] m_nativeSprites;
-    int2[] positions;
+    // NativeSprite[] m_nativeSprites;
+    //int2[] positions;
 
     TickBlock tickBlock;
 
     public void OnEnd()
     {
-        Dispose();
+        
     }
 
 
     public void OnStart()
     {
         tickBlock.Init();
-        SetCurrentLevel(currentOverworld);
+        SetCurrentOverworld(currentOverworld);
     }
 
-    void SetCurrentLevel(int level)
+    void SetCurrentOverworld(int overworldIndex)
     {
-        currentOverworld = level;
-        m_currentOverworld = overworlds[currentOverworld];
-
-        Level[] levels = m_currentOverworld.levels;
-        m_nativeSprites = new NativeSprite[levels.Length];
-        positions = new int2[levels.Length];
-
-        for (int i = 0; i < m_nativeSprites.Length; i++)
+        if(navigationGraph != null)
         {
-            m_nativeSprites[i] = new NativeSprite(levels[i].icon);
-            positions[i] = levels[i].position;
+            Destroy(navigationGraph.gameObject);
         }
+
+
+        currentOverworld = overworldIndex;
+        m_currentOverworld = overworlds[currentOverworld];
+        navigationGraph = m_currentOverworld.LoadNavigationGraph();
+        navigationGraph.Init(this, 0);
     }
 
     public void OnRender()
     {
-        m_currentOverworld.GetBackgroundColors(out NativeArray<Color32> pixels, ref tickBlock);
-
-        for (int i = 0; i < m_nativeSprites.Length; i++)
-        {
-            GridRenderer.ApplySprite(ref pixels, m_nativeSprites[i], positions[i]);
-        }
-
-        GridRenderer.RenderToScreen(pixels);
+        m_currentOverworld.GetBackgroundColors(out NativeArray<Color32> ouputColors, ref tickBlock);
+        navigationGraph.OnRender(ref ouputColors);
+        GridRenderer.RenderToScreen(ouputColors);
     }
 
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
-        if (InputCommand.IsButtonDown(KeyCode.A))
-        {
-            RotateLevel(-1);
-        }
-        else if(InputCommand.IsButtonDown(KeyCode.D))
-        {
-            RotateLevel(1);
-        }
-        else if(InputCommand.IsButtonDown(KeyCode.Space))
-        {
-            SelectLevel();
-        }
+        navigationGraph.OnUpdate();
     }
 
-    void SelectLevel()
+    public void SelectLevel(int i)
     {
+        GameManager.Instance.levelData = m_currentOverworld.levels[i];
         GameManager.Instance.SetLevel();
     }
 
-    void RotateLevel(int direction)
+    public void RotateLevel(int direction)
     {
-        Dispose();
         currentOverworld = (int)Mathf.Repeat(currentOverworld + direction, overworlds.Length);
-        SetCurrentLevel(currentOverworld);
+        SetCurrentOverworld(currentOverworld);
     }
 
     void Dispose()
     {
-        for (int i = 0; i < m_nativeSprites.Length; i++)
+        if (navigationGraph != null)
         {
-            m_nativeSprites[i].Dispose();
+            Destroy(navigationGraph.gameObject);
         }
-
     }
 }
