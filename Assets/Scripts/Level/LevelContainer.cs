@@ -7,7 +7,7 @@ public class LevelContainer : MonoBehaviour
 {
     public LevelDataScriptable levelDataScriptable;
     public LevelElement[] levelElements;
-    public ParticleSpawnerElement[] particleSpawnerElements;
+    public ParticleSpawnerElements particleSpawnerElements;
 
     GameLevelManager gameLevelManager;
     Map map;
@@ -32,7 +32,7 @@ public class LevelContainer : MonoBehaviour
     public void OnValidate()
     {
         levelElements = GetComponents<LevelElement>();
-        particleSpawnerElements = GetComponents<ParticleSpawnerElement>();
+        particleSpawnerElements = GetComponent<ParticleSpawnerElements>();
     }
 
     public void Init(GameLevelManager gameLevelManager, Map map)
@@ -64,11 +64,7 @@ public class LevelContainer : MonoBehaviour
 
     public NativeArray<ParticleSpawner> GetParticleSpawner()
     {
-        NativeArray<ParticleSpawner> particleSpawners = new NativeArray<ParticleSpawner>(particleSpawnerElements.Length, Allocator.Persistent);
-        for (int i = 0; i < particleSpawners.Length; i++)
-        {
-            particleSpawners[i] = particleSpawnerElements[i].particleSpawner;
-        }
+        NativeArray<ParticleSpawner> particleSpawners = new NativeArray<ParticleSpawner>(particleSpawnerElements.particleSpawners, Allocator.Persistent);
         return particleSpawners;
     }
 }

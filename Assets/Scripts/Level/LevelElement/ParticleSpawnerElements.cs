@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class ParticleSpawnerElement : MonoBehaviour
+public class ParticleSpawnerElements : MonoBehaviour
 {
-    public ParticleSpawner particleSpawner;
+    public ParticleSpawner[] particleSpawners;
 }

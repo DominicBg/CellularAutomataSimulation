@@ -945,7 +945,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position:
     x: 75
-    y: 7
+    y: 48
   spriteEnum: 3
 --- !u!114 &606110891
 MonoBehaviour:
@@ -960,8 +960,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   position:
-    x: 5
-    y: 5
+    x: 14
+    y: 12
   spriteEnum: 2
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   debugBoundFlag: 0
@@ -977,12 +977,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129e987c1e5a40e47ae3235c88b53c41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
   levelElements:
   - {fileID: 606110891}
   - {fileID: 606110890}
   - {fileID: 606110894}
-  levelDataScriptable: {fileID: 11400000, guid: 1d3e4ff82694ec7439987f0747a4d459, type: 2}
-  particleSpawnerElements: []
+  particleSpawnerElements: {fileID: 606110895}
 --- !u!4 &606110893
 Transform:
   m_ObjectHideFlags: 0
@@ -1023,10 +1023,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e154990af8c05854e92caf625d686bc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleSpawner:
-    chanceSpawn: 0.525
+  particleSpawners:
+  - chanceSpawn: 0.652
     spawnPosition:
-      x: 75
+      x: 25
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 26
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 20
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 24
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 30
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 34
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 50
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 64
+      y: 99
+    particleType: 2
+    notTickBounded: 1
+    startTick: 0
+    endTick: 0
+  - chanceSpawn: 0.652
+    spawnPosition:
+      x: 87
       y: 99
     particleType: 2
     notTickBounded: 1

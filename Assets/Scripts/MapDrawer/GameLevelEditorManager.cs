@@ -134,10 +134,10 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
         //Color spawner
-        var particleSpawner = currentLevelContainer.particleSpawnerElements;
+        var particleSpawner = currentLevelContainer.particleSpawnerElements.particleSpawners;
         for (int i = 0; i < particleSpawner.Length; i++)
         {
-            var spawner = particleSpawner[i].particleSpawner;
+            var spawner = particleSpawner[i];
             int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
             outputColor[index] = Color.white;
         }
