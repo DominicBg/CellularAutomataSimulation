@@ -4,13 +4,20 @@ using UnityEngine.UI;
 
 public class GridPicker : MonoBehaviour
 {
+    static GridPicker instance;
     public CanvasScaler canvas;
-    public int2 GetGridPosition(int2 gridSizes)
+
+    public void Awake()
+    {
+        instance = this;
+    }
+
+    public static int2 GetGridPosition(int2 gridSizes)
     {
         float2 screen = new Vector2(Screen.width, Screen.height);
         float2 mousePosition = (Vector2)Input.mousePosition;
         float2 ratio = mousePosition / screen;
-        float2 resolution = canvas.referenceResolution;
+        float2 resolution = instance.canvas.referenceResolution;
 
         float2 result = ratio * resolution;
         float xRatio = resolution.x / resolution.y;

@@ -1741,7 +1741,6 @@ MonoBehaviour:
   type: 6
   brushSize: 2
   gameLevelManager: {fileID: 0}
-  gridPicker: {fileID: 1526308771}
 --- !u!4 &1526308770
 Transform:
   m_ObjectHideFlags: 0

@@ -4,18 +4,19 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using static PlayerCellularAutomata;
 
 public class PlayerElement : LevelObject
 {
     public SpriteEnum spriteEnum;
 
+
+
     int jumpIndex = 0;
     bool wasGrounded;
 
-    //Temp
-    InputCommand inputCommand= new InputCommand();
-    public PhysicBound physicBound; //use physics object
+    WeaponBaseElement currentWeapon;
+
+    PhysicBound physicBound; //use physics object
     public Texture2D collisionTexture;
 
     int[] jumpHeight = {
@@ -31,7 +32,6 @@ public class PlayerElement : LevelObject
     {
         base.Init(gameLevelManager, map);
         physicBound = new PhysicBound(collisionTexture);
-        inputCommand.CreateInput(KeyCode.Space);
     }
 
     public override Bound GetBound()
@@ -48,13 +48,15 @@ public class PlayerElement : LevelObject
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
+        if(currentWeapon != null && Input.GetMouseButton(0))
+        {
+            currentWeapon.UseWeapon(position);
+        }
 
-        inputCommand.Update();
-
-        int2 direction = inputCommand.direction;
+        int2 direction = InputCommand.Direction;
 
         bool isGrounded = IsGrounded(map, position);
-        if (inputCommand.IsButtonDown(KeyCode.Space) && (wasGrounded || isGrounded))
+        if (InputCommand.IsButtonDown(KeyCode.Space) && (wasGrounded || isGrounded))
         {
             jumpIndex = 0;
         }
@@ -94,6 +96,15 @@ public class PlayerElement : LevelObject
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
 
+    public void EquipWeapon(WeaponBaseElement weapon)
+    {
+        if(currentWeapon != null)
+        {
+            currentWeapon.UnequipWeapon(position);
+        }
+
+        currentWeapon = weapon;
+    }
 
     NativeSprite GetNativeSprite()
     {

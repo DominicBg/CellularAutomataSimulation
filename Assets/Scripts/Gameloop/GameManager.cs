@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        InputCommand.Update();
         currentDeltaTime += Time.deltaTime;
         while (currentDeltaTime >= frameDuration)
         {

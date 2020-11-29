@@ -147,21 +147,6 @@ public unsafe struct Map
         positions.Dispose();
     }
 
-    public void SetSpriteAtPositionOld(int2 nextPosition, ref PixelSprite sprite, ref PhysicBound physicBound)
-    {
-        Bound boundPosition = physicBound.GetCollisionBound(nextPosition);
-
-        sprite.position = nextPosition;
-        boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            SetParticleType(positions[i], ParticleType.Player);
-        }
-        positions.Dispose();
-    }
-
-
-
     public void SetPlayerAtPosition(int2 nextPosition, ref PhysicBound physicBound)
     {
         Bound boundPosition = physicBound.GetCollisionBound(nextPosition);

@@ -7,14 +7,13 @@ public class MapDrawerManager : MonoBehaviour
     public int brushSize = 2;
 
     public GameLevelManager gameLevelManager;
-    public GridPicker gridPicker;
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButton(0))
         {
-            int2 pos = gridPicker.GetGridPosition(GameManager.GridSizes);
+            int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes);
 
             int halfSize = brushSize / 2;
             for (int x = -halfSize; x <= halfSize; x++)

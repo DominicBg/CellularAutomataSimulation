@@ -5,31 +5,56 @@ using UnityEngine;
 
 public class InputCommand
 {
+    static InputCommand instance;
+
     static readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0) /*, new int2(0, 1), new int2(0, -1)*/ };
     static readonly KeyCode[] directionInputs = new KeyCode[] { KeyCode.D, KeyCode.A /*, KeyCode.W, KeyCode.S */};
 
-    public int2 direction;
+    public static void Update()
+    {
+        EnsureInit();
+        instance.InternalUpdate();
+    }
+    public static bool IsButtonHeld(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonDown();
+
+    public static bool IsButtonDown(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonDown();
+    public static bool IsButtonUp(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonUp();
+
+    static void EnsureInit()
+    {
+        if (instance == null)
+            instance = new InputCommand();
+    }
+
+
+    public static int2 Direction { get; private set; }
 
     Dictionary<KeyCode, InputState> inputs = new Dictionary<KeyCode, InputState>();
 
-    public void CreateInput(KeyCode keyCode)
-    {
-        if (inputs.ContainsKey(keyCode))
-            return;
 
-        InputState inputState = new InputState();
+
+    InputState GetInput(KeyCode keyCode)
+    {
+        InputState inputState;
+        if (inputs.TryGetValue(keyCode, out inputState))
+        {
+            return inputState;
+        }
+
+        inputState = new InputState();
         inputState.Init(keyCode);
         inputs.Add(keyCode, inputState);
+        return inputState;
     }
 
-    public void Update()
+    public void InternalUpdate()
     {
-        direction = 0;
+        Direction = 0;
         for (int i = 0; i < directionInputs.Length; i++)
         {
             if (Input.GetKey(directionInputs[i]))
             {
-                direction = directions[i];
+                Direction = directions[i];
                 break;
             }
         }
@@ -37,10 +62,6 @@ public class InputCommand
         foreach(var input in inputs.Values)
             input.Update();
     }
-
-    public bool IsButtonHeld(KeyCode keyCode) => inputs[keyCode].IsButtonHeld();
-    public bool IsButtonDown(KeyCode keyCode) => inputs[keyCode].IsButtonDown();
-    public bool IsButtonUp(KeyCode keyCode) => inputs[keyCode].IsButtonUp();
 
     public class InputState
     {

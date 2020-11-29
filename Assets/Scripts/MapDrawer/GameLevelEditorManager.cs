@@ -23,8 +23,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public LevelDataScriptable levelData;
     public Texture2D debugTexture;
 
-    InputCommand input = new InputCommand();
-
     TickBlock tickBlock;
     LevelContainer currentLevelContainer;
 
@@ -44,7 +42,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     {
         GameManager.Instance.levelData = levelData;
         tickBlock.Init();
-        input.CreateInput(KeyCode.Z);
         Load();
     }
 
@@ -61,8 +58,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnUpdate()
     {
-        input.Update();
-
         if (!isRecording && Input.GetMouseButton(0))
         {
             currentList = new List<ParticleChange>(50);
@@ -78,7 +73,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         if (isEditing && isRecording)
         {
             int2 sizes = GameManager.GridSizes;
-            int2 pos = gridPicker.GetGridPosition(sizes);
+            int2 pos = GridPicker.GetGridPosition(sizes);
 
             int halfSize = brushSize / 2;
             int extra = brushSize % 2 == 0 ? 0 : 1;
@@ -92,7 +87,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 }
             }
         }
-        else if(input.IsButtonDown(KeyCode.Z))
+        else if(InputCommand.IsButtonDown(KeyCode.Z))
         {
             var changes = controlZ.Pop();
             for (int i = changes.Count - 1; i >= 0; i--)

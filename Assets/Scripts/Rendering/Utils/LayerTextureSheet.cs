@@ -11,7 +11,7 @@ public struct LayerTextureSheet : IRenderableAnimated, IDisposable
     public int2 position;
     public BlendingMode blending;
 
-    public PixelSprite[] sprites;
+    public NativeSprite[] sprites;
 
     public void Dispose()
     {
@@ -23,18 +23,16 @@ public struct LayerTextureSheet : IRenderableAnimated, IDisposable
 
     public void Init()
     {
-        sprites = new PixelSprite[textures.Length];
+        sprites = new NativeSprite[textures.Length];
         for (int i = 0; i < textures.Length; i++)
         {
-            sprites[i] = new PixelSprite(position, textures[i]);
+            sprites[i] = new NativeSprite(textures[i]);
         }
     }
 
     public void Render(ref NativeArray<Color32> colorArray, int tick)
     {
         int i = (tick / tickPerTexture) % sprites.Length;
-        sprites[i].position = position;
-
-        GridRenderer.ApplySprite(ref colorArray, sprites[i], sprites[i].position);
+        GridRenderer.ApplySprite(ref colorArray, sprites[i], position);
     }
 }

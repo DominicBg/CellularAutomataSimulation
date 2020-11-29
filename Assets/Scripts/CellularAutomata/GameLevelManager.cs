@@ -71,18 +71,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         tickBlock.UpdateTick();
         currentLevelContainer.OnUpdate(ref tickBlock);
-       
-
-        //if(equipedWeapon != null && Input.GetMouseButton(0))
-        //{
-        //    //todo add middle position in bound
-        //    //use map.TryFindEmptyPosition to spawn the particle around the player
-
-        //    int2 aimPosition = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
-        //    int2 startPosition = player.position + new int2(9, 3);
-        //    float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
-        //    equipedWeapon.OnShoot(startPosition, aimDirection, map);
-        //}
     }
 
     public void OnRender()
