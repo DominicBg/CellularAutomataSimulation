@@ -20,12 +20,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     [Header("LevelData")]
     public ParticleType[,] grid;
 
-    public LevelContainer currentLevelContainer;
+    public LevelDataScriptable levelData;
     public Texture2D debugTexture;
 
     InputCommand input = new InputCommand();
 
     TickBlock tickBlock;
+    LevelContainer currentLevelContainer;
 
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
     List<ParticleChange> currentList;
@@ -41,7 +42,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnStart()
     {
-        GameManager.Instance.currentLevelContainer = currentLevelContainer;
+        GameManager.Instance.levelData = levelData;
         tickBlock.Init();
         input.CreateInput(KeyCode.Z);
         Load();
@@ -49,12 +50,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void Load()
     {
-        grid = currentLevelContainer.LoadGrid();
+        currentLevelContainer = levelData.LoadLevelContainer();
+        grid = levelData.LoadGrid();
 
     }
     public void Save()
     {
-        currentLevelContainer.SaveGrid(grid);
+        levelData.SaveGrid(grid);
     }
 
     public void OnUpdate()
@@ -134,15 +136,17 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
 
         //Color spawner
-        var particleSpawner = currentLevelContainer.particleSpawnerElements.particleSpawners;
+        var particleSpawner = currentLevelContainer.GetParticleSpawner();
         for (int i = 0; i < particleSpawner.Length; i++)
         {
             var spawner = particleSpawner[i];
             int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
             outputColor[index] = Color.white;
         }
+        particleSpawner.Dispose();
 
-        var levelElements = currentLevelContainer.levelElements;
+
+    var levelElements = currentLevelContainer.levelElements;
         for (int i = 0; i < levelElements.Length; i++)
         {
             levelElements[i].OnRender(ref outputColor, ref tickBlock);
@@ -157,10 +161,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     {
         int2 sizes = GameManager.GridSizes;
         grid = new ParticleType[sizes.x, sizes.y];
+        currentLevelContainer.Unload();
     }
 
     public void OnEnd()
     {
+        currentLevelContainer.Unload();
     }
 
     public struct ParticleChange

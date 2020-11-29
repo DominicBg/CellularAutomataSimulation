@@ -5,29 +5,11 @@ using UnityEngine;
 
 public class LevelContainer : MonoBehaviour
 {
-    public LevelDataScriptable levelDataScriptable;
     public LevelElement[] levelElements;
     public ParticleSpawnerElements particleSpawnerElements;
 
     GameLevelManager gameLevelManager;
     Map map;
-
-    public void SaveGrid(ParticleType[,] particleGrid)
-    {
-        levelDataScriptable.grid = ArrayHelper.GetArrayFromGrid(particleGrid, GameManager.GridSizes);
-    }
-
-    public Map LoadMap()
-    {
-        ParticleType[,] particleGrid = ArrayHelper.GetGridFromArray(levelDataScriptable.grid, GameManager.GridSizes);
-        return new Map(particleGrid, GameManager.GridSizes);
-    }
-
-    public ParticleType[,] LoadGrid()
-    {
-        return ArrayHelper.GetGridFromArray(levelDataScriptable.grid, GameManager.GridSizes);
-    }
-
 
     public void OnValidate()
     {
@@ -51,20 +33,32 @@ public class LevelContainer : MonoBehaviour
         gameLevelManager.UpdateSimulation();
         for (int i = 0; i < levelElements.Length; i++)
         {
-            levelElements[i].OnUpdate(ref tickBlock);
+            if(levelElements[i].isEnable)
+                levelElements[i].OnUpdate(ref tickBlock);
         }
     }
     public void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
         {
-            levelElements[i].OnRender(ref outputcolor, ref tickBlock);
+            if (levelElements[i].isVisible)
+                levelElements[i].OnRender(ref outputcolor, ref tickBlock);
         }
     }
 
     public NativeArray<ParticleSpawner> GetParticleSpawner()
     {
+        if(particleSpawnerElements == null)
+        {
+            return new NativeArray<ParticleSpawner>(0, Allocator.Persistent);
+        }
+
         NativeArray<ParticleSpawner> particleSpawners = new NativeArray<ParticleSpawner>(particleSpawnerElements.particleSpawners, Allocator.Persistent);
         return particleSpawners;
+    }
+
+    public void Unload()
+    {
+        Destroy(gameObject);
     }
 }

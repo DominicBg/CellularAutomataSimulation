@@ -25,6 +25,4 @@ public abstract class GoalElement : LevelObject
     {
         return SpriteRegistry.GetSprite(spriteEnum);
     }
-
-    public abstract void UpdateCompleteStage();
 }

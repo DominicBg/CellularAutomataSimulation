@@ -17,7 +17,7 @@ public class LevelEditorEditor : Editor
             AssetDatabase.CreateAsset(levelDataScriptable, "Assets/LevelDatas/levelDataScriptable.asset");
             AssetDatabase.SaveAssets();
 
-            levelEditor.currentLevelContainer.levelDataScriptable = levelDataScriptable;
+            levelEditor.levelData = levelDataScriptable;
         }
         if (GUILayout.Button("Save level"))
         {

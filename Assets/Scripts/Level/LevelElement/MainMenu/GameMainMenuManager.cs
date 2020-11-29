@@ -22,7 +22,9 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
-    public LevelContainer mainMenuLevel;
+
+    public LevelDataScriptable levelData;
+    LevelContainer mainMenuLevel;
 
     Map m_map;
     TickBlock tickBlock;
@@ -35,6 +37,7 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         m_map.Dispose();
         particleSpawners.Dispose();
+        mainMenuLevel.Unload();
     }
 
     public void OnStart()
@@ -44,7 +47,9 @@ public class GameMainMenuManager : MonoBehaviour, State
         darkRender.Init();
 
         //Load simulation
-        m_map = mainMenuLevel.LoadMap();
+        mainMenuLevel = levelData.LoadLevelContainer();
+        m_map = levelData.LoadMap();
+
         particleSpawners = mainMenuLevel.GetParticleSpawner();
     }
 

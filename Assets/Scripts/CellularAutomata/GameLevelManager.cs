@@ -17,11 +17,13 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public Map map;
     TickBlock tickBlock;
 
-    public LevelContainer currentLevelContainer;
+
+    LevelContainer currentLevelContainer;
+    LevelDataScriptable currentLevelData;
 
     public void OnStart()
     {
-        LoadLevel(GameManager.Instance.currentLevelContainer);
+        LoadLevel(GameManager.Instance.levelData);
     }
 
     public void OnEnd()
@@ -35,17 +37,20 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         {
             nativeParticleSpawners.Dispose();
             map.Dispose();
+
+            currentLevelContainer.Unload();
         }
     }
 
-    public void LoadLevel(LevelContainer levelContainer)
+    public void LoadLevel(LevelDataScriptable levelData)
     {
         Dispose();
 
-        map = levelContainer.LoadMap();
-        nativeParticleSpawners = levelContainer.GetParticleSpawner();
+        currentLevelContainer = levelData.LoadLevelContainer();
+        currentLevelData = levelData;
 
-        currentLevelContainer = levelContainer;
+        map = levelData.LoadMap();
+        nativeParticleSpawners = currentLevelContainer.GetParticleSpawner();
 
         tickBlock.Init();
         currentLevelContainer.Init(this, map);
@@ -88,23 +93,5 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         currentLevelContainer.OnRender(ref outputColor, ref tickBlock);
         
         GridRenderer.RenderToScreen(outputColor);
-
-        //if(m_levelPhase == LevelPhase.gameplay)
-        //    GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.astronaut), player.position);
-
-        //GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.shuttle), shuttlePosition);
-
-        //for (int i = 0; i < pixelSortingSettings.Length; i++)
-        //     GridPostProcess.ApplyPixelSorting(ref outputColor, ref pixelSortingSettings[i]);
-
-
-        //if (debugBound)
-        //    DebugAllPhysicBound(ref outputColor);
-
-        //int2 aimPosition = gridPicker.GetGridPosition(GameManager.GridSizes) - 2;
-        //GridRenderer.ApplySprite(ref outputColor, SpriteRegistry.GetSprite(SpriteEnum.aimPosition), aimPosition);
-        //GridRenderer.ApplySprite(ref outputColor, worldWeapon.pixelSprite, worldWeapon.worldPosition);
-
-
     }
 }

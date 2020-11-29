@@ -11,6 +11,10 @@ public abstract class LevelElement : MonoBehaviour
     protected GameLevelManager gameLevelManager;
     protected Map map;
 
+    [HideInInspector] public bool isEnable = true;
+    [HideInInspector] public bool isVisible = true;
+
+
     public virtual void Init(GameLevelManager gameLevelManager, Map map)
     {
         this.gameLevelManager = gameLevelManager;
