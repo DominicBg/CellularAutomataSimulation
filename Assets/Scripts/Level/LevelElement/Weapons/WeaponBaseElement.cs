@@ -42,7 +42,6 @@ public abstract class WeaponBaseElement : LevelObject
             isVisible = true;
             position = unequipPosition;
         }
-
     }
 
     public void UnequipWeapon(int2 unequipPosition)

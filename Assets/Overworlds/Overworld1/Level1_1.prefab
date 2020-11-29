@@ -73,7 +73,7 @@ MonoBehaviour:
   position:
     x: 14
     y: 12
-  spriteEnum: 2
+  spriteEnum: 0
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   debugBoundFlag: 0
 --- !u!114 &5479903869181738650
@@ -219,7 +219,7 @@ MonoBehaviour:
   position:
     x: 78
     y: 50
-  spriteEnum: 3
+  spriteEnum: 1
 --- !u!114 &7364371957976215773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +239,7 @@ MonoBehaviour:
     y: 25
   isEquiped: 0
   player: {fileID: 5479903869181738654}
-  spriteVisual: 0
+  spriteVisual: 4
   type: 2
   particleSpeed: 10
 --- !u!114 &1783878733823270471
@@ -261,6 +261,6 @@ MonoBehaviour:
     y: 52
   isEquiped: 0
   player: {fileID: 5479903869181738654}
-  spriteVisual: 1
+  spriteVisual: 5
   type: 1
   particleSpeed: 10

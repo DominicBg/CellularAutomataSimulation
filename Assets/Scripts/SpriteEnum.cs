@@ -1,1 +1,1 @@
-    public enum SpriteEnum{_000, _001, astronaut, shuttle, aimPosition}
+    public enum SpriteEnum{astronaut, shuttle, astronaut_gun, aimPosition, _000, _001, _010, _011, underline}

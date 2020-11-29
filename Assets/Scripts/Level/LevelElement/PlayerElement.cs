@@ -7,10 +7,6 @@ using UnityEngine;
 
 public class PlayerElement : LevelObject
 {
-    public SpriteEnum spriteEnum;
-
-
-
     int jumpIndex = 0;
     bool wasGrounded;
 
@@ -108,7 +104,8 @@ public class PlayerElement : LevelObject
 
     NativeSprite GetNativeSprite()
     {
-        return SpriteRegistry.GetSprite(spriteEnum);
+        SpriteEnum sprite = currentWeapon != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
+        return SpriteRegistry.GetSprite(sprite);
     }
 
     //DEBUG

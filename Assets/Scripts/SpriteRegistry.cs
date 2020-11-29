@@ -6,7 +6,7 @@ public class SpriteRegistry : MonoBehaviour
 {
     public static SpriteRegistry instance;
 
-    public Texture2D[] textures;
+    public TextureGroup[] textureGroups;
 
     NativeSprite[] spriteArray;
 
@@ -20,6 +20,8 @@ public class SpriteRegistry : MonoBehaviour
     void Awake()
     {
         instance = this;
+
+        var textures = GetFlattenTextureGroup();
         spriteArray = new NativeSprite[textures.Length];
         for (int i = 0; i < spriteArray.Length; i++)
         {
@@ -36,10 +38,20 @@ public class SpriteRegistry : MonoBehaviour
         }
     }
 
+    Texture2D[] GetFlattenTextureGroup()
+    {
+        List<Texture2D> outputTextures = new List<Texture2D>();
+        for (int i = 0; i < textureGroups.Length; i++)
+        {
+            outputTextures.AddRange(textureGroups[i].textures);
+        }
+        return outputTextures.ToArray();
+    }
 
     [ContextMenu("Generate Enum")]
     public void GenerateEnum()
     {
+        var textures = GetFlattenTextureGroup();
         string[] enumNames = new string[textures.Length];
         for (int i = 0; i < enumNames.Length; i++)
         {
@@ -47,5 +59,12 @@ public class SpriteRegistry : MonoBehaviour
             enumNames[i] = char.IsDigit(name[0]) ? "_" + textures[i].name : textures[i].name;
         }
         ConstFileWriter.GenerateEnumConstFile(this, "SpriteEnum", "SpriteEnum", enumNames, false);
+        Debug.Log("Generated SpriteEnum");
+    }
+
+    [System.Serializable]
+    public class TextureGroup
+    {
+        public Texture2D[] textures;
     }
 }
