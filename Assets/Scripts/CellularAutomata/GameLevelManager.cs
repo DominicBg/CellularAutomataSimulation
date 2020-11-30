@@ -38,7 +38,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             nativeParticleSpawners.Dispose();
             map.Dispose();
 
-            currentLevelContainer.Unload();
+            currentLevelContainer?.Unload();
         }
     }
 
