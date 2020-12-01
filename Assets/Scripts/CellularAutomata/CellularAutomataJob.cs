@@ -113,10 +113,14 @@ public struct CellularAutomataJob : IJob
             return true;
         }
 
-        int2 slidePosition = map.SlideParticle(pos, desiredPosition);
+        int2 slidePosition = map.SlideParticle(pos, desiredPosition, out bool hasCollision);
 
         if (!math.all(pos == slidePosition))
         {
+            //stop velocity on collision
+            if (hasCollision)
+                particle.velocity = 0;
+
             map.MoveParticle(particle, pos, slidePosition);
             return true;
         }

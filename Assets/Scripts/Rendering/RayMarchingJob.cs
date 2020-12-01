@@ -13,7 +13,7 @@ public struct RayMarchingSettings
     public float speed;
 }
 
-[BurstCompile(CompileSynchronously = true)]
+[BurstCompile]
 public struct RayMarchingJob : IJobParallelFor
 {
     public FunctionPointer<CalculateDistancefunction> distanceFunction;
@@ -32,9 +32,9 @@ public struct RayMarchingJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 position = ArrayHelper.IndexToPos(index, gridSizes);
+        int2 gridPosition = ArrayHelper.IndexToPos(index, gridSizes);
 
-        float2 uv = ((float2)position / gridSizes -0.5f) / settings.scales;
+        float2 uv = ((float2)gridPosition / gridSizes -0.5f) / settings.scales;
 
         float3 ro = new float3(uv.x, uv.y, 0);
         float3 rd = new float3(0, 0, 1);
@@ -43,13 +43,21 @@ public struct RayMarchingJob : IJobParallelFor
         float distance = RayMarch(ro, rd, out int numberStep);
         outputDistances[index] = distance;
 
-        float offX = RayMarch(ro + new float3(settings.derivatieDelta, 0, 0), rd, out int numberStepX);
-        float offY = RayMarch(ro + new float3(0, settings.derivatieDelta, 0), rd, out int numberStepY);
+        float3 position = ro + rd * distance;
+        outputNormals[index] = GetNormal(position);
+    }
 
-        float deltaX = (distance - offX) / settings.derivatieDelta;
-        float deltaY = (distance - offY) / settings.derivatieDelta;
-        float3 normal = math.normalize(new float3(deltaX, deltaY, -1));
-        outputNormals[index] = normal;
+
+    float3 GetNormal(float3 position)
+    {
+        float dt = settings.derivatieDelta;
+
+        float d = distanceFunction.Invoke(position.x, position.y, position.z, tickBlock.tick * settings.speed);
+        float dx = distanceFunction.Invoke(position.x + dt, position.y, position.z, tickBlock.tick * settings.speed);
+        float dy = distanceFunction.Invoke(position.x, position.y + dt, position.z, tickBlock.tick * settings.speed);
+        float dz = distanceFunction.Invoke(position.x, position.y, position.z + dt, tickBlock.tick * settings.speed);
+
+        return math.normalize(new float3(dx, dy, dz) - d);
     }
 
     float RayMarch(float3 ro, float3 rd, out int numberstep)

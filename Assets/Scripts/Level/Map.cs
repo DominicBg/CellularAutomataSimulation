@@ -71,7 +71,7 @@ public unsafe struct Map
         return particleGrid[pos];
     }
     
-    public int2 SlideParticle(int2 from, int2 to)
+    public int2 SlideParticle(int2 from, int2 to, out bool hasCollision)
     {
         to = math.clamp(to, 0, GameManager.GridSizes);
 
@@ -96,10 +96,12 @@ public unsafe struct Map
             int2 nextPosition = currentPosition + step;
             if (!InBound(nextPosition) || HasCollision(nextPosition))
             {
+                hasCollision = true;
                 return currentPosition;
             }
             currentPosition = nextPosition;
         }
+        hasCollision = false;
         return currentPosition;
     }
 

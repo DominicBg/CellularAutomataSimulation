@@ -16,10 +16,29 @@ MonoBehaviour:
   levels: []
   backgroundTexture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
   settings:
+    distanceThreshold: 10.42
+    lightPosition:
+      x: -3.76
+      y: -4.38
+      z: -11.2
+    baseLight: 0.2
     scales:
       x: 0.05
       y: 0.05
-    cameraDist: 8.7
-    derivatieDelta: 0.0001
-    speed: 0
-  distanceThreshold: 15.41
+    derivatieDelta: 0.002
+    speed: 0.02
+    ortho: 1
+    rotationAxis:
+      x: 0
+      y: 1
+      z: 1
+    boxBound:
+      x: 0.5
+      y: 0.5
+      z: 0.5
+    modulo: 4.7
+    offset:
+      x: 1
+      y: 1
+      z: 1
+    repeat: 0

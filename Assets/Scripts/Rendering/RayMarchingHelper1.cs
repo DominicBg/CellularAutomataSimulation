@@ -31,6 +31,22 @@ public static class RayMarchingHelper
     public static FunctionPointer<CalculateDistancefunction> BoxDistancePointer => BurstCompiler.CompileFunctionPointer<CalculateDistancefunction>(BoxDistanceFunction);
 
 
+    [BurstCompile(CompileSynchronously = true)]
+    public static float RotatingBoxDistanceFunction(float x, float y, float z, float t)
+    {
+        float3 p = new float3(x, y, z) % 5;
+
+        quaternion boxRotation = quaternion.AxisAngle(math.normalize(new float3(1, 1, 0)), t);
+        //quaternion invBoxRotation = math.inverse(boxRotation);
+
+        p = math.mul(boxRotation, p);
+
+        float3 box = 2;
+        float3 q = math.abs(p) - box;
+        return math.length(math.max(q, 0)) + math.min(math.max(q.x, math.max(q.y, q.z)), 0);
+    }
+
+    public static FunctionPointer<CalculateDistancefunction> RotatingBoxDistancePointer => BurstCompiler.CompileFunctionPointer<CalculateDistancefunction>(RotatingBoxDistanceFunction);
 
 
 
