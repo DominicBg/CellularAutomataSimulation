@@ -156,12 +156,16 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     {
         int2 sizes = GameManager.GridSizes;
         grid = new ParticleType[sizes.x, sizes.y];
-        currentLevelContainer.Unload();
+
+        currentLevelContainer?.Unload();
+        currentLevelContainer = null;
     }
 
     public void OnEnd()
     {
-        currentLevelContainer.Unload();
+        currentLevelContainer?.Unload();
+        currentLevelContainer = null;
+
     }
 
     public struct ParticleChange

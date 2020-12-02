@@ -59,7 +59,6 @@ public class LevelContainer : MonoBehaviour
 
     public void Unload()
     {
-        if(gameObject != null)
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 }

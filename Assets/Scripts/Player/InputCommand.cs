@@ -17,7 +17,7 @@ public class InputCommand
         EnsureInit();
         instance.InternalUpdate();
     }
-    public static bool IsButtonHeld(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonDown();
+    public static bool IsButtonHeld(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonHeld();
 
     public static bool IsButtonDown(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonDown();
     public static bool IsButtonUp(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonUp();

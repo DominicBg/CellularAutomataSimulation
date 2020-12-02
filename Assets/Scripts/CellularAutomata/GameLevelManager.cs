@@ -19,7 +19,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
 
     LevelContainer currentLevelContainer;
-    LevelDataScriptable currentLevelData;
 
     public void OnStart()
     {
@@ -39,6 +38,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             map.Dispose();
 
             currentLevelContainer?.Unload();
+            currentLevelContainer = null;
         }
     }
 
@@ -47,7 +47,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         Dispose();
 
         currentLevelContainer = levelData.LoadLevelContainer();
-        currentLevelData = levelData;
 
         map = levelData.LoadMap();
         nativeParticleSpawners = currentLevelContainer.GetParticleSpawner();

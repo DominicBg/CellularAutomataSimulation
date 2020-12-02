@@ -5,30 +5,11 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerElement : LevelObject
+public class PlayerElement : PhysicObject
 {
-    int jumpIndex = 0;
-    bool wasGrounded;
+    public PlayerControlSettings settings;
 
     WeaponBaseElement currentWeapon;
-
-    PhysicBound physicBound; //use physics object
-    public Texture2D collisionTexture;
-
-    int[] jumpHeight = {
-        1, 1,
-        1, 0, 1, 0,
-        1, 0, 0,
-        -1, 0, 0,
-        -1, 0, -1, 0,
-        -1, -1
-        };
-
-    public override void Init(GameLevelManager gameLevelManager, Map map)
-    {
-        base.Init(gameLevelManager, map);
-        physicBound = new PhysicBound(collisionTexture);
-    }
 
     public override Bound GetBound()
     {
@@ -51,45 +32,26 @@ public class PlayerElement : LevelObject
 
         int2 direction = InputCommand.Direction;
 
-        bool isGrounded = IsGrounded(map, position);
-        if (InputCommand.IsButtonDown(KeyCode.Space) && (wasGrounded || isGrounded))
+        bool isGrounded = IsGrounded();
+
+        if (isGrounded)
         {
-            jumpIndex = 0;
+            physicData.controlledVelocity = (float2)direction * settings.movementSpeed;
         }
-        else
+        else 
         {
-            jumpIndex++;
+            physicData.controlledVelocity = (float2)direction * settings.airMovementSpeed;
+            physicData.velocity += (float2)direction * settings.airMovementSpeed;
         }
-        wasGrounded = isGrounded;
 
-        NativeReference<int2> positionRef = new NativeReference<int2>(Allocator.TempJob);
-        positionRef.Value = position;
-
-        var jumpArray = new NativeArray<int>(jumpHeight, Allocator.TempJob);
-        new HandlePlayerJob()
+        if (InputCommand.IsButtonHeld(KeyCode.Space))
         {
-            direction = direction,
-            map = map,
-            physicBound = physicBound,
-            jumpIndex = jumpIndex,
-            jumpArray = jumpArray,
-            positionRef = positionRef
-        }.Run();
-
-        position = positionRef.Value;
-        jumpArray.Dispose();
-        positionRef.Dispose();
-    }
+            physicData.velocity += new float2(0, settings.jetpackForce);
+        }
 
 
-    public bool IsGrounded(Map map, int2 position)
-    {
-        Bound feetBound = physicBound.GetFeetCollisionBound(position);
-        Bound underFeetBound = physicBound.GetUnderFeetCollisionBound(position);
-        bool hasFeetCollision = map.HasCollision(ref feetBound);
-        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound);
-        bool atFloorLevel = position.y == 0;
-        return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
+        HandlePhysic();
+
     }
 
     public void EquipWeapon(WeaponBaseElement weapon)
@@ -107,40 +69,5 @@ public class PlayerElement : LevelObject
         SpriteEnum sprite = currentWeapon != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
         return SpriteRegistry.GetSprite(sprite);
     }
-
-    //DEBUG
-    [Header("Debug")]
-    public PhysicBound.BoundFlag debugBoundFlag;
-    void DebugAllPhysicBound(ref NativeArray<Color32> outputColor)
-    {
-        PhysicBound physicbound = physicBound;
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
-            DebugPhysicBound(ref outputColor, physicbound.GetCollisionBound(position), Color.magenta);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
-            DebugPhysicBound(ref outputColor, physicbound.GetFeetCollisionBound(position), Color.yellow);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
-            DebugPhysicBound(ref outputColor, physicbound.GetLeftCollisionBound(position), Color.red);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Right) > 0)
-            DebugPhysicBound(ref outputColor, physicbound.GetRightCollisionBound(position), Color.blue);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Top) > 0)
-            DebugPhysicBound(ref outputColor, physicbound.GetTopCollisionBound(position), Color.cyan);
-    }
-
-    void DebugPhysicBound(ref NativeArray<Color32> outputColor, Bound bound, Color color)
-    {
-        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
-        NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            colors[i] = color;
-        }
-        GridRenderer.ApplyPixels(ref outputColor, ref positions, ref colors);
-        positions.Dispose();
-        colors.Dispose();
-    }
+   
 }

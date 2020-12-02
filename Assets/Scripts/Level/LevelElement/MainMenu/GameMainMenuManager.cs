@@ -37,7 +37,8 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         m_map.Dispose();
         particleSpawners.Dispose();
-        mainMenuLevel.Unload();
+        mainMenuLevel?.Unload();
+        mainMenuLevel = null;
     }
 
     public void OnStart()

@@ -6,69 +6,67 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PhysicObject : MonoBehaviour
+public abstract class PhysicObject : LevelObject
 {
-    public int2 GridPosition => physicData.GridPosition;
-    PhysicData physicData;
+    [SerializeField] protected PhysicData physicData;
+    public Texture2D collisionTexture;
 
-    public struct PhysicData
+    public override void Init(GameLevelManager gameLevelManager, Map map)
     {
-        public float2 position;
-        public float2 velocity;
-        public PhysicBound physicBound;
-        public int2 GridPosition => (int2)(position / GameManager.GridScale);
-        public void SetGridPosition(int2 gridPosition)
-        {
-            position = gridPosition * GameManager.GridScale;
-        }
+        this.gameLevelManager = gameLevelManager;
+        this.map = map;
+        physicData.physicBound = new PhysicBound(collisionTexture);
     }
 
-    public void HandlePhysic(Map map, float deltaTime)
+    protected void HandlePhysic()
     {
+        physicData.gridPosition = position;
+
         NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
         physicDataReference.Value = physicData;
-        new HandlePhysicJob(map, deltaTime, physicDataReference).Run();
+        new HandlePhysicJob(map, GameManager.deltaTime, physicDataReference).Run();
         physicData = physicDataReference.Value;
         physicDataReference.Dispose();
+
+        Debug.Log(position + " " + physicData.gridPosition);
+        position = physicData.gridPosition;
     }
 
-    [BurstCompile]
-    public struct HandlePhysicJob : IJob
+    protected bool IsGrounded()
     {
-        Map map;
-        NativeReference<PhysicData> physicDataReference;
-        float deltaTime;
+        return PhysiXVII.IsGrounded(in physicData, map, position);
+    }
 
-        public HandlePhysicJob(Map map, float deltaTime, NativeReference<PhysicData> physicData)
+    [Header("Debug")]
+    public PhysicBound.BoundFlag debugBoundFlag;
+    protected void DebugAllPhysicBound(ref NativeArray<Color32> outputColor)
+    {
+        if ((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetCollisionBound(position), Color.magenta);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetFeetCollisionBound(position), Color.yellow);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetLeftCollisionBound(position), Color.red);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Right) > 0)
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetRightCollisionBound(position), Color.blue);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Top) > 0)
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetTopCollisionBound(position), Color.cyan);
+    }
+
+    protected void DebugPhysicBound(ref NativeArray<Color32> outputColor, Bound bound, Color color)
+    {
+        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
+        NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
+        for (int i = 0; i < positions.Length; i++)
         {
-            this.map = map;
-            this.deltaTime = deltaTime;
-            this.physicDataReference = physicData;
+            colors[i] = color;
         }
-
-        public void Execute()
-        {
-            PhysicData physicData = physicDataReference.Value;
-
-            float2 currentPosition = physicData.position;
-            float2 nextPosition = currentPosition + physicData.velocity * deltaTime;
-
-
-            int2 currentGridPosition = physicData.GridPosition;
-            int2 nextGridPosition = (int2)(nextPosition / GameManager.GridScale);
-
-            //refactor gravity
-            nextGridPosition = map.ApplyGravity(ref physicData.physicBound, nextGridPosition);
-            nextGridPosition = map.HandlePhysics(ref physicData.physicBound, currentGridPosition, nextGridPosition);
-
-            if (math.any(currentGridPosition != nextGridPosition))
-            {
-                map.RemoveSpriteAtPosition(currentGridPosition, ref physicData.physicBound);
-                map.SetSpriteAtPosition(nextGridPosition, ref physicData.physicBound);
-            }
-
-            physicData.SetGridPosition(nextGridPosition);
-            physicDataReference.Value = physicData;
-        }
+        GridRenderer.ApplyPixels(ref outputColor, ref positions, ref colors);
+        positions.Dispose();
+        colors.Dispose();
     }
 }
