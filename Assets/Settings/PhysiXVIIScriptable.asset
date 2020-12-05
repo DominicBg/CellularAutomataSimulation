@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3b1ff579ab83fc479470c3a98eacfd0, type: 3}
-  m_Name: PlayerControlSettings
+  m_Script: {fileID: 11500000, guid: 2d98732c3b634be4dbdc75af92e3ac6c, type: 3}
+  m_Name: PhysiXVIIScriptable
   m_EditorClassIdentifier: 
-  movementSpeed: 150
-  airAcceleration: 5
-  airMovementSpeed: 15
-  jetpackForce: 25.1
+  settings:
+    gravity:
+      x: 0
+      y: -12
+    friction: 0.8

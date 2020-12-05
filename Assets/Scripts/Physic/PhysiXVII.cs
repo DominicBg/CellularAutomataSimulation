@@ -8,6 +8,20 @@ using UnityEngine;
 
 public static class PhysiXVII
 {
+    public static void HandlePhysics(PhysicObject physicObject, Map map)
+    {
+        physicObject.physicData.gridPosition = physicObject.position;
+
+        NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
+        physicDataReference.Value = physicObject.physicData;
+        new PhysiXVIIJob(map, GameManager.PhysiXVIISetings, GameManager.deltaTime, physicDataReference).Run();
+        physicObject.physicData = physicDataReference.Value;
+        physicDataReference.Dispose();
+
+        physicObject.position = physicObject.physicData.gridPosition;
+    }
+
+
     public static bool IsGrounded(in PhysicData physicData, Map map, int2 position)
     {
         Bound feetBound = physicData.physicBound.GetFeetCollisionBound(position);
@@ -18,102 +32,112 @@ public static class PhysiXVII
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
 
-    public static void HandlePhysics(ref PhysicData physicData, Map map, float2 desiredPosition, Allocator allocator = Allocator.Temp)
-    {
-        int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
+    //public static void HandlePhysics(ref PhysicData physicData, Map map, float2 desiredPosition, Allocator allocator = Allocator.Temp)
+    //{
+    //    int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
 
-        int2 desirGridPosition = FindDesiredMovePosition(ref physicData.physicBound, map, physicData.gridPosition, nextGridPosition, allocator);
-        if (TryGoPosition(ref physicData.physicBound, map, physicData.gridPosition, desirGridPosition))
-        {
-            physicData.position = desirGridPosition * GameManager.GridScale;
-            physicData.gridPosition = desirGridPosition;
-        }
-    }
+    //    int2 desiredGridPosition = FindDesiredMovePosition(ref physicData.physicBound, map, physicData.gridPosition, nextGridPosition, allocator);
+    //    if (TryGoPosition(ref physicData.physicBound, map, physicData.gridPosition, desiredGridPosition))
+    //    {
+    //        if(math.all(nextGridPosition == desiredGridPosition))
+    //        {
+    //            physicData.position = desiredPosition;
+    //            physicData.gridPosition = desiredGridPosition;
+    //        }
+    //        else
+    //        {
+    //            physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
+
+    //            physicData.position = desiredGridPosition * GameManager.GridScale;
+    //            physicData.gridPosition = desiredGridPosition;
+    //        }
+    //    }
+    //}
 
 
-    static int2 FindDesiredMovePosition(ref PhysicBound physicBound, Map map, int2 from, int2 to, Allocator allocator)
-    {
-        int direction = (to.x - from.x);
-        bool goingLeft = direction == -1;
+    //static int2 FindDesiredMovePosition(ref PhysicBound physicBound, Map map, int2 from, int2 to, Allocator allocator)
+    //{
+    //    int direction = (to.x - from.x);
+    //    bool goingLeft = direction == -1;
 
-        Bound directionBound;
-        if (goingLeft)
-        {
-            directionBound = physicBound.GetLeftCollisionBound(to);
-        }
-        else
-        {
-            directionBound = physicBound.GetRightCollisionBound(to);
-        }
+    //    Bound directionBound;
+    //    if (goingLeft)
+    //    {
+    //        directionBound = physicBound.GetLeftCollisionBound(to);
+    //    }
+    //    else
+    //    {
+    //        directionBound = physicBound.GetRightCollisionBound(to);
+    //    }
 
-        int minY = directionBound.min.y;
-        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
-        int2 desiredPosition = to;
+    //    int minY = directionBound.min.y;
+    //    directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions, allocator);
+    //    int2 desiredPosition = to;
 
-        int slopeLimit = 2;
-        bool canClimb = false;
-        int highestClimbY = 0;
-        for (int i = 0; i < directionPositions.Length; i++)
-        {
-            int2 pos = directionPositions[i];
-            if (map.HasCollision(pos))
-            {
-                if (pos.y >= minY && pos.y <= minY + slopeLimit)
-                {
-                    canClimb = true;
-                    highestClimbY = math.max(highestClimbY, pos.y + 1);
-                }
-            }
-        }
+    //    int slopeLimit = 2;
+    //    bool canClimb = false;
+    //    int highestClimbY = 0;
+    //    for (int i = 0; i < directionPositions.Length; i++)
+    //    {
+    //        int2 pos = directionPositions[i];
+    //        if (map.HasCollision(pos))
+    //        {
+    //            if (pos.y >= minY && pos.y <= minY + slopeLimit)
+    //            {
+    //                canClimb = true;
+    //                highestClimbY = math.max(highestClimbY, pos.y + 1);
+    //            }
+    //        }
+    //    }
 
-        if (canClimb)
-        {
-            desiredPosition.y = highestClimbY;
-        }
-        return desiredPosition;
-    }
+    //    if (canClimb)
+    //    {
+    //        desiredPosition.y = highestClimbY;
+    //    }
+    //    return desiredPosition;
+    //}
 
-    static bool TryGoPosition(ref PhysicBound physicBound, Map map, int2 from, int2 to)
-    {
-        int2 pushDirection = math.clamp(to - from, -1, 1);
-        Bound bound = physicBound.GetCollisionBound(to);
-        //Add push particles
+    //static bool TryGoPosition(ref PhysicBound physicBound, Map map, int2 from, int2 to)
+    //{
+    //    int2 pushDirection = math.clamp(to - from, -1, 1);
+    //    Bound bound = physicBound.GetCollisionBound(to);
+    //    //Add push particles
 
-        NativeList<int2> pushedParticlePositions = new NativeList<int2>(Allocator.Temp);
-        bool isBlocked = false;
-        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int2 position = positions[i];
-            int2 pusedPosition = position + pushDirection;
+    //    NativeList<int2> pushedParticlePositions = new NativeList<int2>(Allocator.Temp);
+    //    bool isBlocked = false;
+    //    bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+    //    for (int i = 0; i < positions.Length; i++)
+    //    {
+    //        int2 position = positions[i];
+    //        int2 pusedPosition = position + pushDirection;
 
-            if (map.HasCollision(positions[i]))
-            {
-                bool canPush = map.CanPush(positions[i]) && map.IsFreePosition(pusedPosition);
-                if (canPush)
-                {
-                    pushedParticlePositions.Add(positions[i]);
-                }
-                else
-                {
-                    isBlocked = true;
-                    break;
-                }
-            }
-        }
+    //        if (map.HasCollision(positions[i]))
+    //        {
+    //            bool canPush = map.CanPush(positions[i]) && map.IsFreePosition(pusedPosition);
+    //            if (canPush)
+    //            {
+    //                pushedParticlePositions.Add(positions[i]);
+    //            }
+    //            else
+    //            {
+    //                isBlocked = true;
+    //                break;
+    //            }
+    //        }
+    //    }
 
-        if (!isBlocked)
-        {
-            for (int i = 0; i < pushedParticlePositions.Length; i++)
-            {
-                int2 position = pushedParticlePositions[i];
-                int2 pusedPosition = position + pushDirection;
-                map.MoveParticle(position, pusedPosition);
-            }
-        }
+    //    if (!isBlocked)
+    //    {
+    //        for (int i = 0; i < pushedParticlePositions.Length; i++)
+    //        {
+    //            int2 position = pushedParticlePositions[i];
+    //            int2 pusedPosition = position + pushDirection;
+    //            map.MoveParticle(position, pusedPosition);
+    //        }
+    //    }
 
-        positions.Dispose();
-        pushedParticlePositions.Dispose();
-        return !isBlocked;
-    }
+    //    positions.Dispose();
+    //    pushedParticlePositions.Dispose();
+    //    return !isBlocked;
+    //}
 }

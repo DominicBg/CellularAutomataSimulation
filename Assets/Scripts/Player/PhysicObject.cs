@@ -8,7 +8,7 @@ using UnityEngine;
 
 public abstract class PhysicObject : LevelObject
 {
-    [SerializeField] protected PhysicData physicData;
+    public PhysicData physicData;
     public Texture2D collisionTexture;
 
     public override void Init(GameLevelManager gameLevelManager, Map map)
@@ -20,16 +20,16 @@ public abstract class PhysicObject : LevelObject
 
     protected void HandlePhysic()
     {
-        physicData.gridPosition = position;
+        PhysiXVII.HandlePhysics(this, map);
+        //physicData.gridPosition = position;
 
-        NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
-        physicDataReference.Value = physicData;
-        new HandlePhysicJob(map, GameManager.deltaTime, physicDataReference).Run();
-        physicData = physicDataReference.Value;
-        physicDataReference.Dispose();
+        //NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
+        //physicDataReference.Value = physicData;
+        //new PhysiXVIIJob(map, GameManager.deltaTime, physicDataReference).Run();
+        //physicData = physicDataReference.Value;
+        //physicDataReference.Dispose();
 
-        Debug.Log(position + " " + physicData.gridPosition);
-        position = physicData.gridPosition;
+        //position = physicData.gridPosition;
     }
 
     protected bool IsGrounded()

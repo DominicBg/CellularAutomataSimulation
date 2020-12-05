@@ -46,12 +46,12 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         Dispose();
 
+        tickBlock.Init();
         currentLevelContainer = levelData.LoadLevelContainer();
 
         map = levelData.LoadMap();
         nativeParticleSpawners = currentLevelContainer.GetParticleSpawner();
 
-        tickBlock.Init();
         currentLevelContainer.Init(this, map);
     }
 

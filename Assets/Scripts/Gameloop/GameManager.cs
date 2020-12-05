@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public static int FPS => Instance.desiredFPS;
     public static float deltaTime => Instance.frameDuration;
 
+    public static PhysiXVIISetings PhysiXVIISetings => Instance.physiXVIIScriptable.settings;
+
     public static GameManager Instance;
 
     public enum GameStateEnum { MainMenu, Overworld, Level, LevelEditor }
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
     public int desiredFPS;
     //public LevelContainer currentLevelContainer;
     public LevelDataScriptable levelData;
+    [SerializeField] PhysiXVIIScriptable physiXVIIScriptable;
 
     float currentDeltaTime;
     float frameDuration;
