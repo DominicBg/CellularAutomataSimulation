@@ -15,13 +15,24 @@ MonoBehaviour:
   navigationGraphPrefab: {fileID: 7294499005119523509, guid: 9dffbbc2ed0bc804982a2fb1f87ef813, type: 3}
   levels: []
   backgroundTexture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
+  starSettings:
+    density:
+      x: 5
+      y: 5
+    radius: 3
+    seed: 0
+    speed: 0.05
+    sinOffsetScale:
+      x: 24.46
+      y: 23.6
+    sinOffsetAmplitude: 25
   settings:
-    distanceThreshold: 10.42
+    distanceThreshold: 100
     lightPosition:
-      x: -3.76
-      y: -4.38
-      z: -11.2
-    baseLight: 0.2
+      x: -0.65
+      y: -0.67
+      z: -4.11
+    baseLight: 0.1
     scales:
       x: 0.05
       y: 0.05
@@ -29,16 +40,24 @@ MonoBehaviour:
     speed: 0.02
     ortho: 1
     rotationAxis:
-      x: 0
+      x: 1
       y: 1
-      z: 1
+      z: 0
+    position:
+      x: 0
+      y: 0
+      z: 10.33
     boxBound:
       x: 0.5
       y: 0.5
       z: 0.5
-    modulo: 4.7
-    offset:
-      x: 1
-      y: 1
-      z: 1
-    repeat: 0
+    objectSize: 1.25
+    twist: 0
+    lightFactor: 0.73
+    cMin: 2
+    cMax: 4
+    l: 0.5
+    shadowAlpha: 0.25
+    particleType: 1
+    blendingMode: 1
+    colorResolution: 10

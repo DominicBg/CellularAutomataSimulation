@@ -99,7 +99,7 @@ public class GridRenderer : MonoBehaviour
         return colorsA;
     }
 
-    public static NativeArray<Color32> InteraceColors(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> colors, ref InterlaceTextureSettings settings)
+    public static NativeArray<Color32> InterlaceColors(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> colors, ref InterlaceTextureSettings settings)
     {
         new InterlaceTextureJob()
         {

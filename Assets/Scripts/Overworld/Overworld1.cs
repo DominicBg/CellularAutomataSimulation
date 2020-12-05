@@ -11,6 +11,7 @@ public class Overworld1 : OverworldBase
 {
     public PlanetSettings planetSettings;
     public SandSettings sandSettings;
+    public StarBackgroundRendering starSettings;
 
     [System.Serializable]
     public struct PlanetSettings
@@ -42,6 +43,15 @@ public class Overworld1 : OverworldBase
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
         GridRenderer.GetBlankTexture(out backgroundColors);
+
+        new ShiningStarBackgroundJob()
+        {
+            colors = backgroundColors,
+            maxSizes = GameManager.GridSizes,
+            tick = tickBlock.tick,
+            settings = starSettings
+        }.Schedule(GameManager.GridLength, 100).Complete();
+
 
         new RenderPlanetJob()
         {

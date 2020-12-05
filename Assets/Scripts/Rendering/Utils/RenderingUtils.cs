@@ -117,4 +117,12 @@ public static class RenderingUtils
     {
         return new Color(math.saturate(color.r), math.saturate(color.g), math.saturate(color.b), math.saturate(color.a));
     }
+
+    public static Color ReduceResolution(this Color color, int resolution)
+    {
+        float4 color4 = new float4(color.r, color.g, color.b, color.a);
+        color4 = math.floor(color4 * resolution) / resolution;
+       return new Color(color4.x, color4.y, color4.z, color4.w);
+
+    }
 }

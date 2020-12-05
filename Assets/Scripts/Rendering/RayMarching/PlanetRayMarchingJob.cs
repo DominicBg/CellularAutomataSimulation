@@ -18,10 +18,22 @@ public struct PlanetRayMarchingSettings
 
     [Header("SDF")]
     public float3 rotationAxis;
+    public float3 position;
     public float3 boxBound;
-    public float modulo;
-    public float3 offset;
-    public bool repeat;
+    public float objectSize;
+    public float twist;
+
+    public float lightFactor;
+
+    [Header("replicate")]
+    public float cMin;
+    public float cMax;
+    public float l;
+
+    public float shadowAlpha;
+    public ParticleType particleType;
+    public BlendingMode blendingMode;
+    public int colorResolution;
 }
 
 [BurstCompile]
@@ -31,22 +43,17 @@ public struct PlanetRayMarchingJob : IJobParallelFor
     public TickBlock tickBlock;
 
     public PlanetRayMarchingSettings settings;
-
+    public ParticleRendering particleRendering;
     public NativeArray<Color32> outputColor;
 
     const int maxStep = 100;
     const float threshold = 0.01f;
 
-
     public void Execute(int index)
     {
         int2 gridPosition = ArrayHelper.IndexToPos(index, gridSizes);
 
-        //float2 uv = ((float2)gridPosition / gridSizes -0.5f) / settings.scales;
-        float2 uv = settings.repeat ?
-            ((float2)gridPosition / gridSizes) / settings.scales :
-            ((float2)gridPosition / gridSizes - 0.5f) / settings.scales;
-
+        float2 uv = ((float2)gridPosition / gridSizes - 0.5f) / settings.scales;
         float3 ro = new float3(uv.x, uv.y, 0);
         float3 rd = (settings.ortho) ? new float3(0, 0, 1) : math.normalize(new float3(uv.x, uv.y, 1));
 
@@ -55,22 +62,29 @@ public struct PlanetRayMarchingJob : IJobParallelFor
 
         float3 position = ro + rd * distance;
         float3 normal = GetNormal(position);
-        outputColor[index] = CalculateColor(distance, position, normal);
+        Color shadowcolor = CalculateColor(distance, position, normal, numberStep);
 
+        if (shadowcolor.a != 0)
+        {
+            shadowcolor.ReduceResolution(settings.colorResolution);
+            shadowcolor.a = settings.shadowAlpha;
+            Color iceColor = ParticleRenderUtil.GetColorForType(gridPosition, settings.particleType, ref particleRendering, ref tickBlock);
+            outputColor[index] = RenderingUtils.Blend(iceColor, shadowcolor, settings.blendingMode);
+        }
     }
 
     float DistanceFunction(float3 position, float t)
     {
-        if(settings.repeat)
-            position = (position  + settings.offset) % settings.modulo - settings.offset;
+        position = RayMarchingPrimitive.Translate(position, settings.position);
+        position = RayMarchingPrimitive.RotateAroundAxis(position, settings.rotationAxis, t);
 
-        quaternion boxRotation = quaternion.AxisAngle(math.normalize(settings.rotationAxis), t);
-        //quaternion invBoxRotation = math.inverse(boxRotation);
-
-        position = math.mul(boxRotation, position);
-
-        float3 q = math.abs(position) - settings.boxBound;
-        return math.length(math.max(q, 0)) + math.min(math.max(q.x, math.max(q.y, q.z)), 0);
+        float c = math.remap(-1, 1, settings.cMin, settings.cMax, math.sin(t));
+        if (c != 0 && settings.l != 0)
+        {
+            position = RayMarchingPrimitive.opRepLim(position, c, settings.l);
+        }
+        position = RayMarchingPrimitive.opTwist(position, settings.twist);
+        return RayMarchingPrimitive.sdBox(position, settings.objectSize);
     }
 
     float3 GetNormal(float3 position)
@@ -109,13 +123,18 @@ public struct PlanetRayMarchingJob : IJobParallelFor
         return currentDistance;
     }
 
-    Color CalculateColor(float distance, float3 position, float3 normal)
+    Color CalculateColor(float distance, float3 position, float3 normal, int numberOfStep)
     {
         if (distance < settings.distanceThreshold)
         {
             float t = math.saturate(math.dot(math.normalize(settings.lightPosition), normal));
             return (t + settings.baseLight) * Color.white;
         }
-        return Color.black;
+        else if(numberOfStep > maxStep * settings.lightFactor)
+        {
+            float t = math.remap(maxStep * settings.lightFactor, maxStep, 0, 1, numberOfStep);
+            return t * Color.white;
+        }
+        return Color.clear;
     }
 }

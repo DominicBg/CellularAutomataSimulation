@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PlayerControlSettings
   m_EditorClassIdentifier: 
   movementSpeed: 150
-  airAcceleration: 5
+  airAcceleration: 1
   airMovementSpeed: 15
   jetpackForce: 25.1

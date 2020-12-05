@@ -85,7 +85,7 @@ public class GameMainMenuManager : MonoBehaviour, State
             glitchSettings.stride = tickBlock.random.NextInt2(minStride, maxStride);
             glitchSettings.inverted = tickBlock.tick % glitchSpeed * 2 < glitchSpeed;
 
-            var result = GridRenderer.InteraceColors(ref lightTexture, ref darkTexture, ref glitchSettings);
+            var result = GridRenderer.InterlaceColors(ref lightTexture, ref darkTexture, ref glitchSettings);
             GridRenderer.RenderToScreen(result);
 
         }
