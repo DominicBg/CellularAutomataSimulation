@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5479903869181738648}
   - component: {fileID: 5479903869181738649}
+  - component: {fileID: -2321223252203620981}
+  - component: {fileID: -286700993946606182}
   - component: {fileID: 5479903869181738654}
   - component: {fileID: 5479903869181738650}
   - component: {fileID: 5479903869181738651}
@@ -50,12 +52,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelElements:
+  - {fileID: -2321223252203620981}
+  - {fileID: -286700993946606182}
   - {fileID: 5479903869181738654}
   - {fileID: 5479903869181738651}
   - {fileID: 1251561243526543711}
   - {fileID: 7364371957976215773}
   - {fileID: 1783878733823270471}
   particleSpawnerElements: {fileID: 5479903869181738650}
+--- !u!114 &-2321223252203620981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2147efe278ddba4fad17bf11b76316f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+    density:
+      x: 5
+      y: 5
+    radius: 3
+    seed: 0
+    speed: 0.02
+    sinOffsetScale:
+      x: 23.51
+      y: 126.367
+    sinOffsetAmplitude: 12643.2
+--- !u!114 &-286700993946606182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d718be66283c44149b8b3e5fec2e7064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
 --- !u!114 &5479903869181738654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +129,7 @@ MonoBehaviour:
     gridPosition:
       x: 0
       y: 0
+    inclinaison: 0
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   debugBoundFlag: 0
   settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
@@ -250,9 +294,9 @@ MonoBehaviour:
   position:
     x: 52
     y: 25
-  isEquiped: 0
   player: {fileID: 5479903869181738654}
   spriteVisual: 4
+  isEquiped: 0
   type: 2
   particleSpeed: 10
 --- !u!114 &1783878733823270471
@@ -272,8 +316,8 @@ MonoBehaviour:
   position:
     x: 52
     y: 52
-  isEquiped: 0
   player: {fileID: 5479903869181738654}
   spriteVisual: 5
+  isEquiped: 0
   type: 1
   particleSpeed: 10

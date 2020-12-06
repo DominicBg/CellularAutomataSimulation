@@ -20,16 +20,7 @@ public abstract class PhysicObject : LevelObject
 
     protected void HandlePhysic()
     {
-        PhysiXVII.HandlePhysics(this, map);
-        //physicData.gridPosition = position;
-
-        //NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
-        //physicDataReference.Value = physicData;
-        //new PhysiXVIIJob(map, GameManager.deltaTime, physicDataReference).Run();
-        //physicData = physicDataReference.Value;
-        //physicDataReference.Dispose();
-
-        //position = physicData.gridPosition;
+        PhysiXVII.HandlePhysics(this, map);    
     }
 
     protected bool IsGrounded()

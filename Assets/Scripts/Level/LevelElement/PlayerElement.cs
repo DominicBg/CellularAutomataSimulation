@@ -9,28 +9,54 @@ public class PlayerElement : PhysicObject
 {
     public PlayerControlSettings settings;
 
-    WeaponBaseElement currentWeapon;
+    public SpriteAnimator spriteAnimator;
+    EquipableElement currentEquip;
+    int lookDirection;
+    bool lookLeft;
 
     public override Bound GetBound()
     {
         return new Bound(position, GetNativeSprite().sizes);
     }
 
+    public override void Init(GameLevelManager gameLevelManager, Map map)
+    {
+        base.Init(gameLevelManager, map);
+        spriteAnimator = new SpriteAnimator(settings.spriteSheet);
+    }
+
     public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
-        GridRenderer.ApplySprite(ref outputcolor, GetNativeSprite(), position);
+        if(lookDirection != 0)
+        {
+            lookLeft = lookDirection == -1;
+        }
 
+        //spriteAnimator.DebugRender(ref outputcolor, position);
+        spriteAnimator.Render(ref outputcolor, position, lookLeft);
+        //GridRenderer.ApplySprite(ref outputcolor, GetNativeSprite(), position, lookLeft);
         DebugAllPhysicBound(ref outputcolor);
     }
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(currentWeapon != null && Input.GetMouseButton(0))
+        if(currentEquip != null && Input.GetMouseButton(0))
         {
-            currentWeapon.UseWeapon(position);
+            currentEquip.Use(position);
         }
 
         int2 direction = InputCommand.Direction;
+        lookDirection = direction.x;
+
+        if(direction.x == 0)
+        {
+            spriteAnimator.SetAnimation(0);
+        }
+        else
+        {
+            spriteAnimator.SetAnimation(1);
+        }
+        spriteAnimator.Update();
 
         bool isGrounded = IsGrounded();
 
@@ -44,30 +70,33 @@ public class PlayerElement : PhysicObject
             physicData.velocity += (float2)direction * settings.airMovementSpeed;
         }
 
-        if (InputCommand.IsButtonHeld(KeyCode.Space))
+        if (isGrounded && InputCommand.IsButtonDown(KeyCode.Space))
         {
-            physicData.velocity += new float2(0, settings.jetpackForce);
+            physicData.velocity += new float2(0, settings.jumpForce);
         }
 
 
         HandlePhysic();
-
     }
 
-    public void EquipWeapon(WeaponBaseElement weapon)
+    public void Equip(EquipableElement weapon)
     {
-        if(currentWeapon != null)
+        if(currentEquip != null)
         {
-            currentWeapon.UnequipWeapon(position);
+            currentEquip.Unequip(position);
         }
 
-        currentWeapon = weapon;
+        currentEquip = weapon;
     }
 
     NativeSprite GetNativeSprite()
     {
-        SpriteEnum sprite = currentWeapon != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
+        SpriteEnum sprite = currentEquip != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
         return SpriteRegistry.GetSprite(sprite);
     }
-   
+
+    public override void Dispose()
+    {
+        spriteAnimator.Dispose();
+    }
 }

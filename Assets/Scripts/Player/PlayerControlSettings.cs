@@ -10,6 +10,7 @@ public class PlayerControlSettings : ScriptableObject
     public float airMovementSpeed = 75;
 
     //move somewhere else
-    public float jetpackForce = 150;
+    public float jumpForce = 150;
 
+    public NativeSpriteSheet.SpriteSheet spriteSheet;
 }

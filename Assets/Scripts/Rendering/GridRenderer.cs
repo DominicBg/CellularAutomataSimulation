@@ -112,17 +112,19 @@ public class GridRenderer : MonoBehaviour
         return outputColor;
     }
 
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, NativeSprite sprite, int2 position)
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, NativeSprite sprite, int2 position, bool isflipped = false)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
+                int xx = (!isflipped) ? x : sprite.sizes.x - x - 1;
+
                 int2 texturePos = new int2(x, y) + position;
-                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[x, y].a != 0)
+                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[xx, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
-                    outputColor[index] = sprite.pixels[x, y];
+                    outputColor[index] = sprite.pixels[xx, y];
                 }
             }
         }

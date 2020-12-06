@@ -29,7 +29,6 @@ public struct PlanetRayMarchingSettings
     public float cMin;
     public float cMax;
     public float l;
-
     public float shadowAlpha;
     public ParticleType particleType;
     public BlendingMode blendingMode;
@@ -75,6 +74,13 @@ public struct PlanetRayMarchingJob : IJobParallelFor
 
     float DistanceFunction(float3 position, float t)
     {
+        float distBoxNice = BoxNice(position, t);
+        //float distSphere = Sphere(position, t);
+        return distBoxNice;
+    }
+
+    float BoxNice(float3 position, float t)
+    {
         position = RayMarchingPrimitive.Translate(position, settings.position);
         position = RayMarchingPrimitive.RotateAroundAxis(position, settings.rotationAxis, t);
 
@@ -86,6 +92,20 @@ public struct PlanetRayMarchingJob : IJobParallelFor
         position = RayMarchingPrimitive.opTwist(position, settings.twist);
         return RayMarchingPrimitive.sdBox(position, settings.objectSize);
     }
+
+    //float Sphere(float3 position, float t)
+    //{
+    //    position = RayMarchingPrimitive.Translate(position, settings.position);
+    //    //position = RayMarchingPrimitive.RotateAroundAxis(position, settings.rotationAxis, t);
+
+    //    float c = math.remap(-1, 1, settings.cMin, settings.cMax, math.sin(t));
+    //    if (c != 0 && settings.l != 0)
+    //    {
+    //        position = RayMarchingPrimitive.opRepLim(position, c, settings.l);
+    //    }
+    //    position = RayMarchingPrimitive.opTwist(position, settings.twist);
+    //    return RayMarchingPrimitive.sdSphere(position, settings.sphereRadius);
+    //}
 
     float3 GetNormal(float3 position)
     {

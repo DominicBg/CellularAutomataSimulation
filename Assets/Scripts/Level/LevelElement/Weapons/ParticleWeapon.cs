@@ -22,12 +22,12 @@ public class ParticleWeapon : WeaponBaseElement
     }
 
 
-    protected override void OnWeaponEquip()
+    protected override void OnEquip()
     {
         Debug.Log("PARTICLE GUN EQUIPED");
     }
 
-    protected override void OnWeaponUnequip()
+    protected override void OnUnequip()
     {
         Debug.Log("PARTICLE GUN UNEQUIPED");
 

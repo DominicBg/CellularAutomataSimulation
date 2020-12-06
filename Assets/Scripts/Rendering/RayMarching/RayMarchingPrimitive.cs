@@ -61,6 +61,12 @@ public static class RayMarchingPrimitive
         return math.mul(math.inverse(t), p);
     }
 
+    public static float smin0(float a, float b, float k)
+    {
+        float h = math.clamp(0.5f + 0.5f * (b - a) / k, 0, 1);
+        return math.lerp(b, a, h) - k * h * (1 - h);
+    }
+
 
     public static float3 RotateX(float3 p, float a)
     {

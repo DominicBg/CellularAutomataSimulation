@@ -37,6 +37,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             nativeParticleSpawners.Dispose();
             map.Dispose();
 
+            currentLevelContainer.Dispose();
+
             currentLevelContainer?.Unload();
             currentLevelContainer = null;
         }
@@ -76,7 +78,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
 
-        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
+        //GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
         currentLevelContainer.OnRender(ref outputColor, ref tickBlock);
         
         GridRenderer.RenderToScreen(outputColor);

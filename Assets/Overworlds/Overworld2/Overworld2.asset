@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Overworld2
   m_EditorClassIdentifier: 
   navigationGraphPrefab: {fileID: 7294499005119523509, guid: 9dffbbc2ed0bc804982a2fb1f87ef813, type: 3}
-  levels: []
+  levels:
+  - {fileID: 11400000, guid: a4ddb5b6170898b4087e697f0124952c, type: 2}
   backgroundTexture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
   starSettings:
     density:
@@ -60,4 +61,4 @@ MonoBehaviour:
     shadowAlpha: 0.25
     particleType: 1
     blendingMode: 1
-    colorResolution: 10
+    colorResolution: 25

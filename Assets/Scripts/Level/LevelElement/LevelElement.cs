@@ -11,8 +11,8 @@ public abstract class LevelElement : MonoBehaviour
     protected GameLevelManager gameLevelManager;
     protected Map map;
 
-    [HideInInspector] public bool isEnable = true;
-    [HideInInspector] public bool isVisible = true;
+    public bool isEnable = true;
+    public bool isVisible = true;
 
 
     public virtual void Init(GameLevelManager gameLevelManager, Map map)
@@ -22,5 +22,14 @@ public abstract class LevelElement : MonoBehaviour
     }
 
     public abstract void OnUpdate(ref TickBlock tickBlock);
-    public abstract void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock);
+    public abstract void OnRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock);
+    public virtual void OnRenderUI(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    {
+
+    }
+
+    public virtual void Dispose()
+    {
+
+    }
 }

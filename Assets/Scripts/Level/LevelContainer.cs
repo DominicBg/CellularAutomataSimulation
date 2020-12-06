@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class LevelContainer : MonoBehaviour
+public class LevelContainer : MonoBehaviour, IDisposable
 {
     public LevelElement[] levelElements;
     public ParticleSpawnerElements particleSpawnerElements;
@@ -44,6 +45,16 @@ public class LevelContainer : MonoBehaviour
             if (levelElements[i].isVisible)
                 levelElements[i].OnRender(ref outputcolor, ref tickBlock);
         }
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            levelElements[i].OnRenderUI(ref outputcolor, ref tickBlock);
+        }
+    }
+
+    public void Dispose()
+    {
+        for (int i = 0; i < levelElements.Length; i++)
+            levelElements[i].Dispose();
     }
 
     public NativeArray<ParticleSpawner> GetParticleSpawner()

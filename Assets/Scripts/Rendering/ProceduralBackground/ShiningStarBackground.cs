@@ -14,6 +14,19 @@ public struct StarBackgroundRendering : IRenderableAnimated
     public float2 sinOffsetScale;
     public float sinOffsetAmplitude;
 
+    public static StarBackgroundRendering Default()
+    {
+        return new StarBackgroundRendering()
+        {
+            density = 5,
+            radius = 3,
+            seed = 0,
+            sinOffsetAmplitude = 12643.2f,
+            sinOffsetScale = new float2(23.51f, 126.367f),
+            speed = 0.02f
+        };
+    }
+
     public void Render(ref NativeArray<Color32> colorArray, int tick)
     {
         new ShiningStarBackgroundJob()
