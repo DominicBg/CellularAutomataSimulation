@@ -54,7 +54,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
         map = levelData.LoadMap();
         nativeParticleSpawners = currentLevelContainer.GetParticleSpawner();
 
-        currentLevelContainer.Init(this, map);
+        currentLevelContainer.Init(map);
     }
 
     public void UpdateSimulation()
@@ -71,6 +71,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
+        UpdateSimulation();
         currentLevelContainer.OnUpdate(ref tickBlock);
     }
 

@@ -13,12 +13,16 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
     public int2 m_sizes;
 
     Allocator m_Allocator;
+
+#if UNITY_EDITOR
     internal AtomicSafetyHandle m_Safety;
 
     [NativeSetClassTypeToNullOnSchedule]
     internal DisposeSentinel m_DisposeSentinel;
 
     private static int s_staticSafetyId;
+#endif
+
     private int m_binarySize;
 
     public NativeGrid(int2 sizes, Allocator allocator)
@@ -30,6 +34,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         m_buffer = UnsafeUtility.Malloc(m_binarySize, UnsafeUtility.AlignOf<T>(), allocator);
         UnsafeUtility.MemClear(m_buffer, m_binarySize);
 
+#if UNITY_EDITOR
         //Copy pasted stuff from NativeArray
         DisposeSentinel.Create(out m_Safety, out m_DisposeSentinel, 1, allocator);
         if (s_staticSafetyId == 0)
@@ -37,6 +42,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
             s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeGrid<T>>();
         }
         AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
+#endif
     }
 
     public void Clear()
@@ -46,13 +52,17 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 
     public void Dispose()
     {
+        m_buffer = null;
+        UnsafeUtility.Free(m_buffer, m_Allocator);
+
+#if UNITY_EDITOR
         if (!UnsafeUtility.IsValidAllocator(m_Allocator))
         {
             throw new InvalidOperationException("The NativeArray can not be Disposed because it was not allocated with a valid allocator.");
         }
         DisposeSentinel.Dispose(ref m_Safety, ref m_DisposeSentinel);
-        UnsafeUtility.Free(m_buffer, m_Allocator);
-        m_buffer = null;
+#endif
+
     }
 
     public unsafe T this[int x, int y]

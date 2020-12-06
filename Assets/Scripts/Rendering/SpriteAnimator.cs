@@ -8,10 +8,10 @@ using UnityEngine;
 [System.Serializable]
 public class SpriteAnimator : IDisposable
 {
-    NativeSpriteSheet nativeSpriteSheet;
+    public NativeSpriteSheet nativeSpriteSheet;
 
-    int currentAnim;
-    int currentFrame;
+    public int currentAnim;
+    public int currentFrame;
 
     public int framePerImage = 10;
 

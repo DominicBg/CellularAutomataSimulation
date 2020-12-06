@@ -73,12 +73,15 @@ public struct NativeSpriteSheet : IDisposable
     [System.Serializable]
     public class SpriteSheet
     {
+        public string spriteSheetName;
         public SpriteAnimation[] spriteAnimations;
     }
 
     [System.Serializable]
     public class SpriteAnimation
     {
+        //to use in enum generator
+        public string animationName;
         public Texture2D[] sprites;
     }
 }

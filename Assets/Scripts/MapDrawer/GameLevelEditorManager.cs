@@ -40,7 +40,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnStart()
     {
-        GameManager.Instance.levelData = levelData;
+        levelData = GameManager.Instance.levelData;
         tickBlock.Init();
         Load();
     }
@@ -122,13 +122,23 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         tickBlock.UpdateTick();
 
         Map map = new Map(grid, GameManager.GridSizes);
-        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColor);
+        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
-        if (debugTexture != null)
-            GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
+        //if (debugTexture != null)
+        //    GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
 
 
-        GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
+        // GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
+
+
+        currentLevelContainer.Init(map);
+        currentLevelContainer.OnRender(ref outputColors, ref tickBlock);
+
+        var levelElements = currentLevelContainer.levelElements;
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            levelElements[i].OnRender(ref outputColors, ref tickBlock);
+        }
 
         //Color spawner
         var particleSpawner = currentLevelContainer.GetParticleSpawner();
@@ -136,18 +146,11 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         {
             var spawner = particleSpawner[i];
             int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
-            outputColor[index] = Color.white;
+            outputColors[index] = Color.white;
         }
         particleSpawner.Dispose();
 
-
-    var levelElements = currentLevelContainer.levelElements;
-        for (int i = 0; i < levelElements.Length; i++)
-        {
-            levelElements[i].OnRender(ref outputColor, ref tickBlock);
-        }
-
-        GridRenderer.RenderToScreen(outputColor);
+        GridRenderer.RenderToScreen(outputColors);
         map.Dispose();
     }
 
@@ -163,6 +166,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnEnd()
     {
+        currentLevelContainer.Dispose();
         currentLevelContainer?.Unload();
         currentLevelContainer = null;
 

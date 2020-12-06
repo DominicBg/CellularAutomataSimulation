@@ -22,3 +22,16 @@ MonoBehaviour:
   fuelRefillRate: 2
   fuelUseRate: 1
   refuelAfterXTick: 60
+  equipedOffset:
+    x: -4
+    y: 0
+  spriteSheet:
+    spriteSheetName: Jetpack
+    spriteAnimations:
+    - animationName: Idle
+      sprites:
+      - {fileID: 2800000, guid: e711ba23179b49a4aa10c555368ef872, type: 3}
+    - animationName: Use
+      sprites:
+      - {fileID: 2800000, guid: f38b2153b3cd5b442b4ecbcd49a86d49, type: 3}
+      - {fileID: 2800000, guid: 8e3088858528cdd44a546e8246f4f197, type: 3}

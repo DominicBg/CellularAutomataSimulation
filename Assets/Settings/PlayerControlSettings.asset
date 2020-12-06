@@ -17,11 +17,18 @@ MonoBehaviour:
   airMovementSpeed: 15
   jumpForce: 200
   spriteSheet:
+    spriteSheetName: Astro
     spriteAnimations:
-    - sprites:
+    - animationName: Idle
+      sprites:
       - {fileID: 2800000, guid: 1f5d0b366e9aa7f46ac3c4e4883330fa, type: 3}
-    - sprites:
-      - {fileID: 2800000, guid: 1f5d0b366e9aa7f46ac3c4e4883330fa, type: 3}
+    - animationName: Run
+      sprites:
       - {fileID: 2800000, guid: 87755230f497f7f4dbca13e277d8225a, type: 3}
       - {fileID: 2800000, guid: 915a4faf4b8904a4db15f687e6afd9b1, type: 3}
       - {fileID: 2800000, guid: d6f498d05334f5942b9892b500f0a783, type: 3}
+      - {fileID: 2800000, guid: 1f5d0b366e9aa7f46ac3c4e4883330fa, type: 3}
+    - animationName: Fall
+      sprites:
+      - {fileID: 2800000, guid: 86fe31a0ef6f23d42ad23fadde5e403d, type: 3}
+      - {fileID: 2800000, guid: 26941dc7a5784804482396b608e85b44, type: 3}

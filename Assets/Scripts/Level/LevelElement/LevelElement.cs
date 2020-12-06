@@ -8,16 +8,14 @@ using UnityEngine;
 public abstract class LevelElement : MonoBehaviour
 {
     //References
-    protected GameLevelManager gameLevelManager;
     protected Map map;
 
     public bool isEnable = true;
     public bool isVisible = true;
 
 
-    public virtual void Init(GameLevelManager gameLevelManager, Map map)
+    public virtual void Init(Map map)
     {
-        this.gameLevelManager = gameLevelManager;
         this.map = map;
     }
 

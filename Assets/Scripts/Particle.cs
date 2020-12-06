@@ -24,5 +24,8 @@ public enum ParticleType
     Player,
 
     //Misc
-    TitleDisintegration
+    TitleDisintegration,
+    Count
+
+
 }

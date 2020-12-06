@@ -28,9 +28,9 @@ public struct PhysiXVIIJob : IJob
         PhysicData physicData = physicDataReference.Value;
 
         bool isGrounded = PhysiXVII.IsGrounded(in physicData, map, physicData.gridPosition);
-        if (isGrounded && physicData.velocity.y < 0)
+        if (isGrounded && !(physicData.velocity.y > 0))
         {
-            physicData.velocity.y = 0; //set parralel of gravity
+            physicData.velocity.y = 0; //set parallel of gravity
             physicData.velocity *= settings.friction;
         }
         else
@@ -65,26 +65,46 @@ public struct PhysiXVIIJob : IJob
     }
 
 
+    //public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition)
+    //{
+    //    int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
+
+    //    int2 desiredGridPosition = FindDesiredMovePosition(ref physicData.physicBound, physicData.gridPosition, nextGridPosition);
+    //    if (TryGoPosition(ref physicData.physicBound, physicData.gridPosition, desiredGridPosition))
+    //    {
+    //        if (math.all(nextGridPosition == desiredGridPosition))
+    //        {
+    //            physicData.position = desiredPosition;
+    //            physicData.gridPosition = desiredGridPosition;
+    //        }
+    //        else
+    //        {
+    //            physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
+
+    //            physicData.position = desiredGridPosition * GameManager.GridScale;
+    //            physicData.gridPosition = desiredGridPosition;
+    //        }
+    //    }
+    //}
+
     public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition)
     {
         int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
 
         int2 desiredGridPosition = FindDesiredMovePosition(ref physicData.physicBound, physicData.gridPosition, nextGridPosition);
-        if (TryGoPosition(ref physicData.physicBound, physicData.gridPosition, desiredGridPosition))
+        if (math.all(nextGridPosition == desiredGridPosition))
         {
-            if (math.all(nextGridPosition == desiredGridPosition))
-            {
-                physicData.position = desiredPosition;
-                physicData.gridPosition = desiredGridPosition;
-            }
-            else
-            {
-                physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
-
-                physicData.position = desiredGridPosition * GameManager.GridScale;
-                physicData.gridPosition = desiredGridPosition;
-            }
+            physicData.position = desiredPosition;
+            physicData.gridPosition = desiredGridPosition;
         }
+        else
+        {
+            physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
+
+            physicData.position = desiredGridPosition * GameManager.GridScale;
+            physicData.gridPosition = desiredGridPosition;
+        }
+       
     }
 
 
@@ -126,6 +146,14 @@ public struct PhysiXVIIJob : IJob
         {
             desiredPosition.y = highestClimbY;
         }
+
+        Bound newPositionBound = physicBound.GetCollisionBound(desiredPosition);
+        
+        if(map.HasCollision(ref newPositionBound))
+        {
+            return from;
+        }
+
         return desiredPosition;
     }
 

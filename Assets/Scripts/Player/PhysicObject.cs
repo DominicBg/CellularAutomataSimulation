@@ -11,9 +11,8 @@ public abstract class PhysicObject : LevelObject
     public PhysicData physicData;
     public Texture2D collisionTexture;
 
-    public override void Init(GameLevelManager gameLevelManager, Map map)
+    public override void Init(Map map)
     {
-        this.gameLevelManager = gameLevelManager;
         this.map = map;
         physicData.physicBound = new PhysicBound(collisionTexture);
     }

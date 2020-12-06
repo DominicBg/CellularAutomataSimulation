@@ -10,16 +10,22 @@ public class Jetpack : EquipableElement
     private int currentFuel;
     private int unUsedForTicks;
 
-    private void Start()
+    SpriteAnimator spriteAnimator;
+
+    public override void Init(Map map)
     {
+        base.Init(map);
         currentFuel = settings.fuelCapacity;
+        spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }
 
     public override void Use(int2 position)
     {
-        if(currentFuel < settings.fuelUseRate)
+        if (currentFuel < settings.fuelUseRate)
+        {
+            spriteAnimator.SetAnimation(0);
             return;
-
+        }
         if(currentFuel == settings.fuelCapacity)
             player.physicData.velocity += settings.intialVelocity;
         else
@@ -27,15 +33,22 @@ public class Jetpack : EquipableElement
 
         unUsedForTicks = 0;
         currentFuel -= settings.fuelUseRate;
+
+        spriteAnimator.SetAnimation(1);
+
     }
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
+        spriteAnimator.Update();
         base.OnUpdate(ref tickBlock);
         unUsedForTicks++;
 
-        if(unUsedForTicks >= settings.refuelAfterXTick)
+        if (unUsedForTicks >= settings.refuelAfterXTick)
+        {
             currentFuel = math.min(currentFuel + settings.fuelRefillRate, settings.fuelCapacity);
+            spriteAnimator.SetAnimation(0);
+        }
     }
 
     protected override void OnEquip()
@@ -44,6 +57,22 @@ public class Jetpack : EquipableElement
 
     protected override void OnUnequip()
     {
+    }
+
+    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    {
+        if (isEquiped)
+        {
+            int2 offset = settings.equipedOffset;
+
+            if (player.lookLeft)
+                offset.x = -offset.x;
+
+            offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
+            spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset, false);
+        }
+        else
+            spriteAnimator.Render(ref outputcolor, position, false);
     }
 
     public override void OnRenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
@@ -61,5 +90,10 @@ public class Jetpack : EquipableElement
                 outputcolor[index] = Color.white;
             }
         }
+    }
+
+    public override void Dispose()
+    {
+        spriteAnimator.Dispose();
     }
 }

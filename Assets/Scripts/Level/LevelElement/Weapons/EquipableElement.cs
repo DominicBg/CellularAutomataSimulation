@@ -24,7 +24,7 @@ public abstract class EquipableElement : LevelObject
         if (!isEquiped && GetBound().IntersectWith(player.GetBound()) && InputCommand.IsButtonDown(KeyCode.E))
         {
             isEquiped = true;
-            isVisible = false;
+            //isVisible = false;
             player.Equip(this);
             OnEquip();
         }
@@ -35,7 +35,7 @@ public abstract class EquipableElement : LevelObject
         {
             isLateUnequip = false;
             isEquiped = false;
-            isVisible = true;
+            //isVisible = true;
             position = unequipPosition;
         }
     }

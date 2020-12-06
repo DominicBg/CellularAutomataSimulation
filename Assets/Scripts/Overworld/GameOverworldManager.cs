@@ -20,7 +20,7 @@ public class GameOverworldManager : MonoBehaviour, State
 
     public void OnEnd()
     {
-        
+        Dispose();
     }
 
 

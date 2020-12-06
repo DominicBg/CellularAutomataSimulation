@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameOverworldManager gameOverworldManager;
     [SerializeField] GameMainMenuManager gameMainMenuManager;
 
+    public GameStateEnum firstState;
     public int desiredFPS;
     //public LevelContainer currentLevelContainer;
     public LevelDataScriptable levelData;
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour
         m_stateMachine.AddState(gameOverworldManager, GameStateEnum.Overworld, EditorPingManager);
         m_stateMachine.AddState(gameMainMenuManager, GameStateEnum.MainMenu, EditorPingManager);
 
-        m_stateMachine.SetState(GameStateEnum.Level);
+        m_stateMachine.SetState(firstState);
     }
 
     private void Update()

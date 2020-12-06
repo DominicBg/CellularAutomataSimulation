@@ -6,4 +6,6 @@ using UnityEngine;
 public class PhysiXVIIScriptable : ScriptableObject
 {
     public PhysiXVIISetings settings;
+
+
 }

@@ -12,16 +12,16 @@ public class PlayerElement : PhysicObject
     public SpriteAnimator spriteAnimator;
     EquipableElement currentEquip;
     int lookDirection;
-    bool lookLeft;
+    public bool lookLeft;
 
     public override Bound GetBound()
     {
-        return new Bound(position, GetNativeSprite().sizes);
+        return physicData.physicBound.GetCollisionBound(position);
     }
 
-    public override void Init(GameLevelManager gameLevelManager, Map map)
+    public override void Init(Map map)
     {
-        base.Init(gameLevelManager, map);
+        base.Init(map);
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }
 
@@ -48,7 +48,13 @@ public class PlayerElement : PhysicObject
         int2 direction = InputCommand.Direction;
         lookDirection = direction.x;
 
-        if(direction.x == 0)
+        bool isGrounded = IsGrounded();
+
+        if(!isGrounded)
+        {
+            spriteAnimator.SetAnimation(2);
+        }
+        else  if (direction.x == 0)
         {
             spriteAnimator.SetAnimation(0);
         }
@@ -58,7 +64,6 @@ public class PlayerElement : PhysicObject
         }
         spriteAnimator.Update();
 
-        bool isGrounded = IsGrounded();
 
         if (isGrounded)
         {
@@ -89,11 +94,11 @@ public class PlayerElement : PhysicObject
         currentEquip = weapon;
     }
 
-    NativeSprite GetNativeSprite()
-    {
-        SpriteEnum sprite = currentEquip != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
-        return SpriteRegistry.GetSprite(sprite);
-    }
+    //NativeSprite GetNativeSprite()
+    //{
+    //    SpriteEnum sprite = currentEquip != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
+    //    return SpriteRegistry.GetSprite(sprite);
+    //}
 
     public override void Dispose()
     {

@@ -9,8 +9,8 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public LevelElement[] levelElements;
     public ParticleSpawnerElements particleSpawnerElements;
 
-    GameLevelManager gameLevelManager;
-    Map map;
+    //GameLevelManager gameLevelManager;
+    //Map map;
 
     public void OnValidate()
     {
@@ -18,20 +18,20 @@ public class LevelContainer : MonoBehaviour, IDisposable
         particleSpawnerElements = GetComponent<ParticleSpawnerElements>();
     }
 
-    public void Init(GameLevelManager gameLevelManager, Map map)
+    public void Init(Map map)
     {
-        this.gameLevelManager = gameLevelManager;
-        this.map = map;
+        //this.gameLevelManager = gameLevelManager;
+        //this.map = map;
 
         for (int i = 0; i < levelElements.Length; i++)
         {
-            levelElements[i].Init(gameLevelManager, map);
+            levelElements[i].Init(map);
         }
     }
 
     public void OnUpdate(ref TickBlock tickBlock)
     {
-        gameLevelManager.UpdateSimulation();
+        //gameLevelManager.UpdateSimulation();
         for (int i = 0; i < levelElements.Length; i++)
         {
             if(levelElements[i].isEnable)
