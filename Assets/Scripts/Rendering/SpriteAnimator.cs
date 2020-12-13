@@ -51,15 +51,20 @@ public class SpriteAnimator : IDisposable
 
     public void Render(ref NativeArray<Color32> outputColors, int2 position, bool isFlipped)
     {
+        Render(ref outputColors, position, new bool2(isFlipped, false));
+    }
+    public void Render(ref NativeArray<Color32> outputColors, int2 position, bool2 isFlipped)
+    {
         int2 sizes = nativeSpriteSheet.spriteSizes;
         for (int x = 0; x < sizes.x; x++)
         {
             for (int y = 0; y < sizes.y; y++)
             {
-                int xx = (!isFlipped) ? x : sizes.x - x - 1;
+                int xx = (!isFlipped.x) ? x : sizes.x - x - 1;
+                int yy = (!isFlipped.y) ? y : sizes.y - y - 1;
 
                 int2 texturePos = new int2(x, y) + position;
-                int2 pixelPos = new int2(xx, y) + new int2(currentFrame, currentAnim) * nativeSpriteSheet.spriteSizes;
+                int2 pixelPos = new int2(xx, yy) + new int2(currentFrame, currentAnim) * nativeSpriteSheet.spriteSizes;
                 if (GridHelper.InBound(texturePos, GameManager.GridSizes) && nativeSpriteSheet.pixels[pixelPos.x, pixelPos.y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
