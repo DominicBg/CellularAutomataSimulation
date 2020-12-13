@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 150
   airAcceleration: 0
-  airMovementSpeed: 15
+  airMovementSpeed: 10
   jumpForce: 200
   spriteSheet:
     spriteSheetName: Astro

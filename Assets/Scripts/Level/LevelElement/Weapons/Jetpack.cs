@@ -6,11 +6,8 @@ using UnityEngine;
 
 public class Jetpack : EquipableElement
 {
-    public JetpackScriptable settings;
+    public JetpackScriptable settings => (JetpackScriptable)baseSettings;
     private int currentFuel;
-    private int unUsedForTicks;
-
-    SpriteAnimator spriteAnimator;
 
     public override void Init(Map map)
     {
@@ -19,7 +16,7 @@ public class Jetpack : EquipableElement
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }
 
-    public override void Use(int2 position)
+    protected override void OnUse(int2 position)
     {
         if (currentFuel < settings.fuelUseRate)
         {
@@ -38,12 +35,9 @@ public class Jetpack : EquipableElement
 
     }
 
-    public override void OnUpdate(ref TickBlock tickBlock)
+    public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
         spriteAnimator.Update();
-        base.OnUpdate(ref tickBlock);
-        unUsedForTicks++;
-
         if (unUsedForTicks >= settings.refuelAfterXTick)
         {
             currentFuel = math.min(currentFuel + settings.fuelRefillRate, settings.fuelCapacity);

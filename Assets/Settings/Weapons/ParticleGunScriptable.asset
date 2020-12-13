@@ -15,9 +15,6 @@ MonoBehaviour:
   equipedOffset:
     x: 8
     y: 0
-  shootOffset:
-    x: 12
-    y: 5
   spriteSheet:
     spriteSheetName: ParticleGunAnim
     spriteAnimations:
@@ -29,10 +26,14 @@ MonoBehaviour:
       - {fileID: 2800000, guid: 4a871171b5b42394da7f1c4c4b096265, type: 3}
       - {fileID: 2800000, guid: 80f8083bb6f747047a5b0512b7144911, type: 3}
   framePerImage: 3
+  frameCooldown: 2
+  shootOffset:
+    x: 17
+    y: 4
   kickDirection:
     x: -1
     y: 0
-  particleSpeed: 15
+  particleSpeed: 10
   particleOffset:
-    x: 0
+    x: 1
     y: 3

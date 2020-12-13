@@ -10,7 +10,7 @@ public class PlayerElement : PhysicObject
     public PlayerControlSettings settings;
 
     public SpriteAnimator spriteAnimator;
-    EquipableElement currentEquip;
+    [HideInInspector] public EquipableElement currentEquip;
     int lookDirection;
     public bool lookLeft;
 

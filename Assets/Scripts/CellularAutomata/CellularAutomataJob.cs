@@ -113,13 +113,30 @@ public struct CellularAutomataJob : IJob
             return true;
         }
 
-        int2 slidePosition = map.SlideParticle(pos, desiredPosition, out bool hasCollision);
+        int2 slidePosition = map.SlideParticle(pos, desiredPosition, out bool hasCollision, out int2 collisionPosition);
 
         if (!math.all(pos == slidePosition))
         {
             //stop velocity on collision
             if (hasCollision)
-                particle.velocity = 0;
+            {
+                if(map.InBound(collisionPosition))
+                {
+                    Particle p1 = particle;
+                    Particle p2 = map.GetParticle(collisionPosition);
+                    PhysiXVII.ComputeElasticCollision(slidePosition, collisionPosition, p1.velocity, p2.velocity, 1, 1, out float2 outv1, out float2 outv2);
+                    particle.velocity = outv1;
+                    p2.velocity = outv2;
+                    map.SetParticle(collisionPosition, p2, false);
+                }
+                else //WALL COLLISION
+                {
+                    Particle p1 = particle;
+                    int wallMass = 1000;
+                    PhysiXVII.ComputeElasticCollision(slidePosition, collisionPosition, p1.velocity, 0, 1, wallMass, out float2 outv1, out float2 outv2);
+                    particle.velocity = outv1 * 0.1f;
+                }
+            }
 
             map.MoveParticle(particle, pos, slidePosition);
             return true;

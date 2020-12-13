@@ -26,6 +26,8 @@ public abstract class LevelRule : LevelElement
             Debug.Log("BRAVO");
             playerFinished = true;
             OnLevelFinish();
+
+            playerElement.currentEquip.isVisible = false;
         }
     }
 

@@ -58,27 +58,19 @@ public class GridRenderer : MonoBehaviour
         new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, 1).Complete();
     }
 
-    public static void RenderCircle(ref NativeArray<Color32> outputColor, int2 position, int radius, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawEllipse(ref NativeArray<Color32> outputColor, int2 position, int2 radius, Color32 innerColor, Color32 outerColor, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
-        GetColoredCircle(position, radius,
-                    GameManager.GridSizes, color, Allocator.TempJob,
-                    out NativeArray<int2> positions, out NativeArray<Color32> colors);
-
-        ApplyPixels(ref outputColor, ref positions, ref colors, blending);
-        positions.Dispose();
-        colors.Dispose();
+        new CreateEllipseJob()
+        {
+            outputColor = outputColor,
+            position = position,
+            radius = radius,
+            innerColor = innerColor,
+            outerColor = outerColor,
+            blending = blending,
+            useAlphaMask = useAlphaMask
+        }.Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
     }
-
-    public static void RenderEllipseMask(ref NativeArray<Color32> outputColor, int2 position, int2 radius, Color32 color, BlendingMode blending = BlendingMode.Normal)
-    {
-        GetEllipseMask(position, radius,
-                    GameManager.GridSizes, color, Allocator.TempJob,
-                    out NativeArray<Color32> colors);
-
-        ApplyTextureToColor(ref outputColor, ref colors, blending, useAlphaMask: true);
-        colors.Dispose();
-    }
-
 
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {

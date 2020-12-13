@@ -54,3 +54,6 @@ MonoBehaviour:
       x: 1.252
       y: 11.254
     sinOffsetAmplitude: 71.17
+  backgroundColor:
+    serializedVersion: 2
+    rgba: 4279895307

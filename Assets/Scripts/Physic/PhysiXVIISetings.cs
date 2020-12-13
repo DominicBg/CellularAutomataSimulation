@@ -14,11 +14,11 @@ public unsafe struct PhysiXVIISetings
     public fixed float canPush[(int)ParticleType.Count];
 
     //TODO
-    [EnumNamedArray(typeof(ParticleType))]
-    public fixed float frictions[(int)ParticleType.Count];
+    //[EnumNamedArray(typeof(ParticleType))]
+    //public fixed float frictions[(int)ParticleType.Count];
 
-    [EnumNamedArray(typeof(ParticleType))]
-    public fixed float weigth[(int)ParticleType.Count];
+    //[EnumNamedArray(typeof(ParticleType))]
+    //public fixed float weigth[(int)ParticleType.Count];
 
     //[EnumNamedArray(typeof(ParticleType))]
     //public fixed float absorbtion[(int)ParticleType.Count];

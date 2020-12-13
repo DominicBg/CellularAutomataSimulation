@@ -71,42 +71,11 @@ public static class RenderingUtils
         return 0.216f * color.r + 0.715f * color.g + 0.0722f * color.b;
     }
 
-    public static void GetColoredCircle(int2 centerPosition, int radius, int2 mapSizes, Color32 color, Allocator allocator, out NativeArray<int2> positions, out NativeArray<Color32> colors)
+
+    public static bool ShouldRender(Color32 color, bool useAlphaMask)
     {
-        //todo burst
-        positions = GridHelper.GetCircleAtPosition(centerPosition, radius, mapSizes, allocator);
-
-        //Init with good memory?
-        colors = new NativeArray<Color32>(positions.Length, allocator);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            colors[i] = color;
-        }
+        return !useAlphaMask || (useAlphaMask && color.a != 0);
     }
-
-    public static void GetEllipseMask(int2 centerPosition, int2 radius, int2 mapSizes, Color32 color, Allocator allocator, out NativeArray<Color32> colors)
-    {
-        //todo burst
-        var positions = GridHelper.GetEllipseAtPosition(centerPosition, radius, mapSizes, allocator);
-        //Init with good memory?
-
-        colors = new NativeArray<Color32>(mapSizes.x * mapSizes.y, allocator);
-        for (int i = 0; i < colors.Length; i++)
-        {
-            colors[i] = color;
-        }
-
-        //Remove ellipse
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int index = ArrayHelper.PosToIndex(positions[i], mapSizes);
-            colors[index] = Color.clear;
-        }
-        positions.Dispose();
-    }
-
-
-
 
     public static NativeArray<Color32> GetNativeArray(Texture2D texture, Allocator allocator)
     {

@@ -70,7 +70,9 @@ public class MainMenuLightRender : IDisposable
             {
                 float sin = math.sin(tick * speed) * 0.5f + 0.5f;
                 int radius = (int)math.lerp(radiusMin[i], radiusMax[i], sin);
-                GridRenderer.RenderCircle(ref colorArray, position, radius, colors[i], blending);
+                //GridRenderer.RenderCircle(ref colorArray, position, radius, colors[i], blending);
+                GridRenderer.DrawEllipse(ref colorArray, position, radius, colors[i], Color.clear, blending, true);
+
             }
         }
     }
@@ -91,7 +93,8 @@ public class MainMenuLightRender : IDisposable
             {
                 float sin = math.sin(tick * speed) * 0.5f + 0.5f;
                 int2 radius = (int2)math.lerp(radiusMin[i], radiusMax[i], sin);
-                GridRenderer.RenderEllipseMask(ref colorArray, position, radius, colors[i], blending);
+                //GridRenderer.RenderEllipseMask(ref colorArray, position, radius, colors[i], blending);
+                GridRenderer.DrawEllipse(ref colorArray, position, radius, Color.clear, colors[i], blending, true);
             }
         }
     }
