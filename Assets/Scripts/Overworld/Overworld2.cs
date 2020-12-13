@@ -13,6 +13,10 @@ public class Overworld2 : OverworldBase
     public StarBackgroundRendering starSettings;
     public PlanetRayMarchingSettings settings;
 
+    public RayMarcher.Settings testSettings;
+    public FrozenPlanetRayMarchingJob.Settings frozenSettings;
+    private FunctionPointer<RayMarcher.RaymarcherFunc> func;
+
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
         GridRenderer.GetBlankTexture(out backgroundColors);
@@ -33,6 +37,30 @@ public class Overworld2 : OverworldBase
             tickBlock = tickBlock,
             particleRendering = GridRenderer.Instance.particleRendering
         }.Schedule(GameManager.GridLength, 100).Complete();
+
+
+
+        //new FrozenPlanetRayMarchingJob()
+        //{
+        //    gridSizes = GameManager.GridSizes,
+        //    outputColor = backgroundColors,
+        //    settings = frozenSettings,
+        //    tickBlock = tickBlock,
+        //    particleRendering = GridRenderer.Instance.particleRendering
+        //}.Schedule(GameManager.GridLength, 100).Complete();
+
+
+        //if (!func.IsCreated)
+        //    func = RayMarcher.GetFunctionPointer(FrozenPlanetRayMarchingJob.DistanceFunction);
+
+        //new FrozenPlanetRayMarchingJob()
+        //{
+        //    tickBlock = tickBlock,
+        //    gridSizes = GameManager.GridSizes,
+        //    outputColor = backgroundColors,
+        //    settings = testSettings,
+        //    func = func
+        //}.Schedule(GameManager.GridLength, 100).Complete();
     }
 
     [BurstCompile]

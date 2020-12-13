@@ -22,7 +22,7 @@ public class ParticleGun : GunBaseElement
     public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         base.OnRender(ref outputcolor, ref tickBlock);
-        int2 pos1 = isEquiped ? ComputeOffset(settings.particleOffset) : position + settings.particleOffset;
+        int2 pos1 = isEquiped ? GetEquipOffset() + GetAjustedOffset(settings.particleOffset) : position + settings.particleOffset;
         pos1 += GetKickOffset();
 
         ref ParticleRendering particleRendering = ref GridRenderer.Instance.particleRendering;

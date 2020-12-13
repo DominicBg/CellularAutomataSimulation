@@ -78,7 +78,8 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 if (math.all(position == starPosition))
                 {
                     //This pixel is a star
-                    colors[index] = Color.white * starDistance;
+                    //colors[index] = Color.white * starDistance;
+                    colors[index] = CalculateColor(colors[index], math.saturate(starDistance));
                     return;
                 }
                 else
@@ -98,6 +99,11 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
         }
 
 
-        colors[index] = Color.white * math.saturate(alpha);
+        colors[index] = CalculateColor(colors[index], math.saturate(alpha));
+    }
+
+    Color CalculateColor(Color baseColor, float alpha)
+    {
+        return RenderingUtils.Blend(baseColor, Color.white * alpha, BlendingMode.Transparency);
     }
 }

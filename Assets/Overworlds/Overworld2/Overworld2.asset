@@ -62,3 +62,48 @@ MonoBehaviour:
     particleType: 1
     blendingMode: 1
     colorResolution: 25
+  testSettings:
+    maxStep: 100
+    scales:
+      x: 5
+      y: 5
+    distanceThreshold: 79.54
+    derivatieDelta: 0.002
+    speed: 0.02
+  frozenSettings:
+    resolution: 25
+    scales:
+      x: 0.2
+      y: 0.2
+    lightPosition:
+      x: 0
+      y: 0
+      z: -5
+    speed: 0.02
+    distanceThreshold: 100
+    planetPosition:
+      x: 0
+      y: 0
+      z: -3.6
+    planetRadius: 0.69
+    rotationAxis:
+      x: 1
+      y: 1
+      z: 0
+    conePosition:
+      x: 0
+      y: -1.35
+      z: 0
+    coneC:
+      x: 1
+      y: 3.6
+    coneH: 6.84
+    coneNormal1:
+      x: 0
+      y: 0
+      z: -4
+    coneNormal2:
+      x: 1
+      y: 1
+      z: 0
+    smoothk: 21

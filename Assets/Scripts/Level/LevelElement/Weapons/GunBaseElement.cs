@@ -26,7 +26,7 @@ public abstract class GunBaseElement : EquipableElement
         isUsedThisFrame = true;
         int2 aimPosition = GridPicker.GetGridPosition(GameManager.GridSizes) - 2;
         //int2 startPosition = usePosition + new int2(9, 3);
-        int2 startPosition = ComputeOffset(baseSettings.shootOffset);
+        int2 startPosition = player.position + GetAjustedOffset(baseSettings.shootOffset);
 
         float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
         OnShoot(startPosition, aimDirection, map);
@@ -43,7 +43,7 @@ public abstract class GunBaseElement : EquipableElement
 
     public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {     
-        int2 renderPos = isEquiped ? ComputeOffset(baseSettings.equipedOffset) : position;
+        int2 renderPos = isEquiped ? GetEquipOffset() : position;
         int2 kickOffset = GetKickOffset();
         bool isFlipped = isEquiped ? player.lookLeft : false;
 
@@ -57,12 +57,22 @@ public abstract class GunBaseElement : EquipableElement
         return kickOffset;
     }
 
-    protected int2 ComputeOffset(int2 offset)
+    protected int2 GetEquipOffset()
     {
+        int2 offset = baseSettings.equipedOffset;
         if (player.lookLeft)
             offset.x = -offset.x;
 
         offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
         return player.GetBound().center + offset;
+    }
+    protected int2 GetAjustedOffset(int2 offset)
+    {
+        if (player.lookLeft)
+        {
+            offset.x = spriteAnimator.nativeSpriteSheet.spriteSizes.x - offset.x - 1;
+        }
+
+        return offset; 
     }
 }

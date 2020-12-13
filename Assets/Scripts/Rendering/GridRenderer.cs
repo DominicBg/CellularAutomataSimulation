@@ -35,6 +35,14 @@ public class GridRenderer : MonoBehaviour
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
     }
+    public static void GetBlankTexture(out NativeArray<Color32> outputColor, Color baseColor)
+    {
+        outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+        for (int i = 0; i < outputColor.Length; i++)
+        {
+            outputColor[i] = baseColor;
+        }
+    }
 
     public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, TickBlock tickBlock)
     {
