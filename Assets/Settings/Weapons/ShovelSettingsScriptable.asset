@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipedOffset:
     x: 0
-    y: -3
+    y: -4
   spriteSheet:
     spriteSheetName: 
     spriteAnimations:
@@ -22,14 +22,17 @@ MonoBehaviour:
       sprites:
       - {fileID: 2800000, guid: 0d5c3c2e7aa499b47bc89890f8b96bad, type: 3}
   framePerImage: 5
-  frameCooldown: 30
+  frameCooldown: 15
   shovelSize:
     x: 10
     y: 10
   lookingOffset:
-    x: 2
-    y: -9
+    x: 4
+    y: -5
   velocity:
     x: -5
+    y: 5
+  animOffset:
+    x: 2
     y: 10
   showDebug: 0

@@ -125,8 +125,8 @@ public struct CellularAutomataJob : IJob
                     Particle p1 = particle;
                     Particle p2 = map.GetParticle(collisionPosition);
                     PhysiXVII.ComputeElasticCollision(slidePosition, collisionPosition, p1.velocity, p2.velocity, 1, 1, out float2 outv1, out float2 outv2);
-                    particle.velocity = outv1;
-                    p2.velocity = outv2;
+                    particle.velocity = outv1 * 0.9f;
+                    p2.velocity = outv2 * 0.9f;
                     map.SetParticle(collisionPosition, p2, false);
                 }
                 else //WALL COLLISION

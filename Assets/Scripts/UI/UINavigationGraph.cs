@@ -11,6 +11,9 @@ public class UINavigationGraph : MonoBehaviour
     UINode currentNode;
     GameOverworldManager manager;
 
+    NativeSprite[] selectedNativeSprites;
+    NativeSprite[] unselectedNativeSprites;
+
     private void OnValidate()
     {
         nodes = GetComponentsInChildren<UINode>();
@@ -20,6 +23,14 @@ public class UINavigationGraph : MonoBehaviour
     {
         currentNode = nodes[nodeIndex];
         this.manager = manager;
+
+        selectedNativeSprites = new NativeSprite[nodes.Length];
+        unselectedNativeSprites = new NativeSprite[nodes.Length];
+        for (int i = 0; i < selectedNativeSprites.Length; i++)
+        {
+            selectedNativeSprites[i] = new NativeSprite(nodes[i].selectedSprite);
+            unselectedNativeSprites[i] = new NativeSprite(nodes[i].unselectedSprite);
+        }
     }
 
     public void OnUpdate()
@@ -58,8 +69,7 @@ public class UINavigationGraph : MonoBehaviour
         {
             UINode node = nodes[i];
             bool isSelected = currentNode == node;
-            SpriteEnum spriteEnum = isSelected ? node.selectedSprite : node.unselectedSprite;
-            NativeSprite sprite = SpriteRegistry.GetSprite(spriteEnum);
+            NativeSprite sprite = isSelected ? selectedNativeSprites[i] : unselectedNativeSprites[i];
             GridRenderer.ApplySprite(ref outputColor, sprite, node.position);
         }
     }
@@ -72,5 +82,14 @@ public class UINavigationGraph : MonoBehaviour
     public void Rotate(int direction)
     {
         manager.RotateLevel(direction);
+    }
+
+    public void OnDestroy()
+    {
+        for (int i = 0; i < selectedNativeSprites.Length; i++)
+        {
+            selectedNativeSprites[i].Dispose();
+            unselectedNativeSprites[i].Dispose();
+        }
     }
 }

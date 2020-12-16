@@ -107,3 +107,38 @@ MonoBehaviour:
       y: 1
       z: 0
     smoothk: 21
+  gemSettings:
+    cameraDepth: 3.16
+    scales:
+      x: 0.2
+      y: 0.2
+    lightPosition:
+      x: 0
+      y: 0.25
+      z: -0.84
+    speed: 0.02
+    distanceThreshold: 46.7
+    diamondPosition:
+      x: 0
+      y: 0
+      z: 15
+    octaherdronOffset:
+      x: 1
+      y: 0
+      z: 14.5
+    axis:
+      x: 0.1
+      y: 1
+      z: 0
+    h: 1
+    cubeCutout:
+      x: 1
+      y: 1
+      z: 1
+    cubeHeight: 0.7
+    color: {r: 0.03184688, g: 1, b: 0, a: 1}
+    baseIntensity: 0.2
+    numberStepShiny: 187
+    shineIntensity: 0.63
+    resolution: 25
+    octaScale: 0.1

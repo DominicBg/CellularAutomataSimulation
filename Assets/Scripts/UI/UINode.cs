@@ -7,8 +7,8 @@ using static InputCommand;
 
 public class UINode : MonoBehaviour
 {
-    public SpriteEnum unselectedSprite;
-    public SpriteEnum selectedSprite;
+    public Texture2D unselectedSprite;
+    public Texture2D selectedSprite;
     public UnityEvent onEvent;
     public int2 position;
 

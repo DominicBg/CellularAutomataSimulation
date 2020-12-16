@@ -43,8 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 11
-  selectedSprite: 9
+  unselectedSprite: {fileID: 2800000, guid: 0beab0f2bcfb19644a28a7f0e0b7484c, type: 3}
+  selectedSprite: {fileID: 2800000, guid: 7e2c90a805aa57343b9cdcae545b0e80, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:
@@ -110,8 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 12
-  selectedSprite: 10
+  unselectedSprite: {fileID: 2800000, guid: 5ce44e857acb4f7419037cc7a4ece6b3, type: 3}
+  selectedSprite: {fileID: 2800000, guid: a1fe46159214d2a4694e63a715dad340, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:
@@ -177,8 +177,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 8
-  selectedSprite: 7
+  unselectedSprite: {fileID: 2800000, guid: 616c4509d6f99b04292b957cdb6c7cac, type: 3}
+  selectedSprite: {fileID: 2800000, guid: 01fd5a0c006540143a80f6ec085f19d7, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:
@@ -244,8 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 8
-  selectedSprite: 4
+  unselectedSprite: {fileID: 2800000, guid: 616c4509d6f99b04292b957cdb6c7cac, type: 3}
+  selectedSprite: {fileID: 2800000, guid: 41ad90919faacf64d95d5b6ffc103e7a, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:
@@ -311,8 +311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 8
-  selectedSprite: 5
+  unselectedSprite: {fileID: 2800000, guid: 616c4509d6f99b04292b957cdb6c7cac, type: 3}
+  selectedSprite: {fileID: 2800000, guid: 7c50fa7e4a98f884184e6409b468a1eb, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:
@@ -378,8 +378,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab09ec09ef90354591d79d1ea44c915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unselectedSprite: 8
-  selectedSprite: 6
+  unselectedSprite: {fileID: 2800000, guid: 616c4509d6f99b04292b957cdb6c7cac, type: 3}
+  selectedSprite: {fileID: 2800000, guid: 9174d4b2b3f80ad4eb3eb0e8ad1b6d22, type: 3}
   onEvent:
     m_PersistentCalls:
       m_Calls:

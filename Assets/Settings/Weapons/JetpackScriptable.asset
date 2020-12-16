@@ -12,16 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77fb0cba97351354ca4dd881d3883ccf, type: 3}
   m_Name: JetpackScriptable
   m_EditorClassIdentifier: 
-  jetpackVelocity:
-    x: 0
-    y: 10
-  intialVelocity:
-    x: 0
-    y: 250
-  fuelCapacity: 60
-  fuelRefillRate: 2
-  fuelUseRate: 1
-  refuelAfterXTick: 60
   equipedOffset:
     x: -4
     y: 0
@@ -35,3 +25,15 @@ MonoBehaviour:
       sprites:
       - {fileID: 2800000, guid: f38b2153b3cd5b442b4ecbcd49a86d49, type: 3}
       - {fileID: 2800000, guid: 8e3088858528cdd44a546e8246f4f197, type: 3}
+  framePerImage: 5
+  frameCooldown: 2
+  jetpackVelocity:
+    x: 0
+    y: 20
+  intialVelocity:
+    x: 0
+    y: 250
+  fuelCapacity: 60
+  fuelRefillRate: 2
+  fuelUseRate: 1
+  refuelAfterXTick: 60

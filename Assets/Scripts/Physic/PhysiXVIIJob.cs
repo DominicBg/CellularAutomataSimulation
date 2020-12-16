@@ -50,7 +50,7 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
-            HandlePhysics(ref physicData, nextPosition);
+            HandlePhysics(ref physicData, nextPosition, isGrounded);
 
             if (math.distancesq(currentPosition, nextPosition) > 0.01f)
             {
@@ -87,11 +87,11 @@ public struct PhysiXVIIJob : IJob
     //    }
     //}
 
-    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition)
+    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, bool isGrounded)
     {
         int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
 
-        int2 desiredGridPosition = FindDesiredMovePosition(ref physicData.physicBound, physicData.gridPosition, nextGridPosition);
+        int2 desiredGridPosition = FindDesiredMovePosition(ref physicData, physicData.gridPosition, nextGridPosition, isGrounded, out int2 collisionDirection);
         if (math.all(nextGridPosition == desiredGridPosition))
         {
             physicData.position = desiredPosition;
@@ -99,6 +99,13 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
+            if(!math.all(collisionDirection == 0))
+            {
+                //could ez normalize with 0.707..
+                float2 normal = math.normalize(collisionDirection);
+                physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
+            }
+
             physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
 
             physicData.position = desiredGridPosition * GameManager.GridScale;
@@ -108,53 +115,83 @@ public struct PhysiXVIIJob : IJob
     }
 
 
-    int2 FindDesiredMovePosition(ref PhysicBound physicBound, int2 from, int2 to)
+    int2 FindDesiredMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionDirection)
     {
-        int direction = (to.x - from.x);
-        bool goingLeft = direction == -1;
+        PhysicBound physicBound = physicData.physicBound;
+        int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, isGrounded);
+        int2 diff = desiredPosition - from;
 
-        Bound directionBound;
-        if (goingLeft)
+        int2 safePosition = from;
+        int2 currentPos = from;
+        while (diff.x != 0 || diff.y != 0)
         {
-            directionBound = physicBound.GetLeftCollisionBound(to);
-        }
-        else
-        {
-            directionBound = physicBound.GetRightCollisionBound(to);
+            int2 currentDir = (int2)math.sign(diff);
+            currentPos += currentDir;
+            diff -= currentDir;
+            Bound currentPosBound = physicBound.GetCollisionBound(currentPos);
+            if(map.HasCollision(ref currentPosBound))
+            {
+                collisionDirection = GetCollisionDirection(ref physicBound, safePosition, currentDir);
+                return safePosition;
+            }
+            safePosition = currentPos;
         }
 
-        int minY = directionBound.min.y;
-        directionBound.GetPositionsGrid(out NativeArray<int2> directionPositions);
+        collisionDirection = 0;
+        return safePosition;
+    }
+
+    int2 GetCollisionDirection(ref PhysicBound physicBound, int2 safePosition, int2 direction)
+    {
+        Bound horizontalBound = physicBound.GetCollisionBound(safePosition + new int2(direction.x, 0));
+        Bound verticalBound = physicBound.GetCollisionBound(safePosition + new int2(0, direction.y));
+        bool hasHorizontalCollision = map.HasCollision(ref horizontalBound);
+        bool hasVerticalCollision = map.HasCollision(ref verticalBound);
+        int2 collision = 0;
+        if (hasHorizontalCollision)
+            collision.x =- direction.x;
+        if (hasVerticalCollision)
+            collision.y = -direction.y;
+
+        return collision;
+    }
+
+
+    private int2 HandleHorizontalDesiredPosition(ref PhysicBound physicBound, int2 from, int2 to, bool isGrounded)
+    {
+        int2 direction = (int2)math.sign(to - from);
+        bool goingLeft = direction.x == -1;
+
+        Bound horizontalBound = goingLeft ? physicBound.GetLeftCollisionBound(to) : physicBound.GetRightCollisionBound(to);
+
+        int minY = horizontalBound.min.y;
+        horizontalBound.GetPositionsGrid(out NativeArray<int2> directionPositions);
         int2 desiredPosition = to;
 
+        if (isGrounded && CanClimb(minY, directionPositions, out int highestClimbY))
+        {
+            desiredPosition.y = highestClimbY;
+        }
+        return desiredPosition;
+    }
+
+    private bool CanClimb(int minY, NativeArray<int2> directionPositions, out int highestClimbY)
+    {
         bool canClimb = false;
-        int highestClimbY = 0;
+        highestClimbY = 0;
         for (int i = 0; i < directionPositions.Length; i++)
         {
             int2 pos = directionPositions[i];
             if (map.HasCollision(pos))
             {
                 if (pos.y >= minY && pos.y <= minY + settings.maxSlope)
-                {
+                { 
                     canClimb = true;
                     highestClimbY = math.max(highestClimbY, pos.y + 1);
                 }
             }
         }
-
-        if (canClimb)
-        {
-            desiredPosition.y = highestClimbY;
-        }
-
-        Bound newPositionBound = physicBound.GetCollisionBound(desiredPosition);
-        
-        if(map.HasCollision(ref newPositionBound))
-        {
-            return from;
-        }
-
-        return desiredPosition;
+        return canClimb;    
     }
 
     bool TryGoPosition(ref PhysicBound physicBound, int2 from, int2 to)

@@ -15,30 +15,37 @@ public class Overworld2 : OverworldBase
 
     public RayMarcher.Settings testSettings;
     public FrozenPlanetRayMarchingJob.Settings frozenSettings;
+    public GemRayMarchingJob.Settings gemSettings;
     private FunctionPointer<RayMarcher.RaymarcherFunc> func;
 
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
         GridRenderer.GetBlankTexture(out backgroundColors);
 
-        new ShiningStarBackgroundJob()
-        {
-            colors = backgroundColors,
-            maxSizes = GameManager.GridSizes,
-            tick = tickBlock.tick,
-            settings = starSettings
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        //new ShiningStarBackgroundJob()
+        //{
+        //    colors = backgroundColors,
+        //    maxSizes = GameManager.GridSizes,
+        //    tick = tickBlock.tick,
+        //    settings = starSettings
+        //}.Schedule(GameManager.GridLength, 100).Complete();
 
-        new PlanetRayMarchingJob()
+        //new PlanetRayMarchingJob()
+        //{
+        //    gridSizes = GameManager.GridSizes,
+        //    outputColor = backgroundColors,
+        //    settings = settings,
+        //    tickBlock = tickBlock,
+        //    particleRendering = GridRenderer.Instance.particleRendering
+        //}.Schedule(GameManager.GridLength, 100).Complete();
+
+        new GemRayMarchingJob()
         {
-            gridSizes = GameManager.GridSizes,
             outputColor = backgroundColors,
-            settings = settings,
-            tickBlock = tickBlock,
-            particleRendering = GridRenderer.Instance.particleRendering
+            settings = gemSettings,
+            tickBlock = tickBlock
         }.Schedule(GameManager.GridLength, 100).Complete();
-
-
+        // RaymarchingManager.Instance.RenderImage(ref backgroundColors);
 
         //new FrozenPlanetRayMarchingJob()
         //{

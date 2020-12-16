@@ -47,6 +47,27 @@ public static class RayMarchingPrimitive
         float s = math.max(k * (w.x * q.y - w.y * q.x), k * (w.y - q.y));
         return math.sqrt(d) * math.sign(s);
     }
+    [BurstCompile]
+    public static float sdPyramid(float3 p, float h)
+    {
+        float m2 = h * h + 0.25f;
+
+        p.xz = math.abs(p.xz);
+        p.xz = (p.z > p.x) ? p.zx : p.xz;
+        p.xz -= 0.5f;
+
+        float3 q = new float3(p.z, h * p.y - 0.5f * p.x, h * p.x + 0.5f * p.y);
+
+        float s = math.max(-q.x, 0.0f);
+        float t = math.clamp((q.y - 0.5f * p.z) / (m2 + 0.25f), 0.0f, 1.0f);
+
+        float a = m2 * (q.x + s) * (q.x + s) + q.y * q.y;
+        float b = m2 * (q.x + 0.5f * t) * (q.x + 0.5f * t) + (q.y - m2 * t) * (q.y - m2 * t);
+
+        float d2 = math.min(q.y, -q.x * m2 - q.y * 0.5f) > 0.0f ? 0.0f : math.min(a, b);
+
+        return math.sqrt((d2 + q.z * q.z) / m2) * math.sign(math.max(q.z, -p.y));
+    }
 
 
     //Helper

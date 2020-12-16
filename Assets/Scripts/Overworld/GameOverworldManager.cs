@@ -74,6 +74,7 @@ public class GameOverworldManager : MonoBehaviour, State
         if (navigationGraph != null)
         {
             Destroy(navigationGraph.gameObject);
+            navigationGraph = null;
         }
     }
 }
