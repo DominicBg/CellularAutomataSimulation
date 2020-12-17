@@ -77,12 +77,18 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         currentDeltaTime += Time.deltaTime;
-        while (currentDeltaTime >= frameDuration)
+        if(currentDeltaTime >= frameDuration)
         {
             InputCommand.Update();
             m_stateMachine.Update();
             m_stateMachine.Render();
             currentDeltaTime -= frameDuration;
+
+            //Safety
+            if(currentDeltaTime >= frameDuration)
+            {
+                currentDeltaTime = 0;
+            }
         }
     }
 

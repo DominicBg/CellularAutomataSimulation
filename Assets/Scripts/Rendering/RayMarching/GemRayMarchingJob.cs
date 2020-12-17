@@ -14,7 +14,7 @@ public struct GemRayMarchingJob : IJobParallelFor
     public NativeArray<Color32> outputColor;
 
     const int maxStep = 100;
-    const float threshold = 0.01f;
+    const float threshold = 0.001f;
     const float derivativeDelta = 0.0001f;
 
     [System.Serializable]
@@ -29,16 +29,26 @@ public struct GemRayMarchingJob : IJobParallelFor
         public float3 diamondPosition;
         public float3 octaherdronOffset;
         public float3 axis;
-        public float h;
+        public float diamonh1;
+        public float diamonh2;
+        public float boxAngle;
         public float3 cubeCutout;
         public float cubeHeight;
         public Color color;
         public float baseIntensity;
 
-        public int numberStepShiny;
         public float shineIntensity;
         public int resolution;
         public float octaScale;
+
+        public Color colorForDepthMin;
+        public Color colorForDepthMax;
+        public float blendDepthRatio;
+        public BlendingMode blendDepth;
+        public int depthMaxStep;
+        public float depthStepSize;
+        public float depthMinSize;
+        public float depthMaxSize;
 
     }
 
@@ -48,28 +58,31 @@ public struct GemRayMarchingJob : IJobParallelFor
         public float distance;
         public int numberSteps;
         public float3 normal;
+        public float depth;
     }
 
     float DistanceFunction(float3 position, float t)
     {
         float diamond = DrawDiamond(position, settings.diamondPosition, t);
-        float halfPi = math.PI / 2;
-        float octa1 = DrawSpinningOcta(position, t, 0);
-        float octa2 = DrawSpinningOcta(position, t, halfPi);
-        float octa3 = DrawSpinningOcta(position, t, 2 * halfPi);
-        float octa4 = DrawSpinningOcta(position, t, 3 * halfPi);
+        //float halfPi = math.PI / 2;
+        //float octa1 = DrawSpinningOcta(position, t, 0);
+        //float octa2 = DrawSpinningOcta(position, t, halfPi);
+        //float octa3 = DrawSpinningOcta(position, t, 2 * halfPi);
+        //float octa4 = DrawSpinningOcta(position, t, 3 * halfPi);
 
-        return math.min(diamond, math.min(octa1, math.min(octa2, math.min(octa3, octa4))));
+        return diamond;
     }
 
     float DrawDiamond(float3 position, float3 diamondPos, float t)
     {
         position = Translate(position, diamondPos);
         position = RotateAroundAxis(position, settings.axis, t);
-        float pyramidBottom = sdPyramid(RotateX(position, -math.PI), settings.h);
-        float pyramidUpper = sdPyramid(position, settings.h);
-        float cutoutCube = sdBox(position + math.up() * settings.cubeHeight, settings.cubeCutout);
-        return math.min(pyramidBottom, math.max(pyramidUpper, cutoutCube));
+        float pyramidBottom = sdPyramid(RotateX(position, -math.PI), settings.diamonh1);
+        float pyramidUpper = sdPyramid(position, settings.diamonh2);
+
+        float3 boxPos = RotateAroundAxis(position, settings.axis, settings.boxAngle);
+        float cutoutCube = sdBox(boxPos + math.up() * settings.cubeHeight, settings.cubeCutout);
+        return math.max(cutoutCube, math.min(pyramidUpper, pyramidBottom));
     }
 
     float DrawSpinningOcta(float3 position, float t, float offset)
@@ -137,15 +150,38 @@ public struct GemRayMarchingJob : IJobParallelFor
         result.pos = currentPosition;
         result.distance = currentDistance;
         result.normal = GetNormal(currentPosition);
+        result.depth = CalculateDepth(currentPosition, rd, t); ;
         return result;
+    }
+
+    float CalculateDepth(float3 currentPos, float3 rd, float t)
+    {
+        float depth = 0;
+        for (int i = 0; i < settings.depthMaxStep; i++)
+        {
+            currentPos += rd * settings.depthStepSize;
+
+            float distance = DistanceFunction(currentPos, t);
+            if(distance >= 0)
+            {
+                return depth;
+            }
+            depth += settings.depthStepSize;
+        }
+        return depth;
     }
 
     Color CalculateColor(Result result)
     {
         if (result.distance < settings.distanceThreshold)
         {
-            float t = math.saturate(math.dot(math.normalize(settings.lightPosition), result.normal) + settings.baseIntensity);
-            return t  * settings.color;
+            float lightT = math.saturate(math.dot(math.normalize(settings.lightPosition), result.normal) + settings.baseIntensity);
+            float depthRatio = result.depth / settings.depthMaxSize;
+            float depthT = math.saturate(math.remap(settings.depthMinSize, settings.depthMaxSize, 0, 1, depthRatio));
+            Color lightColor = lightT  * settings.color;
+            Color depthcolor = Color.Lerp(settings.colorForDepthMin, settings.colorForDepthMax, depthT);
+            depthcolor.a = settings.blendDepthRatio;
+            return RenderingUtils.Blend(lightColor, depthcolor, settings.blendDepth);
         }
         else if (result.numberSteps > maxStep * settings.shineIntensity)
         {
