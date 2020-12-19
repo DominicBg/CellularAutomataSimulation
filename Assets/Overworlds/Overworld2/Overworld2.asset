@@ -127,18 +127,27 @@ MonoBehaviour:
       y: 0
       z: 14.5
     axis:
-      x: 0.1
+      x: 0.3
       y: 1
       z: 0
-    h: 1
+    diamonh1: 1.19
+    diamonh2: 0.92
+    boxAngle: 0
     cubeCutout:
       x: 1
-      y: 1
+      y: 0.89
       z: 1
-    cubeHeight: 0.7
-    color: {r: 0.03184688, g: 1, b: 0, a: 1}
+    cubeHeight: 0.61
+    color: {r: 0.690159, g: 0.41037738, b: 1, a: 1}
     baseIntensity: 0.2
-    numberStepShiny: 187
-    shineIntensity: 0.63
-    resolution: 25
+    shineIntensity: 0.55
+    resolution: 15
     octaScale: 0.1
+    colorForDepthMin: {r: 0, g: 0.19350243, b: 1, a: 1}
+    colorForDepthMax: {r: 0.24137807, g: 0.18396229, b: 1, a: 1}
+    blendDepthRatio: -0.24
+    blendDepth: 2
+    depthMaxStep: 25
+    depthStepSize: 0.05
+    depthMinSize: 0.2
+    depthMaxSize: 0.94

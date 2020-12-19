@@ -8,10 +8,9 @@ using UnityEngine;
 public struct GridRendererJob : IJobParallelFor
 {
     public NativeArray<Color32> colorArray;
-    public Map map;
-
-    public ParticleRendering particleRendering;
-    public TickBlock tickBlock;
+    Map map;
+    ParticleRendering particleRendering;
+    TickBlock tickBlock;
 
     public GridRendererJob(NativeArray<Color32> colorArray, Map map, ParticleRendering particleRendering, TickBlock tickBlock)
     {

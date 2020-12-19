@@ -52,16 +52,17 @@ public struct PhysiXVIIJob : IJob
         {
             HandlePhysics(ref physicData, nextPosition, isGrounded);
 
-            if (math.distancesq(currentPosition, nextPosition) > 0.01f)
-            {
-                map.RemoveSpriteAtPosition(currentGridPosition, ref physicData.physicBound);
-                map.SetSpriteAtPosition(physicData.gridPosition, ref physicData.physicBound);
-            }
+            //if (math.distancesq(currentPosition, nextPosition) > 0.01f)
+            //{
+            //
         }
 
         physicData.position = math.clamp(physicData.position, 0, GameManager.GridSizes * GameManager.GridScale);
         physicData.gridPosition = math.clamp(physicData.gridPosition, 0, GameManager.GridSizes);
         physicDataReference.Value = physicData;
+
+        map.RemoveSpriteAtPosition(currentGridPosition, ref physicData.physicBound);
+        map.SetSpriteAtPosition(physicData.gridPosition, ref physicData.physicBound);
     }
 
 
@@ -91,7 +92,7 @@ public struct PhysiXVIIJob : IJob
     {
         int2 nextGridPosition = (int2)(desiredPosition / GameManager.GridScale);
 
-        int2 desiredGridPosition = FindDesiredMovePosition(ref physicData, physicData.gridPosition, nextGridPosition, isGrounded, out int2 collisionDirection);
+        int2 desiredGridPosition = FindDesiredMovePosition(ref physicData, physicData.gridPosition, nextGridPosition, isGrounded, out int2 collisionNormal);
         if (math.all(nextGridPosition == desiredGridPosition))
         {
             physicData.position = desiredPosition;
@@ -99,11 +100,21 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
-            if(!math.all(collisionDirection == 0))
+            if(!math.all(collisionNormal == 0))
             {
-                //could ez normalize with 0.707..
-                float2 normal = math.normalize(collisionDirection);
+                //Since values can only be -1, 0 and 1, its easy to normalize fast
+                float2 normal = collisionNormal;
+                if(math.abs(normal.x) + math.abs(normal.y) == 2)
+                {
+                    normal *= math.SQRT2 * 0.5f;
+                }
+
+                //todo add absorbtion and colliding with particles
                 physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
+
+                Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(desiredGridPosition): physicData.physicBound.GetLeftCollisionBound(desiredGridPosition);
+                Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(desiredGridPosition): physicData.physicBound.GetLeftCollisionBound(desiredGridPosition);
+
             }
 
             physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
@@ -115,11 +126,19 @@ public struct PhysiXVIIJob : IJob
     }
 
 
-    int2 FindDesiredMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionDirection)
+    int2 FindDesiredMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionNormal)
     {
         PhysicBound physicBound = physicData.physicBound;
         int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, isGrounded);
         int2 diff = desiredPosition - from;
+
+        //if(math.all(diff == 0))
+        //{
+        //    //Didn't move because of collision
+        //    collisionDirection = (int2)math.sign(-physicData.velocity);
+        //    return from;
+        //}
+
 
         int2 safePosition = from;
         int2 currentPos = from;
@@ -131,17 +150,43 @@ public struct PhysiXVIIJob : IJob
             Bound currentPosBound = physicBound.GetCollisionBound(currentPos);
             if(map.HasCollision(ref currentPosBound))
             {
-                collisionDirection = GetCollisionDirection(ref physicBound, safePosition, currentDir);
+                collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
                 return safePosition;
             }
             safePosition = currentPos;
         }
 
-        collisionDirection = 0;
+        collisionNormal = 0;
         return safePosition;
     }
 
-    int2 GetCollisionDirection(ref PhysicBound physicBound, int2 safePosition, int2 direction)
+    void CalculateObjectParticleCollision(ref PhysicData physicData, int2 position, int2 collisionDirection)
+    {
+        ref PhysicBound physicBound = ref physicData.physicBound;
+        //could ez normalize with 0.707..
+        float2 normal = math.normalize(collisionDirection);
+        //todo add absorbtion and colliding with particles
+        physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
+
+        int2 xOffset = new int2(collisionDirection.x, 0);
+        int2 yOffset = new int2(0, collisionDirection.y);
+
+        if (collisionDirection.x != 0)
+        {
+            int2 boundPos = position + xOffset;
+            Bound horizontalBound = (collisionDirection.x == 1) ? physicBound.GetRightCollisionBound(boundPos) : physicBound.GetLeftCollisionBound(boundPos);
+
+        }
+        if (collisionDirection.y != 0)
+        {
+            int2 boundPos = position + yOffset;
+            Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetTopCollisionBound(position) : physicBound.GetBottomCollisionBound(position);
+        }
+    }
+
+
+
+    int2 GetCollisionNormal(ref PhysicBound physicBound, int2 safePosition, int2 direction)
     {
         Bound horizontalBound = physicBound.GetCollisionBound(safePosition + new int2(direction.x, 0));
         Bound verticalBound = physicBound.GetCollisionBound(safePosition + new int2(0, direction.y));
@@ -149,9 +194,15 @@ public struct PhysiXVIIJob : IJob
         bool hasVerticalCollision = map.HasCollision(ref verticalBound);
         int2 collision = 0;
         if (hasHorizontalCollision)
-            collision.x =- direction.x;
+            collision.x = -direction.x;
         if (hasVerticalCollision)
             collision.y = -direction.y;
+
+        //No horizontal and vertical collision, so its one pixel diagonal collision
+        if(math.all(collision == 0))
+        {
+            return -direction;
+        }
 
         return collision;
     }
@@ -194,47 +245,47 @@ public struct PhysiXVIIJob : IJob
         return canClimb;    
     }
 
-    bool TryGoPosition(ref PhysicBound physicBound, int2 from, int2 to)
-    {
-        int2 pushDirection = math.clamp(to - from, -1, 1);
-        Bound bound = physicBound.GetCollisionBound(to);
-        //Add push particles
+    //bool TryGoPosition(ref PhysicBound physicBound, int2 from, int2 to)
+    //{
+    //    int2 pushDirection = math.clamp(to - from, -1, 1);
+    //    Bound bound = physicBound.GetCollisionBound(to);
+    //    //Add push particles
 
-        NativeList<int2> pushedParticlePositions = new NativeList<int2>(Allocator.Temp);
-        bool isBlocked = false;
-        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int2 position = positions[i];
-            int2 pusedPosition = position + pushDirection;
+    //    NativeList<int2> pushedParticlePositions = new NativeList<int2>(Allocator.Temp);
+    //    bool isBlocked = false;
+    //    bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
+    //    for (int i = 0; i < positions.Length; i++)
+    //    {
+    //        int2 position = positions[i];
+    //        int2 pushedPosition = position + pushDirection;
 
-            if (map.HasCollision(positions[i]))
-            {
-                bool canPush = map.CanPush(positions[i]) && map.IsFreePosition(pusedPosition);
-                if (canPush)
-                {
-                    pushedParticlePositions.Add(positions[i]);
-                }
-                else
-                {
-                    isBlocked = true;
-                    break;
-                }
-            }
-        }
+    //        if (map.HasCollision(positions[i]))
+    //        {
+    //            bool canPush = map.CanPush(positions[i], in settings) && map.IsFreePosition(pushedPosition);
+    //            if (canPush)
+    //            {
+    //                pushedParticlePositions.Add(positions[i]);
+    //            }
+    //            else
+    //            {
+    //                isBlocked = true;
+    //                break;
+    //            }
+    //        }
+    //    }
 
-        if (!isBlocked)
-        {
-            for (int i = 0; i < pushedParticlePositions.Length; i++)
-            {
-                int2 position = pushedParticlePositions[i];
-                int2 pusedPosition = position + pushDirection;
-                map.MoveParticle(position, pusedPosition);
-            }
-        }
+    //    if (!isBlocked)
+    //    {
+    //        for (int i = 0; i < pushedParticlePositions.Length; i++)
+    //        {
+    //            int2 position = pushedParticlePositions[i];
+    //            int2 pusedPosition = position + pushDirection;
+    //            map.MoveParticle(position, pusedPosition);
+    //        }
+    //    }
 
-        positions.Dispose();
-        pushedParticlePositions.Dispose();
-        return !isBlocked;
-    }
+    //    positions.Dispose();
+    //    pushedParticlePositions.Dispose();
+    //    return !isBlocked;
+    //}
 }

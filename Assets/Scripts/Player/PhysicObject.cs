@@ -35,7 +35,7 @@ public abstract class PhysicObject : LevelObject
             DebugPhysicBound(ref outputColor, physicData.physicBound.GetCollisionBound(position), Color.magenta);
 
         if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetFeetCollisionBound(position), Color.yellow);
+            DebugPhysicBound(ref outputColor, physicData.physicBound.GetBottomCollisionBound(position), Color.yellow);
 
         if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
             DebugPhysicBound(ref outputColor, physicData.physicBound.GetLeftCollisionBound(position), Color.red);

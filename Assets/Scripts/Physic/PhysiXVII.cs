@@ -24,7 +24,7 @@ public static class PhysiXVII
 
     public static bool IsGrounded(in PhysicData physicData, Map map, int2 position)
     {
-        Bound feetBound = physicData.physicBound.GetFeetCollisionBound(position);
+        Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
         Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
         bool hasFeetCollision = map.HasCollision(ref feetBound);
         bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound);
@@ -39,5 +39,17 @@ public static class PhysiXVII
 
         outv1 = v1 - (2 * m2 / massSum) * (math.dot(v1 - v2, p1 - p2) / diffSq) * (p1 - p2);
         outv2 = v2 - (2 * m1 / massSum) * (math.dot(v2 - v1, p2 - p1) / diffSq) * (p2 - p1);
+    }
+
+    public unsafe static void CalculateParticleCollisions(ref Particle p1, ref Particle p2, int2 pos1, int2 pos2, in PhysiXVIISetings settings)
+    {
+        int p1Type = (int)p1.type;
+        int p2Type = (int)p2.type;
+        float m1 = settings.mass[p1Type];
+        float m2 = settings.mass[p2Type];
+        ComputeElasticCollision(pos1, pos2, p1.velocity, p2.velocity, m1, m2, out float2 outv1, out float2 outv2);
+        float absorbtion = (settings.absorbtion[p1Type] + settings.absorbtion[p2Type]) * 0.5f;
+        p1.velocity = outv1 * absorbtion;
+        p2.velocity = outv2 * absorbtion;
     }
 }

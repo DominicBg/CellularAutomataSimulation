@@ -63,7 +63,8 @@ public class GameMainMenuManager : MonoBehaviour, State
             behaviour = partaicleBehaviour.particleBehaviour,
             map = m_map,
             nativeParticleSpawners = particleSpawners,
-            tickBlock = tickBlock
+            tickBlock = tickBlock,
+            settings = GameManager.PhysiXVIISetings
         }.Run();
         m_map.SetParticleType(particleDestroyerPosition, ParticleType.None);
     }

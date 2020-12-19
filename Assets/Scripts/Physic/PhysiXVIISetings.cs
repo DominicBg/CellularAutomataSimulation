@@ -10,17 +10,15 @@ public unsafe struct PhysiXVIISetings
     public float friction;
     public int maxSlope;
 
-    [EnumNamedArray(typeof(ParticleType))]
-    public fixed float canPush[(int)ParticleType.Count];
+    [EnumeratedArray(typeof(ParticleType))]
+    public fixed bool canPush[(int)ParticleType.Count];
 
-    //TODO
-    //[EnumNamedArray(typeof(ParticleType))]
-    //public fixed float frictions[(int)ParticleType.Count];
+    [EnumeratedArray(typeof(ParticleType))]
+    public fixed float frictions[(int)ParticleType.Count];
 
-    //[EnumNamedArray(typeof(ParticleType))]
-    //public fixed float weigth[(int)ParticleType.Count];
+    [EnumeratedArray(typeof(ParticleType))]
+    public fixed float mass[(int)ParticleType.Count];
 
-    //[EnumNamedArray(typeof(ParticleType))]
-    //public fixed float absorbtion[(int)ParticleType.Count];
-
+    [EnumeratedArray(typeof(ParticleType))]
+    public fixed float absorbtion[(int)ParticleType.Count];
 }

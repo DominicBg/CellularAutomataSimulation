@@ -64,7 +64,8 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
             behaviour = particleBehaviour.particleBehaviour,
             map = map,
             nativeParticleSpawners = nativeParticleSpawners,
-            tickBlock = tickBlock
+            tickBlock = tickBlock,
+            settings = GameManager.PhysiXVIISetings
         }.Run();
     }
 

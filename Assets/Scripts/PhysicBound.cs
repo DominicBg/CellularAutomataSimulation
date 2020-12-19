@@ -56,7 +56,7 @@ public struct PhysicBound
         Bound globalBound = GetCollisionBound(position);
         return new Bound(globalBound.topLeft, new int2(globalBound.sizes.x, 1));
     }
-    public Bound GetFeetCollisionBound(int2 position)
+    public Bound GetBottomCollisionBound(int2 position)
     {
         Bound globalBound = GetCollisionBound(position);
         return new Bound(globalBound.bottomLeft, new int2(globalBound.sizes.x, 1));

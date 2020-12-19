@@ -10,22 +10,20 @@ public class Shovel : EquipableElement
 
     protected override void OnUse(int2 position)
     {
-        //int2 offset = GetAjustedOffset(settings.lookingOffset);
         float2 throwVelocity = settings.velocity;
         if (player.lookLeft)
         {
-            //offset.x = -offset.x;
             throwVelocity.x = -throwVelocity.x;
         }
-        //int2 startPos = player.GetBound().center + offset;
 
+        //todo stop loops if blocked
         int2 offset = GetEquipOffset(settings.lookingOffset);
         for (int x = 0; x < settings.shovelSize.x; x++)
         {
             for (int y = 0; y < settings.shovelSize.y; y++)
             {
                 int2 pos = offset + new int2(x, y);
-                if(map.InBound(pos) && map.TryFindEmptyPosition(pos, new int2(0, 1), out int2 newPos))
+                if(map.InBound(pos) && map.CanPush(pos, GameManager.PhysiXVIISetings) && map.TryFindEmptyPosition(pos, new int2(0, 1), out int2 newPos))
                 {
                     Particle particle = map.GetParticle(pos);
                     particle.velocity += throwVelocity;

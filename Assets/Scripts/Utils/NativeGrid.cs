@@ -14,13 +14,13 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 
     Allocator m_Allocator;
 
-#if UNITY_EDITOR
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
     internal AtomicSafetyHandle m_Safety;
 
     [NativeSetClassTypeToNullOnSchedule]
     internal DisposeSentinel m_DisposeSentinel;
 
-    private static int s_staticSafetyId;
+    //private static int s_staticSafetyId;
 #endif
 
     private int m_binarySize;
@@ -34,14 +34,14 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         m_buffer = UnsafeUtility.Malloc(m_binarySize, UnsafeUtility.AlignOf<T>(), allocator);
         UnsafeUtility.MemClear(m_buffer, m_binarySize);
 
-#if UNITY_EDITOR
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
         //Copy pasted stuff from NativeArray
         DisposeSentinel.Create(out m_Safety, out m_DisposeSentinel, 1, allocator);
-        if (s_staticSafetyId == 0)
-        {
-            s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeGrid<T>>();
-        }
-        AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
+        //if (s_staticSafetyId == 0)
+        //{
+        //    s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeGrid<T>>();
+        //}
+        //AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
 #endif
     }
 
@@ -55,11 +55,11 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         m_buffer = null;
         UnsafeUtility.Free(m_buffer, m_Allocator);
 
-#if UNITY_EDITOR
-        if (!UnsafeUtility.IsValidAllocator(m_Allocator))
-        {
-            throw new InvalidOperationException("The NativeArray can not be Disposed because it was not allocated with a valid allocator.");
-        }
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+        //if (!UnsafeUtility.IsValidAllocator(m_Allocator))
+        //{
+        //    throw new InvalidOperationException("The NativeArray can not be Disposed because it was not allocated with a valid allocator.");
+        //}
         DisposeSentinel.Dispose(ref m_Safety, ref m_DisposeSentinel);
 #endif
 
@@ -81,6 +81,9 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
     {
         get
         {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            AtomicSafetyHandle.CheckReadAndThrow(m_Safety);
+#endif
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ {index2}, max {m_sizes}");
 
@@ -89,6 +92,9 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         }
         set
         {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
+#endif
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at {index2}, max {m_sizes}");
 

@@ -8,6 +8,6 @@ public struct PhysicData
     public float2 velocity;
     public PhysicBound physicBound;
     public int2 gridPosition;
-
+    public float mass;
     public int inclinaison;
 }

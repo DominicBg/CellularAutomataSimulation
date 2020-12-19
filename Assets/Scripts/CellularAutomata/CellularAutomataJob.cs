@@ -11,6 +11,7 @@ public struct CellularAutomataJob : IJob
     public TickBlock tickBlock;
     public Map map;
     public ParticleBehaviour behaviour;
+    public PhysiXVIISetings settings;
 
     public void Execute()
     {
@@ -98,7 +99,7 @@ public struct CellularAutomataJob : IJob
         }
     }
 
-    bool TryFreeFalling(Particle particle, int2 pos)
+    unsafe bool TryFreeFalling(Particle particle, int2 pos)
     {
         GravityBehaviour gravity = behaviour.gravity;
         particle.velocity += gravity.accelerationPerFrame;
@@ -122,11 +123,10 @@ public struct CellularAutomataJob : IJob
             {
                 if(map.InBound(collisionPosition))
                 {
-                    Particle p1 = particle;
+                    ref Particle p1 = ref particle;
                     Particle p2 = map.GetParticle(collisionPosition);
-                    PhysiXVII.ComputeElasticCollision(slidePosition, collisionPosition, p1.velocity, p2.velocity, 1, 1, out float2 outv1, out float2 outv2);
-                    particle.velocity = outv1 * 0.9f;
-                    p2.velocity = outv2 * 0.9f;
+                    PhysiXVII.CalculateParticleCollisions(ref p1, ref p2, slidePosition, collisionPosition, in settings);
+
                     map.SetParticle(collisionPosition, p2, false);
                 }
                 else //WALL COLLISION

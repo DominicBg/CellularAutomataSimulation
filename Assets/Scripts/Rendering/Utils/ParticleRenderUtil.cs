@@ -17,7 +17,7 @@ public static class ParticleRenderUtil
                 return particleRendering.mudColor;
             case ParticleType.Player:
                 //Gets overriden when trying the sprite
-                return Color.clear;
+                return Color.yellow;
             case ParticleType.Snow:
                 return particleRendering.snowColor;
             case ParticleType.Ice:
