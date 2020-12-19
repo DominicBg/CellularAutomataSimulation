@@ -103,7 +103,7 @@ public abstract class EquipableElement : LevelObject
     protected abstract void OnUnequip();
 
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         int2 renderPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : position;
         bool isFlipped = isEquiped ? player.lookLeft : false;

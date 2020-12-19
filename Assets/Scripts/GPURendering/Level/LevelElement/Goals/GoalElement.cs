@@ -12,7 +12,7 @@ public abstract class GoalElement : LevelObject
         return new Bound(position, GetNativeSprite().sizes);
     }
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         GridRenderer.ApplySprite(ref outputcolor, GetNativeSprite(), position);
     }

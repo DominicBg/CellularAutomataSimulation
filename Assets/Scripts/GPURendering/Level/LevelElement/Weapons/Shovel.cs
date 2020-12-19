@@ -23,7 +23,9 @@ public class Shovel : EquipableElement
             for (int y = 0; y < settings.shovelSize.y; y++)
             {
                 int2 pos = offset + new int2(x, y);
-                if(map.InBound(pos) && map.CanPush(pos, GameManager.PhysiXVIISetings) && map.TryFindEmptyPosition(pos, new int2(0, 1), out int2 newPos))
+                int2 findPosDir = new int2((int)math.sign(throwVelocity.x), 1);
+                int2 moveOffset = pos + new int2((int)math.sign(throwVelocity.x) * 5, 8);
+                if (map.InBound(pos) && map.CanPush(pos, GameManager.PhysiXVIISetings) && map.TryFindEmptyPosition(moveOffset, findPosDir, out int2 newPos))
                 {
                     Particle particle = map.GetParticle(pos);
                     particle.velocity += throwVelocity;
@@ -34,7 +36,7 @@ public class Shovel : EquipableElement
         }
     }
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
         int2 renderOffset = playAnim ? baseSettings.equipedOffset + settings.animOffset : baseSettings.equipedOffset;

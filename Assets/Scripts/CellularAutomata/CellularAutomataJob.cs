@@ -141,6 +141,11 @@ public struct CellularAutomataJob : IJob
             map.MoveParticle(particle, pos, slidePosition);
             return true;
         }
+
+        //reset velocity, its not free falling
+        particle.velocity = 0;
+        map.SetParticle(pos, particle, false);
+
         return false;
     }
 

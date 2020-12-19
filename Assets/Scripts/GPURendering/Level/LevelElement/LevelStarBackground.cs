@@ -13,7 +13,7 @@ public class LevelStarBackground : LevelElement
     }
 
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         settings.Render(ref outputcolor, tickBlock.tick);
     }

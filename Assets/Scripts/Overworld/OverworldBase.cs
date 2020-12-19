@@ -9,7 +9,7 @@ public abstract class OverworldBase : ScriptableObject
 {
     public abstract void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock);
 
-    [SerializeField] UINavigationGraph navigationGraphPrefab;
+    [SerializeField] UINavigationGraph navigationGraphPrefab = default;
     public LevelDataScriptable[] levels;
 
     public UINavigationGraph LoadNavigationGraph()

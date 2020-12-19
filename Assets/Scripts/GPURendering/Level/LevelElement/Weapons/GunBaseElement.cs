@@ -30,7 +30,7 @@ public abstract class GunBaseElement : EquipableElement
         cooldownShoot = math.max(cooldownShoot - 1, 0);
     }
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {     
         int2 renderPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : position;
         int2 kickOffset = GetKickOffset();

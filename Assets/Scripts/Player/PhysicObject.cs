@@ -9,11 +9,14 @@ using UnityEngine;
 public abstract class PhysicObject : LevelObject
 {
     public PhysicData physicData;
-    public Texture2D collisionTexture;
 
     public override void Init(Map map)
     {
         this.map = map;
+    }
+
+    protected void IniPhysicData(Texture2D collisionTexture)
+    {
         physicData.physicBound = new PhysicBound(collisionTexture);
     }
 

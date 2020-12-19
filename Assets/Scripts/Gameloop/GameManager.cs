@@ -35,16 +35,16 @@ public class GameManager : MonoBehaviour
     StateMachine<GameStateEnum> m_stateMachine;
 
     //Rename more manager stuff
-    [SerializeField] GameLevelManager gameLevelManager;
-    [SerializeField] GameLevelEditorManager gameLevelEditorManager;
-    [SerializeField] GameOverworldManager gameOverworldManager;
-    [SerializeField] GameMainMenuManager gameMainMenuManager;
+    [SerializeField] GameLevelManager gameLevelManager = default;
+    [SerializeField] GameLevelEditorManager gameLevelEditorManager = default;
+    [SerializeField] GameOverworldManager gameOverworldManager = default;
+    [SerializeField] GameMainMenuManager gameMainMenuManager = default;
 
     public GameStateEnum firstState;
     public int desiredFPS;
     //public LevelContainer currentLevelContainer;
     public LevelDataScriptable levelData;
-    [SerializeField] PhysiXVIIScriptable physiXVIIScriptable;
+    [SerializeField] PhysiXVIIScriptable physiXVIIScriptable = default;
 
     float currentDeltaTime;
     float frameDuration;

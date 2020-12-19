@@ -12,6 +12,12 @@ public class GridPicker : MonoBehaviour
         instance = this;
     }
 
+
+    public static int2 GetGridPosition()
+    {
+        return GetGridPosition(GameManager.GridSizes);
+    }
+
     public static int2 GetGridPosition(int2 gridSizes)
     {
         float2 screen = new Vector2(Screen.width, Screen.height);

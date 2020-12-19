@@ -14,7 +14,7 @@ public class EscapeInShuttleRule : LevelRule
         playerElement.isVisible = false;
     }
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
     }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public class LevelDataScriptable : ScriptableObject
 {
     [HideInInspector] public ParticleType[] grid;
-    [SerializeField] LevelContainer levelContainerPrefab;
+    [SerializeField] LevelContainer levelContainerPrefab = default;
 
     public LevelContainer LoadLevelContainer()
     {

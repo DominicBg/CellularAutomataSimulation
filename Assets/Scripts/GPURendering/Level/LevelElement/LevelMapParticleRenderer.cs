@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LevelMapParticleRenderer : LevelElement
 {
-    public override void OnRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
     {        
         GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
     }

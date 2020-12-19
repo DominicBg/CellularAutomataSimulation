@@ -43,12 +43,24 @@ public class LevelContainer : MonoBehaviour, IDisposable
         for (int i = 0; i < levelElements.Length; i++)
         {
             if (levelElements[i].isVisible)
-                levelElements[i].OnRender(ref outputcolor, ref tickBlock);
+                levelElements[i].PreRender(ref outputcolor, ref tickBlock);
+        }
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            if (levelElements[i].isVisible)
+                levelElements[i].Render(ref outputcolor, ref tickBlock);
+        }
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            if (levelElements[i].isVisible)
+                levelElements[i].PostRender(ref outputcolor, ref tickBlock);
         }
         for (int i = 0; i < levelElements.Length; i++)
         {
             levelElements[i].OnRenderUI(ref outputcolor, ref tickBlock);
         }
+
+        PostProcessManager.Instance.Render(ref outputcolor, ref tickBlock);
     }
 
     public void Dispose()

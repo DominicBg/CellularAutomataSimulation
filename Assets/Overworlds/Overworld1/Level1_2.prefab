@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5479903869181738648}
   - component: {fileID: 5479903869181738649}
   - component: {fileID: 4031864115272182893}
+  - component: {fileID: 1814391151772662926}
   - component: {fileID: 7873728437074116930}
   - component: {fileID: -1767788282309867286}
   - component: {fileID: 1869864533557053622}
@@ -54,6 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelElements:
   - {fileID: 4031864115272182893}
+  - {fileID: 1814391151772662926}
   - {fileID: 7873728437074116930}
   - {fileID: -1767788282309867286}
   - {fileID: 1869864533557053622}
@@ -87,6 +89,43 @@ MonoBehaviour:
       x: 23.15
       y: 32.64
     sinOffsetAmplitude: 5
+--- !u!114 &1814391151772662926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ba6abecd7bb8b4ea1dbd40b2ef9153, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 58
+    y: 8
+  color:
+    serializedVersion: 2
+    rgba: 2623077702
+  gemShines:
+  - flashSpeed: 0.05
+    flashRadiusMin: 3
+    flashRadiusMax: 7
+    color:
+      serializedVersion: 2
+      rgba: 337116928
+    blend: 1
+    offsynch: 0
+  - flashSpeed: 0.05
+    flashRadiusMin: 2
+    flashRadiusMax: 10
+    color:
+      serializedVersion: 2
+      rgba: 618921792
+    blend: 1
+    offsynch: 0.5
 --- !u!114 &7873728437074116930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,8 +211,8 @@ MonoBehaviour:
     gridPosition:
       x: 0
       y: 0
+    mass: 0
     inclinaison: 0
-  collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   debugBoundFlag: 0
   settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
   spriteAnimator:
@@ -182,6 +221,25 @@ MonoBehaviour:
     framePerImage: 0
   currentEquip: {fileID: 0}
   lookLeft: 0
+  explosiveSettings:
+    radius: 25
+    strength: 10
+  shakeSettings:
+    intensity: 7
+    duration: 0.5
+    speed: 0.5
+    blendWithOriginal: 0.5
+  flashSettings:
+    color1:
+      serializedVersion: 2
+      rgba: 4278190080
+    color2:
+      serializedVersion: 2
+      rgba: 4294967295
+    threshold: 0.7
+    duration: 0.2
+    interval: 2
+    blendWithOriginal: 0.6
 --- !u!114 &5479903869181738650
 MonoBehaviour:
   m_ObjectHideFlags: 0

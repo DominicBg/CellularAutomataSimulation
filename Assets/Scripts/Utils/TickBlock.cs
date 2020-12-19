@@ -22,4 +22,9 @@ public struct TickBlock
         tickSeed = random.NextUInt();
         random.InitState(tickSeed);
     }
+
+    public float DurationSinceTick(int oldTick)
+    {
+        return (tick - oldTick) * GameManager.deltaTime;
+    }
 }

@@ -83,9 +83,9 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckReadAndThrow(m_Safety);
-#endif
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ {index2}, max {m_sizes}");
+#endif
 
             int index = ArrayHelper.PosToIndex(index2, m_sizes);
             return UnsafeUtility.ReadArrayElement<T>(m_buffer, index);
@@ -94,9 +94,9 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
-#endif
             if (!InBound(index2))
                 throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at {index2}, max {m_sizes}");
+#endif
 
             int index = ArrayHelper.PosToIndex(index2, m_sizes);
             UnsafeUtility.WriteArrayElement(m_buffer, index, value);

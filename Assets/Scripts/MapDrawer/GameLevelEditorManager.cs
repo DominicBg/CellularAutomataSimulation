@@ -137,7 +137,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         var levelElements = currentLevelContainer.levelElements;
         for (int i = 0; i < levelElements.Length; i++)
         {
-            levelElements[i].OnRender(ref outputColors, ref tickBlock);
+            levelElements[i].Render(ref outputColors, ref tickBlock);
         }
 
         //Color spawner

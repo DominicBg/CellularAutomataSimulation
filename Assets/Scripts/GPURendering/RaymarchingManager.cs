@@ -46,7 +46,7 @@ public class RaymarchingManager : MonoBehaviour
     [SerializeField] private float m_softShadowCoef = 8f;
     [SerializeField] private Color m_ambientColor = Color.white;
     [SerializeField] private bool m_paintNormals = false;
-    [SerializeField] private ComputeShader m_raymarchingShader;
+    [SerializeField] private ComputeShader m_raymarchingShader = default;
 
     private Camera m_camera;
     private ComputeBuffer m_shapesBuffer;

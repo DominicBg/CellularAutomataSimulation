@@ -13,4 +13,5 @@ public class PlayerControlSettings : ScriptableObject
     public float jumpForce = 150;
 
     public NativeSpriteSheet.SpriteSheet spriteSheet;
+    public Texture2D collisionTexture;
 }

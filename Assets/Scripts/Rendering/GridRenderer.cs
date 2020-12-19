@@ -16,7 +16,7 @@ public class GridRenderer : MonoBehaviour
     static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
     static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");
 
-    [SerializeField] RawImage m_renderer;
+    [SerializeField] RawImage m_renderer = default;
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 

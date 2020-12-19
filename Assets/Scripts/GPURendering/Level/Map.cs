@@ -178,7 +178,8 @@ public unsafe struct Map
 
     public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition)
     {
-        for (int i = 0; i < 32; i++)
+        const int maxStep = 32;
+        for (int i = 0; i < maxStep; i++)
         {
             position += direction;
             if (InBound(position))

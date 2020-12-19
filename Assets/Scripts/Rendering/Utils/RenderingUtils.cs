@@ -66,7 +66,7 @@ public static class RenderingUtils
         return new Color(Screen(color1.r, color2.r), Screen(color1.g, color2.g), Screen(color1.b, color2.b), Screen(color1.a, color2.a)).Clamp01();
     }
 
-    public static float Luminance(Color32 color)
+    public static float Luminance(Color color)
     {
         return 0.216f * color.r + 0.715f * color.g + 0.0722f * color.b;
     }

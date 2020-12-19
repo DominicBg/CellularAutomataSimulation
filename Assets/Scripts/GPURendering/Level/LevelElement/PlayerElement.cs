@@ -14,6 +14,10 @@ public class PlayerElement : PhysicObject
     int lookDirection;
     public bool lookLeft;
 
+    public Explosive.Settings explosiveSettings;
+    public PostProcessManager.ShakeSettings shakeSettings;
+    public PostProcessManager.ScreenFlashSettings flashSettings;
+
     public override Bound GetBound()
     {
         return physicData.physicBound.GetCollisionBound(position);
@@ -23,9 +27,10 @@ public class PlayerElement : PhysicObject
     {
         base.Init(map);
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
+        IniPhysicData(settings.collisionTexture);
     }
 
-    public override void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         if(lookDirection != 0)
         {
@@ -64,7 +69,6 @@ public class PlayerElement : PhysicObject
         }
         spriteAnimator.Update();
 
-
         if (isGrounded)
         {
             physicData.controlledVelocity = (float2)direction * settings.movementSpeed;
@@ -80,6 +84,13 @@ public class PlayerElement : PhysicObject
             physicData.velocity += new float2(0, settings.jumpForce);
         }
 
+
+        if (InputCommand.IsButtonDown(KeyCode.X))
+            Explosive.SetExplosive(GridPicker.GetGridPosition(), ref explosiveSettings, map);
+        if (InputCommand.IsButtonDown(KeyCode.V))
+            PostProcessManager.ScreenFlash(in flashSettings, tickBlock.tick);
+        if (InputCommand.IsButtonDown(KeyCode.C))
+            PostProcessManager.EnqueueShake(in shakeSettings, tickBlock.tick);
 
         HandlePhysic();
     }
