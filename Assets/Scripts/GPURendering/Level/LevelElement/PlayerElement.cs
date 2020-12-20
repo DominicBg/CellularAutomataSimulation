@@ -18,6 +18,8 @@ public class PlayerElement : PhysicObject, ILightSource
     public Explosive.Settings explosiveSettings;
     public PostProcessManager.ShakeSettings shakeSettings;
     public PostProcessManager.ScreenFlashSettings flashSettings;
+    public PostProcessManager.ShockwaveSettings shockwaveSettings;
+    public PostProcessManager.BlackholeSettings blackholeSettings;
 
     public override Bound GetBound()
     {
@@ -85,14 +87,22 @@ public class PlayerElement : PhysicObject, ILightSource
             physicData.velocity += new float2(0, settings.jumpForce);
         }
 
-
         if (InputCommand.IsButtonDown(KeyCode.X))
             Explosive.SetExplosive(GridPicker.GetGridPosition(), ref explosiveSettings, map);
         if (InputCommand.IsButtonDown(KeyCode.V))
-            PostProcessManager.ScreenFlash(in flashSettings, tickBlock.tick);
+            PostProcessManager.EnqueueScreenFlash(in flashSettings, tickBlock.tick);
         if (InputCommand.IsButtonDown(KeyCode.C))
             PostProcessManager.EnqueueShake(in shakeSettings, tickBlock.tick);
-
+        if (InputCommand.IsButtonDown(KeyCode.B))
+        {
+            shockwaveSettings.centerPoint = GridPicker.GetGridPosition();
+            PostProcessManager.EnqueueShockwave(in shockwaveSettings, tickBlock.tick);
+        }
+        if (InputCommand.IsButtonDown(KeyCode.N))
+        {
+            blackholeSettings.centerPoint = GridPicker.GetGridPosition();
+            PostProcessManager.EnqueueBlackHole(in blackholeSettings, tickBlock.tick);
+        }
         HandlePhysic();
     }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LevelCollision : LevelElement
 {
-    [SerializeField] Texture2D texture;
+    [SerializeField] Texture2D texture = default;
     NativeArray<Color32> nativeTexture;
     public bool hasCollision;
 

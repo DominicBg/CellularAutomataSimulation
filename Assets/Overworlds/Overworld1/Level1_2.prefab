@@ -272,6 +272,22 @@ MonoBehaviour:
     duration: 0.2
     interval: 2
     blendWithOriginal: 0.6
+  shockwaveSettings:
+    centerPoint:
+      x: 50
+      y: 50
+    radiusThickness: 25
+    duration: 1.5
+    waveSpeed: 40
+    intensity: 1
+  blackholeSettings:
+    centerPoint:
+      x: 0
+      y: 0
+    duration: 2
+    waveSpeed: 25
+    intensityMin: 0.5
+    intensityMax: 1.5
 --- !u!114 &5479903869181738650
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,7 +21,8 @@ public class PostProcessManager
 
     ShakeAnimation shakeAnimation;
     ScreenFlashAnimation screenFlashAnimation;
-
+    ShockwaveAnimation shockwaveAnimation;
+    Animation<BlackholeSettings> blackholeAnimation;
 
     public static void EnqueueShake(in ShakeSettings settings, int tick)
     {
@@ -33,7 +34,7 @@ public class PostProcessManager
         };
     }
 
-    public static void ScreenFlash(in ScreenFlashSettings settings, int tick)
+    public static void EnqueueScreenFlash(in ScreenFlashSettings settings, int tick)
     {
         Instance.screenFlashAnimation = new ScreenFlashAnimation()
         {
@@ -43,10 +44,31 @@ public class PostProcessManager
         };
     }
 
+    public static void EnqueueShockwave(in ShockwaveSettings settings, int tick)
+    {
+        Instance.shockwaveAnimation = new ShockwaveAnimation()
+        {
+            tick = tick,
+            settings = settings,
+            isActive = true
+        };
+    }
+    public static void EnqueueBlackHole(in BlackholeSettings settings, int tick)
+    {
+        Instance.blackholeAnimation = new Animation<BlackholeSettings>()
+        {
+            settings = settings,
+            tick = tick,
+            isActive = true
+        };
+    }
+
     public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
         RenderShake(ref outputColors, ref tickBlock);
         RenderScreenFlash(ref outputColors, ref tickBlock);
+        RenderShockwave(ref outputColors, ref tickBlock);
+        RenderBlackHole(ref outputColors, ref tickBlock);
     }
 
     void RenderShake(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
@@ -75,15 +97,15 @@ public class PostProcessManager
         if (math.all(offset == 0))
             return;
 
-        NativeArray<Color32> inputColor = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+        NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
         new ShakeScreenJobs()
         {
-            outputColor = outputColors,
-            inputColor = inputColor,
+            outputColors = outputColors,
+            inputColors = inputColors,
             offset = offset,
             blendWithOriginal = settings.blendWithOriginal
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-        inputColor.Dispose();
+        inputColors.Dispose();
         return;
     }
     void RenderScreenFlash(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
@@ -116,6 +138,71 @@ public class PostProcessManager
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
+    void RenderShockwave(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    {
+        if (!shockwaveAnimation.isActive)
+            return;
+
+        float duration = tickBlock.DurationSinceTick(shockwaveAnimation.tick);
+
+        if (duration > shockwaveAnimation.settings.duration)
+        {
+            shockwaveAnimation.isActive = false;
+            return;
+        };
+
+        NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+
+        new ShockwaveJob()
+        {
+           inputColors = inputColors,
+           outputColors = outputColors,
+           settings = shockwaveAnimation.settings,
+           tickBlock = tickBlock,
+           startTick = shockwaveAnimation.tick
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        inputColors.Dispose();
+    }
+
+    void RenderBlackHole(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    {
+        if (!ShouldUpdate(ref blackholeAnimation, ref tickBlock, blackholeAnimation.settings.duration))
+            return;
+
+        NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+
+        //to be able to controls the blackhole outside the job
+        float t = tickBlock.DurationSinceTick(blackholeAnimation.tick) / blackholeAnimation.settings.duration;
+        t = math.sin(t * math.PI);
+
+        new BlackholeJob()
+        {
+            inputColors = inputColors,
+            outputColors = outputColors,
+            settings = blackholeAnimation.settings,
+            t = t
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        inputColors.Dispose();
+    }
+
+    public bool ShouldUpdate<T>(ref Animation<T> animation, ref TickBlock tickBlock, float settingsDuration)
+    {
+        if (!animation.isActive)
+            return false;
+
+        float duration = tickBlock.DurationSinceTick(animation.tick);
+
+        if (duration > settingsDuration)
+        {
+            animation.isActive = false;
+            return false; 
+        };
+
+        return true;
+    }
+
+
+    //States
     struct ShakeAnimation
     {
         public ShakeSettings settings;
@@ -129,6 +216,23 @@ public class PostProcessManager
         public int tick;
         public bool isActive;
     }
+
+    struct ShockwaveAnimation
+    {
+        public ShockwaveSettings settings;
+        public int tick;
+        public bool isActive;
+    }
+
+    public struct Animation<T>
+    {
+        public T settings;
+        public int tick;
+        public bool isActive;
+    }
+
+
+    //Settings
 
     [System.Serializable]
     public struct ShakeSettings 
@@ -148,5 +252,25 @@ public class PostProcessManager
         public float duration;
         public int interval;
         public float blendWithOriginal;
+    }
+
+    [System.Serializable]
+    public struct ShockwaveSettings
+    {
+        public int2 centerPoint;
+        public int radiusThickness;
+        public float duration;
+        public float waveSpeed;
+        public float intensity;
+    }
+
+    [System.Serializable]
+    public struct BlackholeSettings
+    {
+        public int2 centerPoint;
+        public float duration;
+        public float waveSpeed;
+        public float intensityMin;
+        public float intensityMax;
     }
 }

@@ -9,8 +9,8 @@ using UnityEngine;
 [BurstCompile]
 public struct ShakeScreenJobs : IJobParallelFor
 {
-    [ReadOnly] public NativeArray<Color32> inputColor;
-    public NativeArray<Color32> outputColor;
+    [ReadOnly] public NativeArray<Color32> inputColors;
+    public NativeArray<Color32> outputColors;
     public int2 offset;
     public float blendWithOriginal;
     
@@ -21,12 +21,12 @@ public struct ShakeScreenJobs : IJobParallelFor
         int2 posOffset = pos + offset;
         if(GridHelper.InBound(posOffset, GameManager.GridSizes))
         {
-            Color32 colorOffset = inputColor[ArrayHelper.PosToIndex(posOffset, GameManager.GridSizes)];
-            outputColor[index] = Color.Lerp(outputColor[index], colorOffset, blendWithOriginal);
+            Color32 colorOffset = inputColors[ArrayHelper.PosToIndex(posOffset, GameManager.GridSizes)];
+            outputColors[index] = Color.Lerp(outputColors[index], colorOffset, blendWithOriginal);
         }
         else
         {
-            outputColor[index] = Color.clear;
+            outputColors[index] = Color.clear;
         }
     }
 }
