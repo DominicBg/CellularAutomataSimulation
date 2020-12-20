@@ -31,7 +31,7 @@ public struct MandlebrotBackground : IJobParallelFor
         new MandlebrotBackground() 
         {
             outputColor = outputColor, settings = settings, sizes = sizes
-        }.Schedule(sizes.x * sizes.y, 100).Complete();
+        }.Schedule(sizes.x * sizes.y, GameManager.InnerLoopBatchCount).Complete();
     }
 
     public void Execute(int index)

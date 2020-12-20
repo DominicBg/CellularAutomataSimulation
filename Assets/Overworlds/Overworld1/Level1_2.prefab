@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5479903869181738648}
   - component: {fileID: 5479903869181738649}
   - component: {fileID: 4031864115272182893}
+  - component: {fileID: 7840373642871753906}
   - component: {fileID: 1814391151772662926}
   - component: {fileID: 7873728437074116930}
   - component: {fileID: -1767788282309867286}
@@ -20,6 +21,8 @@ GameObject:
   - component: {fileID: 5479903869181738651}
   - component: {fileID: 1251561243526543711}
   - component: {fileID: 6220337013202316425}
+  - component: {fileID: 4496222148599108688}
+  - component: {fileID: -6500284653280436171}
   m_Layer: 0
   m_Name: Level1_2
   m_TagString: Untagged
@@ -55,6 +58,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelElements:
   - {fileID: 4031864115272182893}
+  - {fileID: 7840373642871753906}
   - {fileID: 1814391151772662926}
   - {fileID: 7873728437074116930}
   - {fileID: -1767788282309867286}
@@ -63,6 +67,8 @@ MonoBehaviour:
   - {fileID: 5479903869181738651}
   - {fileID: 1251561243526543711}
   - {fileID: 6220337013202316425}
+  - {fileID: 4496222148599108688}
+  - {fileID: -6500284653280436171}
   particleSpawnerElements: {fileID: 5479903869181738650}
 --- !u!114 &4031864115272182893
 MonoBehaviour:
@@ -89,6 +95,22 @@ MonoBehaviour:
       x: 23.15
       y: 32.64
     sinOffsetAmplitude: 5
+--- !u!114 &7840373642871753906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4af0583de7dfa941b05149e50a3bae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  texture: {fileID: 2800000, guid: a34b148bcbdbcb249ba815216c5855ea, type: 3}
+  hasCollision: 0
 --- !u!114 &1814391151772662926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +148,16 @@ MonoBehaviour:
       rgba: 618921792
     blend: 1
     offsynch: 0.5
+  lightSource:
+    position:
+      x: 0
+      y: 0
+    innerRadiusMin: 10
+    innerRadiusMax: 13
+    outerRadiusMin: 13
+    outerRadiusMax: 15
+    offsynch: 1
+    speed: 0.05
 --- !u!114 &7873728437074116930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,3 +364,54 @@ MonoBehaviour:
   player: {fileID: 5479903869181738654}
   baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
   isEquiped: 0
+--- !u!114 &4496222148599108688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4af0583de7dfa941b05149e50a3bae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  texture: {fileID: 2800000, guid: 154a7b5d972f5604387210b0559a20ac, type: 3}
+  hasCollision: 1
+--- !u!114 &-6500284653280436171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f014ddeed9d9d734a941a2cafe652630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+    colorA:
+      serializedVersion: 2
+      rgba: 4294008389
+    colorB:
+      serializedVersion: 2
+      rgba: 4204278127
+    minAlpha: 0.2
+    maxAlpha: 0.3
+    noiseSpeed: 1
+    colorSpeed:
+      x: 5
+      y: 5
+    movingSpeed:
+      x: 1
+      y: 2
+    noiseScale:
+      x: 0.01
+      y: 0.03
+    lightRatio: 1
+    blending: 1

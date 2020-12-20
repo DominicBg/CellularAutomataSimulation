@@ -143,11 +143,32 @@ MonoBehaviour:
     shineIntensity: 0.55
     resolution: 15
     octaScale: 0.1
-    colorForDepthMin: {r: 0, g: 0.19350243, b: 1, a: 1}
+    colorForDepthMin: {r: 0, g: 0.19215679, b: 1, a: 1}
     colorForDepthMax: {r: 0.24137807, g: 0.18396229, b: 1, a: 1}
-    blendDepthRatio: -0.24
-    blendDepth: 2
+    blendDepthRatio: -2
+    blendDepth: 0
     depthMaxStep: 25
     depthStepSize: 0.05
-    depthMinSize: 0.2
-    depthMaxSize: 0.94
+    depthMinSize: 2
+    depthMaxSize: 2
+  fogSettings:
+    colorA:
+      serializedVersion: 2
+      rgba: 4294902528
+    colorB:
+      serializedVersion: 2
+      rgba: 4286840862
+    minAlpha: 0.5
+    maxAlpha: 2.06
+    noiseSpeed: 1.89
+    colorSpeed:
+      x: 5
+      y: 5
+    movingSpeed:
+      x: 5
+      y: 5
+    noiseScale:
+      x: 0.005
+      y: 0.005
+    lightRatio: 2.76
+    blending: 0

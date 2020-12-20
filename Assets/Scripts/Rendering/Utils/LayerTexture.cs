@@ -23,6 +23,6 @@ public struct LayerTexture : IRenderable, IDisposable
 
     public void Render(ref NativeArray<Color32> colorArray)
     {
-        GridRenderer.ApplyTextureToColor(ref colorArray, ref nativeTexture);
+        GridRenderer.ApplyTexture(ref colorArray, ref nativeTexture);
     }
 }

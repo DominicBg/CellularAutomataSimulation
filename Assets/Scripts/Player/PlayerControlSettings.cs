@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static FogElement;
 
 [CreateAssetMenu(fileName = "PlayerControlSettings", menuName = "PlayerControlSettings", order = 1)]
 public class PlayerControlSettings : ScriptableObject
@@ -14,4 +15,6 @@ public class PlayerControlSettings : ScriptableObject
 
     public NativeSpriteSheet.SpriteSheet spriteSheet;
     public Texture2D collisionTexture;
+
+    public LightSource lightSource;
 }

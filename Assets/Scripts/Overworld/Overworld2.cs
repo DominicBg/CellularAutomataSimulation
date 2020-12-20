@@ -17,6 +17,7 @@ public class Overworld2 : OverworldBase
     public FrozenPlanetRayMarchingJob.Settings frozenSettings;
     public GemRayMarchingJob.Settings gemSettings;
     private FunctionPointer<RayMarcher.RaymarcherFunc> func;
+    public FogElement.FogSettings fogSettings;
 
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
@@ -39,12 +40,23 @@ public class Overworld2 : OverworldBase
         //    particleRendering = GridRenderer.Instance.particleRendering
         //}.Schedule(GameManager.GridLength, 100).Complete();
 
-        new GemRayMarchingJob()
+        NativeArray<FogElement.LightSource> lights = new NativeArray<FogElement.LightSource>(0, Allocator.TempJob);
+        new FogElement.FogRenderingJob()
+        {
+            outputColor = backgroundColors,
+            settings = fogSettings,
+            tickBlock = tickBlock,
+            lightSources = lights
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        lights.Dispose();
+
+
+    new GemRayMarchingJob()
         {
             outputColor = backgroundColors,
             settings = gemSettings,
             tickBlock = tickBlock
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         // RaymarchingManager.Instance.RenderImage(ref backgroundColors);
 
         //new FrozenPlanetRayMarchingJob()

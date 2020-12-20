@@ -51,7 +51,7 @@ public class Overworld1 : OverworldBase
             maxSizes = GameManager.GridSizes,
             tick = tickBlock.tick,
             settings = starSettings
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
 
         new RenderPlanetJob()
@@ -63,7 +63,7 @@ public class Overworld1 : OverworldBase
             sandRendering = GridRenderer.Instance.particleRendering.sandRendering,
             sizes = GameManager.GridSizes,
             tickBlock = tickBlock
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
  
     [BurstCompile]

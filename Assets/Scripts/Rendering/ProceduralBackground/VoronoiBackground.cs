@@ -24,7 +24,7 @@ public struct VoronoiRendering : IRenderableAnimated
             maxSizes = GameManager.GridSizes,
             settings = this,
             tick = tick
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 }
 

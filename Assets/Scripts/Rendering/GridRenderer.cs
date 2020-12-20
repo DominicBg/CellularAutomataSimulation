@@ -20,8 +20,6 @@ public class GridRenderer : MonoBehaviour
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 
-    public int innerLoopBatchCount = 100;
-
     void Awake()
     {
         Instance = this;
@@ -48,14 +46,14 @@ public class GridRenderer : MonoBehaviour
     {
         using (S_SimulationRender.Auto())
         {
-            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock).Schedule(GameManager.GridLength, 1).Complete();
+            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         }
     }
 
     public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, BlendingMode blending, ParticleType particleType)
     {
         //todo profile
-        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, 1).Complete();
+        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     public static void DrawEllipse(ref NativeArray<Color32> outputColor, int2 position, int2 radius, Color32 innerColor, Color32 outerColor, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
@@ -69,7 +67,7 @@ public class GridRenderer : MonoBehaviour
             outerColor = outerColor,
             blending = blending,
             useAlphaMask = useAlphaMask
-        }.Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
@@ -77,16 +75,9 @@ public class GridRenderer : MonoBehaviour
         new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, GameManager.GridSizes, blending).Run();
     }
 
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, Texture2D texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
+    public static void ApplyTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
-        NativeArray<Color32> nativeTexture = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
-        new ApplyTextureJob(outputColor, nativeTexture, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
-        nativeTexture.Dispose();
-    }
-
-    public static void ApplyTextureToColor(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
-    {
-        new ApplyTextureJob(outputColor, texture, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        new ApplyTextureJob(outputColor, texture, blending, useAlphaMask).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     /// <summary>
@@ -94,7 +85,7 @@ public class GridRenderer : MonoBehaviour
     /// </summary>
     public static NativeArray<Color32> CombineColors(ref NativeArray<Color32> colorsA, ref NativeArray<Color32> colorsB, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)
     {
-        new ApplyTextureJob(colorsA, colorsB, blending, useAlphaMask).Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        new ApplyTextureJob(colorsA, colorsB, blending, useAlphaMask).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         colorsB.Dispose();
         return colorsA;
     }
@@ -107,7 +98,7 @@ public class GridRenderer : MonoBehaviour
             colors = colors,
             outputColor = outputColor,
             mapSizes = GameManager.GridSizes
-        }.Schedule(GameManager.GridLength, Instance.innerLoopBatchCount).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         colors.Dispose();
         return outputColor;
     }

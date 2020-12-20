@@ -4,8 +4,9 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using static FogElement;
 
-public class PlayerElement : PhysicObject
+public class PlayerElement : PhysicObject, ILightSource
 {
     public PlayerControlSettings settings;
 
@@ -114,5 +115,12 @@ public class PlayerElement : PhysicObject
     public override void Dispose()
     {
         spriteAnimator.Dispose();
+    }
+
+    public LightSource GetLightSource()
+    {
+        LightSource source = settings.lightSource;
+        source.position = GetBound().center;
+        return source;
     }
 }

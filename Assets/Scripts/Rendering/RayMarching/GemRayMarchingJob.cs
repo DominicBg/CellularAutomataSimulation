@@ -106,7 +106,7 @@ public struct GemRayMarchingJob : IJobParallelFor
 
         Result result = RayMarch(ro, rd);
 
-        Color colorFront = CalculateColor(result).ReduceResolution(settings.resolution);
+        Color colorFront = CalculateColor(outputColor[index], result).ReduceResolution(settings.resolution);
         //colorBack.a = settings.backBlend;
 
         outputColor[index] = colorFront;
@@ -171,17 +171,18 @@ public struct GemRayMarchingJob : IJobParallelFor
         return depth;
     }
 
-    Color CalculateColor(Result result)
+    Color CalculateColor(Color currentColor, Result result)
     {
         if (result.distance < settings.distanceThreshold)
         {
             float lightT = math.saturate(math.dot(math.normalize(settings.lightPosition), result.normal) + settings.baseIntensity);
             float depthRatio = result.depth / settings.depthMaxSize;
-            float depthT = math.saturate(math.remap(settings.depthMinSize, settings.depthMaxSize, 0, 1, depthRatio));
+            //float depthT = math.saturate(math.remap(settings.depthMinSize, settings.depthMaxSize, 0, 1, depthRatio));
             Color lightColor = lightT  * settings.color;
-            Color depthcolor = Color.Lerp(settings.colorForDepthMin, settings.colorForDepthMax, depthT);
-            depthcolor.a = settings.blendDepthRatio;
-            return RenderingUtils.Blend(lightColor, depthcolor, settings.blendDepth);
+            // depthcolor = Color.Lerp(settings.colorForDepthMin, settings.colorForDepthMax, depthT);
+            //depthcolor.a = settings.blendDepthRatio;
+            currentColor.a = depthRatio;
+            return RenderingUtils.Blend(lightColor, currentColor, settings.blendDepth);
         }
         else if (result.numberSteps > maxStep * settings.shineIntensity)
         {

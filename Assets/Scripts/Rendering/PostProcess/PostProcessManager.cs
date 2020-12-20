@@ -82,7 +82,7 @@ public class PostProcessManager
             inputColor = inputColor,
             offset = offset,
             blendWithOriginal = settings.blendWithOriginal
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         inputColor.Dispose();
         return;
     }
@@ -105,6 +105,7 @@ public class PostProcessManager
 
         Color32 color1 = screenFlashAnimation.settings.color1;
         Color32 color2 = screenFlashAnimation.settings.color2;
+
         new MonochromeFilterJob()
         {
             black = inverted ? color1 : color2,
@@ -112,7 +113,7 @@ public class PostProcessManager
             blendWithOriginal = screenFlashAnimation.settings.blendWithOriginal,
             threshold = screenFlashAnimation.settings.threshold,
             outputColors = outputColors,
-        }.Schedule(GameManager.GridLength, 100).Complete();
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     struct ShakeAnimation
