@@ -7,21 +7,13 @@ using UnityEngine;
 
 public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
-    public GridRenderer gridRenderer;
-    public GridPicker gridPicker;
-
-    NativeArray<ParticleSpawner> nativeParticleSpawners;
-
-    public ParticleBehaviourScriptable particleBehaviour;
-
-    public Map map;
-    TickBlock tickBlock;
-
+    public static GameLevelManager Instance;
 
     LevelContainer currentLevelContainer;
 
     public void OnStart()
     {
+        Instance = this;
         LoadLevel(GameManager.Instance.levelData);
     }
 
@@ -32,14 +24,9 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     void Dispose()
     {
-        if (nativeParticleSpawners.IsCreated)
+        if (currentLevelContainer != null)
         {
-            nativeParticleSpawners.Dispose();
-            map.Dispose();
-
             currentLevelContainer.Dispose();
-
-            currentLevelContainer?.Unload();
             currentLevelContainer = null;
         }
     }
@@ -48,41 +35,19 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         Dispose();
 
-        tickBlock.Init();
         currentLevelContainer = levelData.LoadLevelContainer();
-
-        map = levelData.LoadMap();
-        nativeParticleSpawners = currentLevelContainer.GetParticleSpawner();
-
-        currentLevelContainer.Init(map);
+        currentLevelContainer.Init(levelData.LoadMap());
     }
-
-    public void UpdateSimulation()
-    {
-        new CellularAutomataJob()
-        {
-            behaviour = particleBehaviour.particleBehaviour,
-            map = map,
-            nativeParticleSpawners = nativeParticleSpawners,
-            tickBlock = tickBlock,
-            settings = GameManager.PhysiXVIISetings
-        }.Run();
-    }
-
+    
     public void OnUpdate()
     {
-        tickBlock.UpdateTick();
-        UpdateSimulation();
-        currentLevelContainer.OnUpdate(ref tickBlock);
+        currentLevelContainer.OnUpdate();
     }
 
     public void OnRender()
     {
         var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-
-        //GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
-        currentLevelContainer.OnRender(ref outputColor, ref tickBlock);
-        
+        currentLevelContainer.OnRender(ref outputColor);
         GridRenderer.RenderToScreen(outputColor);
     }
 }

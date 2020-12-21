@@ -23,7 +23,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public LevelDataScriptable levelData;
     public Texture2D debugTexture;
 
-    TickBlock tickBlock;
+    //TickBlock tickBlock;
     LevelContainer currentLevelContainer;
 
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
@@ -41,7 +41,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public void OnStart()
     {
         levelData = GameManager.Instance.levelData;
-        tickBlock.Init();
+        //tickBlock.Init();
         Load();
     }
 
@@ -119,26 +119,11 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnRender()
     {
-        tickBlock.UpdateTick();
-
         Map map = new Map(grid, GameManager.GridSizes);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
-        //if (debugTexture != null)
-        //    GridRenderer.ApplyTextureToColor(ref outputColor, debugTexture);
-
-
-        // GridRenderer.ApplyMapPixels(ref outputColor, map, tickBlock);
-
-
         currentLevelContainer.Init(map);
-        currentLevelContainer.OnRender(ref outputColors, ref tickBlock);
-
-        var levelElements = currentLevelContainer.levelElements;
-        for (int i = 0; i < levelElements.Length; i++)
-        {
-            levelElements[i].Render(ref outputColors, ref tickBlock);
-        }
+        currentLevelContainer.OnRender(ref outputColors);
 
         //Color spawner
         var particleSpawner = currentLevelContainer.GetParticleSpawner();
@@ -160,16 +145,16 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         int2 sizes = GameManager.GridSizes;
         grid = new ParticleType[sizes.x, sizes.y];
 
-        currentLevelContainer?.Unload();
+        if (currentLevelContainer != null)
+            currentLevelContainer.Dispose();
         currentLevelContainer = null;
     }
 
     public void OnEnd()
     {
-        currentLevelContainer.Dispose();
-        currentLevelContainer?.Unload();
+        if (currentLevelContainer != null)
+            currentLevelContainer.Dispose();
         currentLevelContainer = null;
-
     }
 
     public struct ParticleChange

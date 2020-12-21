@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public class LevelContainer : MonoBehaviour, IDisposable
@@ -9,36 +10,49 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public LevelElement[] levelElements;
     public ParticleSpawnerElements particleSpawnerElements;
 
-    //GameLevelManager gameLevelManager;
-    //Map map;
+    public TickBlock tickBlock;
+    public Map map;
 
     public void OnValidate()
     {
-        levelElements = GetComponents<LevelElement>();
-        particleSpawnerElements = GetComponent<ParticleSpawnerElements>();
+        levelElements = GetComponentsInChildren<LevelElement>();
+        particleSpawnerElements = GetComponentInChildren<ParticleSpawnerElements>();
     }
 
     public void Init(Map map)
     {
-        //this.gameLevelManager = gameLevelManager;
-        //this.map = map;
-
+        this.map = map;
+        tickBlock.Init();
         for (int i = 0; i < levelElements.Length; i++)
         {
             levelElements[i].Init(map);
         }
     }
 
-    public void OnUpdate(ref TickBlock tickBlock)
+    public void OnUpdate()
     {
-        //gameLevelManager.UpdateSimulation();
+        tickBlock.UpdateTick();
+
+        //Update simulation
+        var particleSpawners = GetParticleSpawner();
+        new CellularAutomataJob()
+        {
+            behaviour = GameManager.ParticleBehaviour,
+            map = map,
+            nativeParticleSpawners = particleSpawners,
+            tickBlock = tickBlock,
+            settings = GameManager.PhysiXVIISetings
+        }.Run();
+        particleSpawners.Dispose();
+
+        //Update elements
         for (int i = 0; i < levelElements.Length; i++)
         {
             if(levelElements[i].isEnable)
                 levelElements[i].OnUpdate(ref tickBlock);
         }
     }
-    public void OnRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public void OnRender(ref NativeArray<Color32> outputcolor)
     {
         for (int i = 0; i < levelElements.Length; i++)
         {
@@ -65,8 +79,12 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
     public void Dispose()
     {
+        map.Dispose();
         for (int i = 0; i < levelElements.Length; i++)
             levelElements[i].Dispose();
+
+        if(gameObject != null)
+            Destroy(gameObject);
     }
 
     public NativeArray<ParticleSpawner> GetParticleSpawner()
@@ -78,10 +96,5 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
         NativeArray<ParticleSpawner> particleSpawners = new NativeArray<ParticleSpawner>(particleSpawnerElements.particleSpawners, Allocator.Persistent);
         return particleSpawners;
-    }
-
-    public void Unload()
-    {
-        Destroy(gameObject);
     }
 }

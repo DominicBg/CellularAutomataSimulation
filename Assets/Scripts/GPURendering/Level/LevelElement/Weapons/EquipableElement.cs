@@ -23,7 +23,7 @@ public abstract class EquipableElement : LevelObject
 
     public void OnValidate()
     {
-        player = GetComponent<PlayerElement>();
+        player = GetLevelElement<PlayerElement>();
     }
 
     public override void Init(Map map)

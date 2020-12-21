@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public static float deltaTime => Instance.frameDuration;
 
     public static PhysiXVIISetings PhysiXVIISetings => Instance.physiXVIIScriptable.settings;
+    public static ParticleBehaviour ParticleBehaviour => Instance.particleBehaviourScriptable.particleBehaviour;
 
     public static GameManager Instance;
 
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
     //public LevelContainer currentLevelContainer;
     public LevelDataScriptable levelData;
     [SerializeField] PhysiXVIIScriptable physiXVIIScriptable = default;
+    [SerializeField] ParticleBehaviourScriptable particleBehaviourScriptable = default;
 
     float currentDeltaTime;
     float frameDuration;

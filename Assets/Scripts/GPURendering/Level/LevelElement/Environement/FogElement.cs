@@ -14,7 +14,7 @@ public class FogElement : LevelElement
     public override void Init(Map map)
     {
         base.Init(map);
-        sources = GetComponents<ILightSource>();
+        sources = GetInterfaces<ILightSource>();
     }
 
     public override void OnUpdate(ref TickBlock tickBlock)
@@ -138,20 +138,21 @@ public class FogElement : LevelElement
         public BlendingMode blending;
     }
 
-    [System.Serializable]
-    public struct LightSource
-    {
-        public int2 position;
-        public int innerRadiusMin;
-        public int innerRadiusMax;
-        public int outerRadiusMin;
-        public int outerRadiusMax;
-        public float offsynch;
-        public float speed;
-    }
 
-    public interface ILightSource
-    {
-        LightSource GetLightSource();
-    }
+}
+
+[System.Serializable]
+public struct LightSource
+{
+    public int2 position;
+    public int innerRadiusMin;
+    public int innerRadiusMax;
+    public int outerRadiusMin;
+    public int outerRadiusMax;
+    public float offsynch;
+    public float speed;
+}
+public interface ILightSource
+{
+    LightSource GetLightSource();
 }

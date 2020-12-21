@@ -8,6 +8,13 @@ public class MapDrawerManager : MonoBehaviour
 
     public GameLevelManager gameLevelManager;
 
+    static Map m_map;
+
+    public static void SetMap(Map map)
+    {
+        m_map = map;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -20,7 +27,7 @@ public class MapDrawerManager : MonoBehaviour
             {
                 for (int y = -halfSize; y <= halfSize; y++)
                 {
-                    gameLevelManager.map.SetParticleType(new int2(pos.x + x, pos.y + y), type);
+                    m_map.SetParticleType(new int2(pos.x + x, pos.y + y), type);
                 }
             }
         }

@@ -40,7 +40,7 @@ public class Overworld2 : OverworldBase
         //    particleRendering = GridRenderer.Instance.particleRendering
         //}.Schedule(GameManager.GridLength, 100).Complete();
 
-        NativeArray<FogElement.LightSource> lights = new NativeArray<FogElement.LightSource>(0, Allocator.TempJob);
+        NativeArray<LightSource> lights = new NativeArray<LightSource>(0, Allocator.TempJob);
         new FogElement.FogRenderingJob()
         {
             outputColor = backgroundColors,

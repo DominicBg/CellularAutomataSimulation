@@ -26,11 +26,6 @@ public class GameMainMenuManager : MonoBehaviour, State
     public LevelDataScriptable levelData;
     LevelContainer mainMenuLevel;
 
-    Map m_map;
-    TickBlock tickBlock;
-    NativeArray<ParticleSpawner> particleSpawners;
-
-    //
     public float t;
     public Texture2D leftImage;
     public Texture2D rightImage;
@@ -40,42 +35,31 @@ public class GameMainMenuManager : MonoBehaviour, State
         lightRender.Dispose();
         darkRender.Dispose();
 
-        m_map.Dispose();
-        particleSpawners.Dispose();
-        mainMenuLevel?.Unload();
+        if(mainMenuLevel != null)
+            mainMenuLevel.Dispose();
+
         mainMenuLevel = null;
     }
 
     public void OnStart()
     {
-        tickBlock.Init();
         lightRender.Init();
         darkRender.Init();
 
+
         //Load simulation
         mainMenuLevel = levelData.LoadLevelContainer();
-        m_map = levelData.LoadMap();
-
-        particleSpawners = mainMenuLevel.GetParticleSpawner();
+        mainMenuLevel.Init(levelData.LoadMap());
     }
 
     public void OnUpdate()
     {
-        tickBlock.UpdateTick();
-
-        new CellularAutomataJob()
-        {
-            behaviour = partaicleBehaviour.particleBehaviour,
-            map = m_map,
-            nativeParticleSpawners = particleSpawners,
-            tickBlock = tickBlock,
-            settings = GameManager.PhysiXVIISetings
-        }.Run();
-        m_map.SetParticleType(particleDestroyerPosition, ParticleType.None);
+        mainMenuLevel.OnUpdate();
     }
 
     public void OnRender()
-    {       
+    {
+        ref TickBlock tickBlock = ref mainMenuLevel.tickBlock;
         float noiseValue = noise.cnoise((float2)(tickBlock.tick * randomSpeed));
         noiseValue = MathUtils.unorm(noiseValue);
 
@@ -84,7 +68,7 @@ public class GameMainMenuManager : MonoBehaviour, State
 
         if(showGlitch)
         {
-            var lightTexture = lightRender.Render(ref tickBlock, ref m_map);
+            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map);
             var darkTexture = darkRender.Render(ref tickBlock);
 
             InterlaceTextureSettings glitchSettings = new InterlaceTextureSettings();
@@ -97,7 +81,7 @@ public class GameMainMenuManager : MonoBehaviour, State
         }
         else if (showlight)
         {
-            var lightTexture =lightRender.Render(ref tickBlock, ref m_map);
+            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map);
             GridRenderer.RenderToScreen(lightTexture);
         }
         else

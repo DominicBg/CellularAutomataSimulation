@@ -1,0 +1,385 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5479903869181738652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5479903869181738648}
+  - component: {fileID: 5479903869181738649}
+  - component: {fileID: 4031864115272182893}
+  - component: {fileID: 7840373642871753906}
+  - component: {fileID: 1814391151772662926}
+  - component: {fileID: 7873728437074116930}
+  - component: {fileID: 5479903869181738654}
+  - component: {fileID: 5479903869181738650}
+  - component: {fileID: 4496222148599108688}
+  - component: {fileID: -6500284653280436171}
+  - component: {fileID: -4000470189832300799}
+  m_Layer: 0
+  m_Name: Level1_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5479903869181738648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.06716061, y: -1.0785847, z: -1.6823359}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5479903869181738649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129e987c1e5a40e47ae3235c88b53c41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelElements:
+  - {fileID: 4031864115272182893}
+  - {fileID: 7840373642871753906}
+  - {fileID: 1814391151772662926}
+  - {fileID: 7873728437074116930}
+  - {fileID: 5479903869181738654}
+  - {fileID: 4496222148599108688}
+  - {fileID: -6500284653280436171}
+  - {fileID: -4000470189832300799}
+  particleSpawnerElements: {fileID: 5479903869181738650}
+--- !u!114 &4031864115272182893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2147efe278ddba4fad17bf11b76316f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+    density:
+      x: 5
+      y: 5
+    radius: 3
+    seed: 0
+    speed: 0.02
+    sinOffsetScale:
+      x: 23.15
+      y: 32.64
+    sinOffsetAmplitude: 5
+--- !u!114 &7840373642871753906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4af0583de7dfa941b05149e50a3bae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  texture: {fileID: 2800000, guid: a34b148bcbdbcb249ba815216c5855ea, type: 3}
+  hasCollision: 0
+--- !u!114 &1814391151772662926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ba6abecd7bb8b4ea1dbd40b2ef9153, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 74
+    y: 20
+  color:
+    serializedVersion: 2
+    rgba: 2623077702
+  gemShines:
+  - flashSpeed: 0.05
+    flashRadiusMin: 3
+    flashRadiusMax: 7
+    color:
+      serializedVersion: 2
+      rgba: 337116928
+    blend: 1
+    offsynch: 0
+  - flashSpeed: 0.05
+    flashRadiusMin: 2
+    flashRadiusMax: 10
+    color:
+      serializedVersion: 2
+      rgba: 618921792
+    blend: 1
+    offsynch: 0.5
+  lightSource:
+    position:
+      x: 0
+      y: 0
+    innerRadiusMin: 10
+    innerRadiusMax: 13
+    outerRadiusMin: 13
+    outerRadiusMax: 15
+    offsynch: 1
+    speed: 0.05
+--- !u!114 &7873728437074116930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d718be66283c44149b8b3e5fec2e7064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+--- !u!114 &5479903869181738654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 14
+    y: 12
+  physicData:
+    position:
+      x: 0
+      y: 0
+    controlledVelocity:
+      x: 0
+      y: 0
+    velocity:
+      x: 0
+      y: 0
+    gridPosition:
+      x: 0
+      y: 0
+    mass: 25
+    inclinaison: 0
+  debugBoundFlag: 0
+  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
+  spriteAnimator:
+    currentAnim: 0
+    currentFrame: 0
+    framePerImage: 0
+  currentEquip: {fileID: 0}
+  lookLeft: 0
+  explosiveSettings:
+    radius: 25
+    strength: 10
+  shakeSettings:
+    intensity: 7
+    duration: 0.5
+    speed: 0.5
+    blendWithOriginal: 0.5
+  flashSettings:
+    color1:
+      serializedVersion: 2
+      rgba: 4278190080
+    color2:
+      serializedVersion: 2
+      rgba: 4294967295
+    threshold: 0.7
+    duration: 0.2
+    interval: 2
+    blendWithOriginal: 0.6
+  shockwaveSettings:
+    centerPoint:
+      x: 50
+      y: 50
+    radiusThickness: 25
+    duration: 1.5
+    waveSpeed: 40
+    intensity: 1
+  blackholeSettings:
+    centerPoint:
+      x: 0
+      y: 0
+    duration: 2
+    waveSpeed: 25
+    intensityMin: 0.5
+    intensityMax: 1.5
+--- !u!114 &5479903869181738650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e154990af8c05854e92caf625d686bc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleSpawners:
+  - chanceSpawn: 0.082
+    spawnPosition:
+      x: 39
+      y: 99
+    particleType: 2
+    notTickBounded: 0
+    startTick: 0
+    endTick: 1800
+  - chanceSpawn: 0.067
+    spawnPosition:
+      x: 42
+      y: 99
+    particleType: 2
+    notTickBounded: 0
+    startTick: 0
+    endTick: 1800
+  - chanceSpawn: 0.089
+    spawnPosition:
+      x: 67
+      y: 99
+    particleType: 2
+    notTickBounded: 0
+    startTick: 0
+    endTick: 1800
+--- !u!114 &4496222148599108688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4af0583de7dfa941b05149e50a3bae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  texture: {fileID: 2800000, guid: 154a7b5d972f5604387210b0559a20ac, type: 3}
+  hasCollision: 1
+--- !u!114 &-6500284653280436171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f014ddeed9d9d734a941a2cafe652630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+    colorA:
+      serializedVersion: 2
+      rgba: 4294008389
+    colorB:
+      serializedVersion: 2
+      rgba: 4204278127
+    minAlpha: 0.2
+    maxAlpha: 0.3
+    noiseSpeed: 1
+    colorSpeed:
+      x: 5
+      y: 5
+    movingSpeed:
+      x: 1
+      y: 2
+    noiseScale:
+      x: 0.01
+      y: 0.03
+    lightRatio: 1
+    blending: 1
+--- !u!114 &-4000470189832300799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d77cff9c33c2b42967821fad028b1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+  - radius: 2
+    randomness:
+      x: 0
+      y: 0
+    position:
+      x: 37
+      y: 27
+    count: 1
+    shakeSpeed: 0.005
+    shakeAmplitude: 1
+  - radius: 3
+    randomness:
+      x: 1
+      y: 1
+    position:
+      x: 30
+      y: 31
+    count: 1
+    shakeSpeed: 0.005
+    shakeAmplitude: 1
+  - radius: 4
+    randomness:
+      x: 1
+      y: 1
+    position:
+      x: 22
+      y: 45
+    count: 1
+    shakeSpeed: 0.05
+    shakeAmplitude: 1
+  - radius: 8
+    randomness:
+      x: 10
+      y: 5
+    position:
+      x: 30
+      y: 65
+    count: 25
+    shakeSpeed: 0.01
+    shakeAmplitude: 2
+  seed: 16

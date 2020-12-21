@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-[RequireComponent(typeof(LevelContainer))]
 public abstract class LevelElement : MonoBehaviour
 {
     //References
@@ -29,5 +28,21 @@ public abstract class LevelElement : MonoBehaviour
     public virtual void Dispose()
     {
 
+    }
+
+    protected T GetLevelElement<T>() where T : LevelElement
+    {
+        return transform.parent.GetComponentInChildren<T>();
+    }
+    protected T[] GetLevelElements<T>() where T : LevelElement
+    {
+
+        return transform.parent.GetComponentsInChildren<T>();
+    }
+
+    protected T[] GetInterfaces<T>()
+    {
+        //lol
+        return transform.parent.GetComponentsInChildren<T>();
     }
 }
