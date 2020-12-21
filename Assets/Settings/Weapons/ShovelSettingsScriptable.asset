@@ -24,15 +24,15 @@ MonoBehaviour:
   framePerImage: 5
   frameCooldown: 15
   shovelSize:
-    x: 10
-    y: 10
-  lookingOffset:
-    x: 4
-    y: -5
-  velocity:
-    x: -25
+    x: 15
     y: 15
+  lookingOffset:
+    x: 3
+    y: -3
+  minThrowStrength: 1
+  maxThrowStrength: 5
   animOffset:
     x: 2
     y: 10
+  flipPhysics: 0
   showDebug: 0

@@ -29,10 +29,10 @@ MonoBehaviour:
   frameCooldown: 2
   jetpackVelocity:
     x: 0
-    y: 20
+    y: 9
   intialVelocity:
     x: 0
-    y: 250
+    y: 0
   fuelCapacity: 60
   fuelRefillRate: 2
   fuelUseRate: 1

@@ -50,6 +50,9 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
+            int inclination = GetTerrainInclination(ref physicData, nextGridPosition, isGrounded);
+            float inclinationSlowDown = inclination == 0 ? 1 : settings.slopeSlow;
+            nextPosition = currentPosition + (physicData.velocity + physicData.controlledVelocity) * deltaTime * inclinationSlowDown;
             HandlePhysics(ref physicData, nextPosition, isGrounded);
         }
 
@@ -64,13 +67,14 @@ public struct PhysiXVIIJob : IJob
 
     public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, bool isGrounded)
     {
-        int2 nextGridPosition = (int2)(desiredPosition);
+        //float maxDeltaSq = math.distancesq(physicData.position, desiredPosition);
+        int2 desiredGridPosition = (int2)(desiredPosition);
 
-        int2 desiredGridPosition = FindDesiredMovePosition(ref physicData, physicData.gridPosition, nextGridPosition, isGrounded, out int2 collisionNormal);
-        if (math.all(nextGridPosition == desiredGridPosition))
+        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, isGrounded, out int2 collisionNormal);
+        if (math.all(desiredGridPosition == finalGridPosition))
         {
             physicData.position = desiredPosition;
-            physicData.gridPosition = desiredGridPosition;
+            physicData.gridPosition = finalGridPosition;
         }
         else
         {
@@ -80,27 +84,51 @@ public struct PhysiXVIIJob : IJob
                 float2 normal = collisionNormal;
                 if(math.abs(normal.x) + math.abs(normal.y) == 2)
                 {
+                    //this simulate normalization
+                    // normal / sqrt(1^2 + 1^2)
+                    // but normals are 1 or -1, so we can multiply by half sqrt2
                     normal *= math.SQRT2 * 0.5f;
                 }
 
                 //todo add absorbtion and colliding with particles
                 physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
 
-                Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(desiredGridPosition): physicData.physicBound.GetLeftCollisionBound(desiredGridPosition);
-                Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(desiredGridPosition): physicData.physicBound.GetLeftCollisionBound(desiredGridPosition);
+                Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
+                Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
 
             }
 
-            physicData.inclinaison = desiredGridPosition.y - nextGridPosition.y;
+            //Make sure you don't go faster uphill while going left
+            bool2 moved = desiredGridPosition != finalGridPosition;
+            float2 finalDesiredPosition;
+            if (moved.x && !moved.y)
+            {
+                finalDesiredPosition = new float2(finalGridPosition.x, desiredPosition.y);
 
-            physicData.position = desiredGridPosition;
-            physicData.gridPosition = desiredGridPosition;
-        }
-       
+            }
+            else if (!moved.x && moved.y)
+            {
+                finalDesiredPosition = new float2(desiredPosition.x, finalGridPosition.y);
+            }
+            else
+            {
+                finalDesiredPosition = finalGridPosition;
+            }
+
+            physicData.position = finalDesiredPosition;
+            physicData.inclinaison = finalGridPosition.y - physicData.gridPosition.y;
+            physicData.gridPosition = (int2)physicData.position;
+        } 
     }
 
+    //This is slow
+    int GetTerrainInclination(ref PhysicData physicData, int2 to, bool isGrounded)
+    {
+        int2 newPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, to, isGrounded, out _);
+        return to.y - newPosition.y;
+    }
 
-    int2 FindDesiredMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionNormal)
+    int2 FindFinalMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionNormal)
     {
         PhysicBound physicBound = physicData.physicBound;
         int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, isGrounded);

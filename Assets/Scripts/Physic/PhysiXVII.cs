@@ -21,7 +21,7 @@ public static class PhysiXVII
         physicObject.position = physicObject.physicData.gridPosition;
     }
 
-
+    [BurstCompile]
     public static bool IsGrounded(in PhysicData physicData, Map map, int2 position)
     {
         Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
@@ -32,6 +32,7 @@ public static class PhysiXVII
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
 
+    [BurstCompile]
     public static void ComputeElasticCollision(float2 p1, float2 p2, float2 v1, float2 v2, float m1, float m2, out float2 outv1, out float2 outv2)
     {
         float massSum = m1 + m2;
@@ -41,6 +42,7 @@ public static class PhysiXVII
         outv2 = v2 - (2 * m1 / massSum) * (math.dot(v2 - v1, p2 - p1) / diffSq) * (p2 - p1);
     }
 
+    [BurstCompile]
     public unsafe static void CalculateParticleCollisions(ref Particle p1, ref Particle p2, int2 pos1, int2 pos2, in PhysiXVIISetings settings)
     {
         int p1Type = (int)p1.type;

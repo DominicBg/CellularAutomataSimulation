@@ -15,7 +15,7 @@ MonoBehaviour:
   settings:
     gravity:
       x: 0
-      y: -12
+      y: -4
     friction: 0.8
     maxSlope: 3
     canPush: 0000010101000001000000

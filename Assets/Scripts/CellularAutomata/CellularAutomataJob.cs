@@ -26,7 +26,7 @@ public struct CellularAutomataJob : IJob
         for (int i = 0; i < nativeParticleSpawners.Length; i++)
         {
             var spawner = nativeParticleSpawners[i];
-            bool canEmit = spawner.notTickBounded || (tickBlock.tick >= spawner.startTick && tickBlock.tick <= spawner.endTick);
+            bool canEmit = spawner.notTickBounded || (tickBlock.tick >= spawner.startTick && tickBlock.tick <= spawner. endTick);
 
             if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
             {
