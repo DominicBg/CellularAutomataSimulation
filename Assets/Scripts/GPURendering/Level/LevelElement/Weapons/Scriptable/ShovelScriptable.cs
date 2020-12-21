@@ -9,7 +9,9 @@ public class ShovelScriptable : EquipableBaseScriptable
     [Header("Shovel")]
     public int2 shovelSize = 3;
     public int2 lookingOffset;
-    public float2 velocity;
+    public float minThrowStrength;
+    public float maxThrowStrength;
     public int2 animOffset;
+    public bool flipPhysics;
     public bool showDebug;
 }

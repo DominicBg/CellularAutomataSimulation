@@ -57,7 +57,7 @@ public abstract class EquipableElement : LevelObject
         {
             if(requestUse)
             {
-                InternalUse(requestUsePosition);
+                InternalUse(requestUsePosition, ref tickBlock);
                 isUsedThisFrame = true;
                 unUsedForTicks = 0;
                 requestUse = false;
@@ -88,16 +88,16 @@ public abstract class EquipableElement : LevelObject
         requestUsePosition = pos;
     }
 
-    void InternalUse(int2 position)
+    void InternalUse(int2 position, ref TickBlock tickBlock)
     {
         if (cooldown != 0)
             return;
 
         isUsedThisFrame = true;
         cooldown = baseSettings.frameCooldown;
-        OnUse(position);
+        OnUse(position, ref tickBlock);
     }
-    protected abstract void OnUse(int2 position);
+    protected abstract void OnUse(int2 position, ref TickBlock tickBlock);
 
     protected abstract void OnEquip();
     protected abstract void OnUnequip();

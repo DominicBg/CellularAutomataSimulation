@@ -19,14 +19,14 @@ public class PostProcessManager
         }
     }
 
-    ShakeAnimation shakeAnimation;
-    ScreenFlashAnimation screenFlashAnimation;
-    ShockwaveAnimation shockwaveAnimation;
+    Animation<ShakeSettings> shakeAnimation;
+    Animation<ScreenFlashSettings> screenFlashAnimation;
+    Animation<ShockwaveSettings> shockwaveAnimation;
     Animation<BlackholeSettings> blackholeAnimation;
 
     public static void EnqueueShake(in ShakeSettings settings, int tick)
     {
-        Instance.shakeAnimation = new ShakeAnimation()
+        Instance.shakeAnimation = new Animation<ShakeSettings>()
         {
             settings = settings,
             tick = tick,
@@ -36,7 +36,7 @@ public class PostProcessManager
 
     public static void EnqueueScreenFlash(in ScreenFlashSettings settings, int tick)
     {
-        Instance.screenFlashAnimation = new ScreenFlashAnimation()
+        Instance.screenFlashAnimation = new Animation<ScreenFlashSettings>()
         {
             tick = tick,
             settings = settings,
@@ -46,7 +46,7 @@ public class PostProcessManager
 
     public static void EnqueueShockwave(in ShockwaveSettings settings, int tick)
     {
-        Instance.shockwaveAnimation = new ShockwaveAnimation()
+        Instance.shockwaveAnimation = new Animation<ShockwaveSettings>()
         {
             tick = tick,
             settings = settings,
@@ -73,25 +73,14 @@ public class PostProcessManager
 
     void RenderShake(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        if (!shakeAnimation.isActive)
+        if (!ShouldUpdate(ref shakeAnimation, ref tickBlock, shakeAnimation.settings.duration, out float duration))
             return;
 
-        float duration = tickBlock.DurationSinceTick(shakeAnimation.tick);
-
-        ref ShakeSettings settings = ref shakeAnimation.settings;
-        if(duration > settings.duration)
-        {
-            shakeAnimation.isActive = false;
-            return;
-        }
-
-
-        //float sin = math.sin(duration * shakeAnimation.settings.speed) * shakeAnimation.settings.intensity;
-        float t = duration / settings.duration;
+        float t = duration / shakeAnimation.settings.duration;
         float falloff = 1 - t * t * t;
-        float p = tickBlock.tick * settings.speed;
-        float x = noise.cnoise(new float2(p, 100)) * settings.intensity * falloff;
-        float y = noise.cnoise(new float2(100, p)) * settings.intensity * falloff;
+        float p = tickBlock.tick * shakeAnimation.settings.speed;
+        float x = noise.cnoise(new float2(p, 100)) * shakeAnimation.settings.intensity * falloff;
+        float y = noise.cnoise(new float2(100, p)) * shakeAnimation.settings.intensity * falloff;
 
         int2 offset = new int2((int)x, (int)y);
         if (math.all(offset == 0))
@@ -103,23 +92,15 @@ public class PostProcessManager
             outputColors = outputColors,
             inputColors = inputColors,
             offset = offset,
-            blendWithOriginal = settings.blendWithOriginal
+            blendWithOriginal = shakeAnimation.settings.blendWithOriginal
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         inputColors.Dispose();
         return;
     }
     void RenderScreenFlash(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        if (!screenFlashAnimation.isActive)
+        if (!ShouldUpdate(ref screenFlashAnimation, ref tickBlock, screenFlashAnimation.settings.duration, out float duration))
             return;
-
-        float duration = tickBlock.DurationSinceTick(screenFlashAnimation.tick);
-
-        if (duration > screenFlashAnimation.settings.duration)
-        {
-            screenFlashAnimation.isActive = false;
-            return;
-        }
 
         float intervalDuration = screenFlashAnimation.settings.duration / screenFlashAnimation.settings.interval;
 
@@ -140,16 +121,8 @@ public class PostProcessManager
 
     void RenderShockwave(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        if (!shockwaveAnimation.isActive)
+        if (!ShouldUpdate(ref shockwaveAnimation, ref tickBlock, shockwaveAnimation.settings.duration, out float duration))
             return;
-
-        float duration = tickBlock.DurationSinceTick(shockwaveAnimation.tick);
-
-        if (duration > shockwaveAnimation.settings.duration)
-        {
-            shockwaveAnimation.isActive = false;
-            return;
-        };
 
         NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
 
@@ -166,13 +139,13 @@ public class PostProcessManager
 
     void RenderBlackHole(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        if (!ShouldUpdate(ref blackholeAnimation, ref tickBlock, blackholeAnimation.settings.duration))
+        if (!ShouldUpdate(ref blackholeAnimation, ref tickBlock, blackholeAnimation.settings.duration, out float duration))
             return;
 
         NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
 
         //to be able to controls the blackhole outside the job
-        float t = tickBlock.DurationSinceTick(blackholeAnimation.tick) / blackholeAnimation.settings.duration;
+        float t = duration;
         t = math.sin(t * math.PI);
 
         new BlackholeJob()
@@ -185,12 +158,13 @@ public class PostProcessManager
         inputColors.Dispose();
     }
 
-    public bool ShouldUpdate<T>(ref Animation<T> animation, ref TickBlock tickBlock, float settingsDuration)
+    public bool ShouldUpdate<T>(ref Animation<T> animation, ref TickBlock tickBlock, float settingsDuration, out float duration)
     {
+        duration = 0;
         if (!animation.isActive)
             return false;
 
-        float duration = tickBlock.DurationSinceTick(animation.tick);
+        duration = tickBlock.DurationSinceTick(animation.tick);
 
         if (duration > settingsDuration)
         {
@@ -202,28 +176,6 @@ public class PostProcessManager
     }
 
 
-    //States
-    struct ShakeAnimation
-    {
-        public ShakeSettings settings;
-        public int tick;
-        public bool isActive;
-    }
-
-    struct ScreenFlashAnimation
-    {
-        public ScreenFlashSettings settings;
-        public int tick;
-        public bool isActive;
-    }
-
-    struct ShockwaveAnimation
-    {
-        public ShockwaveSettings settings;
-        public int tick;
-        public bool isActive;
-    }
-
     public struct Animation<T>
     {
         public T settings;
@@ -231,9 +183,7 @@ public class PostProcessManager
         public bool isActive;
     }
 
-
     //Settings
-
     [System.Serializable]
     public struct ShakeSettings 
     {

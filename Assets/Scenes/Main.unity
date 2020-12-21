@@ -1665,8 +1665,8 @@ MonoBehaviour:
       noiseCrackThreshold: 0.76
       noiseScale: 0.32
     rubbleColor:
-      rockColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
-      crackColor: {r: 0.19607843, g: 0.20784314, b: 0.3019608, a: 1}
+      rockColor: {r: 0.20799218, g: 0.24561678, b: 0.3584906, a: 1}
+      crackColor: {r: 0.13817194, g: 0.14692852, b: 0.21698111, a: 1}
     fireRendering:
       flameColor1:
         serializedVersion: 2
@@ -1709,7 +1709,6 @@ MonoBehaviour:
     snowColor: {r: 0.8726415, g: 0.94381243, b: 1, a: 1}
     titleDisintegration: {r: 1, g: 1, b: 1, a: 1}
   m_renderer: {fileID: 412216246}
-  innerLoopBatchCount: 100
 --- !u!4 &1286533893
 Transform:
   m_ObjectHideFlags: 0

@@ -26,8 +26,8 @@ public static class PhysiXVII
     {
         Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
         Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
-        bool hasFeetCollision = map.HasCollision(ref feetBound);
-        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound);
+        bool hasFeetCollision = map.HasCollision(ref feetBound, (int)ParticleType.Player);
+        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, (int)ParticleType.Player);
         bool atFloorLevel = position.y <= 0;
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }

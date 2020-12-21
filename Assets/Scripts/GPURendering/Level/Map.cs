@@ -176,18 +176,25 @@ public unsafe struct Map
     }
 
 
-    public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition)
+    public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition, int maxStep = 5, int ignoreTypeFlag = 0)
     {
-        const int maxStep = 32;
         for (int i = 0; i < maxStep; i++)
         {
             position += direction;
             if (InBound(position))
             {
-                if (particleGrid[position].type == ParticleType.None)
+                ParticleType type = particleGrid[position].type;
+                bool canIgnoreType = ((int)type & ignoreTypeFlag) != 0;
+
+                if (type == ParticleType.None)
                 {
                     newPosition = position;
                     return true;
+                }
+                else if(!canIgnoreType)
+                {
+                    newPosition = -1;
+                    return false;
                 }
             }
             else
@@ -206,13 +213,14 @@ public unsafe struct Map
 
     public bool HasParticleCollision(ParticleType type)
     {
-        switch (type)
-        {
-            case ParticleType.None:
-            case ParticleType.Player:
-                return false;
-        }
-        return true;
+        return type != ParticleType.None;
+        //switch (type)
+        //{
+        //    case ParticleType.None:
+        //    case ParticleType.Player:
+        //        return false;
+        //}
+        //return true;
     }
 
     public bool CanPush(int2 position, in PhysiXVIISetings settings)
@@ -224,30 +232,35 @@ public unsafe struct Map
         return settings.canPush[(int)type];
     }
 
-    public bool HasCollision(ref Bound bound, Allocator allocator = Allocator.Temp)
+    public bool HasCollision(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp)
     {
-        return CountCollision(ref bound, allocator) > 0;
+        return CountCollision(ref bound, ignoreFlag, allocator) > 0;
     }
 
-    public int CountCollision(ref Bound bound, Allocator allocator = Allocator.Temp)
+    public int CountCollision(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp)
     {
         bound.GetPositionsGrid(out NativeArray<int2> positions, allocator);
-        int count = CountCollision(ref positions);
+        int count = CountCollision(ref positions, ignoreFlag);
         positions.Dispose();
         return count;
     }
 
-    public bool HasCollision(ref NativeArray<int2> positions)
+    public bool HasCollision(ref NativeArray<int2> positions, int ignoreFlag = 0)
     {
-        return CountCollision(ref positions) > 0;
+        return CountCollision(ref positions, ignoreFlag) > 0;
     }
 
-    public int CountCollision(ref NativeArray<int2> positions)
+    public int CountCollision(ref NativeArray<int2> positions, int ignoreFlag = 0)
     {
         int count = 0;
         for (int i = 0; i < positions.Length; i++)
         {
-            if (InBound(positions[i]) && HasParticleCollision(GetParticleType(positions[i])))
+            if (!InBound(positions[i]))
+                continue;
+
+            ParticleType particleType = GetParticleType(positions[i]);
+            bool ignoreCollision = ((int)particleType & ignoreFlag) != 0;
+            if (!ignoreCollision && HasParticleCollision(particleType))
             {
                 count++;
             }

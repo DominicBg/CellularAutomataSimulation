@@ -16,7 +16,7 @@ public class Jetpack : EquipableElement
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }
 
-    protected override void OnUse(int2 position)
+    protected override void OnUse(int2 position, ref TickBlock _)
     {
         if (currentFuel < settings.fuelUseRate)
         {
@@ -69,7 +69,7 @@ public class Jetpack : EquipableElement
             spriteAnimator.Render(ref outputcolor, position, false);
     }
 
-    public override void OnRenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void RenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         if(isEquiped && currentFuel != settings.fuelCapacity)
         {

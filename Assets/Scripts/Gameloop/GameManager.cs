@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Correspond to the float size of one grid cell
     /// </summary>
-    public static readonly float2 GridScale = 3;
+    //public static readonly float2 GridScale = 3;
     public static readonly int InnerLoopBatchCount = 100;
     public static int FPS => Instance.desiredFPS;
     public static float deltaTime => Instance.frameDuration;

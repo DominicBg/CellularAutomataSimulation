@@ -37,7 +37,7 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
-        if(tickBlock.tick % 2 == 0)
+       // if (tickBlock.tick % 2 == 0)
         {
             for (int x = 0; x < map.Sizes.x; x++)
             {
@@ -48,16 +48,16 @@ public struct CellularAutomataJob : IJob
                 }
             }
         }
-        else
-        {
-            for (int x = map.Sizes.x - 1; x >= 0; x--)
-            {
-                for (int y = map.Sizes.y - 1; y >= 0; y--)
-                {
-                    UpdateParticleBehaviour(new int2(x, y));
-                }
-            }
-        }
+        //else
+        //{
+        //    for (int x = map.Sizes.x - 1; x >= 0; x--)
+        //    {
+        //        for (int y = map.Sizes.y - 1; y >= 0; y--)
+        //        {
+        //            UpdateParticleBehaviour(new int2(x, y));
+        //        }
+        //    }
+        //}
     }
 
     void UpdateParticleBehaviour(int2 pos)
@@ -103,8 +103,7 @@ public struct CellularAutomataJob : IJob
     {
         GravityBehaviour gravity = behaviour.gravity;
         particle.velocity += gravity.accelerationPerFrame;
-        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity / GameManager.GridScale);
-        //TODO remove gravity on collision or reflect?
+        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity);
 
         bool samePosition = math.all(pos == desiredPosition);
         if(samePosition)
@@ -143,7 +142,7 @@ public struct CellularAutomataJob : IJob
         }
 
         //reset velocity, its not free falling
-        particle.velocity = 0;
+        particle.velocity *= settings.frictions[(int)particle.type] * settings.absorbtion[(int)particle.type];
         map.SetParticle(pos, particle, false);
 
         return false;

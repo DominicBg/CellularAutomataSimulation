@@ -8,30 +8,55 @@ public class Shovel : EquipableElement
 {
     public ShovelScriptable settings => (ShovelScriptable)baseSettings;
 
-    protected override void OnUse(int2 position)
+    protected override void OnUse(int2 position, ref TickBlock tickBlock)
     {
-        float2 throwVelocity = settings.velocity;
-        if (player.lookLeft)
-        {
-            throwVelocity.x = -throwVelocity.x;
-        }
+        int2 aimPosition = GridPicker.GetGridPosition();
+        float2 dir = math.normalize(aimPosition - player.GetBound().center);
+
+        bool ascOrder = player.lookLeft;
+        if (settings.flipPhysics)
+            ascOrder = !ascOrder;
 
         //todo stop loops if blocked
         int2 offset = GetEquipOffset(settings.lookingOffset);
-        for (int x = 0; x < settings.shovelSize.x; x++)
+        for (int y = 0; y < settings.shovelSize.y; y++)
         {
-            for (int y = 0; y < settings.shovelSize.y; y++)
+            if(ascOrder)
             {
-                int2 pos = offset + new int2(x, y);
-                int2 findPosDir = new int2((int)math.sign(throwVelocity.x), 1);
-                int2 moveOffset = pos + new int2((int)math.sign(throwVelocity.x) * 5, 8);
-                if (map.InBound(pos) && map.CanPush(pos, GameManager.PhysiXVIISetings) && map.TryFindEmptyPosition(moveOffset, findPosDir, out int2 newPos))
+                for (int x = 0; x < settings.shovelSize.x; x++)
                 {
-                    Particle particle = map.GetParticle(pos);
-                    particle.velocity += throwVelocity;
-                    map.SetParticle(pos, particle);
-                    map.MoveParticle(pos, newPos);                     
+                    int2 pos = offset + new int2(x, y);
+                    ThrowParticle(pos, dir, ref tickBlock);
                 }
+            }
+            else
+            {
+                for (int x = settings.shovelSize.x - 1; x >= 0; x--)
+                {
+                    int2 pos = offset + new int2(x, y);
+                    ThrowParticle(pos, dir, ref tickBlock);
+                }
+            }
+        }
+    }
+
+    void ThrowParticle(int2 pos, float2 dir, ref TickBlock tickBlock)
+    {
+        if (map.InBound(pos) && map.CanPush(pos, GameManager.PhysiXVIISetings))
+        {
+            int2 findPosDir = (int2)math.sign(dir);
+
+            //Create a flag somewhere for pushable?
+            int ignoreFilter = (int)(ParticleType.Player | ParticleType.Sand);
+            if (map.TryFindEmptyPosition(pos, findPosDir, out int2 newPos, 15, ignoreFilter))
+            {
+                Particle particle = map.GetParticle(pos);
+                float strength = math.lerp(settings.minThrowStrength, settings.maxThrowStrength, tickBlock.random.NextFloat());
+                particle.velocity = dir * strength;
+                map.SetParticle(pos, particle);
+
+                //might move one twice?
+                map.MoveParticle(pos, newPos);
             }
         }
     }

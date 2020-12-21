@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 6220337013202316425}
   - component: {fileID: 4496222148599108688}
   - component: {fileID: -6500284653280436171}
+  - component: {fileID: -4000470189832300799}
   m_Layer: 0
   m_Name: Level1_2
   m_TagString: Untagged
@@ -69,6 +70,7 @@ MonoBehaviour:
   - {fileID: 6220337013202316425}
   - {fileID: 4496222148599108688}
   - {fileID: -6500284653280436171}
+  - {fileID: -4000470189832300799}
   particleSpawnerElements: {fileID: 5479903869181738650}
 --- !u!114 &4031864115272182893
 MonoBehaviour:
@@ -301,30 +303,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleSpawners:
-  - chanceSpawn: 0.652
+  - chanceSpawn: 0
     spawnPosition:
       x: 75
       y: 99
     particleType: 2
     notTickBounded: 1
     startTick: 0
-    endTick: 0
-  - chanceSpawn: 0.652
+    endTick: 3600
+  - chanceSpawn: 0
     spawnPosition:
       x: 77
       y: 99
     particleType: 2
     notTickBounded: 1
     startTick: 0
-    endTick: 0
-  - chanceSpawn: 0.652
+    endTick: 3600
+  - chanceSpawn: 0
     spawnPosition:
       x: 78
       y: 99
     particleType: 2
     notTickBounded: 1
     startTick: 0
-    endTick: 0
+    endTick: 3600
 --- !u!114 &5479903869181738651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,3 +433,59 @@ MonoBehaviour:
       y: 0.03
     lightRatio: 1
     blending: 1
+--- !u!114 &-4000470189832300799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5479903869181738652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d77cff9c33c2b42967821fad028b1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  settings:
+  - radius: 2
+    randomness:
+      x: 0
+      y: 0
+    position:
+      x: 37
+      y: 27
+    count: 1
+    shakeSpeed: 0.005
+    shakeAmplitude: 1
+  - radius: 3
+    randomness:
+      x: 1
+      y: 1
+    position:
+      x: 30
+      y: 31
+    count: 1
+    shakeSpeed: 0.005
+    shakeAmplitude: 1
+  - radius: 4
+    randomness:
+      x: 1
+      y: 1
+    position:
+      x: 22
+      y: 45
+    count: 1
+    shakeSpeed: 0.05
+    shakeAmplitude: 1
+  - radius: 8
+    randomness:
+      x: 10
+      y: 5
+    position:
+      x: 30
+      y: 65
+    count: 25
+    shakeSpeed: 0.01
+    shakeAmplitude: 2
+  seed: 16
