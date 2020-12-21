@@ -9,7 +9,17 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
     public static GameLevelManager Instance;
 
+    public float transitionSpeed = 1;
     LevelContainer currentLevelContainer;
+
+
+    LevelContainer transitionLevelContainer;
+    public bool inTransition;
+    public float transitionRatio;
+
+    //test
+    public LevelDataScriptable testLevelData;
+
 
     public void OnStart()
     {
@@ -41,13 +51,69 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     
     public void OnUpdate()
     {
-        currentLevelContainer.OnUpdate();
+        if(!inTransition)
+        {
+            currentLevelContainer.OnUpdate();
+        }
+        else
+        {
+            transitionRatio += GameManager.deltaTime * transitionSpeed;
+            if(transitionRatio >= 1)
+            {
+                inTransition = false;
+
+                currentLevelContainer.Dispose();
+                currentLevelContainer = transitionLevelContainer;
+                transitionLevelContainer = null;
+
+            }
+        }
+   
     }
 
     public void OnRender()
     {
-        var outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        currentLevelContainer.OnRender(ref outputColor);
-        GridRenderer.RenderToScreen(outputColor);
+        if(inTransition)
+        {
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
+
+            currentLevelContainer.OnRender(ref transitionColors);
+            transitionLevelContainer.OnRender(ref currentColors);
+
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+            new ImageTransitionJob()
+            {
+                firstImage = currentColors,
+                secondImage = transitionColors,
+                outputColors = outputColors,
+                isHorizontal = true,
+                t = transitionRatio
+            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+            GridRenderer.RenderToScreen(outputColors);
+        }
+        else
+        {
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+            currentLevelContainer.OnRender(ref outputColors);
+            GridRenderer.RenderToScreen(outputColors);
+        }
+
+    }
+
+    public void SetTransition(bool isHorizontal, bool inverted, LevelDataScriptable levelData)
+    {
+        transitionRatio = 0;
+        inTransition = true;
+
+        transitionLevelContainer = levelData.LoadLevelContainer();
+        transitionLevelContainer.Init(levelData.LoadMap());
+    }
+
+    [ContextMenu("Test Transition")]
+    public void TestTransition()
+    {
+        SetTransition(true, true, testLevelData);
     }
 }

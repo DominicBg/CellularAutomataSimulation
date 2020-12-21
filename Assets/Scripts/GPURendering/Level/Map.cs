@@ -34,6 +34,7 @@ public unsafe struct Map
 
     public void Dispose()
     {
+
         particleGrid.Dispose();
         dirtyGrid.Dispose();
     }

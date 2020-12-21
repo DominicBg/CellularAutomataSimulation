@@ -52,6 +52,9 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 
     public void Dispose()
     {
+        if (m_buffer == null)
+            return;
+
         m_buffer = null;
         UnsafeUtility.Free(m_buffer, m_Allocator);
 

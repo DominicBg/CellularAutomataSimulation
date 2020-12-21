@@ -8,23 +8,47 @@ using UnityEngine;
 public struct ImageTransitionJob : IJobParallelFor
 {
     public NativeArray<Color32> outputColors;
-    [ReadOnly] public NativeArray<Color32> leftImage;
-    [ReadOnly] public NativeArray<Color32> rightImage;
+    [ReadOnly] public NativeArray<Color32> firstImage;
+    [ReadOnly] public NativeArray<Color32> secondImage;
 
     public float t;
+    public bool isHorizontal;
 
     public void Execute(int index)
     {
         t = math.saturate(t);
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
-        int offset = (int)(t * GameManager.GridSizes.x);
-        offset = math.clamp(offset, 0, GameManager.GridSizes.x);
 
-        int2 samplePos = new int2(pos.x + offset, pos.y);
-        bool useRightImage = (samplePos.x >= GameManager.GridSizes.x);
-        samplePos.x %= GameManager.GridSizes.x;
+        int size = isHorizontal ? GameManager.GridSizes.x : GameManager.GridSizes.y;
+
+        int offset = (int)(t * size);
+        offset = math.clamp(offset, 0, size);
+
+        //int2 samplePos = new int2(pos.x + offset, pos.y);
+        //bool useFirstImage = (samplePos.x >= size);
+        //samplePos.x %= size;
+        int2 samplePos = GetSamplePos(pos, size, offset, out bool useFirstImage);
 
         int sampleIndex = ArrayHelper.PosToIndex(samplePos, GameManager.GridSizes);
-        outputColors[index] = useRightImage ? rightImage[sampleIndex] : leftImage[sampleIndex];
+        outputColors[index] = useFirstImage ? firstImage[sampleIndex] : secondImage[sampleIndex];
+    }
+
+    int2 GetSamplePos(int2 pos, int size, int offset, out bool useFirstImage)
+    {
+        int2 samplePos;
+        if (isHorizontal)
+        {
+            samplePos = new int2(pos.x + offset, pos.y);
+            useFirstImage = (samplePos.x >= size);
+            samplePos.x %= size;
+        }
+        else
+        {
+
+            samplePos = new int2(pos.x, pos.y + offset);
+            useFirstImage = (samplePos.y >= size);
+            samplePos.y %= size;
+        }
+        return samplePos;
     }
 }

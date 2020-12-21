@@ -23,7 +23,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public LevelDataScriptable levelData;
     public Texture2D debugTexture;
 
-    //TickBlock tickBlock;
     LevelContainer currentLevelContainer;
 
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
