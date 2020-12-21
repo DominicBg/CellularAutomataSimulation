@@ -14,13 +14,8 @@ GameObject:
   - component: {fileID: 7840373642871753906}
   - component: {fileID: 1814391151772662926}
   - component: {fileID: 7873728437074116930}
-  - component: {fileID: -1767788282309867286}
-  - component: {fileID: 1869864533557053622}
   - component: {fileID: 5479903869181738654}
   - component: {fileID: 5479903869181738650}
-  - component: {fileID: 5479903869181738651}
-  - component: {fileID: 1251561243526543711}
-  - component: {fileID: 6220337013202316425}
   - component: {fileID: 4496222148599108688}
   - component: {fileID: -6500284653280436171}
   - component: {fileID: -4000470189832300799}
@@ -62,12 +57,7 @@ MonoBehaviour:
   - {fileID: 7840373642871753906}
   - {fileID: 1814391151772662926}
   - {fileID: 7873728437074116930}
-  - {fileID: -1767788282309867286}
-  - {fileID: 1869864533557053622}
   - {fileID: 5479903869181738654}
-  - {fileID: 5479903869181738651}
-  - {fileID: 1251561243526543711}
-  - {fileID: 6220337013202316425}
   - {fileID: 4496222148599108688}
   - {fileID: -6500284653280436171}
   - {fileID: -4000470189832300799}
@@ -128,8 +118,8 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   position:
-    x: 58
-    y: 8
+    x: 74
+    y: 20
   color:
     serializedVersion: 2
     rgba: 2623077702
@@ -174,47 +164,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &-1767788282309867286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479903869181738652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5965bdb49e7fb84479d547874f3862a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 25
-    y: 18
-  player: {fileID: 5479903869181738654}
-  baseSettings: {fileID: 11400000, guid: 277481031a8a7dc4db42df2df9ea9a1b, type: 2}
-  isEquiped: 0
-  type: 2
---- !u!114 &1869864533557053622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479903869181738652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a664e514a9a96a47bd5d293341dbf7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 74
-    y: 22
-  player: {fileID: 5479903869181738654}
-  baseSettings: {fileID: 11400000, guid: c75557c8888a8a94c9b2339f54b5cf51, type: 2}
-  isEquiped: 0
 --- !u!114 &5479903869181738654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +194,7 @@ MonoBehaviour:
     gridPosition:
       x: 0
       y: 0
-    mass: 0
+    mass: 25
     inclinaison: 0
   debugBoundFlag: 0
   settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
@@ -303,85 +252,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleSpawners:
-  - chanceSpawn: 0.687
+  - chanceSpawn: 0.082
     spawnPosition:
-      x: 75
+      x: 39
       y: 99
     particleType: 2
     notTickBounded: 0
     startTick: 0
     endTick: 1800
-  - chanceSpawn: 0.84
+  - chanceSpawn: 0.067
     spawnPosition:
-      x: 77
+      x: 42
       y: 99
     particleType: 2
     notTickBounded: 0
     startTick: 0
     endTick: 1800
-  - chanceSpawn: 0.672
+  - chanceSpawn: 0.089
     spawnPosition:
-      x: 78
+      x: 67
       y: 99
     particleType: 2
     notTickBounded: 0
     startTick: 0
     endTick: 1800
---- !u!114 &5479903869181738651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479903869181738652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5871af2cbdf6e5d48a9dc4661a6cebbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  playerElement: {fileID: 5479903869181738654}
-  goalElement: {fileID: 1251561243526543711}
-  timeFlightShuttle: 60
---- !u!114 &1251561243526543711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479903869181738652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed3f0fb2beb40e44cb314ba28c660ea5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 83
-    y: 71
-  spriteEnum: 1
---- !u!114 &6220337013202316425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5479903869181738652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 15
-    y: 15
-  player: {fileID: 5479903869181738654}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
 --- !u!114 &4496222148599108688
 MonoBehaviour:
   m_ObjectHideFlags: 0

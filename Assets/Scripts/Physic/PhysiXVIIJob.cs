@@ -91,10 +91,11 @@ public struct PhysiXVIIJob : IJob
                 }
 
                 //todo add absorbtion and colliding with particles
-                physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
+                //physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
 
-                Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
-                Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
+                CalculateObjectParticleCollision(ref physicData, normal, collisionNormal);
+                //Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
+                //Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
 
             }
 
@@ -154,28 +155,58 @@ public struct PhysiXVIIJob : IJob
         return safePosition;
     }
 
-    void CalculateObjectParticleCollision(ref PhysicData physicData, int2 position, int2 collisionDirection)
+    void CalculateObjectParticleCollision(ref PhysicData physicData, float2 normal, int2 collisionDirection)
     {
         ref PhysicBound physicBound = ref physicData.physicBound;
-        //could ez normalize with 0.707..
-        float2 normal = math.normalize(collisionDirection);
-        //todo add absorbtion and colliding with particles
-        physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
+        int2 position = physicData.gridPosition;
 
-        int2 xOffset = new int2(collisionDirection.x, 0);
-        int2 yOffset = new int2(0, collisionDirection.y);
-
+        float horizontalAbsorbtion = 1;
+        float verticalAbsorbtion = 1;
         if (collisionDirection.x != 0)
         {
-            int2 boundPos = position + xOffset;
+            int2 boundPos = position + new int2(collisionDirection.x, 0);
             Bound horizontalBound = (collisionDirection.x == 1) ? physicBound.GetRightCollisionBound(boundPos) : physicBound.GetLeftCollisionBound(boundPos);
-
+            CalculateObjectParticleCollisionBound(ref physicData, horizontalBound, out horizontalAbsorbtion);
         }
         if (collisionDirection.y != 0)
         {
-            int2 boundPos = position + yOffset;
-            Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetTopCollisionBound(position) : physicBound.GetBottomCollisionBound(position);
+            int2 boundPos = position + new int2(0, collisionDirection.y);
+            Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetTopCollisionBound(boundPos) : physicBound.GetBottomCollisionBound(boundPos);
+            CalculateObjectParticleCollisionBound(ref physicData, verticalBound, out verticalAbsorbtion);
         }
+
+        float absorbtion = (horizontalAbsorbtion + verticalAbsorbtion) * 0.5f;
+        physicData.velocity = math.reflect(physicData.velocity, normal) * absorbtion;
+    }
+
+    unsafe void CalculateObjectParticleCollisionBound(ref PhysicData physicData, Bound bound, out float absorbtion)
+    {
+        int count = 0;
+        absorbtion = 1;
+        bound.GetPositionsGrid(out NativeArray<int2> pos);
+        for (int i = 0; i < pos.Length; i++)
+        {
+            Particle particle = map.GetParticle(pos[i]);
+
+            if(particle.type != ParticleType.Player && particle.type != ParticleType.None)
+            {
+                float mass = settings.mass[(int)particle.type];
+                PhysiXVII.ComputeElasticCollision(physicData.position, pos[i], physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
+            
+                //Add player?
+                particle.velocity = outv2;
+                map.SetParticle(pos[i], particle);
+
+                absorbtion += settings.absorbtion[(int)particle.type];
+                count++;
+            }
+        }
+        if (count == 0)
+            absorbtion = 1;
+        else
+            absorbtion /= count;
+
+        pos.Dispose();
     }
 
 
