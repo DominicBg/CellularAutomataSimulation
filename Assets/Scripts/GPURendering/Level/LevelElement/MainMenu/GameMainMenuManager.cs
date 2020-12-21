@@ -30,6 +30,11 @@ public class GameMainMenuManager : MonoBehaviour, State
     TickBlock tickBlock;
     NativeArray<ParticleSpawner> particleSpawners;
 
+    //
+    public float t;
+    public Texture2D leftImage;
+    public Texture2D rightImage;
+
     public void OnEnd()
     {
         lightRender.Dispose();
@@ -70,7 +75,7 @@ public class GameMainMenuManager : MonoBehaviour, State
     }
 
     public void OnRender()
-    {
+    {       
         float noiseValue = noise.cnoise((float2)(tickBlock.tick * randomSpeed));
         noiseValue = MathUtils.unorm(noiseValue);
 
