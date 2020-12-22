@@ -7,8 +7,8 @@ public class InputCommand
 {
     static InputCommand instance;
 
-    static readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0) /*, new int2(0, 1), new int2(0, -1)*/ };
-    static readonly KeyCode[] directionInputs = new KeyCode[] { KeyCode.D, KeyCode.A /*, KeyCode.W, KeyCode.S */};
+    static readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0), new int2(0, 1), new int2(0, -1)};
+    static readonly KeyCode[] directionInputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S};
     public enum DirectionEnum { Left, Right, Up, Down, None }
 
 
@@ -61,17 +61,19 @@ public class InputCommand
 
     public void InternalUpdate()
     {
+        int2 currentDir = 0;
         Direction = 0;
         for (int i = 0; i < directionInputs.Length; i++)
         {
             if (Input.GetKey(directionInputs[i]))
             {
-                Direction = directions[i];
-                break;
+                int2 dir = directions[i];
+                currentDir.x = currentDir.x == 0 ? dir.x : currentDir.x;
+                currentDir.y = currentDir.y == 0 ? dir.y : currentDir.y;
             }
         }
-
-        foreach(var input in inputs.Values)
+        Direction = currentDir;
+        foreach (var input in inputs.Values)
             input.Update();
     }
 

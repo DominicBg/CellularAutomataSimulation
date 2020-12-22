@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -16,14 +17,16 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     [Header("LevelData")]
     public ParticleType[,] grid;
 
-
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
     List<ParticleChange> currentList;
     HashSet<int2> dirtyPixels = new HashSet<int2>();
     bool isRecording;
 
-    public int2 levelPosition;
     public WorldLevel currentWorldLevel;
+
+    private bool inFreeView;
+    public float2 viewPosition;
+    public float movingSpeed = 5;
 
     public void OnStart()
     {
@@ -40,17 +43,21 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     }
     public void Save()
     {
-
+        if(inFreeView)
+        {
+            Debug.Log("Leave Freeview before saving");
+            return;
+        }
 
         WorldLevel prefab = GameManager.Instance.worldLevel;
-        LevelContainer currentLevel = currentWorldLevel.CurrentLevel;
+        LevelContainer currentLevel = currentWorldLevel.levels[(int2)viewPosition];
         LevelContainerData data = currentLevel.GetComponent<LevelContainerData>();
         data.SaveGrid(grid);
 
         for (int i = 0; i < prefab.levelContainerPrefabList.Length; i++)
         {
             WorldLevel.LevelPosition levelPos = prefab.levelContainerPrefabList[i];
-            if (math.all(levelPos.position == levelPosition))
+            if (math.all(levelPos.position == (int2)viewPosition))
             {
                 string path = AssetDatabase.GetAssetPath(levelPos.levelContainerPrefab);               
                 PrefabUtility.SaveAsPrefabAsset(data.gameObject, path);
@@ -58,18 +65,25 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 Debug.Log("Asset saved");
             }
         }
-
-        //LevelContainerData levelContainerData = worldLevelPrefab.CurrentLevel.GetComponent<LevelContainerData>();
-        //levelContainerData.SaveGrid(grid);
-        //REDO SAVE
-        //levelData.SaveGrid(grid);
     }
 
     public void OnUpdate()
     {
-        FillGridWithCurrentMapParticle();
-        DrawPixels();
-        UpdateMapParticles();
+        viewPosition += (float2)InputCommand.Direction * movingSpeed * GameManager.deltaTime;
+
+        if(Input.GetMouseButton(1))
+        {
+            viewPosition = (int2)math.round(viewPosition);
+        }
+        inFreeView = math.any(viewPosition % 1 != 0);
+          
+
+        if(!inFreeView)
+        {
+            FillGridWithCurrentMapParticle();
+            DrawPixels();
+            UpdateMapParticles();
+        }
     }
 
     private void DrawPixels()
@@ -116,7 +130,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     void FillGridWithCurrentMapParticle()
     {
-        Map map = currentWorldLevel.CurrentLevel.map;
+        LevelContainer levelContainer;
+        if (!currentWorldLevel.levels.TryGetValue((int2)viewPosition, out levelContainer))
+        {
+            return;
+        }
+
+        Map map = levelContainer.map;
         if (grid == null || grid.Length != map.ArrayLength)
             grid = new ParticleType[map.Sizes.x, map.Sizes.y];
 
@@ -131,7 +151,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     void UpdateMapParticles()
     {
-        Map map = currentWorldLevel.CurrentLevel.map;
+        LevelContainer levelContainer;
+        if (!currentWorldLevel.levels.TryGetValue((int2)viewPosition, out levelContainer))
+        {
+            return;
+        }
+
+        Map map = levelContainer.map;
         for (int x = 0; x < GameManager.GridSizes.x; x++)
         {
             for (int y = 0; y < GameManager.GridSizes.y; y++)
@@ -162,28 +188,95 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnRender()
     {
-        LevelContainer currentLevelContainer = currentWorldLevel.CurrentLevel;
-
-        //Map map = new Map(grid, GameManager.GridSizes);
-        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-
-        //currentLevelContainer.Init(map);
-        currentLevelContainer.OnRender(ref outputColors);
-
-        //Color spawner
-        var particleSpawner = currentLevelContainer.GetParticleSpawner();
-        for (int i = 0; i < particleSpawner.Length; i++)
+        if (inFreeView)
         {
-            var spawner = particleSpawner[i];
-            int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
-            outputColors[index] = Color.white;
-        }
-        particleSpawner.Dispose();
+            int2 min = new int2((int)math.floor(viewPosition.x), (int)math.floor(viewPosition.y));
+            int2 max = new int2((int)math.ceil(viewPosition.x), (int)math.ceil(viewPosition.y));
 
-        GridRenderer.RenderToScreen(outputColors);
-        //map.Dispose();
+            if(min.x == max.x)
+            {
+                max.x++;
+            }
+            if (min.y == max.y)
+            {
+                max.y++;
+            }
+
+            int2 pos1 = new int2(min.x, min.y);
+            int2 pos2 = new int2(max.x, min.y);
+            int2 pos3 = new int2(min.x, max.y);
+            int2 pos4 = new int2(max.x, max.y);
+            var colors1 = RenderLevelContainer(pos1);
+            var colors2 = RenderLevelContainer(pos2);
+            var colors3 = RenderLevelContainer(pos3);
+            var colors4 = RenderLevelContainer(pos4);
+
+            var horizontalOutput = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+            new ImageTransitionJob()
+            {
+                firstImage = colors1,
+                secondImage = colors2,
+                outputColors = horizontalOutput,
+                t = math.frac(viewPosition.x),
+                isHorizontal = true
+            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+            var horizontal2Output = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+            new ImageTransitionJob()
+            {
+                firstImage = colors3,
+                secondImage = colors4,
+                outputColors = horizontal2Output,
+                t = math.frac(viewPosition.x),
+                isHorizontal = true
+            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+            var finalOutput = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+            new ImageTransitionJob()
+            {
+                firstImage = horizontalOutput,
+                secondImage = horizontal2Output,
+                outputColors = finalOutput,
+                t = math.frac(viewPosition.y),
+                isHorizontal = false
+            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+            colors1.Dispose();
+            colors2.Dispose();
+            colors3.Dispose();
+            colors4.Dispose();
+            horizontalOutput.Dispose();
+            horizontal2Output.Dispose();
+            GridRenderer.RenderToScreen(finalOutput);
+        }
+        else
+        {
+            var colors = RenderLevelContainer((int2)viewPosition);
+            GridRenderer.RenderToScreen(colors);
+        }
     }
 
+    NativeArray<Color32> RenderLevelContainer(int2 position)
+    {
+        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+
+        if(currentWorldLevel.levels.TryGetValue(position, out LevelContainer levelContainer))
+        {
+            levelContainer.OnRender(ref outputColors);
+
+            //Color spawner
+            var particleSpawner = levelContainer.GetParticleSpawner();
+            for (int i = 0; i < particleSpawner.Length; i++)
+            {
+                var spawner = particleSpawner[i];
+                int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
+                outputColors[index] = Color.white;
+            }
+            particleSpawner.Dispose();
+        }
+
+        return outputColors;
+    }
 
     public void ResetLevelData()
     {

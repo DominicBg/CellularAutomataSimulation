@@ -155,10 +155,11 @@ MonoBehaviour:
   isEditing: 0
   type: 0
   brushSize: 2
-  levelPosition:
+  currentWorldLevel: {fileID: 0}
+  viewPosition:
     x: 0
     y: 0
-  currentWorldLevel: {fileID: 0}
+  movingSpeed: 2
 --- !u!4 &24019102
 Transform:
   m_ObjectHideFlags: 0

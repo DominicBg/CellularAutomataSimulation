@@ -8,10 +8,11 @@ public class WorldLevel : MonoBehaviour
 {
     public LevelPosition[] levelContainerPrefabList = default;
 
-    [SerializeField] Dictionary<int2, LevelContainer> levels;
-    [SerializeField] int2 currentLevel;
+    public Dictionary<int2, LevelContainer> levels;
+    public int2 currentLevelPosition;
 
-    public LevelContainer CurrentLevel => levels[currentLevel];
+    public LevelContainer CurrentLevel => levels[currentLevelPosition];
+
 
     public void LoadLevel()
     {
@@ -31,14 +32,14 @@ public class WorldLevel : MonoBehaviour
 
     public void OnUpdate()
     {
-        levels[currentLevel].OnUpdate();
+        levels[currentLevelPosition].OnUpdate();
     }
     public void OnRender()
     {
         //TODO add global effect in rendering here?
 
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-        levels[currentLevel].OnRender(ref outputColors);
+        levels[currentLevelPosition].OnRender(ref outputColors);
         GridRenderer.RenderToScreen(outputColors);
     }
 

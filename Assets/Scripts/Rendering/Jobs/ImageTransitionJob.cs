@@ -27,26 +27,26 @@ public struct ImageTransitionJob : IJobParallelFor
         //int2 samplePos = new int2(pos.x + offset, pos.y);
         //bool useFirstImage = (samplePos.x >= size);
         //samplePos.x %= size;
-        int2 samplePos = GetSamplePos(pos, size, offset, out bool useFirstImage);
+        int2 samplePos = GetSamplePos(pos, size, offset, out bool useSecondImage);
 
         int sampleIndex = ArrayHelper.PosToIndex(samplePos, GameManager.GridSizes);
-        outputColors[index] = useFirstImage ? firstImage[sampleIndex] : secondImage[sampleIndex];
+        outputColors[index] = useSecondImage ? secondImage[sampleIndex] : firstImage[sampleIndex];
     }
 
-    int2 GetSamplePos(int2 pos, int size, int offset, out bool useFirstImage)
+    int2 GetSamplePos(int2 pos, int size, int offset, out bool useSecondImage)
     {
         int2 samplePos;
         if (isHorizontal)
         {
             samplePos = new int2(pos.x + offset, pos.y);
-            useFirstImage = (samplePos.x >= size);
+            useSecondImage = (samplePos.x >= size);
             samplePos.x %= size;
         }
         else
         {
 
             samplePos = new int2(pos.x, pos.y + offset);
-            useFirstImage = (samplePos.y >= size);
+            useSecondImage = (samplePos.y >= size);
             samplePos.y %= size;
         }
         return samplePos;

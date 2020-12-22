@@ -11,7 +11,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnStart()
     {
-        LoadLevel(GameManager.Instance.worldLevel);
+        LoadLevel(GameManager.Instance.GetWorldLevelInstance());
     }
 
     public void OnEnd()
@@ -37,6 +37,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnUpdate()
     {
+
         currentWorldLevel.OnUpdate();
     }
 

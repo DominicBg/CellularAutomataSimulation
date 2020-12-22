@@ -54,7 +54,7 @@ public class PlayerElement : PhysicObject, ILightSource
             currentEquip.Use(position);
         }
 
-        int2 direction = InputCommand.Direction;
+        int2 direction = new int2(InputCommand.Direction.x, 0);
         lookDirection = direction.x;
 
         bool isGrounded = IsGrounded();

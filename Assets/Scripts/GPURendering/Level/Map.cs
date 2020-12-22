@@ -163,8 +163,6 @@ public unsafe struct Map
         positions.Dispose();
     }
 
-
-
     public void SetSpriteAtPosition(int2 nextPosition, ref PhysicBound physicBound)
     {
         Bound boundPosition = physicBound.GetCollisionBound(nextPosition);
@@ -175,7 +173,6 @@ public unsafe struct Map
         }
         positions.Dispose();
     }
-
 
     public bool TryFindEmptyPosition(int2 position, int2 direction, out int2 newPosition, int maxStep = 5, int ignoreTypeFlag = 0)
     {
