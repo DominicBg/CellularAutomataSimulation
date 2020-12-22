@@ -97,6 +97,7 @@ MonoBehaviour:
       y: 0.03
     lightRatio: 1
     blending: 1
+    resolution: 150
 --- !u!114 &2269832189009635999
 MonoBehaviour:
   m_ObjectHideFlags: 0

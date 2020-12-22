@@ -5,6 +5,8 @@ using Unity.Burst;
 using Unity.Jobs;
 using Unity.Collections;
 
+
+
 [BurstCompile]
 public struct MonochromeFilterJob : IJobParallelFor
 {

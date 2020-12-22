@@ -23,6 +23,7 @@ public class PostProcessManager
     Animation<ScreenFlashSettings> screenFlashAnimation;
     Animation<ShockwaveSettings> shockwaveAnimation;
     Animation<BlackholeSettings> blackholeAnimation;
+    Animation<IllusionEffectSettings> illusionAnimation;
 
     public static void EnqueueShake(in ShakeSettings settings, int tick)
     {
@@ -63,12 +64,24 @@ public class PostProcessManager
         };
     }
 
+    public static void EnqueuIllusion(in IllusionEffectSettings settings, int tick)
+    {
+        Instance.illusionAnimation = new Animation<IllusionEffectSettings>()
+        {
+            settings = settings,
+            tick = tick,
+            isActive = true
+        };
+    }
+
+
     public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
         RenderShake(ref outputColors, ref tickBlock);
         RenderScreenFlash(ref outputColors, ref tickBlock);
         RenderShockwave(ref outputColors, ref tickBlock);
         RenderBlackHole(ref outputColors, ref tickBlock);
+        RenderIllusion(ref outputColors, ref tickBlock);
     }
 
     void RenderShake(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
@@ -76,6 +89,7 @@ public class PostProcessManager
         if (!ShouldUpdate(ref shakeAnimation, ref tickBlock, shakeAnimation.settings.duration, out float duration))
             return;
 
+        //add in screenshake?
         float t = duration / shakeAnimation.settings.duration;
         float falloff = 1 - t * t * t;
         float p = tickBlock.tick * shakeAnimation.settings.speed;
@@ -158,6 +172,25 @@ public class PostProcessManager
         inputColors.Dispose();
     }
 
+    void RenderIllusion(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    {
+        if (!ShouldUpdate(ref illusionAnimation, ref tickBlock, illusionAnimation.settings.duration, out float duration))
+            return;
+
+        NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+
+        new IllusionEffectJob()
+        {
+            inputColors = inputColors,
+            outputColors = outputColors,
+            settings = illusionAnimation.settings,
+            t = duration
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        inputColors.Dispose();
+    }
+
+
+
     public bool ShouldUpdate<T>(ref Animation<T> animation, ref TickBlock tickBlock, float settingsDuration, out float duration)
     {
         duration = 0;
@@ -204,23 +237,15 @@ public class PostProcessManager
         public float blendWithOriginal;
     }
 
-    [System.Serializable]
-    public struct ShockwaveSettings
-    {
-        public int2 centerPoint;
-        public int radiusThickness;
-        public float duration;
-        public float waveSpeed;
-        public float intensity;
-    }
+    //[System.Serializable]
+    //public struct ShockwaveSettings
+    //{
+    //    public int2 centerPoint;
+    //    public int radiusThickness;
+    //    public float duration;
+    //    public float waveSpeed;
+    //    public float intensity;
+    //}
 
-    [System.Serializable]
-    public struct BlackholeSettings
-    {
-        public int2 centerPoint;
-        public float duration;
-        public float waveSpeed;
-        public float intensityMin;
-        public float intensityMax;
-    }
+   
 }

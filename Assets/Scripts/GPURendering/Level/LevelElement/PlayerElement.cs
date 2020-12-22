@@ -18,8 +18,9 @@ public class PlayerElement : PhysicObject, ILightSource
     public Explosive.Settings explosiveSettings;
     public PostProcessManager.ShakeSettings shakeSettings;
     public PostProcessManager.ScreenFlashSettings flashSettings;
-    public PostProcessManager.ShockwaveSettings shockwaveSettings;
-    public PostProcessManager.BlackholeSettings blackholeSettings;
+    public ShockwaveSettings shockwaveSettings;
+    public BlackholeSettings blackholeSettings;
+    public IllusionEffectSettings illusionEffect;
 
     public override Bound GetBound()
     {
@@ -102,6 +103,10 @@ public class PlayerElement : PhysicObject, ILightSource
         {
             blackholeSettings.centerPoint = GridPicker.GetGridPosition();
             PostProcessManager.EnqueueBlackHole(in blackholeSettings, tickBlock.tick);
+        }
+        if (InputCommand.IsButtonDown(KeyCode.M))
+        {
+            PostProcessManager.EnqueuIllusion(in illusionEffect, tickBlock.tick);
         }
         HandlePhysic();
     }

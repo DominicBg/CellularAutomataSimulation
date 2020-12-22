@@ -6,13 +6,24 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
+
+[System.Serializable]
+public struct ShockwaveSettings
+{
+    public int2 centerPoint;
+    public int radiusThickness;
+    public float duration;
+    public float waveSpeed;
+    public float intensity;
+}
+
+
 [BurstCompile]
 public struct ShockwaveJob : IJobParallelFor
 {
     [ReadOnly] public NativeArray<Color32> inputColors;
     public NativeArray<Color32> outputColors;
-
-    public PostProcessManager.ShockwaveSettings settings;
+    public ShockwaveSettings settings;
 
     public TickBlock tickBlock;
     public int startTick;

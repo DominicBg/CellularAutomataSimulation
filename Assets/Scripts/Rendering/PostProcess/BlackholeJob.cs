@@ -6,13 +6,23 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
+[System.Serializable]
+public struct BlackholeSettings
+{
+    public int2 centerPoint;
+    public float duration;
+    public float waveSpeed;
+    public float intensityMin;
+    public float intensityMax;
+}
+
 [BurstCompile]
 public struct BlackholeJob : IJobParallelFor
 {
     [ReadOnly] public NativeArray<Color32> inputColors;
     public NativeArray<Color32> outputColors;
 
-    public PostProcessManager.BlackholeSettings settings;
+    public BlackholeSettings settings;
     public float t;
 
     public void Execute(int index)

@@ -77,7 +77,7 @@ public class FogElement : LevelElement
 
             color.a = math.remap(0, 1, settings.minAlpha, settings.maxAlpha, movingNoise) * lightRatio;
 
-            outputColor[index] = RenderingUtils.Blend(outputColor[index], color, settings.blending);
+            outputColor[index] = RenderingUtils.Blend(outputColor[index], color, settings.blending).ReduceResolution(settings.resolution);
         }
 
         //Rescale la position + bouge par rapport au temps
@@ -136,6 +136,7 @@ public class FogElement : LevelElement
 
         public float lightRatio;
         public BlendingMode blending;
+        public int resolution;
     }
 
 

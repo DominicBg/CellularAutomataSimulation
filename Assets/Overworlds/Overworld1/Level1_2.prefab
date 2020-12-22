@@ -140,6 +140,7 @@ MonoBehaviour:
       y: 0.03
     lightRatio: 1
     blending: 1
+    resolution: 155
 --- !u!1 &2958117810463117806
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +507,11 @@ MonoBehaviour:
     waveSpeed: 25
     intensityMin: 0.5
     intensityMax: 1.5
+  illusionEffect:
+    intensity: 25
+    speed: 5
+    duration: 1
+    yoffset: 0.1
 --- !u!114 &1245956244065010496
 MonoBehaviour:
   m_ObjectHideFlags: 0

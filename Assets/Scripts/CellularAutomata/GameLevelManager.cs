@@ -53,7 +53,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         if(!inTransition)
         {
-
             currentLevelContainer.OnUpdate();
         }
         else

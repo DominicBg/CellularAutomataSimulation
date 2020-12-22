@@ -135,6 +135,15 @@ public struct PhysiXVIIJob : IJob
         int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, isGrounded);
         int2 diff = desiredPosition - from;
 
+        //For slopes, works but is sloppy
+        Bound currentPosBound = physicBound.GetCollisionBound(desiredPosition);
+        if (isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
+        {
+            collisionNormal = 0;
+            return desiredPosition;
+        }
+
+
         int2 safePosition = from;
         int2 currentPos = from;
         while (diff.x != 0 || diff.y != 0)
@@ -142,7 +151,7 @@ public struct PhysiXVIIJob : IJob
             int2 currentDir = (int2)math.sign(diff);
             currentPos += currentDir;
             diff -= currentDir;
-            Bound currentPosBound = physicBound.GetCollisionBound(currentPos);
+            currentPosBound = physicBound.GetCollisionBound(currentPos);
             if(map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
             {
                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
@@ -191,7 +200,7 @@ public struct PhysiXVIIJob : IJob
             if(particle.type != ParticleType.Player && particle.type != ParticleType.None)
             {
                 float mass = settings.mass[(int)particle.type];
-                PhysiXVII.ComputeElasticCollision(physicData.position, pos[i], physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
+                PhysiXVII.ComputeElasticCollision(physicData.gridPosition, pos[i], physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
             
                 //Add player?
                 particle.velocity = outv2;
