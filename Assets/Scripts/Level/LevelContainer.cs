@@ -10,14 +10,18 @@ using UnityEngine;
 public class LevelContainer : MonoBehaviour, IDisposable
 {
     public LevelElement[] levelElements;
+    public LevelEntrance[] entrances;
     public ParticleSpawnerElements particleSpawnerElements;
 
     public TickBlock tickBlock;
     public Map map;
 
+    public bool inDebug;
+
     public void OnValidate()
     {
         levelElements = GetComponentsInChildren<LevelElement>();
+        entrances = GetComponentsInChildren<LevelEntrance>();
         particleSpawnerElements = GetComponentInChildren<ParticleSpawnerElements>();
     }
 
@@ -74,6 +78,14 @@ public class LevelContainer : MonoBehaviour, IDisposable
         for (int i = 0; i < levelElements.Length; i++)
         {
             levelElements[i].RenderUI(ref outputcolor, ref tickBlock);
+        }
+
+        if(inDebug)
+        {
+            for (int i = 0; i < levelElements.Length; i++)
+            {
+                levelElements[i].OnRenderDebug(ref outputcolor, ref tickBlock);
+            }
         }
 
         PostProcessManager.Instance.Render(ref outputcolor, ref tickBlock);

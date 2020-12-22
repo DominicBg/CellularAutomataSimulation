@@ -70,6 +70,19 @@ public class GridRenderer : MonoBehaviour
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
+    public static void DrawBound(ref NativeArray<Color32> outputColor, Bound bound, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    {
+        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
+        NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colors[i] = color;
+        }
+        new ApplyPixelsJob(outputColor, positions, colors, GameManager.GridSizes, blending).Run();
+        positions.Dispose();
+        colors.Dispose();
+    }
+
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {
         new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, GameManager.GridSizes, blending).Run();
