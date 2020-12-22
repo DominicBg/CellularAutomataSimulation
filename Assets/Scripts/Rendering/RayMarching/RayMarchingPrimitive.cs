@@ -111,76 +111,62 @@ public static class RayMarchingPrimitive
     }
 
     [BurstCompile]
+    public static float3 RotateAroundAxis(float3 p, float3 axis, float angle)
+    {
+        quaternion q = quaternion.AxisAngle(math.normalize(axis), angle);
+        return math.mul(math.inverse(q), p);
+    }
+
+    [BurstCompile]
+    public static float3 RotateAroundAxisUnsafe(float3 p, float3 axis, float angle)
+    {
+        quaternion q = quaternion.AxisAngle(axis, angle);
+        return math.mul(math.inverse(q), p);
+    }
+
+    [BurstCompile]
+    public static float3 XZFlip(float3 p)
+    {
+        return new float3(p.x, -p.y, p.z);
+    }
+
+
+    [BurstCompile]
     public static float3 RotateX(float3 p, float a)
     {
-        return Transform(p, rotationX(a));
+        math.sincos(-a, out float s, out float c);
+        return new float3(
+            p.x,
+            p.y * c - p.z * s,
+            p.y * s + p.z * c);
     }
 
     [BurstCompile]
     public static float3 RotateY(float3 p, float a)
     {
-        return Transform(p, rotationY(a));
+        math.sincos(-a, out float s, out float c);
+        return new float3(
+            p.x * c - p.z * s,
+            p.y,
+            p.x * s + p.z * c);
     }
-
 
     [BurstCompile]
     public static float3 RotateZ(float3 p, float a)
     {
-        return Transform(p, rotationZ(a));
-    }
-
-    [BurstCompile]
-    public static float3 RotateAroundAxis(float3 p, float3 axis, float angle)
-    {
-        quaternion q = quaternion.AxisAngle(math.normalize(axis), angle);
-        return math.mul(math.inverse(q), p);
-
+        math.sincos(-a, out float s, out float c);
+        return new float3(
+            p.x * c - p.y * s,
+            p.y * s + p.z * c,
+            p.z);
     }
 
 
-    [BurstCompile]
-    public static float3x3 rotationX(float a)
-    {
-        math.sincos(a, out float s, out float c);
-        return new float3x3(
-            1, 0, 0,
-            0, c, s,
-            0, -s, c
-        );
-    }
-
-    [BurstCompile]
-    public static float3x3 rotationY(float a)
-    {
-        math.sincos(a, out float s, out float c);
-        return new float3x3(
-            c, 0, -s,
-            0, 1, 0,
-            s, 0, c
-        );
-    }
-
-    [BurstCompile]
-    public static float3x3 rotationZ(float a)
-    {
-        math.sincos(a, out float s, out float c);
-        return new float3x3(
-            c, -s, 0,
-            s, c, 0,
-            0, 0, 1
-        );
-    }
 
     [BurstCompile]
     public static float3 Translate(float3 p, float3 tr)
     {
-        float4x4 trm = new float4x4(
-            1, 0, 0, tr.x,
-            0, 1, 0, tr.y,
-            0, 0, 1, tr.z,
-            0, 0, 0, 1
-        );
-        return (math.mul(math.inverse(trm), new float4(p.x, p.y, p.z, 1))).xyz;
+        return p - tr;
     }
 
     [BurstCompile]

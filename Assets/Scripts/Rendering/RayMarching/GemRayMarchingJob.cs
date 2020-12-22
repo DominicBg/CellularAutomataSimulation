@@ -14,8 +14,7 @@ public struct GemRayMarchingJob : IJobParallelFor
     public NativeArray<Color32> outputColor;
     public NativeArray<float3> normals;
 
-    const int maxStep = 100;
-    const float threshold = 0.001f;
+ 
     const float derivativeDelta = 0.0001f;
 
     [System.Serializable]
@@ -25,7 +24,10 @@ public struct GemRayMarchingJob : IJobParallelFor
         public float2 scales;
         public float3 lightPosition;
         public float speed;
+
         public float distanceThreshold;
+        public int maxStep;
+        public float stopThreshold;
 
         public float3 diamondPosition;
         public float3 octaherdronOffset;
@@ -40,7 +42,6 @@ public struct GemRayMarchingJob : IJobParallelFor
 
         public float shineIntensity;
         public int resolution;
-        public float octaScale;
 
         public Color colorForDepthMin;
         public Color colorForDepthMax;
@@ -64,22 +65,12 @@ public struct GemRayMarchingJob : IJobParallelFor
 
     float DistanceFunction(float3 position, float t)
     {
-        float diamond = DrawDiamond(position, settings.diamondPosition, t);
-        //float halfPi = math.PI / 2;
-        //float octa1 = DrawSpinningOcta(position, t, 0);
-        //float octa2 = DrawSpinningOcta(position, t, halfPi);
-        //float octa3 = DrawSpinningOcta(position, t, 2 * halfPi);
-        //float octa4 = DrawSpinningOcta(position, t, 3 * halfPi);
+        position = Translate(position, settings.diamondPosition);
+        position = RotateAroundAxisUnsafe(position, settings.axis, t);
 
-        return diamond;
-    }
+        float pyramidBottom1 = sdPyramid(XZFlip(position), settings.diamonh1);
+        float pyramidBottom2 = sdPyramid(RotateY(XZFlip(position), math.PI / 4), settings.diamonh1);
 
-    float DrawDiamond(float3 position, float3 diamondPos, float t)
-    {
-        position = Translate(position, diamondPos);
-        position = RotateAroundAxis(position, settings.axis, t);
-        float pyramidBottom1 = sdPyramid(RotateX(position, -math.PI), settings.diamonh1);
-        float pyramidBottom2 = sdPyramid(RotateY(RotateX(position, -math.PI), math.PI/4), settings.diamonh1);
         float pyramidUpper1 = sdPyramid(position, settings.diamonh2);
         float pyramidUpper2 = sdPyramid(RotateY(position, math.PI / 4), settings.diamonh2);
 
@@ -87,16 +78,6 @@ public struct GemRayMarchingJob : IJobParallelFor
         float cutoutCube = sdBox(boxPos + math.up() * settings.cubeHeight, settings.cubeCutout);
         return math.max(cutoutCube, math.min(math.max(pyramidUpper1, pyramidUpper2), math.max(pyramidBottom1, pyramidBottom2)));
     }
-
-    float DrawSpinningOcta(float3 position, float t, float offset)
-    {
-        //position = RotateY(position, offset + t);
-        position = RotateAroundAxis(position, settings.axis, offset + t);
-        position = Translate(position, settings.diamondPosition + settings.octaherdronOffset);
-
-        return sdOctahedron(position, settings.octaScale);
-    }
-
 
     public void Execute(int index)
     {
@@ -106,6 +87,8 @@ public struct GemRayMarchingJob : IJobParallelFor
         float3 ro = new float3(uv.x, uv.y, settings.cameraDepth);
         float3 rd = new float3(0, 0, 1);
 
+        //precompute
+        settings.axis = math.normalize(settings.axis);
 
         Result result = RayMarch(ro, rd);
 
@@ -137,13 +120,13 @@ public struct GemRayMarchingJob : IJobParallelFor
         float t = tickBlock.tick * settings.speed;
 
         int i;
-        for (i = 0; i < maxStep; i++)
+        for (i = 0; i < settings.maxStep; i++)
         {
             float distance = DistanceFunction(currentPosition, t);
             currentDistance += distance;
             currentPosition += rd * distance;
 
-            if(distance < threshold)
+            if(distance < settings.stopThreshold)
             {
                 break;
             }
@@ -187,9 +170,9 @@ public struct GemRayMarchingJob : IJobParallelFor
             currentColor.a = depthRatio;
             return RenderingUtils.Blend(lightColor, currentColor, settings.blendDepth);
         }
-        else if (result.numberSteps > maxStep * settings.shineIntensity)
+        else if (result.numberSteps > settings.maxStep * settings.shineIntensity)
         {
-            float t = math.remap(maxStep * settings.shineIntensity, maxStep, 0, 1, result.numberSteps);
+            float t = math.remap(settings.maxStep * settings.shineIntensity, settings.maxStep, 0, 1, result.numberSteps);
             return t * settings.color;
         }
         return Color.clear;
