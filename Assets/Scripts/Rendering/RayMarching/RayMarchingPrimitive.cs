@@ -3,6 +3,9 @@ using Unity.Mathematics;
 
 public static class RayMarchingPrimitive
 {
+
+    public const float quaterAngle = 0.70710678118f;
+
     [BurstCompile]
     public static float sdSphere(float3 pos, float scale)
     {
@@ -113,15 +116,15 @@ public static class RayMarchingPrimitive
     [BurstCompile]
     public static float3 RotateAroundAxis(float3 p, float3 axis, float angle)
     {
-        quaternion q = quaternion.AxisAngle(math.normalize(axis), angle);
-        return math.mul(math.inverse(q), p);
+        quaternion q = quaternion.AxisAngle(math.normalize(-axis), angle);
+        return math.mul(q, p);
     }
 
     [BurstCompile]
     public static float3 RotateAroundAxisUnsafe(float3 p, float3 axis, float angle)
     {
-        quaternion q = quaternion.AxisAngle(axis, angle);
-        return math.mul(math.inverse(q), p);
+        quaternion q = quaternion.AxisAngle(-axis, angle);
+        return math.mul(q, p);
     }
 
     [BurstCompile]
@@ -161,7 +164,15 @@ public static class RayMarchingPrimitive
             p.z);
     }
 
-
+    [BurstCompile]
+    public static float3 RotateYQuater(float3 p, int steps = 1)
+    {
+        float a = quaterAngle * steps;
+        return new float3(
+            p.x * a - p.z * a,
+            p.y,
+            p.x * a + p.z * a);
+    }
 
     [BurstCompile]
     public static float3 Translate(float3 p, float3 tr)

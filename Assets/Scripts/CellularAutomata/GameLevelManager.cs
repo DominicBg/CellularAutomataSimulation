@@ -53,6 +53,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
     {
         if(!inTransition)
         {
+
             currentLevelContainer.OnUpdate();
         }
         else
@@ -65,7 +66,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
                 currentLevelContainer.Dispose();
                 currentLevelContainer = transitionLevelContainer;
                 transitionLevelContainer = null;
-
             }
         }
    
@@ -87,7 +87,7 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
                 firstImage = currentColors,
                 secondImage = transitionColors,
                 outputColors = outputColors,
-                isHorizontal = false,
+                isHorizontal = true,
                 t = transitionRatio
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FiniteStateMachine;
 using Unity.Mathematics;
+using Unity.Jobs;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -19,10 +20,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static readonly int GridLength = GridSizes.x * GridSizes.y;
 
-    /// <summary>
-    /// Correspond to the float size of one grid cell
-    /// </summary>
-    //public static readonly float2 GridScale = 3;
     public static readonly int InnerLoopBatchCount = 100;
     public static int FPS => Instance.desiredFPS;
     public static float deltaTime => Instance.frameDuration;

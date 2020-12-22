@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navigationGraphPrefab: {fileID: 7294499005119523509, guid: 9dffbbc2ed0bc804982a2fb1f87ef813, type: 3}
   levels:
-  - {fileID: 11400000, guid: a4ddb5b6170898b4087e697f0124952c, type: 2}
+  - {fileID: 0}
   backgroundTexture: {fileID: 2800000, guid: 190bcc52fe28a274d8735f6d6a4c7269, type: 3}
   starSettings:
     density:
@@ -108,41 +108,41 @@ MonoBehaviour:
       z: 0
     smoothk: 21
   gemSettings:
-    cameraDepth: 3.16
+    cameraDepth: 0
     scales:
-      x: 0.2
-      y: 0.2
-    lightPosition:
-      x: 0
+      x: 0.25
       y: 0.25
-      z: -0.84
+    lightPosition:
+      x: 3.41
+      y: 0.8
+      z: -5.15
     speed: 0.02
-    distanceThreshold: 46.7
+    distanceThreshold: 7
+    maxStep: 94
+    stopThreshold: 0.03
     diamondPosition:
       x: 0
       y: 0
-      z: 15
+      z: 5
     octaherdronOffset:
       x: 1
       y: 0
       z: 14.5
     axis:
-      x: 0.3
+      x: 0.5
       y: 1
       z: 0
-    diamonh1: 1.19
-    diamonh2: 0.92
-    boxAngle: 0
+    diamonh: 0.74
+    boxAngle: 0.785
     cubeCutout:
       x: 1
-      y: 0.89
+      y: 0.8
       z: 1
-    cubeHeight: 0.61
+    cubeHeight: 0.54
     color: {r: 0.690159, g: 0.41037738, b: 1, a: 1}
     baseIntensity: 0.2
-    shineIntensity: 0.55
+    shineIntensity: 0.62
     resolution: 15
-    octaScale: 0.1
     colorForDepthMin: {r: 0, g: 0.19215679, b: 1, a: 1}
     colorForDepthMax: {r: 0.24137807, g: 0.18396229, b: 1, a: 1}
     blendDepthRatio: -2
@@ -151,6 +151,12 @@ MonoBehaviour:
     depthStepSize: 0.05
     depthMinSize: 2
     depthMaxSize: 2
+  edgeSettings:
+    color:
+      serializedVersion: 2
+      rgba: 268406714
+    dotThreshold: 0.9
+    blendingMode: 1
   fogSettings:
     colorA:
       serializedVersion: 2
@@ -158,17 +164,17 @@ MonoBehaviour:
     colorB:
       serializedVersion: 2
       rgba: 4286840862
-    minAlpha: 0.5
-    maxAlpha: 2.06
-    noiseSpeed: 1.89
+    minAlpha: 0
+    maxAlpha: 0.69
+    noiseSpeed: 5
     colorSpeed:
-      x: 5
-      y: 5
+      x: 25
+      y: 25
     movingSpeed:
       x: 5
       y: 5
     noiseScale:
-      x: 0.005
-      y: 0.005
+      x: 0.02
+      y: 0.02
     lightRatio: 2.76
     blending: 0

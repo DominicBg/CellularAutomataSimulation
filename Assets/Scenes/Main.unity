@@ -1049,6 +1049,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be3e52a54ed745419bcd3daa101f42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionSpeed: 1
+  inTransition: 0
+  transitionRatio: 0
+  testLevelData: {fileID: 11400000, guid: 78e79f227ab9eb3488648640f6ad7cdd, type: 2}
 --- !u!4 &726109844
 Transform:
   m_ObjectHideFlags: 0

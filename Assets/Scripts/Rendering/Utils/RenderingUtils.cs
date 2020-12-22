@@ -87,6 +87,11 @@ public static class RenderingUtils
         return new Color(math.saturate(color.r), math.saturate(color.g), math.saturate(color.b), math.saturate(color.a));
     }
 
+    public static bool Equals(Color32 colorA, Color32 colorB)
+    {
+        return colorA.r == colorB.r && colorA.g == colorB.g && colorA.b == colorB.b && colorA.a == colorB.a;
+    }
+
     public static Color ReduceResolution(this Color color, int resolution)
     {
         float4 color4 = new float4(color.r, color.g, color.b, color.a);

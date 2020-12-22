@@ -32,8 +32,7 @@ public struct GemRayMarchingJob : IJobParallelFor
         public float3 diamondPosition;
         public float3 octaherdronOffset;
         public float3 axis;
-        public float diamonh1;
-        public float diamonh2;
+        public float diamonh;
         public float boxAngle;
         public float3 cubeCutout;
         public float cubeHeight;
@@ -68,15 +67,15 @@ public struct GemRayMarchingJob : IJobParallelFor
         position = Translate(position, settings.diamondPosition);
         position = RotateAroundAxisUnsafe(position, settings.axis, t);
 
-        float pyramidBottom1 = sdPyramid(XZFlip(position), settings.diamonh1);
-        float pyramidBottom2 = sdPyramid(RotateY(XZFlip(position), math.PI / 4), settings.diamonh1);
+        float3 pyramidPos = position;
+        //Mirror pyramid on the xz plane
+        pyramidPos.y = math.abs(pyramidPos.y);
+        float pyramidBottom1 = sdPyramid(pyramidPos, settings.diamonh);
+        float pyramidBottom2 = sdPyramid(RotateYQuater(pyramidPos), settings.diamonh);
 
-        float pyramidUpper1 = sdPyramid(position, settings.diamonh2);
-        float pyramidUpper2 = sdPyramid(RotateY(position, math.PI / 4), settings.diamonh2);
-
-        float3 boxPos = RotateY(position, settings.boxAngle);
+        float3 boxPos = position;
         float cutoutCube = sdBox(boxPos + math.up() * settings.cubeHeight, settings.cubeCutout);
-        return math.max(cutoutCube, math.min(math.max(pyramidUpper1, pyramidUpper2), math.max(pyramidBottom1, pyramidBottom2)));
+        return math.max(cutoutCube, math.max(pyramidBottom1, pyramidBottom2));
     }
 
     public void Execute(int index)

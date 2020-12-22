@@ -206,6 +206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6059458187940542458}
   - component: {fileID: 3760949210365862371}
+  - component: {fileID: 1901101851661240775}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -243,6 +244,40 @@ MonoBehaviour:
   isVisible: 1
   texture: {fileID: 2800000, guid: a34b148bcbdbcb249ba815216c5855ea, type: 3}
   hasCollision: 0
+--- !u!114 &1901101851661240775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4809577714348114501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18b6b5579ea40b4e82861079a498436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 6
+    y: 25
+  sizes:
+    x: 50
+    y: 50
+  offset:
+    x: 5
+    y: -5
+  baseColor:
+    serializedVersion: 2
+    rgba: 2524977155
+  mirrorBlending: 1
+  reflectionBlending: 0
+  t: 0.5
+  cellularTest: 0.01
+  cellularMagnitude: 5
+  seed:
+    x: 0
+    y: 0
 --- !u!1 &5479903869181738652
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +289,7 @@ GameObject:
   - component: {fileID: 5479903869181738648}
   - component: {fileID: 5479903869181738649}
   m_Layer: 0
-  m_Name: Level1_2 1
+  m_Name: Level1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,6 +328,7 @@ MonoBehaviour:
   levelElements:
   - {fileID: 330355631010069239}
   - {fileID: 3760949210365862371}
+  - {fileID: 1901101851661240775}
   - {fileID: 10464337468497750}
   - {fileID: 8840121812376108910}
   - {fileID: 7436076264407017550}
