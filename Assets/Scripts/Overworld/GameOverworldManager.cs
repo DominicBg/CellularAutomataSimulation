@@ -59,7 +59,8 @@ public class GameOverworldManager : MonoBehaviour, State
 
     public void SelectLevel(int i)
     {
-        GameManager.Instance.levelData = m_currentOverworld.levels[i];
+        GameManager.Instance.worldLevel = m_currentOverworld.levelPrefab;
+        //GameManager.Instance.levelData = m_currentOverworld.levels[i];
         GameManager.Instance.SetLevel();
     }
 

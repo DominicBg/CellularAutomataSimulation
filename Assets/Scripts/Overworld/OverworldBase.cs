@@ -10,7 +10,7 @@ public abstract class OverworldBase : ScriptableObject
     public abstract void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock);
 
     [SerializeField] UINavigationGraph navigationGraphPrefab = default;
-    public LevelDataScriptable[] levels;
+    public WorldLevel levelPrefab;
 
     public UINavigationGraph LoadNavigationGraph()
     {
@@ -25,13 +25,4 @@ public abstract class OverworldBase : ScriptableObject
         }
         backgroundColors = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
     }
-
-    //[System.Serializable]
-    //public struct Level
-    //{
-    //    public int2 position;
-    //    public Texture2D icon;
-    //    public LevelContainer levelContainer;
-    //    public int[] connectionIndex;
-    //}
 }

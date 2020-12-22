@@ -12,57 +12,74 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     public ParticleType type;
     public int brushSize = 2;
 
-    [Header("Managers")]
-    public GameLevelManager gameLevelManager;
-    public GridPicker gridPicker;
-    public GridRenderer gridRenderer;
 
     [Header("LevelData")]
     public ParticleType[,] grid;
 
-    public LevelDataScriptable levelData;
-    public Texture2D debugTexture;
-
-    LevelContainer currentLevelContainer;
 
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
     List<ParticleChange> currentList;
     HashSet<int2> dirtyPixels = new HashSet<int2>();
     bool isRecording;
 
-    private void OnValidate()
-    {
-        gridPicker = FindObjectOfType<GridPicker>();
-        gameLevelManager = FindObjectOfType<GameLevelManager>();
-        gridRenderer = FindObjectOfType<GridRenderer>();
-    }
+    public int2 levelPosition;
+    public WorldLevel currentWorldLevel;
 
     public void OnStart()
     {
-        levelData = GameManager.Instance.levelData;
-        //tickBlock.Init();
         Load();
     }
 
     public void Load()
     {
-        currentLevelContainer = levelData.LoadLevelContainer();
-        grid = levelData.LoadGrid();
+        if (currentWorldLevel != null)
+            currentWorldLevel.Dispose();
 
+        currentWorldLevel = GameManager.Instance.GetWorldLevelInstance();
+        currentWorldLevel.LoadLevel();
     }
     public void Save()
     {
-        levelData.SaveGrid(grid);
+
+
+        WorldLevel prefab = GameManager.Instance.worldLevel;
+        LevelContainer currentLevel = currentWorldLevel.CurrentLevel;
+        LevelContainerData data = currentLevel.GetComponent<LevelContainerData>();
+        data.SaveGrid(grid);
+
+        for (int i = 0; i < prefab.levelContainerPrefabList.Length; i++)
+        {
+            WorldLevel.LevelPosition levelPos = prefab.levelContainerPrefabList[i];
+            if (math.all(levelPos.position == levelPosition))
+            {
+                string path = AssetDatabase.GetAssetPath(levelPos.levelContainerPrefab);               
+                PrefabUtility.SaveAsPrefabAsset(data.gameObject, path);
+                AssetDatabase.SaveAssets();
+                Debug.Log("Asset saved");
+            }
+        }
+
+        //LevelContainerData levelContainerData = worldLevelPrefab.CurrentLevel.GetComponent<LevelContainerData>();
+        //levelContainerData.SaveGrid(grid);
+        //REDO SAVE
+        //levelData.SaveGrid(grid);
     }
 
     public void OnUpdate()
+    {
+        FillGridWithCurrentMapParticle();
+        DrawPixels();
+        UpdateMapParticles();
+    }
+
+    private void DrawPixels()
     {
         if (!isRecording && Input.GetMouseButton(0))
         {
             currentList = new List<ParticleChange>(50);
             isRecording = true;
         }
-        else if(isRecording && !Input.GetMouseButton(0))
+        else if (isRecording && !Input.GetMouseButton(0))
         {
             controlZ.Push(currentList);
             dirtyPixels.Clear();
@@ -86,7 +103,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 }
             }
         }
-        else if(InputCommand.IsButtonDown(KeyCode.Z))
+        else if (InputCommand.IsButtonDown(KeyCode.Z))
         {
             var changes = controlZ.Pop();
             for (int i = changes.Count - 1; i >= 0; i--)
@@ -95,6 +112,33 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
                 grid[change.position.x, change.position.y] = change.previousType;
             }
         }
+    }
+
+    void FillGridWithCurrentMapParticle()
+    {
+        Map map = currentWorldLevel.CurrentLevel.map;
+        if (grid == null || grid.Length != map.ArrayLength)
+            grid = new ParticleType[map.Sizes.x, map.Sizes.y];
+
+        for (int x = 0; x < GameManager.GridSizes.x; x++)
+        {
+            for (int y = 0; y < GameManager.GridSizes.y; y++)
+            {
+                grid[x, y] = map.GetParticleType(new int2(x, y));
+            }
+        }
+    }
+
+    void UpdateMapParticles()
+    {
+        Map map = currentWorldLevel.CurrentLevel.map;
+        for (int x = 0; x < GameManager.GridSizes.x; x++)
+        {
+            for (int y = 0; y < GameManager.GridSizes.y; y++)
+            {
+                map.SetParticleType(new int2(x, y), grid[x, y]);
+            }
+        }        
     }
 
     private void DrawPixel(int2 sizes, int2 pixelPos)
@@ -118,10 +162,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnRender()
     {
-        Map map = new Map(grid, GameManager.GridSizes);
+        LevelContainer currentLevelContainer = currentWorldLevel.CurrentLevel;
+
+        //Map map = new Map(grid, GameManager.GridSizes);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
-        currentLevelContainer.Init(map);
+        //currentLevelContainer.Init(map);
         currentLevelContainer.OnRender(ref outputColors);
 
         //Color spawner
@@ -135,7 +181,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         particleSpawner.Dispose();
 
         GridRenderer.RenderToScreen(outputColors);
-        map.Dispose();
+        //map.Dispose();
     }
 
 
@@ -144,16 +190,16 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         int2 sizes = GameManager.GridSizes;
         grid = new ParticleType[sizes.x, sizes.y];
 
-        if (currentLevelContainer != null)
-            currentLevelContainer.Dispose();
-        currentLevelContainer = null;
+        if (currentWorldLevel != null)
+            currentWorldLevel.Dispose();
+        currentWorldLevel = null;
     }
 
     public void OnEnd()
     {
-        if (currentLevelContainer != null)
-            currentLevelContainer.Dispose();
-        currentLevelContainer = null;
+        if (currentWorldLevel != null)
+            currentWorldLevel.Dispose();
+        currentWorldLevel = null;
     }
 
     public struct ParticleChange

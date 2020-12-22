@@ -23,7 +23,7 @@ public class GameMainMenuManager : MonoBehaviour, State
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
 
-    public LevelDataScriptable levelData;
+    public LevelContainer mainMenuLevelPrefab;
     LevelContainer mainMenuLevel;
 
     public float t;
@@ -48,8 +48,10 @@ public class GameMainMenuManager : MonoBehaviour, State
 
 
         //Load simulation
-        mainMenuLevel = levelData.LoadLevelContainer();
-        mainMenuLevel.Init(levelData.LoadMap());
+        mainMenuLevel = Instantiate(mainMenuLevelPrefab);
+        LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
+        mainMenuLevel.Init(data.LoadMap());
+        //mainMenuLevel.Init(levelData.LoadMap());
     }
 
     public void OnUpdate()

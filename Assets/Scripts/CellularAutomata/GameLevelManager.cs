@@ -7,24 +7,11 @@ using UnityEngine;
 
 public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 {
-    public static GameLevelManager Instance;
-
-    public float transitionSpeed = 1;
-    LevelContainer currentLevelContainer;
-
-
-    LevelContainer transitionLevelContainer;
-    public bool inTransition;
-    public float transitionRatio;
-
-    //test
-    public LevelDataScriptable testLevelData;
-
+    public WorldLevel currentWorldLevel;
 
     public void OnStart()
     {
-        Instance = this;
-        LoadLevel(GameManager.Instance.levelData);
+        LoadLevel(GameManager.Instance.worldLevel);
     }
 
     public void OnEnd()
@@ -34,87 +21,27 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     void Dispose()
     {
-        if (currentLevelContainer != null)
+        if(currentWorldLevel != null)
         {
-            currentLevelContainer.Dispose();
-            currentLevelContainer = null;
+            currentWorldLevel.Dispose();
+            currentWorldLevel = null;
         }
     }
 
-    public void LoadLevel(LevelDataScriptable levelData)
+    public void LoadLevel(WorldLevel worldLevel)
     {
         Dispose();
-
-        currentLevelContainer = levelData.LoadLevelContainer();
-        currentLevelContainer.Init(levelData.LoadMap());
+        worldLevel.LoadLevel();
+        currentWorldLevel = worldLevel;
     }
-    
+
     public void OnUpdate()
     {
-        if(!inTransition)
-        {
-            currentLevelContainer.OnUpdate();
-        }
-        else
-        {
-            transitionRatio += GameManager.deltaTime * transitionSpeed;
-            if(transitionRatio >= 1)
-            {
-                inTransition = false;
-
-                currentLevelContainer.Dispose();
-                currentLevelContainer = transitionLevelContainer;
-                transitionLevelContainer = null;
-            }
-        }
-   
+        currentWorldLevel.OnUpdate();
     }
 
     public void OnRender()
     {
-        if(inTransition)
-        {
-            GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
-            GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
-
-            currentLevelContainer.OnRender(ref transitionColors);
-            transitionLevelContainer.OnRender(ref currentColors);
-
-            GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-            new ImageTransitionJob()
-            {
-                firstImage = currentColors,
-                secondImage = transitionColors,
-                outputColors = outputColors,
-                isHorizontal = true,
-                t = transitionRatio
-            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-
-            currentColors.Dispose();
-            transitionColors.Dispose();
-            GridRenderer.RenderToScreen(outputColors);
-        }
-        else
-        {
-            GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-            currentLevelContainer.OnRender(ref outputColors);
-            GridRenderer.RenderToScreen(outputColors);
-        }
-
-    }
-
-    public void SetTransition(bool isHorizontal, bool inverted, LevelDataScriptable levelData)
-    {
-        transitionRatio = 0;
-        inTransition = true;
-
-        transitionLevelContainer = levelData.LoadLevelContainer();
-        transitionLevelContainer.Init(levelData.LoadMap());
-    }
-
-    [ContextMenu("Test Transition")]
-    public void TestTransition()
-    {
-        SetTransition(true, true, testLevelData);
+        currentWorldLevel.OnRender();
     }
 }

@@ -42,7 +42,11 @@ public class GameManager : MonoBehaviour
     public GameStateEnum firstState;
     public int desiredFPS;
     //public LevelContainer currentLevelContainer;
-    public LevelDataScriptable levelData;
+    //public LevelDataScriptable levelData;
+    public WorldLevel worldLevel;
+    public WorldLevel GetWorldLevelInstance() => Instantiate(worldLevel);
+
+
     [SerializeField] PhysiXVIIScriptable physiXVIIScriptable = default;
     [SerializeField] ParticleBehaviourScriptable particleBehaviourScriptable = default;
 

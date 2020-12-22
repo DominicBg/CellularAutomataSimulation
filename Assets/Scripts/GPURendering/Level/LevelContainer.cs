@@ -5,6 +5,8 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
+
+[RequireComponent(typeof(LevelContainer))]
 public class LevelContainer : MonoBehaviour, IDisposable
 {
     public LevelElement[] levelElements;
