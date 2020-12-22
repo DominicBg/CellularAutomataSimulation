@@ -85,9 +85,4 @@ public class Jetpack : EquipableElement
             }
         }
     }
-
-    public override void Dispose()
-    {
-        spriteAnimator.Dispose();
-    }
 }

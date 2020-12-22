@@ -16,7 +16,8 @@ public class Overworld2 : OverworldBase
     public RayMarcher.Settings testSettings;
     public FrozenPlanetRayMarchingJob.Settings frozenSettings;
     public GemRayMarchingJob.Settings gemSettings;
-    private FunctionPointer<RayMarcher.RaymarcherFunc> func;
+    public RayMarchingEdgeDetectorJob.RayMarchingEdgeDetectorSettings edgeSettings;
+    //private FunctionPointer<RayMarcher.RaymarcherFunc> func;
     public FogElement.FogSettings fogSettings;
 
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
@@ -40,6 +41,25 @@ public class Overworld2 : OverworldBase
         //    particleRendering = GridRenderer.Instance.particleRendering
         //}.Schedule(GameManager.GridLength, 100).Complete();
 
+        NativeArray<float3> normals = new NativeArray<float3>(GameManager.GridLength, Allocator.TempJob);
+        new GemRayMarchingJob()
+        {
+            outputColor = backgroundColors,
+            settings = gemSettings,
+            normals = normals,
+            tickBlock = tickBlock
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        // RaymarchingManager.Instance.RenderImage(ref backgroundColors);
+
+        new RayMarchingEdgeDetectorJob()
+        {
+            outputColor = backgroundColors,
+            normals = normals,
+            settings = edgeSettings
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+        normals.Dispose();
+
         NativeArray<LightSource> lights = new NativeArray<LightSource>(0, Allocator.TempJob);
         new FogElement.FogRenderingJob()
         {
@@ -51,13 +71,6 @@ public class Overworld2 : OverworldBase
         lights.Dispose();
 
 
-    new GemRayMarchingJob()
-        {
-            outputColor = backgroundColors,
-            settings = gemSettings,
-            tickBlock = tickBlock
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-        // RaymarchingManager.Instance.RenderImage(ref backgroundColors);
 
         //new FrozenPlanetRayMarchingJob()
         //{

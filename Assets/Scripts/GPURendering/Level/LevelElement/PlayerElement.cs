@@ -116,12 +116,6 @@ public class PlayerElement : PhysicObject, ILightSource
         currentEquip = weapon;
     }
 
-    //NativeSprite GetNativeSprite()
-    //{
-    //    SpriteEnum sprite = currentEquip != null ? SpriteEnum.astronaut_gun : SpriteEnum.astronaut;
-    //    return SpriteRegistry.GetSprite(sprite);
-    //}
-
     public override void Dispose()
     {
         spriteAnimator.Dispose();

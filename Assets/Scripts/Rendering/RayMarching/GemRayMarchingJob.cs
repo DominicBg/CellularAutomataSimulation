@@ -12,6 +12,7 @@ public struct GemRayMarchingJob : IJobParallelFor
 
     public Settings settings;
     public NativeArray<Color32> outputColor;
+    public NativeArray<float3> normals;
 
     const int maxStep = 100;
     const float threshold = 0.001f;
@@ -77,18 +78,20 @@ public struct GemRayMarchingJob : IJobParallelFor
     {
         position = Translate(position, diamondPos);
         position = RotateAroundAxis(position, settings.axis, t);
-        float pyramidBottom = sdPyramid(RotateX(position, -math.PI), settings.diamonh1);
-        float pyramidUpper = sdPyramid(position, settings.diamonh2);
+        float pyramidBottom1 = sdPyramid(RotateX(position, -math.PI), settings.diamonh1);
+        float pyramidBottom2 = sdPyramid(RotateY(RotateX(position, -math.PI), math.PI/4), settings.diamonh1);
+        float pyramidUpper1 = sdPyramid(position, settings.diamonh2);
+        float pyramidUpper2 = sdPyramid(RotateY(position, math.PI / 4), settings.diamonh2);
 
-        float3 boxPos = RotateAroundAxis(position, settings.axis, settings.boxAngle);
+        float3 boxPos = RotateY(position, settings.boxAngle);
         float cutoutCube = sdBox(boxPos + math.up() * settings.cubeHeight, settings.cubeCutout);
-        return math.max(cutoutCube, math.min(pyramidUpper, pyramidBottom));
+        return math.max(cutoutCube, math.min(math.max(pyramidUpper1, pyramidUpper2), math.max(pyramidBottom1, pyramidBottom2)));
     }
 
     float DrawSpinningOcta(float3 position, float t, float offset)
     {
-        position = RotateAroundAxis(position, settings.axis, offset + t);
         //position = RotateY(position, offset + t);
+        position = RotateAroundAxis(position, settings.axis, offset + t);
         position = Translate(position, settings.diamondPosition + settings.octaherdronOffset);
 
         return sdOctahedron(position, settings.octaScale);
@@ -108,7 +111,7 @@ public struct GemRayMarchingJob : IJobParallelFor
 
         Color colorFront = CalculateColor(outputColor[index], result).ReduceResolution(settings.resolution);
         //colorBack.a = settings.backBlend;
-
+        normals[index] = result.normal;
         outputColor[index] = colorFront;
     }
 

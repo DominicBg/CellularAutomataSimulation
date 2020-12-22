@@ -87,10 +87,12 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
                 firstImage = currentColors,
                 secondImage = transitionColors,
                 outputColors = outputColors,
-                isHorizontal = true,
+                isHorizontal = false,
                 t = transitionRatio
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
+            currentColors.Dispose();
+            transitionColors.Dispose();
             GridRenderer.RenderToScreen(outputColors);
         }
         else

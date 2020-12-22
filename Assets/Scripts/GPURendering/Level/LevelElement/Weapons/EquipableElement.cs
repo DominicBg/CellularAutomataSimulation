@@ -132,4 +132,11 @@ public abstract class EquipableElement : LevelObject
 
         return offset;
     }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        spriteAnimator.Dispose();
+    }
 }
+

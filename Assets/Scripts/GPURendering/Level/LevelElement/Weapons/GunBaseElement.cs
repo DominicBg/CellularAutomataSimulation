@@ -45,23 +45,4 @@ public abstract class GunBaseElement : EquipableElement
         kickOffset.x = player.lookLeft ? -kickOffset.x : kickOffset.x;
         return kickOffset;
     }
-
-    //protected int2 GetEquipOffset()
-    //{
-    //    int2 offset = baseSettings.equipedOffset;
-    //    if (player.lookLeft)
-    //        offset.x = -offset.x;
-
-    //    offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
-    //    return player.GetBound().center + offset;
-    //}
-    //protected int2 GetAjustedOffset(int2 offset)
-    //{
-    //    if (player.lookLeft)
-    //    {
-    //        offset.x = spriteAnimator.nativeSpriteSheet.spriteSizes.x - offset.x - 1;
-    //    }
-
-    //    return offset; 
-    //}
 }
