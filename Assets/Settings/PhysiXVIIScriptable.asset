@@ -19,7 +19,7 @@ MonoBehaviour:
     friction: 0.8
     maxSlope: 3
     slopeSlow: 0.4
-    canPush: 00000101010000010001000100
+    canPush: 00000101010000010001000000
     frictions:
     - 0
     - 0.5

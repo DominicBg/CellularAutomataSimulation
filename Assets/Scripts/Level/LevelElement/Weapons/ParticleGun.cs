@@ -16,7 +16,7 @@ public class ParticleGun : GunBaseElement
         };
 
         if(map.IsFreePosition(aimStartPosition))
-            map.SetParticle(aimStartPosition, newParticle);
+            map.SetParticle(aimStartPosition, newParticle, false, true);
     }
 
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)

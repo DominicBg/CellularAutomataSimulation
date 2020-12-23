@@ -55,7 +55,10 @@ public static class PhysiXVII
         p2.velocity = outv2 * absorbtion;
     }
 
-    //try to remove GC?
+    public static int GetFlag(ParticleType particleType)
+    {
+        return 1 << (int)particleType;
+    }
     public static int GetFlag(params ParticleType[] particles)
     {
         int flag = 0;
@@ -64,10 +67,6 @@ public static class PhysiXVII
             flag |= GetFlag(particles[i]);
         }
         return flag;
-    }
-    public static int GetFlag(ParticleType particleType)
-    {
-        return 1 << (int)particleType;
     }
 
     public static bool IsInFlag(int flag, ParticleType particleType)

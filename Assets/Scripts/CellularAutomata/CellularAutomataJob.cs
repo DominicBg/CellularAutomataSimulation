@@ -16,6 +16,7 @@ public struct CellularAutomataJob : IJob
     public void Execute()
     {
         map.ClearDirtyGrid();
+        map.UpdateParticleTick();
         UpdateSimulation();
 
         SpawnParticles();
@@ -58,6 +59,7 @@ public struct CellularAutomataJob : IJob
         //        }
         //    }
         //}
+
     }
 
     void UpdateParticleBehaviour(int2 pos)
@@ -122,7 +124,8 @@ public struct CellularAutomataJob : IJob
         if(samePosition)
         {
             //used to update the velocity
-            map.MoveParticle(particle, pos, desiredPosition);
+            map.SetParticle(pos, particle);
+            //map.MoveParticle(particle, pos, desiredPosition);
             return true;
         }
 
@@ -257,6 +260,12 @@ public struct CellularAutomataJob : IJob
         return false;
     }
 
+    bool TryUpdateSticking(Particle particle, int2 pos, int stickingFlag)
+    {
+        return IsSurroundedBy(pos, stickingFlag);
+    }
+
+
     void UpdateWaterParticle(Particle particle, int2 pos)
     {
         bool updateFalling = TryFreeFalling(particle, pos);
@@ -353,14 +362,23 @@ public struct CellularAutomataJob : IJob
 
     void UpdateWoodParticle(Particle particle, int2 pos)
     {
-        if (IsSurroundedBy(pos, ParticleType.Cinder))
+        var surrounding = GetSurroundingParticle(pos);
+        for (int i = 0; i < surrounding.Length; i++)
         {
-            map.SetParticleType(pos, ParticleType.Cinder);
+            if(surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.woodBehaviour.tickBeforeTurnToCinder)
+            {
+                map.SetParticleType(pos, ParticleType.Cinder);
+            }
         }
+        surrounding.Dispose();
     }
 
     void UpdateCinderParticle(Particle particle, int2 pos)
     {
+        bool sticking = TryUpdateSticking(particle, pos, PhysiXVII.GetFlag(ParticleType.Wood));
+        if (sticking)
+            return;
+
         bool falling = TryFreeFalling(particle, pos);
         if (falling)
             return;
@@ -368,6 +386,12 @@ public struct CellularAutomataJob : IJob
         bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
         if (updatePiling)
             return;
+
+        var cinderBehaviour = behaviour.cinderBehaviour;
+        if (SurroundedByCount(pos, ParticleType.Cinder) < cinderBehaviour.minimumSurroundingCinder && particle.tickIdle > cinderBehaviour.tickBeforeDisapear)
+        {
+            map.SetParticleType(pos, ParticleType.None);
+        }
     }
 
 
@@ -391,7 +415,32 @@ public struct CellularAutomataJob : IJob
         }
     }
 
-    bool IsSurroundedBy(int2 pos, ParticleType type, int range = 1)
+    NativeList<Particle> GetSurroundingParticle(int2 pos, int range = 1, Allocator allocator = Allocator.Temp)
+    {
+        NativeList<Particle> particles = new NativeList<Particle>(allocator);
+        for (int x = -range; x <= range; x++)
+        {
+            for (int y = -range; y <= range; y++)
+            {
+                if (x == y)
+                    continue;
+
+                int2 adjacentPos = pos + new int2(x, y);
+                if (map.InBound(adjacentPos))
+                {
+                    particles.Add(map.GetParticle(adjacentPos));
+                }
+            }
+        }
+        return particles;
+    }
+
+    bool IsSurroundedBy(int2 pos, ParticleType particleType, int range = 1)
+    {
+        return IsSurroundedBy(pos, PhysiXVII.GetFlag(particleType), range);
+    }
+
+    bool IsSurroundedBy(int2 pos, int particleFlag, int range = 1)
     {
         for (int x = -range; x <= range; x++)
         {
@@ -403,7 +452,8 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    if (type == map.GetParticleType(adjacentPos))
+                    ParticleType type = map.GetParticleType(adjacentPos);
+                    if (PhysiXVII.IsInFlag(particleFlag, type))
                     {
                         return true;
                     }
@@ -416,10 +466,10 @@ public struct CellularAutomataJob : IJob
 
     int SurroundedByCount(int2 pos, ParticleType type, int range = 1)
     {
-        return SurroundedByCount(pos, (int)type, range);
+        return SurroundedByCount(pos, PhysiXVII.GetFlag(type), range);
     }
 
-    int SurroundedByCount(int2 pos, int type, int range = 1)
+    int SurroundedByCount(int2 pos, int flag, int range = 1)
     {
         int count = 0;
         for (int x = -range; x <= range; x++)
@@ -432,7 +482,8 @@ public struct CellularAutomataJob : IJob
                 int2 adjacentPos = pos + new int2(x, y);
                 if (map.InBound(adjacentPos))
                 {
-                    if ((type & (int)map.GetParticleType(adjacentPos)) != 0)
+                    ParticleType type = map.GetParticleType(adjacentPos);
+                    if (PhysiXVII.IsInFlag(flag, type))
                     {
                         count++;
                     }

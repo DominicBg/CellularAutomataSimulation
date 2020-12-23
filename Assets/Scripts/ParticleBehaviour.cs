@@ -7,7 +7,8 @@ public struct ParticleBehaviour
     public FloatyBehaviour floaty;
     public WaterBehaviour water;
     public TitleDisentegrateBehaviour titleDisentegrate;
-
+    public WoodBehaviour woodBehaviour;
+    public CinderBehaviour cinderBehaviour;
 
     [System.Serializable]
     public struct GravityBehaviour
@@ -30,11 +31,27 @@ public struct ParticleBehaviour
     }
 
     [System.Serializable]
+    public struct WoodBehaviour
+    {
+        public int tickBeforeTurnToCinder;
+    }
+
+    [System.Serializable]
+    public struct CinderBehaviour
+    {
+        public int minimumSurroundingCinder;
+        public int tickBeforeDisapear;
+    }
+
+
+    [System.Serializable]
     public struct TitleDisentegrateBehaviour
     {
         public float chanceMove;
         public float chanceDespawn;
     }
+
+
 
 
 }

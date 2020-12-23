@@ -7,7 +7,7 @@ public struct Particle
 {
     public ParticleType type;
     public float2 velocity;
-    //turn idle?
+    public int tickIdle;
 }
 
 public enum ParticleType

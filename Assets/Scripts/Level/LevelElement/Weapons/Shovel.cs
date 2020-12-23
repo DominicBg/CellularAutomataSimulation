@@ -50,7 +50,7 @@ public class Shovel : EquipableElement
             int2 findPosDir = (int2)math.sign(dir);
 
             //Create a flag somewhere for pushable?
-            int ignoreFilter = PhysiXVII.GetFlag(ParticleType.Player, ParticleType.Sand, ParticleType.Cinder);
+            int ignoreFilter = PhysiXVII.GetFlag(ParticleType.Player, ParticleType.Sand, ParticleType.Cinder, ParticleType.Rubble);
             if (map.TryFindEmptyPosition(pos, findPosDir, out int2 newPos, 15, ignoreFilter))
             {
                 Particle particle = map.GetParticle(pos);

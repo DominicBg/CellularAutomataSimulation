@@ -1524,8 +1524,8 @@ MonoBehaviour:
       color3:
         serializedVersion: 2
         rgba: 4294967295
-      threshold1: 0.5
-      threshold2: 0.7
+      threshold1: 0.7
+      threshold2: 0.8
       threshold3: 0.9
     mudColor: {r: 0.58431375, g: 0.20784314, b: 0.007843138, a: 1}
     snowColor: {r: 0.8726415, g: 0.94381243, b: 1, a: 1}

@@ -44,7 +44,7 @@ public class SpriteAnimator : IDisposable
         currentAnim = animation;
     }
 
-    public SpriteAnimator(NativeSpriteSheet.SpriteSheet spriteSheet)
+    public SpriteAnimator(SpriteSheet spriteSheet)
     {
         nativeSpriteSheet = new NativeSpriteSheet(spriteSheet);
     }

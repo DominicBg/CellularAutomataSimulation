@@ -13,7 +13,7 @@ public class PlayerControlSettings : ScriptableObject
     //move somewhere else
     public float jumpForce = 150;
 
-    public NativeSpriteSheet.SpriteSheet spriteSheet;
+    public SpriteSheet spriteSheet;
     public Texture2D collisionTexture;
 
     public LightSource lightSource;

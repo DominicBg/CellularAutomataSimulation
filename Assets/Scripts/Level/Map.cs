@@ -34,7 +34,6 @@ public unsafe struct Map
 
     public void Dispose()
     {
-
         particleGrid.Dispose();
         dirtyGrid.Dispose();
     }
@@ -49,7 +48,7 @@ public unsafe struct Map
         if (!InBound(pos))
             return;
 
-        particleGrid[pos] = new Particle() { type = type, velocity = 0 };
+        particleGrid[pos] = new Particle() { type = type, velocity = 0, tickIdle = 0 };
         if(setDirty)
             dirtyGrid[pos] = true;
     }
@@ -60,8 +59,11 @@ public unsafe struct Map
         return dirtyGrid[pos];
     }
 
-    public void SetParticle(int2 pos, Particle particle, bool setDirty = true)
+    public void SetParticle(int2 pos, Particle particle, bool setDirty = true, bool resetTick = false)
     {
+        if(resetTick)
+            particle.tickIdle = 0;
+
         particleGrid[pos] = particle;
         if (setDirty)
             dirtyGrid[pos] = true;
@@ -72,6 +74,19 @@ public unsafe struct Map
         return particleGrid[pos];
     }
     
+    public void UpdateParticleTick()
+    {
+        for (int x = 0; x < Sizes.x; x++)
+        {
+            for (int y = 0; y < Sizes.y; y++)
+            {
+                Particle p = particleGrid[x, y];
+                p.tickIdle++;
+                particleGrid[x, y] = p;
+            }
+        }
+    }
+
     public int2 SlideParticle(int2 from, int2 to, out bool hasCollision, out int2 collisionPos)
     {
         to = math.clamp(to, -1, GameManager.GridSizes);
@@ -110,25 +125,40 @@ public unsafe struct Map
 
     public void MoveParticle(int2 from, int2 to)
     {
+        if (math.all(from == to))
+            return;
+
         Particle temp = particleGrid[from];
-        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0 };
+        temp.tickIdle = 0;
+        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0 };
         particleGrid[to] = temp;
         dirtyGrid[to] = true;
     }
 
     public void MoveParticle(Particle particle, int2 from, int2 to)
     {
-        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0 };
+        if (math.all(from == to))
+            return;
+
+        particle.tickIdle = 0;
+        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0 };
         particleGrid[to] = particle;
         dirtyGrid[to] = true;
     }
 
     public void SwapParticles(int2 from, int2 to)
     {
-        Particle temp = particleGrid[from];
-        particleGrid[from] = particleGrid[to];
-        particleGrid[to] = temp;
+        Particle p1 = particleGrid[from];
+        Particle p2 = particleGrid[to];
+        p1.tickIdle = 0;
+        p2.tickIdle = 0;
+        particleGrid[from] = p2;
+        particleGrid[to] = p1;
         dirtyGrid[to] = true;
+
+        //particleGrid[from] = particleGrid[to];
+        //particleGrid[to] = temp;
+        //dirtyGrid[to] = true;
     }
 
     public bool IsFreePosition(int2 pos)
@@ -212,13 +242,6 @@ public unsafe struct Map
     public bool HasParticleCollision(ParticleType type)
     {
         return type != ParticleType.None;
-        //switch (type)
-        //{
-        //    case ParticleType.None:
-        //    case ParticleType.Player:
-        //        return false;
-        //}
-        //return true;
     }
 
     public bool CanPush(int2 position, in PhysiXVIISetings settings)
