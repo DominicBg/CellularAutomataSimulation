@@ -14,7 +14,7 @@ public abstract class GunBaseElement : EquipableElement
 
     protected abstract void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map);
 
-    protected override void OnUse(int2 position, ref TickBlock _)
+    protected override void OnUse(int2 position, bool _, ref TickBlock tickBlock)
     {
         int2 aimPosition = GridPicker.GetGridPosition(GameManager.GridSizes);
         int2 startPosition = player.position + GetAjustedOffset(baseGunSettings.shootOffset);

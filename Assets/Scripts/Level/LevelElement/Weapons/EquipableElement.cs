@@ -18,8 +18,7 @@ public abstract class EquipableElement : LevelObject
     protected bool isUsedThisFrame = false;
     protected int unUsedForTicks;
 
-    bool requestUse;
-    int2 requestUsePosition;
+    UseRequest useRequest;
 
     public void OnValidate()
     {
@@ -55,12 +54,11 @@ public abstract class EquipableElement : LevelObject
 
         if(isEquiped)
         {
-            if(requestUse)
+            if(useRequest.requestUse)
             {
-                InternalUse(requestUsePosition, ref tickBlock);
+                InternalUse(ref tickBlock);
                 isUsedThisFrame = true;
                 unUsedForTicks = 0;
-                requestUse = false;
             }
             else
             {
@@ -82,22 +80,28 @@ public abstract class EquipableElement : LevelObject
         this.unequipPosition = unequipPosition;
     }
 
-    public void Use(int2 pos)
+    public void Use(int2 pos, bool useAltButton)
     {
-        requestUse = true;
-        requestUsePosition = pos;
+        useRequest = new UseRequest()
+        {
+            requestUse = true,
+            useAltButton = useAltButton,
+            requestUsePosition = pos
+        };
     }
 
-    void InternalUse(int2 position, ref TickBlock tickBlock)
+    void InternalUse(ref TickBlock tickBlock)
     {
         if (cooldown != 0)
             return;
 
+        useRequest.requestUse = false;
         isUsedThisFrame = true;
         cooldown = baseSettings.frameCooldown;
-        OnUse(position, ref tickBlock);
+
+        OnUse(position, useRequest.useAltButton, ref tickBlock);
     }
-    protected abstract void OnUse(int2 position, ref TickBlock tickBlock);
+    protected abstract void OnUse(int2 position, bool altButton, ref TickBlock tickBlock);
 
     protected abstract void OnEquip();
     protected abstract void OnUnequip();
@@ -137,6 +141,13 @@ public abstract class EquipableElement : LevelObject
     {
         base.Dispose();
         spriteAnimator.Dispose();
+    }
+
+    struct UseRequest
+    {
+        public bool requestUse;
+        public int2 requestUsePosition;
+        public bool useAltButton;
     }
 }
 

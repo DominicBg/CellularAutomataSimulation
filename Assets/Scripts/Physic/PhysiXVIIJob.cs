@@ -89,14 +89,8 @@ public struct PhysiXVIIJob : IJob
                     // but normals are 1 or -1, so we can multiply by half sqrt2
                     normal *= math.SQRT2 * 0.5f;
                 }
-
-                //todo add absorbtion and colliding with particles
-                //physicData.velocity = math.reflect(physicData.velocity, normal) * .5f;
-
+                
                 CalculateObjectParticleCollision(ref physicData, normal, collisionNormal);
-                //Bound horizontalBound = (collisionNormal.x == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
-                //Bound verticalBound = (collisionNormal.y == 1) ? physicData.physicBound.GetRightCollisionBound(finalGridPosition): physicData.physicBound.GetLeftCollisionBound(finalGridPosition);
-
             }
 
             //Make sure you don't go faster uphill while going left
@@ -143,16 +137,21 @@ public struct PhysiXVIIJob : IJob
             return desiredPosition;
         }
 
-
         int2 safePosition = from;
-        int2 currentPos = from;
-        while (diff.x != 0 || diff.y != 0)
+
+        //Trace line on a grid
+        int maxSteps = math.abs(diff.x) + math.abs(diff.y);
+        float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
+        for (int i = 0; i <= maxSteps; i++)
         {
-            int2 currentDir = (int2)math.sign(diff);
-            currentPos += currentDir;
-            diff -= currentDir;
+            int2 currentPos = (int2)math.lerp(from, desiredPosition, i * steps);
+            if (math.all(currentPos == safePosition))
+                continue;
+            
             currentPosBound = physicBound.GetCollisionBound(currentPos);
-            if(map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
+
+            int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
+            if (map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
             {
                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
                 return safePosition;

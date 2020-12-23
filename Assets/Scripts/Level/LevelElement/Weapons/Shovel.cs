@@ -8,16 +8,19 @@ public class Shovel : EquipableElement
 {
     public ShovelScriptable settings => (ShovelScriptable)baseSettings;
 
-    protected override void OnUse(int2 position, ref TickBlock tickBlock)
+    protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
     {
-        int2 aimPosition = GridPicker.GetGridPosition();
-        float2 dir = math.normalize(aimPosition - player.GetBound().center);
+        float2 dir = settings.throwDir;
+        if (player.lookLeft)
+            dir.x = -dir.x;
+        if (altButton)
+            dir.x = -dir.x;
 
         bool ascOrder = player.lookLeft;
         if (settings.flipPhysics)
             ascOrder = !ascOrder;
 
-        //todo stop loops if blocked
+        //todo stop loops if blocked?
         int2 offset = GetEquipOffset(settings.lookingOffset);
         for (int y = 0; y < settings.shovelSize.y; y++)
         {
@@ -69,23 +72,19 @@ public class Shovel : EquipableElement
         bool2 flipped;
         flipped.x = isEquiped ? player.lookLeft : false;
         flipped.y = isEquiped && playAnim;
-        //int2 animHeightOffset = cooldown > 0 ? GetAjustedOffset(settings.animOffset) : 0;
         spriteAnimator.Render(ref outputcolor, renderPos, flipped);
+    }
 
-        //base.OnRender(ref outputcolor, ref tickBlock);
-
-        if (settings.showDebug)
+    public override void OnRenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    {       
+        int2 offset = GetEquipOffset(settings.lookingOffset);
+        for (int x = 0; x < settings.shovelSize.x; x++)
         {
-            int2 offset = GetEquipOffset(settings.lookingOffset);
-            for (int x = 0; x < settings.shovelSize.x; x++)
+            for (int y = 0; y < settings.shovelSize.y; y++)
             {
-                for (int y = 0; y < settings.shovelSize.y; y++)
-                {
-                    int2 pos = offset + new int2(x, y);
-                    if (map.InBound(pos))
-                        outputcolor[ArrayHelper.PosToIndex(pos, GameManager.GridSizes)] = Color.red;
-
-                }
+                int2 pos = offset + new int2(x, y);
+                if (map.InBound(pos))
+                    outputColor[ArrayHelper.PosToIndex(pos, GameManager.GridSizes)] = Color.red;
             }
         }
     }

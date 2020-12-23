@@ -16,7 +16,7 @@ public class Jetpack : EquipableElement
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }
 
-    protected override void OnUse(int2 position, ref TickBlock _)
+    protected override void OnUse(int2 position, bool altButton, ref TickBlock _)
     {
         if (currentFuel < settings.fuelUseRate)
         {

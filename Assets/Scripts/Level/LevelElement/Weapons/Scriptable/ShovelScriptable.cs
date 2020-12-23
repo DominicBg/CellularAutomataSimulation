@@ -11,7 +11,7 @@ public class ShovelScriptable : EquipableBaseScriptable
     public int2 lookingOffset;
     public float minThrowStrength;
     public float maxThrowStrength;
+    public int2 throwDir;
     public int2 animOffset;
     public bool flipPhysics;
-    public bool showDebug;
 }

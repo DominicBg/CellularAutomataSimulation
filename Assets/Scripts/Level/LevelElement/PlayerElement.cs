@@ -49,9 +49,10 @@ public class PlayerElement : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(currentEquip != null && Input.GetMouseButton(0))
+        if(currentEquip != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
-            currentEquip.Use(position);
+            bool isAltButton = Input.GetMouseButton(1);
+            currentEquip.Use(position, isAltButton);
         }
 
         int2 direction = new int2(InputCommand.Direction.x, 0);
