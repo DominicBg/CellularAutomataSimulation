@@ -182,7 +182,7 @@ public unsafe struct Map
             if (InBound(position))
             {
                 ParticleType type = particleGrid[position].type;
-                bool canIgnoreType = ((int)type & ignoreTypeFlag) != 0;
+                bool canIgnoreType = PhysiXVII.IsInFlag(ignoreTypeFlag, type);
 
                 if (type == ParticleType.None)
                 {
@@ -257,7 +257,7 @@ public unsafe struct Map
                 continue;
 
             ParticleType particleType = GetParticleType(positions[i]);
-            bool ignoreCollision = ((int)particleType & ignoreFlag) != 0;
+            bool ignoreCollision = PhysiXVII.IsInFlag(ignoreFlag, particleType);
             if (!ignoreCollision && HasParticleCollision(particleType))
             {
                 count++;

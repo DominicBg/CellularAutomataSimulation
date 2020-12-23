@@ -31,8 +31,10 @@ MonoBehaviour:
     y: -3
   minThrowStrength: 1
   maxThrowStrength: 5
+  throwDir:
+    x: 1
+    y: 1
   animOffset:
     x: 2
     y: 10
   flipPhysics: 0
-  showDebug: 0

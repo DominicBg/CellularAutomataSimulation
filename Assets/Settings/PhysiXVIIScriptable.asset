@@ -18,8 +18,8 @@ MonoBehaviour:
       y: -4
     friction: 0.8
     maxSlope: 3
-    slopeSlow: 0.5
-    canPush: 0000010101000001000000
+    slopeSlow: 0.4
+    canPush: 00000101010000010001000100
     frictions:
     - 0
     - 0.5
@@ -31,6 +31,8 @@ MonoBehaviour:
     - 0.5
     - 0.5
     - 0
+    - 0
+    - 1
     - 0
     mass:
     - 0
@@ -44,6 +46,8 @@ MonoBehaviour:
     - 0
     - 2
     - 0
+    - 255
+    - 0
     absorbtion:
     - 0
     - 0
@@ -53,6 +57,8 @@ MonoBehaviour:
     - 0
     - 0.5
     - 1
+    - 0.5
+    - 0.5
     - 0
     - 0
     - 0

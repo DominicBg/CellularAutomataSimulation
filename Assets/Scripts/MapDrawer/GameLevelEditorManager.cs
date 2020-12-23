@@ -27,10 +27,11 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
     private bool inFreeView;
     public float2 viewPosition;
     public float movingSpeed = 5;
-
+    public bool inDebugView;
     public void OnStart()
     {
         Load();
+        viewPosition = currentWorldLevel.currentLevelPosition;
     }
 
     public void Load()
@@ -262,7 +263,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
         if(currentWorldLevel.levels.TryGetValue(position, out LevelContainer levelContainer))
         {
-            levelContainer.OnRender(ref outputColors);
+            levelContainer.OnRender(ref outputColors, inDebugView);
 
             //Color spawner
             var particleSpawner = levelContainer.GetParticleSpawner();

@@ -18,6 +18,8 @@ public abstract class PhysicObject : LevelObject
     protected void IniPhysicData(Texture2D collisionTexture)
     {
         physicData.physicBound = new PhysicBound(collisionTexture);
+        physicData.gridPosition = position;
+        physicData.position = position;
     }
 
     protected void HandlePhysic()

@@ -160,6 +160,7 @@ MonoBehaviour:
     x: 0
     y: 0
   movingSpeed: 2
+  inDebugView: 1
 --- !u!4 &24019102
 Transform:
   m_ObjectHideFlags: 0
@@ -1504,6 +1505,28 @@ MonoBehaviour:
         x: 0.3
         y: 0.6
       blending: 0
+    woodRendering:
+      color:
+        serializedVersion: 2
+        rgba: 4279512679
+    cinderRendering:
+      speed: 0.025
+      spread: 125.2531
+      color0:
+        serializedVersion: 2
+        rgba: 4279769112
+      color1:
+        serializedVersion: 2
+        rgba: 4278467839
+      color2:
+        serializedVersion: 2
+        rgba: 4278240767
+      color3:
+        serializedVersion: 2
+        rgba: 4294967295
+      threshold1: 0.5
+      threshold2: 0.7
+      threshold3: 0.9
     mudColor: {r: 0.58431375, g: 0.20784314, b: 0.007843138, a: 1}
     snowColor: {r: 0.8726415, g: 0.94381243, b: 1, a: 1}
     titleDisintegration: {r: 1, g: 1, b: 1, a: 1}

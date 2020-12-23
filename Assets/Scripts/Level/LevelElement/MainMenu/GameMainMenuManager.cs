@@ -52,6 +52,7 @@ public class GameMainMenuManager : MonoBehaviour, State
         LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
         mainMenuLevel.Init(data.LoadMap());
         //mainMenuLevel.Init(levelData.LoadMap());
+
     }
 
     public void OnUpdate()

@@ -15,12 +15,14 @@ public enum ParticleType
     None,
     Water,
     Sand,
-    Mud,
+    Mud, 
     Snow,
-    Ice,
+    Ice, 
     Rock,
     Rubble,
     Fire,
+    Cinder,
+    Wood,
     Player,
 
     //Misc

@@ -15,10 +15,7 @@ public static class ParticleRenderUtil
                 return particleRendering.sandRendering.GetColor(position, ref tickBlock);
             case ParticleType.Mud:
                 return particleRendering.mudColor;
-            case ParticleType.Player:
-                //Gets overriden when trying the sprite
 
-                return Color.clear;
             case ParticleType.Snow:
                 return particleRendering.snowColor;
             case ParticleType.Ice:
@@ -31,6 +28,14 @@ public static class ParticleRenderUtil
                 return particleRendering.titleDisintegration;
             case ParticleType.Fire:
                 return particleRendering.fireRendering.GetColor(position, ref tickBlock);
+            case ParticleType.Player:
+                //Gets overriden when trying the sprite
+                return Color.clear;
+            case ParticleType.Cinder:
+                return particleRendering.cinderRendering.GetColor(position, ref tickBlock);
+            case ParticleType.Wood:
+                return particleRendering.woodRendering.GetColor(position, ref tickBlock);
+  
             default:
                 return Color.black;
         }

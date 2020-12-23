@@ -259,6 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1052247341935092496}
   - component: {fileID: 948332018257826927}
+  - component: {fileID: 7452865525779219097}
   m_Layer: 0
   m_Name: Exits
   m_TagString: Untagged
@@ -303,6 +304,30 @@ MonoBehaviour:
   nextLevelContainerPosition:
     x: 1
     y: 0
+  nextLevelEntrance: 0
+--- !u!114 &7452865525779219097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3506968646888823273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bdd2c8faed1ecb48bad81c4a97886be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 75
+    y: 13
+  sizes:
+    x: 1
+    y: 28
+  nextLevelContainerPosition:
+    x: 0
+    y: -1
   nextLevelEntrance: 0
 --- !u!1 &4809577714348114501
 GameObject:
@@ -398,7 +423,7 @@ GameObject:
   - component: {fileID: 5479903869181738649}
   - component: {fileID: 583114116725864076}
   m_Layer: 0
-  m_Name: Level1_2
+  m_Name: Level1_1_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -443,15 +468,16 @@ MonoBehaviour:
   - {fileID: 10464337468497750}
   - {fileID: 8840121812376108910}
   - {fileID: 7436076264407017550}
+  - {fileID: 8543753411825837983}
   - {fileID: 4204471444559714592}
   - {fileID: 410953964631380676}
   - {fileID: 3203337710646242240}
   - {fileID: 948332018257826927}
+  - {fileID: 7452865525779219097}
   - {fileID: 7202090984246048697}
   entrances:
   - {fileID: 7202090984246048697}
   particleSpawnerElements: {fileID: 1245956244065010496}
-  inDebug: 1
 --- !u!114 &583114116725864076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,6 +504,7 @@ GameObject:
   - component: {fileID: 8840121812376108910}
   - component: {fileID: 7436076264407017550}
   - component: {fileID: 1245956244065010496}
+  - component: {fileID: 8543753411825837983}
   m_Layer: 0
   m_Name: GameplayElements
   m_TagString: Untagged
@@ -678,3 +705,23 @@ MonoBehaviour:
     notTickBounded: 0
     startTick: 0
     endTick: 1800
+--- !u!114 &8543753411825837983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8621487383551056548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 17
+    y: 16
+  player: {fileID: 7436076264407017550}
+  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
+  isEquiped: 0

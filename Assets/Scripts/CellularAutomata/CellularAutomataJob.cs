@@ -85,16 +85,29 @@ public struct CellularAutomataJob : IJob
             case ParticleType.Ice:
                 UpdateIceParticle(particle, pos);
                 break;
-            case ParticleType.Player:
-                //nada
-                break;
             case ParticleType.Rock:
                 break;
             case ParticleType.Rubble:
                 UpdateRubbleParticle(particle, pos);
                 break;
+            case ParticleType.Fire:
+                //todo
+                break;
+            case ParticleType.Cinder:
+                UpdateCinderParticle(particle, pos);
+                break;
+            case ParticleType.Wood:
+                UpdateWoodParticle(particle, pos);
+                break;
+
+            //Others
             case ParticleType.TitleDisintegration:
                 UpdateTitleDisintegrationPartaicle(particle, pos);
+                break;
+            case ParticleType.Player:
+                //nada
+                break;
+            case ParticleType.Count:
                 break;
         }
     }
@@ -337,6 +350,26 @@ public struct CellularAutomataJob : IJob
             map.SetParticleType(pos, ParticleType.Sand);
         }       
     }
+
+    void UpdateWoodParticle(Particle particle, int2 pos)
+    {
+        if (IsSurroundedBy(pos, ParticleType.Cinder))
+        {
+            map.SetParticleType(pos, ParticleType.Cinder);
+        }
+    }
+
+    void UpdateCinderParticle(Particle particle, int2 pos)
+    {
+        bool falling = TryFreeFalling(particle, pos);
+        if (falling)
+            return;
+
+        bool updatePiling = TryUpdatePilingUpParticle(particle, pos);
+        if (updatePiling)
+            return;
+    }
+
 
     void UpdateTitleDisintegrationPartaicle(Particle particle, int2 pos)
     {

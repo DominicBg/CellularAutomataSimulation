@@ -26,8 +26,8 @@ public static class PhysiXVII
     {
         Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
         Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
-        bool hasFeetCollision = map.HasCollision(ref feetBound, (int)ParticleType.Player);
-        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, (int)ParticleType.Player);
+        bool hasFeetCollision = map.HasCollision(ref feetBound, GetFlag(ParticleType.Player));
+        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, GetFlag(ParticleType.Player));
         bool atFloorLevel = position.y <= 0;
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
@@ -53,5 +53,25 @@ public static class PhysiXVII
         float absorbtion = (settings.absorbtion[p1Type] + settings.absorbtion[p2Type]) * 0.5f;
         p1.velocity = outv1 * absorbtion;
         p2.velocity = outv2 * absorbtion;
+    }
+
+    //try to remove GC?
+    public static int GetFlag(params ParticleType[] particles)
+    {
+        int flag = 0;
+        for (int i = 0; i < particles.Length; i++)
+        {
+            flag |= GetFlag(particles[i]);
+        }
+        return flag;
+    }
+    public static int GetFlag(ParticleType particleType)
+    {
+        return 1 << (int)particleType;
+    }
+
+    public static bool IsInFlag(int flag, ParticleType particleType)
+    {
+        return (GetFlag(particleType) & flag) != 0;
     }
 }

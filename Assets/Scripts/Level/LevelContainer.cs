@@ -16,8 +16,6 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public TickBlock tickBlock;
     public Map map;
 
-    public bool inDebug;
-
     public void OnValidate()
     {
         levelElements = GetComponentsInChildren<LevelElement>();
@@ -58,7 +56,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
                 levelElements[i].OnUpdate(ref tickBlock);
         }
     }
-    public void OnRender(ref NativeArray<Color32> outputcolor)
+    public void OnRender(ref NativeArray<Color32> outputcolor, bool debug)
     {
         for (int i = 0; i < levelElements.Length; i++)
         {
@@ -80,7 +78,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
             levelElements[i].RenderUI(ref outputcolor, ref tickBlock);
         }
 
-        if(inDebug)
+        if(debug)
         {
             for (int i = 0; i < levelElements.Length; i++)
             {

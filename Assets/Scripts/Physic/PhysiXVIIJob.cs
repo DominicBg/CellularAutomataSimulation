@@ -131,7 +131,7 @@ public struct PhysiXVIIJob : IJob
 
         //For slopes, works but is sloppy
         Bound currentPosBound = physicBound.GetCollisionBound(desiredPosition);
-        if (isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
+        if (isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
         {
             collisionNormal = 0;
             return desiredPosition;
@@ -151,7 +151,7 @@ public struct PhysiXVIIJob : IJob
             currentPosBound = physicBound.GetCollisionBound(currentPos);
 
             int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
-            if (map.HasCollision(ref currentPosBound, (int)ParticleType.Player))
+            if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
             {
                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
                 return safePosition;
@@ -223,8 +223,8 @@ public struct PhysiXVIIJob : IJob
     {
         Bound horizontalBound = physicBound.GetCollisionBound(safePosition + new int2(direction.x, 0));
         Bound verticalBound = physicBound.GetCollisionBound(safePosition + new int2(0, direction.y));
-        bool hasHorizontalCollision = map.HasCollision(ref horizontalBound, (int)ParticleType.Player);
-        bool hasVerticalCollision = map.HasCollision(ref verticalBound, (int)ParticleType.Player);
+        bool hasHorizontalCollision = map.HasCollision(ref horizontalBound, PhysiXVII.GetFlag(ParticleType.Player));
+        bool hasVerticalCollision = map.HasCollision(ref verticalBound, PhysiXVII.GetFlag(ParticleType.Player));
         int2 collision = 0;
         if (hasHorizontalCollision)
             collision.x = -direction.x;

@@ -10,6 +10,8 @@ public struct ParticleRendering
     public RockRendering rockRendering;
     public RubbleRendering rubbleColor;
     public FireRendering fireRendering;
+    public WoodRendering woodRendering;
+    public CinderRendering cinderRendering;
     public Color mudColor;
     public Color snowColor;
     public Color titleDisintegration;

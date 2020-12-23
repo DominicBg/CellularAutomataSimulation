@@ -12,6 +12,8 @@ public class WorldLevel : MonoBehaviour
     public Dictionary<int2, LevelContainer> levels;
     public int2 currentLevelPosition;
 
+    public bool inDebug = false;
+
     public LevelContainer CurrentLevel => levels[currentLevelPosition];
 
     private float transitionRatio;
@@ -77,7 +79,7 @@ public class WorldLevel : MonoBehaviour
         }
         else
         { 
-            levels[currentLevelPosition].OnRender(ref outputColors);
+            levels[currentLevelPosition].OnRender(ref outputColors, inDebug);
         }
         GridRenderer.RenderToScreen(outputColors);
     }
@@ -87,8 +89,8 @@ public class WorldLevel : MonoBehaviour
         GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
 
-        levels[currentLevelPosition].OnRender(ref currentColors);
-        levels[nextLevelContainerPosition].OnRender(ref transitionColors);
+        levels[currentLevelPosition].OnRender(ref currentColors, inDebug);
+        levels[nextLevelContainerPosition].OnRender(ref transitionColors, inDebug);
 
         bool isHorizontal = currentLevelPosition.y == nextLevelContainerPosition.y;
         bool inverted = isHorizontal ? currentLevelPosition.x > nextLevelContainerPosition.x : currentLevelPosition.y > nextLevelContainerPosition.y;

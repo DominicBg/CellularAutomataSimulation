@@ -52,6 +52,12 @@ MonoBehaviour:
     position:
       x: 1
       y: 0
-  currentLevel:
+  - levelContainerPrefab: {fileID: 5479903869181738649, guid: 39809174b0cba6343ae8e4ec8d0d8bdc, type: 3}
+    position:
+      x: 0
+      y: -1
+  currentLevelPosition:
     x: 0
     y: 0
+  inDebug: 0
+  transitionSpeed: 1
