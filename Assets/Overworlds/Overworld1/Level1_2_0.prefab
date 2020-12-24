@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 5479903869181738649}
   - component: {fileID: -2989868246975951515}
   m_Layer: 0
-  m_Name: Level1_3
+  m_Name: Level1_2_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393,7 +393,6 @@ MonoBehaviour:
   entrances:
   - {fileID: 5676799054947511788}
   particleSpawnerElements: {fileID: 5940236663630957296}
-  inDebug: 1
 --- !u!114 &-2989868246975951515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,3 +461,4 @@ MonoBehaviour:
     x: 0
     y: 0
   nextLevelEntrance: 0
+  transition: {fileID: 11400000, guid: 34cafd8f13a11c04f97ae35854009180, type: 2}

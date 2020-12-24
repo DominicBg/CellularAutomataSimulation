@@ -272,6 +272,7 @@ MonoBehaviour:
     x: 1
     y: 0
   nextLevelEntrance: 0
+  transition: {fileID: 11400000, guid: 271d33d0a39aa1d40893ab89c1bcd527, type: 2}
 --- !u!1 &4809577714348114501
 GameObject:
   m_ObjectHideFlags: 0

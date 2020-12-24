@@ -10,6 +10,7 @@ public class LevelExit : LevelObject
     public int2 nextLevelContainerPosition;
     public int nextLevelEntrance;
 
+    public TransitionBase transition;
     PlayerElement player;
 
     public override void Init(Map map)
@@ -30,7 +31,7 @@ public class LevelExit : LevelObject
 
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
-            worldLevel.SetNextLevelContainer(nextLevelContainerPosition, nextLevelEntrance);
+            worldLevel.StartTransition(nextLevelContainerPosition, nextLevelEntrance, transition);
             Debug.Log("next level");
         }
     }

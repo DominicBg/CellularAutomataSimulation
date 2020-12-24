@@ -26,7 +26,7 @@ public class GridRenderer : MonoBehaviour
 
         int2 sizes = GameManager.GridSizes;
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
-        m_texture.filterMode = FilterMode.Point;
+        m_texture.filterMode = FilterMode.Point;     
     }
 
     public static void GetBlankTexture(out NativeArray<Color32> outputColor)

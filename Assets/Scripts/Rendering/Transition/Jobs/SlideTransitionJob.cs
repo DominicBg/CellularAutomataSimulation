@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [BurstCompile]
-public struct ImageTransitionJob : IJobParallelFor
+public struct SlideTransitionJob : IJobParallelFor
 {
     public NativeArray<Color32> outputColors;
     [ReadOnly] public NativeArray<Color32> firstImage;
@@ -24,9 +24,6 @@ public struct ImageTransitionJob : IJobParallelFor
         int offset = (int)(t * size);
         offset = math.clamp(offset, 0, size);
 
-        //int2 samplePos = new int2(pos.x + offset, pos.y);
-        //bool useFirstImage = (samplePos.x >= size);
-        //samplePos.x %= size;
         int2 samplePos = GetSamplePos(pos, size, offset, out bool useSecondImage);
 
         int sampleIndex = ArrayHelper.PosToIndex(samplePos, GameManager.GridSizes);

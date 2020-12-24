@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b1ff579ab83fc479470c3a98eacfd0, type: 3}
   m_Name: PlayerControlSettings
   m_EditorClassIdentifier: 
-  movementSpeed: 50
+  movementSpeed: 3000
   airAcceleration: 0
-  airMovementSpeed: 3
-  jumpForce: 65
+  airMovementSpeed: 150
+  jumpForce: 80
   spriteSheet:
     spriteSheetName: Astro
     spriteAnimations:

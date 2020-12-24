@@ -305,6 +305,7 @@ MonoBehaviour:
     x: 1
     y: 0
   nextLevelEntrance: 0
+  transition: {fileID: 11400000, guid: 5fa6d0f6479a1aa4da65d1f2ef7bf505, type: 2}
 --- !u!114 &7452865525779219097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +330,7 @@ MonoBehaviour:
     x: 0
     y: -1
   nextLevelEntrance: 0
+  transition: {fileID: 11400000, guid: 271d33d0a39aa1d40893ab89c1bcd527, type: 2}
 --- !u!1 &4809577714348114501
 GameObject:
   m_ObjectHideFlags: 0

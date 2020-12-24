@@ -213,7 +213,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             var colors4 = RenderLevelContainer(pos4);
 
             var horizontalOutput = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            new ImageTransitionJob()
+            new SlideTransitionJob()
             {
                 firstImage = colors1,
                 secondImage = colors2,
@@ -223,7 +223,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
             var horizontal2Output = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            new ImageTransitionJob()
+            new SlideTransitionJob()
             {
                 firstImage = colors3,
                 secondImage = colors4,
@@ -233,7 +233,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
             var finalOutput = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-            new ImageTransitionJob()
+            new SlideTransitionJob()
             {
                 firstImage = horizontalOutput,
                 secondImage = horizontal2Output,

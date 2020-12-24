@@ -26,9 +26,9 @@ public class GameMainMenuManager : MonoBehaviour, State
     public LevelContainer mainMenuLevelPrefab;
     LevelContainer mainMenuLevel;
 
+    //Debug
     public float t;
-    public Texture2D leftImage;
-    public Texture2D rightImage;
+    public int diamondSize;
 
     public void OnEnd()
     {
@@ -69,7 +69,7 @@ public class GameMainMenuManager : MonoBehaviour, State
         bool showlight = noiseValue < lightThreshold;
         bool showGlitch = noiseValue > lightThreshold && noiseValue < glitchThreshold;
 
-        if(showGlitch)
+        if (showGlitch)
         {
             var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map);
             var darkTexture = darkRender.Render(ref tickBlock);

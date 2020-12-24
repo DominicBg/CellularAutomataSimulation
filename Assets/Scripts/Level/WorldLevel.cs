@@ -15,12 +15,13 @@ public class WorldLevel : MonoBehaviour
     public bool inDebug = false;
 
     public LevelContainer CurrentLevel => levels[currentLevelPosition];
-
-    private float transitionRatio;
-    private int2 nextLevelContainerPosition;
     public float transitionSpeed = 1;
-    private bool isInTransition;
-    private int nextEntranceID;
+    TransitionInfo transitionInfo;
+    //private float transitionRatio;
+    //private int2 nextLevelContainerPosition;
+    //public float transitionSpeed = 1;
+    //private bool isInTransition;
+    //private int nextEntranceID;
 
     public void LoadLevel()
     {
@@ -40,21 +41,21 @@ public class WorldLevel : MonoBehaviour
 
     public void OnUpdate()
     {
-        if (!isInTransition)
+        if (!transitionInfo.isInTransition)
         {
             levels[currentLevelPosition].OnUpdate();
         }
         else
         {
-            transitionRatio += GameManager.deltaTime * transitionSpeed;
-            if (transitionRatio >= 1)
+            transitionInfo.transitionRatio += GameManager.deltaTime * transitionSpeed;
+            if (transitionInfo.transitionRatio >= 1)
             {
-                isInTransition = false;
-                currentLevelPosition = nextLevelContainerPosition;
+                transitionInfo.isInTransition = false;
+                currentLevelPosition = transitionInfo.nextLevelContainerPosition;
                 LevelEntrance[] levelEntrances = CurrentLevel.entrances;
                 for (int i = 0; i < levelEntrances.Length; i++)
                 {
-                    if(nextEntranceID == levelEntrances[i].id)
+                    if(transitionInfo.nextEntranceID == levelEntrances[i].id)
                     {
                         //eww
                         PlayerElement player = CurrentLevel.GetComponentInChildren<PlayerElement>();
@@ -73,7 +74,7 @@ public class WorldLevel : MonoBehaviour
         //TODO add global effect in rendering here?
 
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-        if(isInTransition)
+        if(transitionInfo.isInTransition)
         {
             RenderTransition(ref outputColors);
         }
@@ -90,21 +91,22 @@ public class WorldLevel : MonoBehaviour
         GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
 
         levels[currentLevelPosition].OnRender(ref currentColors, inDebug);
-        levels[nextLevelContainerPosition].OnRender(ref transitionColors, inDebug);
+        levels[transitionInfo.nextLevelContainerPosition].OnRender(ref transitionColors, inDebug);
 
-        bool isHorizontal = currentLevelPosition.y == nextLevelContainerPosition.y;
-        bool inverted = isHorizontal ? currentLevelPosition.x > nextLevelContainerPosition.x : currentLevelPosition.y > nextLevelContainerPosition.y;
+        transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
+        //bool isHorizontal = currentLevelPosition.y == nextLevelContainerPosition.y;
+        //bool inverted = isHorizontal ? currentLevelPosition.x > nextLevelContainerPosition.x : currentLevelPosition.y > nextLevelContainerPosition.y;
 
-        float t = (inverted) ? 1 - transitionRatio : transitionRatio;
+        //float t = (inverted) ? 1 - transitionRatio : transitionRatio;
 
-        new ImageTransitionJob()
-        {
-            firstImage = !inverted ? currentColors : transitionColors,
-            secondImage = !inverted ? transitionColors : currentColors,
-            outputColors = outputColors,
-            isHorizontal = isHorizontal,
-            t = t
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        //new SlideTransitionJob()
+        //{
+        //    firstImage = !inverted ? currentColors : transitionColors,
+        //    secondImage = !inverted ? transitionColors : currentColors,
+        //    outputColors = outputColors,
+        //    isHorizontal = isHorizontal,
+        //    t = t
+        //}.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
         currentColors.Dispose();
         transitionColors.Dispose();    
@@ -112,12 +114,16 @@ public class WorldLevel : MonoBehaviour
 
 
     //todo add types?
-    public void SetNextLevelContainer(int2 nextPosition, int nextEntranceID)
+    public void StartTransition(int2 nextPosition, int nextEntranceID, TransitionBase transition)
     {
-        isInTransition = true;
-        transitionRatio = 0;
-        this.nextLevelContainerPosition = nextPosition;
-        this.nextEntranceID = nextEntranceID;
+        transitionInfo = new TransitionInfo()
+        {
+            isInTransition = true,
+            nextEntranceID = nextEntranceID,
+            nextLevelContainerPosition = nextPosition,
+            transition = transition,
+            transitionRatio = 0
+        };
     }
 
     public void Dispose()
@@ -136,5 +142,14 @@ public class WorldLevel : MonoBehaviour
     {
         public LevelContainer levelContainerPrefab;
         public int2 position;
+    }
+
+    public struct TransitionInfo
+    {
+        public  float transitionRatio;
+        public  int2 nextLevelContainerPosition;
+        public  bool isInTransition;
+        public  int nextEntranceID;
+        public TransitionBase transition;
     }
 }

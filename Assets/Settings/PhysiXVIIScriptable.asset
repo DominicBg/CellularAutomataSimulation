@@ -15,7 +15,7 @@ MonoBehaviour:
   settings:
     gravity:
       x: 0
-      y: -2
+      y: -250
     friction: 0.8
     maxSlope: 3
     slopeSlow: 0.4

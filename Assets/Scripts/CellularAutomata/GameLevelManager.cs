@@ -37,7 +37,6 @@ public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnUpdate()
     {
-
         currentWorldLevel.OnUpdate();
     }
 
