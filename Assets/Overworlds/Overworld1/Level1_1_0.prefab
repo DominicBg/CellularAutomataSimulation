@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isEnable: 1
-  isVisible: 1
+  isVisible: 0
   position:
     x: 6
     y: 25
@@ -606,8 +606,8 @@ MonoBehaviour:
     y: 12
   physicData:
     position:
-      x: 0
-      y: 0
+      x: 14
+      y: 12
     controlledVelocity:
       x: 0
       y: 0
@@ -615,8 +615,8 @@ MonoBehaviour:
       x: 0
       y: 0
     gridPosition:
-      x: 0
-      y: 0
+      x: 14
+      y: 12
     mass: 25
     inclinaison: 0
   debugBoundFlag: 0

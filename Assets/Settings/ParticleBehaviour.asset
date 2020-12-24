@@ -16,7 +16,7 @@ MonoBehaviour:
     gravity:
       accelerationPerFrame:
         x: 0
-        y: -0.2
+        y: -0.4
     floaty:
       sinSpeed: 0
       sinOffset:
@@ -30,3 +30,6 @@ MonoBehaviour:
       chanceDespawn: 0.0001
     woodBehaviour:
       tickBeforeTurnToCinder: 30
+    cinderBehaviour:
+      minimumSurroundingCinder: 4
+      tickBeforeDisapear: 120

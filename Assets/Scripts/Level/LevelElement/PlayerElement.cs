@@ -76,16 +76,19 @@ public class PlayerElement : PhysicObject, ILightSource
 
         if (isGrounded)
         {
-            physicData.controlledVelocity = (float2)direction * settings.movementSpeed;
+            physicData.controlledVelocity = (float2)direction * settings.movementSpeed * GameManager.deltaTime;
         }
         else 
         {
-            physicData.controlledVelocity = (float2)direction * settings.airMovementSpeed;
-            physicData.velocity += (float2)direction * settings.airMovementSpeed;
+            physicData.controlledVelocity = (float2)direction * settings.airMovementSpeed * GameManager.deltaTime;
+            physicData.velocity += (float2)direction * settings.airMovementSpeed * GameManager.deltaTime;
         }
 
         if (isGrounded && InputCommand.IsButtonDown(KeyCode.Space))
         {
+            if (physicData.velocity.y < 0)
+                physicData.velocity.y = 0;
+
             physicData.velocity += new float2(0, settings.jumpForce);
         }
 

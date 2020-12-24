@@ -26,7 +26,7 @@ public class Jetpack : EquipableElement
         if(currentFuel == settings.fuelCapacity)
             player.physicData.velocity += settings.intialVelocity;
         else
-            player.physicData.velocity += settings.jetpackVelocity;
+            player.physicData.velocity += settings.jetpackVelocity * GameManager.deltaTime;
 
         unUsedForTicks = 0;
         currentFuel -= settings.fuelUseRate;

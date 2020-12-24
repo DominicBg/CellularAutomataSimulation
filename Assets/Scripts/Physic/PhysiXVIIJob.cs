@@ -35,7 +35,7 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
-            physicData.velocity += settings.gravity;
+            physicData.velocity += settings.gravity * deltaTime;
         }
 
         float2 currentPosition = physicData.position;

@@ -12,6 +12,7 @@ public struct CellularAutomataJob : IJob
     public Map map;
     public ParticleBehaviour behaviour;
     public PhysiXVIISetings settings;
+    public float deltaTime;
 
     public void Execute()
     {
@@ -116,9 +117,8 @@ public struct CellularAutomataJob : IJob
 
     unsafe bool TryFreeFalling(Particle particle, int2 pos)
     {
-        GravityBehaviour gravity = behaviour.gravity;
-        particle.velocity += gravity.accelerationPerFrame;
-        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity);
+        particle.velocity += settings.gravity * deltaTime;
+        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity * deltaTime);
 
         bool samePosition = math.all(pos == desiredPosition);
         if(samePosition)

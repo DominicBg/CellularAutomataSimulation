@@ -45,6 +45,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
             map = map,
             nativeParticleSpawners = particleSpawners,
             tickBlock = tickBlock,
+            deltaTime = GameManager.deltaTime,
             settings = GameManager.PhysiXVIISetings
         }.Run();
         particleSpawners.Dispose();

@@ -3,18 +3,12 @@
 [System.Serializable]
 public struct ParticleBehaviour
 {
-    public GravityBehaviour gravity;
     public FloatyBehaviour floaty;
     public WaterBehaviour water;
     public TitleDisentegrateBehaviour titleDisentegrate;
     public WoodBehaviour woodBehaviour;
     public CinderBehaviour cinderBehaviour;
 
-    [System.Serializable]
-    public struct GravityBehaviour
-    {
-        public float2 accelerationPerFrame;
-    }
 
     [System.Serializable]
     public struct FloatyBehaviour

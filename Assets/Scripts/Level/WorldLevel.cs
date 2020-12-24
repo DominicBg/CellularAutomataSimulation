@@ -124,6 +124,7 @@ public class WorldLevel : MonoBehaviour
     {
         foreach(var level in levels.Values)
         {
+            level.Dispose();
             Destroy(level.gameObject);
         }
         levels.Clear();
