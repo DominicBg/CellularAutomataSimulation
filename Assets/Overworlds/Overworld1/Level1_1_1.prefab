@@ -181,8 +181,8 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   position:
-    x: 0
-    y: 75
+    x: 4
+    y: 64
   id: 0
   sizes:
     x: 5
@@ -263,15 +263,15 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   position:
-    x: 99
-    y: 48
+    x: 0
+    y: 62
   sizes:
-    x: 1
+    x: 3
     y: 10
   nextLevelContainerPosition:
-    x: 1
+    x: 0
     y: 0
-  nextLevelEntrance: 0
+  nextLevelEntrance: 1
   transition: {fileID: 11400000, guid: 271d33d0a39aa1d40893ab89c1bcd527, type: 2}
 --- !u!1 &4809577714348114501
 GameObject:

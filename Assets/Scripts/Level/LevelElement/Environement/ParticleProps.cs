@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class ParticleProps : LevelObject
 {
-    [SerializeField] ParticleType particleType;
-    [SerializeField] Texture2D texture;
+    [SerializeField] ParticleType particleType = ParticleType.None;
+    [SerializeField] Texture2D texture = default;
 
     NativeSprite nativeSprite;
     NativeGrid<bool> isParticles;

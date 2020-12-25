@@ -118,18 +118,20 @@ public struct CellularAutomataJob : IJob
     unsafe bool TryFreeFalling(Particle particle, int2 pos)
     {
         particle.velocity += settings.gravity * deltaTime;
-        int2 desiredPosition = new int2(pos.x, pos.y) + (int2)(particle.velocity * deltaTime);
+        float2 desiredPosition = (pos + particle.fracPosition) + (particle.velocity * deltaTime);
+        int2 desiredGridPosition = (int2)desiredPosition;
 
-        bool samePosition = math.all(pos == desiredPosition);
+        bool samePosition = math.all(pos == desiredGridPosition);
         if(samePosition)
         {
+            particle.fracPosition = math.frac(desiredPosition);
+
             //used to update the velocity
             map.SetParticle(pos, particle);
-            //map.MoveParticle(particle, pos, desiredPosition);
             return true;
         }
 
-        int2 slidePosition = map.SlideParticle(pos, desiredPosition, out bool hasCollision, out int2 collisionPosition);
+        int2 slidePosition = map.SimulateParticlePhysic(pos, desiredGridPosition, out bool hasCollision, out int2 collisionPosition);
 
         if (!math.all(pos == slidePosition))
         {
@@ -151,6 +153,13 @@ public struct CellularAutomataJob : IJob
                     PhysiXVII.ComputeElasticCollision(slidePosition, collisionPosition, p1.velocity, 0, 1, wallMass, out float2 outv1, out float2 outv2);
                     particle.velocity = outv1 * 0.1f;
                 }
+
+                //Had a collision, set frac position to middle of the gridcell
+                particle.fracPosition = 0.5f;
+            }
+            else
+            {
+                particle.fracPosition = math.frac(desiredPosition);
             }
 
             map.MoveParticle(particle, pos, slidePosition);
@@ -411,7 +420,7 @@ public struct CellularAutomataJob : IJob
         int2 newPosition = pos + floatingDirection;
         if (willUpdate && map.IsFreePosition(newPosition))
         {
-            map.MoveParticle(pos, newPosition);
+            map.MoveParticle(particle, pos, newPosition);
         }
     }
 

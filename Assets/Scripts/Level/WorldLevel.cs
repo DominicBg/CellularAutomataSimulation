@@ -41,6 +41,10 @@ public class WorldLevel : MonoBehaviour
 
     public void OnUpdate()
     {
+        if (InputCommand.IsButtonDown(KeyCode.F1))
+            inDebug = !inDebug;
+
+
         if (!transitionInfo.isInTransition)
         {
             levels[currentLevelPosition].OnUpdate();
@@ -64,8 +68,6 @@ public class WorldLevel : MonoBehaviour
                         player.physicData.velocity = 0;
                     }
                 }
-
-
             }
         }
     }
@@ -94,19 +96,6 @@ public class WorldLevel : MonoBehaviour
         levels[transitionInfo.nextLevelContainerPosition].OnRender(ref transitionColors, inDebug);
 
         transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
-        //bool isHorizontal = currentLevelPosition.y == nextLevelContainerPosition.y;
-        //bool inverted = isHorizontal ? currentLevelPosition.x > nextLevelContainerPosition.x : currentLevelPosition.y > nextLevelContainerPosition.y;
-
-        //float t = (inverted) ? 1 - transitionRatio : transitionRatio;
-
-        //new SlideTransitionJob()
-        //{
-        //    firstImage = !inverted ? currentColors : transitionColors,
-        //    secondImage = !inverted ? transitionColors : currentColors,
-        //    outputColors = outputColors,
-        //    isHorizontal = isHorizontal,
-        //    t = t
-        //}.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
         currentColors.Dispose();
         transitionColors.Dispose();    

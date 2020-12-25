@@ -57,8 +57,6 @@ public abstract class EquipableElement : LevelObject
             if(useRequest.requestUse)
             {
                 InternalUse(ref tickBlock);
-                isUsedThisFrame = true;
-                unUsedForTicks = 0;
             }
             else
             {
@@ -92,10 +90,12 @@ public abstract class EquipableElement : LevelObject
 
     void InternalUse(ref TickBlock tickBlock)
     {
+        useRequest.requestUse = false;
         if (cooldown != 0)
             return;
 
-        useRequest.requestUse = false;
+        isUsedThisFrame = true;
+        unUsedForTicks = 0;
         isUsedThisFrame = true;
         cooldown = baseSettings.frameCooldown;
 

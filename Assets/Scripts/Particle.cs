@@ -8,6 +8,7 @@ public struct Particle
     public ParticleType type;
     public float2 velocity;
     public int tickIdle;
+    public float2 fracPosition;
 }
 
 public enum ParticleType

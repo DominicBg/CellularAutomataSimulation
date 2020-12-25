@@ -16,12 +16,16 @@ public struct DiamondTransitionJob : IJobParallelFor
     public float t;
     public int diamondSize;
     public Color32 color;
+    public float offset;
 
     public void Execute(int index)
     {
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        //int2 diamondPos = pos / (diamondSize * 2);
+        //int2 numberDiamond = GameManager.GridSizes / (diamondSize * 2);
+        //t += diamondPos.y * offset;
 
-        if(t < 0.5f)
+        if (t < 0.5f)
         {
             //remap [0, .5] -> [0, 1]
             float tt = t * 2;

@@ -45,18 +45,17 @@ public unsafe struct Map
 
     public void SetParticleType(int2 pos, ParticleType type, bool setDirty = true)
     {
+        SetParticleType(pos, type, 0.5f, setDirty);
+    }
+
+    public void SetParticleType(int2 pos, ParticleType type, float2 fracPos, bool setDirty = true)
+    {
         if (!InBound(pos))
             return;
 
-        particleGrid[pos] = new Particle() { type = type, velocity = 0, tickIdle = 0 };
+        particleGrid[pos] = new Particle() { type = type, velocity = 0, tickIdle = 0, fracPosition = fracPos };
         if(setDirty)
             dirtyGrid[pos] = true;
-    }
-
-
-    public bool IsParticleDirty(int2 pos)
-    {
-        return dirtyGrid[pos];
     }
 
     public void SetParticle(int2 pos, Particle particle, bool setDirty = true, bool resetTick = false)
@@ -67,6 +66,51 @@ public unsafe struct Map
         particleGrid[pos] = particle;
         if (setDirty)
             dirtyGrid[pos] = true;
+    }
+    //public void MoveParticle(int2 from, int2 to)
+    //{
+    //    MoveParticle(from, to, 0.5f);
+    //}
+
+    //public void MoveParticle(int2 from, int2 to, float2 fracPos)
+    //{
+    //    if (math.all(from == to))
+    //        return;
+
+    //    Particle temp = particleGrid[from];
+    //    temp.tickIdle = 0;
+    //    temp.fracPosition = fracPos;
+    //    particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0, fracPosition = 0.5f };
+    //    particleGrid[to] = temp;
+    //    dirtyGrid[to] = true;
+    //}
+
+    public void MoveParticle(Particle particle, int2 from, int2 to)
+    {
+        if (math.all(from == to))
+            return;
+
+        particle.tickIdle = 0;
+        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0, fracPosition = 0.5f };
+        particleGrid[to] = particle;
+        dirtyGrid[to] = true;
+    }
+
+    public void SwapParticles(int2 from, int2 to)
+    {
+        Particle p1 = particleGrid[from];
+        Particle p2 = particleGrid[to];
+        p1.tickIdle = 0;
+        p2.tickIdle = 0;
+        particleGrid[from] = p2;
+        particleGrid[to] = p1;
+        dirtyGrid[to] = true;
+    }
+
+
+    public bool IsParticleDirty(int2 pos)
+    {
+        return dirtyGrid[pos];
     }
 
     public Particle GetParticle(int2 pos)
@@ -87,79 +131,72 @@ public unsafe struct Map
         }
     }
 
-    public int2 SlideParticle(int2 from, int2 to, out bool hasCollision, out int2 collisionPos)
+    public int2 SimulateParticlePhysic(int2 from, int2 to, out bool hasCollision, out int2 collisionPos)
     {
         to = math.clamp(to, -1, GameManager.GridSizes);
 
         int2 diff = to - from;
-        int distance = math.abs(diff.x) + math.abs(diff.y);
+        int maxSteps = math.abs(diff.x) + math.abs(diff.y);
 
         int2 currentPosition = from;
-        for (int i = 0; i < distance; i++)
+
+        float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
+        for (int i = 0; i <= maxSteps; i++)
         {
-            diff = to - currentPosition;
-            int2 step = math.clamp(diff, -1, 1);
+            int2 nextPosition = (int2)math.lerp(from, to, i * steps);
+            if (math.all(currentPosition == nextPosition))
+                continue;
 
-            //Make sure we dont step in diagonals
-            if(math.all(math.abs(step) == 1))
-            {
-                if (i % 2 == 0)
-                    step.y = 0;
-                else
-                    step.x = 0;
-            }
-
-            int2 nextPosition = currentPosition + step;
+            //int2 nextPosition = currentPosition + step;
             if (!InBound(nextPosition) || HasCollision(nextPosition))
             {
                 hasCollision = true;
                 collisionPos = nextPosition;
                 return currentPosition;
             }
+
             currentPosition = nextPosition;
         }
         hasCollision = false;
-        collisionPos = currentPosition;
+        collisionPos = -1;
         return currentPosition;
     }
 
-    public void MoveParticle(int2 from, int2 to)
+    public int2 FindParticlePosition(int2 from, int2 to, int ignoreFlag = 0)
     {
         if (math.all(from == to))
-            return;
+            return from;
 
-        Particle temp = particleGrid[from];
-        temp.tickIdle = 0;
-        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0 };
-        particleGrid[to] = temp;
-        dirtyGrid[to] = true;
+        int2 diff = to - from;
+        int maxSteps = math.abs(diff.x) + math.abs(diff.y);
+
+        int2 currentPosition = from;
+        int2 safePosition = from;
+
+        float steps = 1f / maxSteps;
+        for (int i = 0; i <= maxSteps; i++)
+        {
+            int2 nextPosition = (int2)math.lerp(from, to, i * steps);
+            if (math.all(currentPosition == nextPosition))
+                continue;
+
+            ParticleType particleType = GetParticleType(nextPosition);
+            if(particleType == ParticleType.None)
+            {
+                safePosition = currentPosition;
+            }
+            else if (HasCollision(nextPosition, ignoreFlag))
+            {
+                return safePosition;
+            }
+
+            currentPosition = nextPosition;
+        }
+        return safePosition;
     }
 
-    public void MoveParticle(Particle particle, int2 from, int2 to)
-    {
-        if (math.all(from == to))
-            return;
 
-        particle.tickIdle = 0;
-        particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0 };
-        particleGrid[to] = particle;
-        dirtyGrid[to] = true;
-    }
-
-    public void SwapParticles(int2 from, int2 to)
-    {
-        Particle p1 = particleGrid[from];
-        Particle p2 = particleGrid[to];
-        p1.tickIdle = 0;
-        p2.tickIdle = 0;
-        particleGrid[from] = p2;
-        particleGrid[to] = p1;
-        dirtyGrid[to] = true;
-
-        //particleGrid[from] = particleGrid[to];
-        //particleGrid[to] = temp;
-        //dirtyGrid[to] = true;
-    }
+  
 
     public bool IsFreePosition(int2 pos)
     {
@@ -234,14 +271,15 @@ public unsafe struct Map
         return false;
     }
 
-    public bool HasCollision(int2 position)
+    public bool HasCollision(int2 position, int ignoreFlag = 0)
     {
-        return InBound(position) && HasParticleCollision(GetParticleType(position));
+        return InBound(position) && HasParticleCollision(GetParticleType(position), ignoreFlag);
     }
 
-    public bool HasParticleCollision(ParticleType type)
+    public bool HasParticleCollision(ParticleType type, int ignoreFlag = 0)
     {
-        return type != ParticleType.None;
+        //can remove  type != ParticleType.None?
+        return type != ParticleType.None && !PhysiXVII.IsInFlag(ignoreFlag, type);
     }
 
     public bool CanPush(int2 position, in PhysiXVIISetings settings)

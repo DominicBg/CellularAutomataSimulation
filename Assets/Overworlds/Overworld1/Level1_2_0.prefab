@@ -461,4 +461,4 @@ MonoBehaviour:
     x: 0
     y: 0
   nextLevelEntrance: 0
-  transition: {fileID: 11400000, guid: 34cafd8f13a11c04f97ae35854009180, type: 2}
+  transition: {fileID: 11400000, guid: 271d33d0a39aa1d40893ab89c1bcd527, type: 2}
