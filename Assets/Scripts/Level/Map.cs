@@ -205,6 +205,8 @@ public unsafe struct Map
 
     public ParticleType GetParticleType(int2 pos)
     {
+        if (!InBound(pos))
+            return ParticleType.None;
         return particleGrid[pos].type;
     }
 

@@ -57,10 +57,9 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
         for (int i = 0; i < prefab.levelContainerPrefabList.Length; i++)
         {
-            WorldLevel.LevelPosition levelPos = prefab.levelContainerPrefabList[i];
-            if (math.all(levelPos.position == (int2)viewPosition))
+            if (math.all(prefab.levelContainerPrefabList[i].levelPosition == (int2)viewPosition))
             {
-                string path = AssetDatabase.GetAssetPath(levelPos.levelContainerPrefab);               
+                string path = AssetDatabase.GetAssetPath(prefab.levelContainerPrefabList[i]);               
                 PrefabUtility.SaveAsPrefabAsset(data.gameObject, path);
                 AssetDatabase.SaveAssets();
                 Debug.Log("Asset saved");

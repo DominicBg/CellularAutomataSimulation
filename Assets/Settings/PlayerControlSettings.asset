@@ -33,13 +33,4 @@ MonoBehaviour:
       - {fileID: 2800000, guid: 86fe31a0ef6f23d42ad23fadde5e403d, type: 3}
       - {fileID: 2800000, guid: 26941dc7a5784804482396b608e85b44, type: 3}
   collisionTexture: {fileID: 2800000, guid: c16361f6e0235cb4a8f3b7fa0c206186, type: 3}
-  lightSource:
-    position:
-      x: 0
-      y: 0
-    innerRadiusMin: 5
-    innerRadiusMax: 8
-    outerRadiusMin: 17
-    outerRadiusMax: 20
-    offsynch: 1
-    speed: 0.05
+  lightSourceSettings: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}

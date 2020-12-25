@@ -25,10 +25,12 @@ public class FogElement : LevelElement
     public override void PostRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
     {
         NativeArray<LightSource> lightSources = new NativeArray<LightSource>(sources.Length, Allocator.TempJob);
+        NativeArray<int2> lightPositions = new NativeArray<int2>(sources.Length, Allocator.TempJob);
         for (int i = 0; i < lightSources.Length; i++)
         {
-            LightSource source = sources[i].GetLightSource();
+            LightSource source = sources[i].GetLightSource(out int2 pos);
             lightSources[i] = source;
+            lightPositions[i] = pos;
         }
 
         new FogRenderingJob()
@@ -36,9 +38,12 @@ public class FogElement : LevelElement
             outputColor = outputColor,
             settings = settings,
             lightSources = lightSources,
-            tickBlock = tickBlock
+            lightPositions = lightPositions,
+            tickBlock = tickBlock,
+            map = map
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
+        lightPositions.Dispose();
         lightSources.Dispose();
     }
 
@@ -53,14 +58,16 @@ public class FogElement : LevelElement
         public NativeArray<Color32> outputColor;
         public TickBlock tickBlock;
 
+        [ReadOnly] public Map map;
         [ReadOnly] public NativeArray<LightSource> lightSources;
+        [ReadOnly] public NativeArray<int2> lightPositions;
 
         public void Execute(int index)
         {
             const float small = 0.001f;
             int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
          
-            float lightRatio = GetLightRatio(position);
+            float lightRatio = math.min(GetLightRatio(position), GetParticleLightRatio(position));
             if (lightRatio == 0)
                 return;
             
@@ -95,7 +102,8 @@ public class FogElement : LevelElement
             for (int i = 0; i < lightSources.Length; i++)
             {
                 LightSource source = lightSources[i];
-                float distSq = math.distancesq(position, source.position);
+                int2 lightPos = lightPositions[i];
+                float distSq = math.distancesq(position, lightPos);
 
                 if (distSq > source.outerRadiusMax * source.outerRadiusMax)
                 {
@@ -103,7 +111,7 @@ public class FogElement : LevelElement
                 }
 
                 float lightInnerSin = math.sin(tickBlock.tick * source.speed);
-                float innerRadius = math.lerp(source.innerRadiusMin, source.innerRadiusMin, lightInnerSin);
+                float innerRadius = math.lerp(source.innerRadiusMin, source.innerRadiusMax, lightInnerSin);
                 float lightOuterSin = math.sin(tickBlock.tick * source.speed + source.offsynch);
                 float outerRadius = math.lerp(source.outerRadiusMin, source.outerRadiusMax, lightOuterSin);
 
@@ -118,6 +126,22 @@ public class FogElement : LevelElement
                 }
             }
             return ratio;
+        }
+
+        float GetParticleLightRatio(int2 position)
+        {
+            if (map.GetParticleType(position) == ParticleType.Cinder)
+                return 0;
+
+            float ratio = 1;
+            if (map.GetParticleType(position + new int2(1, 0)) == ParticleType.Cinder) ratio -= 0.5f;
+            if (map.GetParticleType(position + new int2(-1, 0)) == ParticleType.Cinder) ratio -= 0.5f;
+            if (map.GetParticleType(position + new int2(0, 1)) == ParticleType.Cinder) ratio -= 0.5f;
+            if (map.GetParticleType(position + new int2(0, -1)) == ParticleType.Cinder) ratio -= 0.5f;
+
+            ratio = math.saturate(ratio);
+            return ratio;
+
         }
     }
 
@@ -145,7 +169,6 @@ public class FogElement : LevelElement
 [System.Serializable]
 public struct LightSource
 {
-    public int2 position;
     public int innerRadiusMin;
     public int innerRadiusMax;
     public int outerRadiusMin;
@@ -155,5 +178,5 @@ public struct LightSource
 }
 public interface ILightSource
 {
-    LightSource GetLightSource();
+    LightSource GetLightSource(out int2 position);
 }

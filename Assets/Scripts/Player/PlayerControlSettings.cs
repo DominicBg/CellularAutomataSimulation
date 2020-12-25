@@ -16,5 +16,5 @@ public class PlayerControlSettings : ScriptableObject
     public SpriteSheet spriteSheet;
     public Texture2D collisionTexture;
 
-    public LightSource lightSource;
+    public LightSourceScriptable lightSourceSettings;
 }

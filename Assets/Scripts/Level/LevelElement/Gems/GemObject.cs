@@ -9,7 +9,7 @@ public class GemObject : LevelObject, ILightSource
 {
     public Color32 color;
     public GemShine[] gemShines;
-    public LightSource lightSource;
+    public LightSourceScriptable lightSource;
 
     public override Bound GetBound()
     {
@@ -37,11 +37,10 @@ public class GemObject : LevelObject, ILightSource
     {
     }
 
-    public LightSource GetLightSource()
+    public LightSource GetLightSource(out int2 position)
     {
-        LightSource lightsource = this.lightSource;
-        lightsource.position = position; // GetBound().center;
-        return lightsource;
+        position = this.position;
+        return lightSource.lightSource;
     }
 
     [System.Serializable]

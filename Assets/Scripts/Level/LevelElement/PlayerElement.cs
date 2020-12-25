@@ -130,10 +130,9 @@ public class PlayerElement : PhysicObject, ILightSource
         spriteAnimator.Dispose();
     }
 
-    public LightSource GetLightSource()
+    public LightSource GetLightSource(out int2 position)
     {
-        LightSource source = settings.lightSource;
-        source.position = GetBound().center;
-        return source;
+        position = GetBound().center;
+        return settings.lightSourceSettings.lightSource;
     }
 }

@@ -17,5 +17,5 @@ public class ShovelScriptable : EquipableBaseScriptable
     public bool flipPhysics;
 
     public int2 throwStartOffset;
-    public int yshifting;
+    public float yshifting;
 }

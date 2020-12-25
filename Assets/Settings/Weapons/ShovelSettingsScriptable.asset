@@ -24,21 +24,21 @@ MonoBehaviour:
   framePerImage: 5
   frameCooldown: 15
   shovelSize:
-    x: 10
-    y: 10
+    x: 12
+    y: 12
   lookingOffset:
-    x: 3
-    y: -2
-  minThrowStrength: 80
+    x: 2
+    y: -3
+  minThrowStrength: 70
   maxThrowStrength: 90
   throwDirVelocity:
-    x: 1
+    x: 2
     y: 1
   animOffset:
     x: 2
     y: 10
   flipPhysics: 0
   throwStartOffset:
-    x: 8
-    y: 11
-  yshifting: 2
+    x: 9
+    y: 12
+  yshifting: 0.75

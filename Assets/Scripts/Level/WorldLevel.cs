@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    public LevelPosition[] levelContainerPrefabList = default;
+    public LevelContainer[] levelContainerPrefabList = default;
 
     public Dictionary<int2, LevelContainer> levels;
     public int2 currentLevelPosition;
@@ -17,25 +17,17 @@ public class WorldLevel : MonoBehaviour
     public LevelContainer CurrentLevel => levels[currentLevelPosition];
     public float transitionSpeed = 1;
     TransitionInfo transitionInfo;
-    //private float transitionRatio;
-    //private int2 nextLevelContainerPosition;
-    //public float transitionSpeed = 1;
-    //private bool isInTransition;
-    //private int nextEntranceID;
 
     public void LoadLevel()
     {
         levels = new Dictionary<int2, LevelContainer>();
         for (int i = 0; i < levelContainerPrefabList.Length; i++)
         {
-            LevelContainer instance = Instantiate(levelContainerPrefabList[i].levelContainerPrefab);
-            levels.Add(levelContainerPrefabList[i].position, instance);
+            LevelContainer instance = Instantiate(levelContainerPrefabList[i]);
+            levels.Add(levelContainerPrefabList[i].levelPosition, instance);
 
             LevelContainerData data = instance.GetComponent<LevelContainerData>();
             instance.Init(data.LoadMap());
-
-            //todo, delete
-            //Delete data
         }
     }
 
@@ -124,13 +116,6 @@ public class WorldLevel : MonoBehaviour
         }
         levels.Clear();
         Destroy(gameObject);
-    }
-
-    [System.Serializable]
-    public class LevelPosition
-    {
-        public LevelContainer levelContainerPrefab;
-        public int2 position;
     }
 
     public struct TransitionInfo
