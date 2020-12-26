@@ -29,7 +29,6 @@ namespace FiniteStateMachine
         {
             currentState.OnUpdate();
             m_onUpdateCallback?.Invoke(currentState);
-
             previousState = currentState;
         }
 

@@ -16,7 +16,8 @@ public class LevelExit : LevelObject
     public override void Init(Map map)
     {
         base.Init(map);
-        player = GetLevelElement<PlayerElement>();
+        //nasto
+        player = FindObjectOfType<PlayerElement>();
     }
 
     public override Bound GetBound()
@@ -36,7 +37,7 @@ public class LevelExit : LevelObject
         }
     }
 
-    public override void OnRenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
         GridRenderer.DrawBound(ref outputColors, GetBound(), new Color32(255, 69, 0, 100));
     }

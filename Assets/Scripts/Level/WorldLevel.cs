@@ -9,6 +9,7 @@ public class WorldLevel : MonoBehaviour
 {
     //public LevelContainer[] levelContainerPrefabList = default;
 
+    WorldObject[] worldObjects;
     public Dictionary<int2, LevelContainer> levels;
     public int2 currentLevelPosition;
 
@@ -20,6 +21,9 @@ public class WorldLevel : MonoBehaviour
 
     public void LoadLevel()
     {
+        //add WorldElements
+        worldObjects = GetComponentsInChildren<WorldObject>();
+
         LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
         levels = new Dictionary<int2, LevelContainer>();
         for (int i = 0; i < levelContainers.Length; i++)
@@ -29,6 +33,11 @@ public class WorldLevel : MonoBehaviour
 
             LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
             levelContainers[i].Init(data.LoadMap());
+        }
+
+        for (int i = 0; i < worldObjects.Length; i++)
+        {
+            worldObjects[i].Init(CurrentLevel.map);
         }
     }
 
@@ -41,29 +50,46 @@ public class WorldLevel : MonoBehaviour
         if (!transitionInfo.isInTransition)
         {
             levels[currentLevelPosition].OnUpdate();
+            for (int i = 0; i < worldObjects.Length; i++)
+                //update according to current level, might put tickBlock in worldLevel
+                worldObjects[i].OnUpdate(ref levels[worldObjects[i].currentLevel].tickBlock);
         }
         else
         {
             transitionInfo.transitionRatio += GameManager.DeltaTime * transitionSpeed;
             if (transitionInfo.transitionRatio >= 1)
             {
-                transitionInfo.isInTransition = false;
-                currentLevelPosition = transitionInfo.nextLevelContainerPosition;
-                LevelEntrance[] levelEntrances = CurrentLevel.entrances;
-                for (int i = 0; i < levelEntrances.Length; i++)
-                {
-                    if(transitionInfo.nextEntranceID == levelEntrances[i].id)
-                    {
-                        //eww
-                        PlayerElement player = CurrentLevel.GetComponentInChildren<PlayerElement>();
-                        player.position = levelEntrances[i].position;
-                        player.physicData.position = player.position;
-                        player.physicData.velocity = 0;
-                    }
-                }
+                OnTransitionFinished();
             }
         }
     }
+
+    void OnTransitionFinished()
+    {
+        transitionInfo.isInTransition = false;
+        currentLevelPosition = transitionInfo.nextLevelContainerPosition;
+
+        //Bind entrance by refs
+        LevelEntrance[] levelEntrances = CurrentLevel.entrances;
+        for (int i = 0; i < levelEntrances.Length; i++)
+        {
+            if (transitionInfo.nextEntranceID == levelEntrances[i].id)
+            {
+                //eww
+                PlayerElement player =FindObjectOfType<PlayerElement>();
+                player.position = levelEntrances[i].position;
+                player.physicData.position = player.position;
+                player.physicData.velocity = 0;
+            }
+        }
+
+        for (int i = 0; i < worldObjects.Length; i++)
+        {
+            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map);
+        }
+    }
+
+
     public void OnRender()
     {
         //TODO add global effect in rendering here?
@@ -75,24 +101,45 @@ public class WorldLevel : MonoBehaviour
         }
         else
         {
-            LevelContainer levelContainer = levels[currentLevelPosition];
-            levelContainer.PreRender(ref outputColors);
-            levelContainer.Render(ref outputColors);
-            levelContainer.PostRender(ref outputColors);
-            levelContainer.RenderUI(ref outputColors);
+            RenderLevelContainer(levels[currentLevelPosition], ref outputColors);
         }
+
+        PostProcessManager.Instance.Render(ref outputColors, ref levels[currentLevelPosition].tickBlock);
         GridRenderer.RenderToScreen(outputColors);
     }
 
     public void RenderLevelContainer(LevelContainer levelContainer, ref NativeArray<Color32> outputColors)
     {
+        ref TickBlock currentTickBlock = ref levelContainer.tickBlock;
+
+        //Nasty shit, maybe transfer worldObject in WorldContainer?
         levelContainer.PreRender(ref outputColors);
+        for (int i = 0; i < worldObjects.Length; i++)
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                worldObjects[i].PreRender(ref outputColors, ref currentTickBlock);
+
         levelContainer.Render(ref outputColors);
+        for (int i = 0; i < worldObjects.Length; i++)
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                worldObjects[i].Render(ref outputColors, ref currentTickBlock);
+
         levelContainer.PostRender(ref outputColors);
+        for (int i = 0; i < worldObjects.Length; i++)
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                worldObjects[i].PostRender(ref outputColors, ref currentTickBlock);
+
         levelContainer.RenderUI(ref outputColors);
-        
-        if(inDebug)
+        for (int i = 0; i < worldObjects.Length; i++)
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                worldObjects[i].RenderUI(ref outputColors, ref currentTickBlock);
+
+        if (inDebug)
+        {
             levelContainer.RenderDebug(ref outputColors);
+            for (int i = 0; i < worldObjects.Length; i++)
+                if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                    worldObjects[i].RenderDebug(ref outputColors, ref currentTickBlock);
+        }
     }
 
     void RenderTransition(ref NativeArray<Color32> outputColors)
@@ -123,7 +170,11 @@ public class WorldLevel : MonoBehaviour
 
     public void Dispose()
     {
-        foreach(var level in levels.Values)
+        for (int i = 0; i < worldObjects.Length; i++)
+        {
+            worldObjects[i].Dispose();
+        }
+        foreach (var level in levels.Values)
         {
             level.Dispose();
             Destroy(level.gameObject);

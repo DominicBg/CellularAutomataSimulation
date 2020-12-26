@@ -59,8 +59,6 @@ MonoBehaviour:
   - {fileID: 4006933567569677730}
   - {fileID: 1648035945990244810}
   - {fileID: 6175075688007538656}
-  - {fileID: 6600564232470503148}
-  - {fileID: 9100844644149809602}
   - {fileID: 7011559508825684718}
   - {fileID: 5061419967716492432}
   - {fileID: 5208214235377210407}
@@ -364,8 +362,6 @@ MonoBehaviour:
   - {fileID: 7474073052752577270}
   - {fileID: 2452708273747942895}
   - {fileID: 6385452076607476062}
-  - {fileID: 880637822572209918}
-  - {fileID: 6909201115196937041}
   - {fileID: 7263521034863561224}
   - {fileID: 8484544750821116549}
   - {fileID: 9073906542627926566}
@@ -716,7 +712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevelPosition:
-    x: 0
+    x: -1
     y: 0
   inDebug: 0
   transitionSpeed: 1
@@ -731,9 +727,7 @@ GameObject:
   - component: {fileID: 5841259647618872440}
   - component: {fileID: 5522893050416227433}
   - component: {fileID: 1251494101718799270}
-  - component: {fileID: 6754915410532158260}
   - component: {fileID: 4337019063490639071}
-  - component: {fileID: 4060841141542367444}
   m_Layer: 0
   m_Name: GameplayElements
   m_TagString: Untagged
@@ -807,87 +801,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &6754915410532158260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642530473867454341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 14
-    y: 12
-  physicData:
-    position:
-      x: 14
-      y: 12
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 14
-      y: 12
-    mass: 25
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 25
-    speed: 5
-    duration: 1
-    yoffset: 0.1
 --- !u!114 &4337019063490639071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,26 +838,6 @@ MonoBehaviour:
     notTickBounded: 0
     startTick: 0
     endTick: 1800
---- !u!114 &4060841141542367444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642530473867454341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 17
-    y: 16
-  player: {fileID: 6754915410532158260}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
 --- !u!1 &1656264781881254017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,7 +937,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7652053161957617432}
   - component: {fileID: 7241238292873079565}
-  - component: {fileID: 8259139552646951246}
   - component: {fileID: 419600324719199345}
   m_Layer: 0
   m_Name: GameplayElements
@@ -1081,87 +973,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &8259139552646951246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2004359267955576075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 14
-    y: 12
-  physicData:
-    position:
-      x: 14
-      y: 12
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 14
-      y: 12
-    mass: 25
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 25
-    speed: 5
-    duration: 1
-    yoffset: 0.1
 --- !u!114 &419600324719199345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1377,8 +1188,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6336579165851728308}
   - component: {fileID: 6175075688007538656}
-  - component: {fileID: 6600564232470503148}
-  - component: {fileID: 9100844644149809602}
   m_Layer: 0
   m_Name: GameplayElements
   m_TagString: Untagged
@@ -1414,107 +1223,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &6600564232470503148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2592159513335629630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 3
-    y: 9
-  physicData:
-    position:
-      x: 3
-      y: 9
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 3
-      y: 9
-    mass: 25
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 25
-    speed: 5
-    duration: 1
-    yoffset: 0.1
---- !u!114 &9100844644149809602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2592159513335629630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 25
-    y: 10
-  player: {fileID: 6600564232470503148}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
 --- !u!1 &2851471667862367945
 GameObject:
   m_ObjectHideFlags: 0
@@ -1626,8 +1334,6 @@ MonoBehaviour:
   - {fileID: 7519127446519077296}
   - {fileID: 5522893050416227433}
   - {fileID: 1251494101718799270}
-  - {fileID: 6754915410532158260}
-  - {fileID: 4060841141542367444}
   - {fileID: 1068183905175757506}
   - {fileID: 6108152443188727337}
   - {fileID: 8891723967417814538}
@@ -1778,7 +1484,6 @@ MonoBehaviour:
   levelElements:
   - {fileID: 9221696166870492234}
   - {fileID: 7241238292873079565}
-  - {fileID: 8259139552646951246}
   - {fileID: 484451904893337705}
   - {fileID: 8670559809612821123}
   - {fileID: 1170306120785212416}
@@ -1810,6 +1515,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6176266064442670241}
+  - component: {fileID: 5063371037428566823}
+  - component: {fileID: 6113349723988590751}
   m_Layer: 0
   m_Name: Global
   m_TagString: Untagged
@@ -1831,6 +1538,72 @@ Transform:
   m_Father: {fileID: 2951247776117687430}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5063371037428566823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3780873987243710670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 17
+    y: 16
+  currentLevel:
+    x: 2
+    y: 0
+  player: {fileID: 6113349723988590751}
+  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
+  isEquiped: 0
+--- !u!114 &6113349723988590751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3780873987243710670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 10
+    y: 10
+  currentLevel:
+    x: -1
+    y: 0
+  physicData:
+    position:
+      x: 0
+      y: 0
+    controlledVelocity:
+      x: 0
+      y: 0
+    velocity:
+      x: 0
+      y: 0
+    gridPosition:
+      x: 0
+      y: 0
+    mass: 0
+    inclinaison: 0
+  debugBoundFlag: 0
+  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
+  spriteAnimator:
+    currentAnim: 0
+    currentFrame: 0
+    framePerImage: 0
+  currentEquip: {fileID: 0}
+  lookLeft: 0
 --- !u!1 &4002597310567755649
 GameObject:
   m_ObjectHideFlags: 0
@@ -2070,7 +1843,6 @@ MonoBehaviour:
   - {fileID: 8026267665570560304}
   - {fileID: 8308700622335687317}
   - {fileID: 5773362087864314386}
-  - {fileID: 5585393998005124402}
   - {fileID: 5754246610845119178}
   - {fileID: 286334666037564829}
   - {fileID: 26262885948911283}
@@ -2100,8 +1872,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2746159359171924758}
   - component: {fileID: 3901527883972240017}
-  - component: {fileID: 3540306589278736644}
-  - component: {fileID: 8593919546707099352}
   - component: {fileID: 3300725040633926755}
   - component: {fileID: 6265499164865353651}
   - component: {fileID: 569233020226569529}
@@ -2140,107 +1910,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &3540306589278736644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4835517186611534407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 3
-    y: 66
-  physicData:
-    position:
-      x: 3
-      y: 66
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 3
-      y: 66
-    mass: 25
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 25
-    speed: 5
-    duration: 1
-    yoffset: 0.1
---- !u!114 &8593919546707099352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4835517186611534407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 25
-    y: 10
-  player: {fileID: 3540306589278736644}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
 --- !u!114 &3300725040633926755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2509,7 +2178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1408467803583081846}
   - component: {fileID: 5773362087864314386}
-  - component: {fileID: 5585393998005124402}
   - component: {fileID: 1275238953357268603}
   m_Layer: 0
   m_Name: GameplayElements
@@ -2546,87 +2214,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &5585393998005124402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6707228538473451480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 14
-    y: 12
-  physicData:
-    position:
-      x: 14
-      y: 12
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 14
-      y: 12
-    mass: 25
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 25
-    speed: 5
-    duration: 1
-    yoffset: 0.1
 --- !u!114 &1275238953357268603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2865,8 +2452,6 @@ MonoBehaviour:
   - {fileID: 1369336952172076138}
   - {fileID: 4570481340598427240}
   - {fileID: 3901527883972240017}
-  - {fileID: 3540306589278736644}
-  - {fileID: 8593919546707099352}
   - {fileID: 3300725040633926755}
   - {fileID: 6265499164865353651}
   - {fileID: 569233020226569529}
@@ -3429,8 +3014,6 @@ GameObject:
   - component: {fileID: 7474073052752577270}
   - component: {fileID: 2452708273747942895}
   - component: {fileID: 6385452076607476062}
-  - component: {fileID: 880637822572209918}
-  - component: {fileID: 6909201115196937041}
   - component: {fileID: 7263521034863561224}
   - component: {fileID: 1545380400399593777}
   m_Layer: 0
@@ -3529,107 +3112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnable: 1
   isVisible: 1
---- !u!114 &880637822572209918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9086010169762290415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 1
-    y: 48
-  physicData:
-    position:
-      x: 1
-      y: 48
-    controlledVelocity:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 1
-      y: 48
-    mass: 0
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquip: {fileID: 0}
-  lookLeft: 0
-  explosiveSettings:
-    radius: 25
-    strength: 10
-  shakeSettings:
-    intensity: 7
-    duration: 0.5
-    speed: 0.5
-    blendWithOriginal: 0.5
-  flashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4278190080
-    color2:
-      serializedVersion: 2
-      rgba: 4294967295
-    threshold: 0.7
-    duration: 0.2
-    interval: 2
-    blendWithOriginal: 0.6
-  shockwaveSettings:
-    centerPoint:
-      x: 50
-      y: 50
-    radiusThickness: 25
-    duration: 1.5
-    waveSpeed: 40
-    intensity: 1
-  blackholeSettings:
-    centerPoint:
-      x: 0
-      y: 0
-    duration: 2
-    waveSpeed: 25
-    intensityMin: 0.5
-    intensityMax: 1.5
-  illusionEffect:
-    minIntensity: 0
-    intensity: 0
-    speed: 0
-    duration: 0
-    yoffset: 0
---- !u!114 &6909201115196937041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9086010169762290415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  position:
-    x: 48
-    y: 13
-  player: {fileID: 880637822572209918}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
 --- !u!114 &7263521034863561224
 MonoBehaviour:
   m_ObjectHideFlags: 0

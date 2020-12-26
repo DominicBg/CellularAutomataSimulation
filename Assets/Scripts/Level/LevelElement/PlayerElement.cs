@@ -15,12 +15,6 @@ public class PlayerElement : PhysicObject, ILightSource
     int lookDirection;
     public bool lookLeft;
 
-    public Explosive.Settings explosiveSettings;
-    public PostProcessManager.ShakeSettings shakeSettings;
-    public PostProcessManager.ScreenFlashSettings flashSettings;
-    public ShockwaveSettings shockwaveSettings;
-    public BlackholeSettings blackholeSettings;
-    public IllusionEffectSettings illusionEffect;
 
     public override Bound GetBound()
     {
@@ -41,9 +35,7 @@ public class PlayerElement : PhysicObject, ILightSource
             lookLeft = lookDirection == -1;
         }
 
-        //spriteAnimator.DebugRender(ref outputcolor, position);
         spriteAnimator.Render(ref outputcolor, position, lookLeft);
-        //GridRenderer.ApplySprite(ref outputcolor, GetNativeSprite(), position, lookLeft);
         DebugAllPhysicBound(ref outputcolor);
     }
 
@@ -91,27 +83,6 @@ public class PlayerElement : PhysicObject, ILightSource
 
             physicData.velocity += new float2(0, settings.jumpForce);
         }
-
-        if (InputCommand.IsButtonDown(KeyCode.X))
-            Explosive.SetExplosive(GridPicker.GetGridPosition(), ref explosiveSettings, map);
-        if (InputCommand.IsButtonDown(KeyCode.V))
-            PostProcessManager.EnqueueScreenFlash(in flashSettings, tickBlock.tick);
-        if (InputCommand.IsButtonDown(KeyCode.C))
-            PostProcessManager.EnqueueShake(in shakeSettings, tickBlock.tick);
-        if (InputCommand.IsButtonDown(KeyCode.B))
-        {
-            shockwaveSettings.centerPoint = GridPicker.GetGridPosition();
-            PostProcessManager.EnqueueShockwave(in shockwaveSettings, tickBlock.tick);
-        }
-        if (InputCommand.IsButtonDown(KeyCode.N))
-        {
-            blackholeSettings.centerPoint = GridPicker.GetGridPosition();
-            PostProcessManager.EnqueueBlackHole(in blackholeSettings, tickBlock.tick);
-        }
-        if (InputCommand.IsButtonDown(KeyCode.M))
-        {
-            PostProcessManager.EnqueuIllusion(in illusionEffect, tickBlock.tick);
-        }
         HandlePhysic();
     }
 
@@ -134,5 +105,11 @@ public class PlayerElement : PhysicObject, ILightSource
     {
         position = GetBound().center;
         return settings.lightSourceSettings.lightSource;
+    }
+
+    public override void UpdateLevelMap(int2 newLevel, Map map)
+    {
+        base.UpdateLevelMap(newLevel, map);
+        currentLevel = newLevel;
     }
 }

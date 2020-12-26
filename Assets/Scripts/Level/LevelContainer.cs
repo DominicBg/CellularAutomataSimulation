@@ -72,9 +72,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
                 levelElements[i].Render(ref outputcolor, ref tickBlock);
- 
-        //PostProcessManager.Instance.Render(ref outputcolor, ref tickBlock);
-    }
+     }
 
     public void PostRender(ref NativeArray<Color32> outputcolor)
     {
@@ -92,7 +90,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public void RenderDebug(ref NativeArray<Color32> outputcolor)
     {
         for (int i = 0; i < levelElements.Length; i++)
-            levelElements[i].OnRenderDebug(ref outputcolor, ref tickBlock);
+            levelElements[i].RenderDebug(ref outputcolor, ref tickBlock);
     }
 
     public void Dispose()

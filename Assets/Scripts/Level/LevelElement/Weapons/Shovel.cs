@@ -104,7 +104,7 @@ public class Shovel : EquipableElement
         spriteAnimator.Render(ref outputcolor, renderPos, flipped);
     }
 
-    public override void OnRenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < debugPositions.Count; i++)
         {

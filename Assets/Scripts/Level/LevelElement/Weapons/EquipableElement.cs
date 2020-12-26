@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public abstract class EquipableElement : LevelObject
+public abstract class EquipableElement : WorldObject
 {
     [HideInInspector] public PlayerElement player;
     public EquipableBaseScriptable baseSettings;
@@ -141,6 +141,14 @@ public abstract class EquipableElement : LevelObject
     {
         base.Dispose();
         spriteAnimator.Dispose();
+    }
+
+    //Make sure to follow in the map
+    public override void UpdateLevelMap(int2 newLevel, Map map)
+    {
+        base.UpdateLevelMap(newLevel, map);
+        if (isEquiped)
+            currentLevel = newLevel;
     }
 
     struct UseRequest
