@@ -15,6 +15,7 @@ public struct SmokeParticleSystemSettings
     public float fadeOffFactor;
     public float dispersionFactor;
     public float2 windForce;
+    public int resolution;
 }
 
 [BurstCompile]
@@ -39,7 +40,7 @@ public struct ParticleEffectSmokeMoveJob : IJob
             sp.position = math.clamp(sp.position, 0, GameManager.GridSizes - 1);
 
             int index = ArrayHelper.PosToIndex((int2)sp.position, GameManager.GridSizes);
-            outputColors[index] = Color32.Lerp(sp.startColor, sp.endColor, t);
+            outputColors[index] = Color.Lerp(sp.startColor, sp.endColor, t).ReduceResolution(settings.resolution);
 
             smokeParticles[i] = sp;
         }

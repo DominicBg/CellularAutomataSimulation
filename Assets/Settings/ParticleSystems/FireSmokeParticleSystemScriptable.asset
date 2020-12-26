@@ -18,7 +18,7 @@ MonoBehaviour:
       rgba: 1979764991
     maxStartColor:
       serializedVersion: 2
-      rgba: 1828733951
+      rgba: 4211098623
     minEndColor:
       serializedVersion: 2
       rgba: 2368548
@@ -32,12 +32,12 @@ MonoBehaviour:
       x: 7
       y: 0
     minDuration: 2
-    maxDuration: 5
+    maxDuration: 3
   settings:
     noiseSpeed: 0.123
     moveAmplitude: 1.37
-    fadeOffFactor: 1
-    dispersionFactor: 2.08
+    fadeOffFactor: 0.51
+    dispersionFactor: 0.86
     windForce:
       x: 2.5
       y: 5

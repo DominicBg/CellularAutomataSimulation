@@ -6,6 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class MainMenuLightRender : IDisposable
 {
+    public SmokeParticleSystemScriptable smokeParticleScriptable;
+
     [Header("Light Textures")]
     public LayerTexture sandBackground;
     public LayerTexture campFire;
@@ -15,6 +17,8 @@ public class MainMenuLightRender : IDisposable
     public ShadowRendering shadowRendering;
     public StarBackgroundRendering starBackground;
     public LayerTexture title;
+    public SmokeParticleSystem smokeParticle;
+
 
     public void Init()
     {
@@ -23,6 +27,7 @@ public class MainMenuLightRender : IDisposable
         sandBackground.Init();
         astronaut.Init();
         title.Init();
+        smokeParticle = new SmokeParticleSystem();
     }
     public void Dispose()
     {
@@ -31,6 +36,7 @@ public class MainMenuLightRender : IDisposable
         sandBackground.Dispose();
         astronaut.Dispose();
         title.Dispose();
+        smokeParticle.Dispose();
     }
 
     public NativeArray<Color32> Render(ref TickBlock tickBlock, ref Map map)
@@ -46,6 +52,12 @@ public class MainMenuLightRender : IDisposable
         shadowRendering.Render(ref pass2, tickBlock.tick);
 
         var pass3 = GridRenderer.CombineColors(ref pass1, ref pass2);
+
+        if(tickBlock.tick % 3 == 0)
+            smokeParticle.EmitParticle(campFireFlame.position + new int2(5,2), ref smokeParticleScriptable.emitter, ref tickBlock);
+
+        smokeParticle.Update(ref smokeParticleScriptable.settings, ref tickBlock);
+        smokeParticle.Render(ref pass3, BlendingMode.Transparency);
 
         fireRendering.Render(ref pass3, tickBlock.tick);
         campFireFlame.Render(ref pass3, tickBlock.tick);

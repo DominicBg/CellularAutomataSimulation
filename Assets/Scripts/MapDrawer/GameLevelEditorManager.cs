@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 {
     [Header("Editing")]
@@ -59,10 +61,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         {
             if (math.all(prefab.levelContainerPrefabList[i].levelPosition == (int2)viewPosition))
             {
+#if UNITY_EDITOR
+
                 string path = AssetDatabase.GetAssetPath(prefab.levelContainerPrefabList[i]);               
                 PrefabUtility.SaveAsPrefabAsset(data.gameObject, path);
                 AssetDatabase.SaveAssets();
                 Debug.Log("Asset saved");
+#endif
             }
         }
     }
