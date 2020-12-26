@@ -74,10 +74,25 @@ public class WorldLevel : MonoBehaviour
             RenderTransition(ref outputColors);
         }
         else
-        { 
-            levels[currentLevelPosition].OnRender(ref outputColors, inDebug);
+        {
+            LevelContainer levelContainer = levels[currentLevelPosition];
+            levelContainer.PreRender(ref outputColors);
+            levelContainer.Render(ref outputColors);
+            levelContainer.PostRender(ref outputColors);
+            levelContainer.RenderUI(ref outputColors);
         }
         GridRenderer.RenderToScreen(outputColors);
+    }
+
+    public void RenderLevelContainer(LevelContainer levelContainer, ref NativeArray<Color32> outputColors)
+    {
+        levelContainer.PreRender(ref outputColors);
+        levelContainer.Render(ref outputColors);
+        levelContainer.PostRender(ref outputColors);
+        levelContainer.RenderUI(ref outputColors);
+        
+        if(inDebug)
+            levelContainer.RenderDebug(ref outputColors);
     }
 
     void RenderTransition(ref NativeArray<Color32> outputColors)
@@ -85,8 +100,8 @@ public class WorldLevel : MonoBehaviour
         GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
 
-        levels[currentLevelPosition].OnRender(ref currentColors, inDebug);
-        levels[transitionInfo.nextLevelContainerPosition].OnRender(ref transitionColors, inDebug);
+        RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
+        RenderLevelContainer(levels[transitionInfo.nextLevelContainerPosition], ref transitionColors);
 
         transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
 
@@ -94,8 +109,6 @@ public class WorldLevel : MonoBehaviour
         transitionColors.Dispose();    
     }
 
-
-    //todo add types?
     public void StartTransition(int2 nextPosition, int nextEntranceID, TransitionBase transition)
     {
         transitionInfo = new TransitionInfo()

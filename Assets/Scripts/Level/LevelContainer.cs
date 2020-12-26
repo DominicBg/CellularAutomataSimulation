@@ -59,37 +59,40 @@ public class LevelContainer : MonoBehaviour, IDisposable
                 levelElements[i].OnUpdate(ref tickBlock);
         }
     }
-    public void OnRender(ref NativeArray<Color32> outputcolor, bool debug)
+
+    public void PreRender(ref NativeArray<Color32> outputcolor)
     {
         for (int i = 0; i < levelElements.Length; i++)
-        {
             if (levelElements[i].isVisible)
                 levelElements[i].PreRender(ref outputcolor, ref tickBlock);
-        }
+    }
+
+    public void Render(ref NativeArray<Color32> outputcolor)
+    {   
         for (int i = 0; i < levelElements.Length; i++)
-        {
             if (levelElements[i].isVisible)
                 levelElements[i].Render(ref outputcolor, ref tickBlock);
-        }
+ 
+        //PostProcessManager.Instance.Render(ref outputcolor, ref tickBlock);
+    }
+
+    public void PostRender(ref NativeArray<Color32> outputcolor)
+    {
         for (int i = 0; i < levelElements.Length; i++)
-        {
             if (levelElements[i].isVisible)
                 levelElements[i].PostRender(ref outputcolor, ref tickBlock);
-        }
+    }
+
+    public void RenderUI(ref NativeArray<Color32> outputcolor)
+    {
         for (int i = 0; i < levelElements.Length; i++)
-        {
             levelElements[i].RenderUI(ref outputcolor, ref tickBlock);
-        }
 
-        if(debug)
-        {
-            for (int i = 0; i < levelElements.Length; i++)
-            {
-                levelElements[i].OnRenderDebug(ref outputcolor, ref tickBlock);
-            }
-        }
-
-        PostProcessManager.Instance.Render(ref outputcolor, ref tickBlock);
+    }
+    public void RenderDebug(ref NativeArray<Color32> outputcolor)
+    {
+        for (int i = 0; i < levelElements.Length; i++)
+            levelElements[i].OnRenderDebug(ref outputcolor, ref tickBlock);
     }
 
     public void Dispose()

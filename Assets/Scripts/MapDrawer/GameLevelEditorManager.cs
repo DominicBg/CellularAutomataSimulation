@@ -270,7 +270,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
         if(currentWorldLevel.levels.TryGetValue(position, out LevelContainer levelContainer))
         {
-            levelContainer.OnRender(ref outputColors, inDebugView);
+            currentWorldLevel.RenderLevelContainer(levelContainer, ref outputColors);
 
             //Color spawner
             var particleSpawner = levelContainer.GetParticleSpawner();
@@ -285,17 +285,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
         return outputColors;
     }
-
-    public void ResetLevelData()
-    {
-        int2 sizes = GameManager.GridSizes;
-        grid = new ParticleType[sizes.x, sizes.y];
-
-        if (currentWorldLevel != null)
-            currentWorldLevel.Dispose();
-        currentWorldLevel = null;
-    }
-
     public void OnEnd()
     {
         if (currentWorldLevel != null)
