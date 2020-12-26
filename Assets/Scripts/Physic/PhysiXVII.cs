@@ -14,7 +14,7 @@ public static class PhysiXVII
 
         NativeReference<PhysicData> physicDataReference = new NativeReference<PhysicData>(Allocator.TempJob);
         physicDataReference.Value = physicObject.physicData;
-        new PhysiXVIIJob(map, GameManager.PhysiXVIISetings, GameManager.deltaTime, physicDataReference).Run();
+        new PhysiXVIIJob(map, GameManager.PhysiXVIISetings, GameManager.DeltaTime, physicDataReference).Run();
         physicObject.physicData = physicDataReference.Value;
         physicDataReference.Dispose();
 

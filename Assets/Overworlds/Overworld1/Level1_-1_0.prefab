@@ -240,8 +240,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6059458187940542458}
+  - component: {fileID: 141721641227228170}
   - component: {fileID: 8874642299512932154}
   - component: {fileID: 1423876071963467355}
+  - component: {fileID: 2786813124890463820}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -263,6 +265,26 @@ Transform:
   m_Father: {fileID: 5479903869181738648}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &141721641227228170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4809577714348114501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e2cf70c7c719438263cfa3379858b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 50
+    y: 10
+  settings: {fileID: 11400000, guid: b95b489e40bf0264396efc0e8c87693c, type: 2}
+  delayEmitParticle: 0.1
+  inBackground: 0
 --- !u!114 &8874642299512932154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,6 +303,7 @@ MonoBehaviour:
     x: 11
     y: 9
   spriteSheetScriptable: {fileID: 11400000, guid: 7f735a1f0e929b045b6208ae9cfc517d, type: 2}
+  inBackground: 0
 --- !u!114 &1423876071963467355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,6 +322,23 @@ MonoBehaviour:
     x: 43
     y: 8
   spriteSheetScriptable: {fileID: 11400000, guid: 4e720201e99a72948a9e7b32ff373e4e, type: 2}
+  inBackground: 0
+--- !u!114 &2786813124890463820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4809577714348114501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  target: {fileID: 1423876071963467355}
+  lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
 --- !u!1 &5479903869181738652
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,8 +394,10 @@ MonoBehaviour:
     y: 0
   levelElements:
   - {fileID: 330355631010069239}
+  - {fileID: 141721641227228170}
   - {fileID: 8874642299512932154}
   - {fileID: 1423876071963467355}
+  - {fileID: 2786813124890463820}
   - {fileID: 8840121812376108910}
   - {fileID: 7436076264407017550}
   - {fileID: 3203337710646242240}

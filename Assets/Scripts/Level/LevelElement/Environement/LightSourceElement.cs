@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class LightSourceElement : LevelElement, ILightSource
 {
-    [SerializeField] LevelObject target;
-    [SerializeField] LightSourceScriptable lightSource;
+    [SerializeField] LevelObject target = default;
+    [SerializeField] LightSourceScriptable lightSource = default;
 
 
     public override void OnUpdate(ref TickBlock tickBlock)

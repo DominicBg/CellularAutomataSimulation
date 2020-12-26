@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
     public static readonly int GridLength = GridSizes.x * GridSizes.y;
 
     public static readonly int InnerLoopBatchCount = 100;
-    public static int FPS => Instance.desiredFPS;
-    public static float deltaTime => Instance.frameDuration;
+    public static readonly int FPS = 60;
+    public static readonly float DeltaTime = 1f / FPS;
 
     public static PhysiXVIISetings PhysiXVIISetings => Instance.physiXVIIScriptable.settings;
     public static ParticleBehaviour ParticleBehaviour => Instance.particleBehaviourScriptable.particleBehaviour;
@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameMainMenuManager gameMainMenuManager = default;
 
     public GameStateEnum firstState;
-    public int desiredFPS;
     public WorldLevel worldLevel;
     public WorldLevel GetWorldLevelInstance() => Instantiate(worldLevel);
 
@@ -49,12 +48,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] ParticleBehaviourScriptable particleBehaviourScriptable = default;
 
     float currentDeltaTime;
-    float frameDuration;
 
-    private void OnValidate()
-    {
-        frameDuration = 1f / desiredFPS;
-    }
 
     private void Awake()
     {
@@ -79,15 +73,15 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         currentDeltaTime += Time.deltaTime;
-        if(currentDeltaTime >= frameDuration)
+        if(currentDeltaTime >= DeltaTime)
         {
             InputCommand.Update();
             m_stateMachine.Update();
             m_stateMachine.Render();
-            currentDeltaTime -= frameDuration;
+            currentDeltaTime -= DeltaTime;
 
             //Safety
-            if(currentDeltaTime >= frameDuration)
+            if(currentDeltaTime >= DeltaTime)
             {
                 currentDeltaTime = 0;
             }

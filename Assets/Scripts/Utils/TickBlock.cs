@@ -25,6 +25,6 @@ public struct TickBlock
 
     public float DurationSinceTick(int oldTick)
     {
-        return (tick - oldTick) * GameManager.deltaTime;
+        return (tick - oldTick) * GameManager.DeltaTime;
     }
 }

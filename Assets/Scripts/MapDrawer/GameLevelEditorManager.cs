@@ -69,7 +69,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
 
     public void OnUpdate()
     {
-        viewPosition += (float2)InputCommand.Direction * movingSpeed * GameManager.deltaTime;
+        viewPosition += (float2)InputCommand.Direction * movingSpeed * GameManager.DeltaTime;
 
         if(Input.GetMouseButton(1))
         {

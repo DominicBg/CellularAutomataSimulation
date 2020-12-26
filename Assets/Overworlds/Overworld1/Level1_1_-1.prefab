@@ -330,6 +330,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6059458187940542458}
+  - component: {fileID: 4879846599222297435}
   - component: {fileID: 3504203426119537613}
   - component: {fileID: 7190154276680812119}
   m_Layer: 0
@@ -353,6 +354,27 @@ Transform:
   m_Father: {fileID: 5479903869181738648}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4879846599222297435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4809577714348114501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e2cf70c7c719438263cfa3379858b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  position:
+    x: 10
+    y: 5
+  settings: {fileID: 11400000, guid: b95b489e40bf0264396efc0e8c87693c, type: 2}
+  autoEmit: 1
+  delayEmitParticle: 0.2
+  inBackground: 0
 --- !u!114 &3504203426119537613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,6 +393,7 @@ MonoBehaviour:
     x: 5
     y: 5
   spriteSheetScriptable: {fileID: 11400000, guid: 4e720201e99a72948a9e7b32ff373e4e, type: 2}
+  inBackground: 0
 --- !u!114 &7190154276680812119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,9 +409,6 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   target: {fileID: 3504203426119537613}
-  offset:
-    x: 0
-    y: 0
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
 --- !u!1 &5479903869181738652
 GameObject:
@@ -445,6 +465,7 @@ MonoBehaviour:
     x: 1
     y: -1
   levelElements:
+  - {fileID: 4879846599222297435}
   - {fileID: 3504203426119537613}
   - {fileID: 7190154276680812119}
   - {fileID: 8840121812376108910}
@@ -645,6 +666,7 @@ MonoBehaviour:
     y: 4
   particleType: 10
   texture: {fileID: 2800000, guid: 88971bb925cb1984fb545c873333e592, type: 3}
+  emitterOnParticleChange: {fileID: 4879846599222297435}
 --- !u!114 &3160284117541894753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +686,7 @@ MonoBehaviour:
     y: 7
   particleType: 10
   texture: {fileID: 2800000, guid: 88971bb925cb1984fb545c873333e592, type: 3}
+  emitterOnParticleChange: {fileID: 4879846599222297435}
 --- !u!114 &2426544720712194775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -683,3 +706,4 @@ MonoBehaviour:
     y: 15
   particleType: 10
   texture: {fileID: 2800000, guid: 88971bb925cb1984fb545c873333e592, type: 3}
+  emitterOnParticleChange: {fileID: 4879846599222297435}

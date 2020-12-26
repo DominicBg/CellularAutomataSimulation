@@ -51,7 +51,7 @@ MonoBehaviour:
   - {fileID: 5479903869181738649, guid: dc7b9075f47ed254aaee5474b83fc5a3, type: 3}
   - {fileID: 5479903869181738649, guid: 7db2a20363d1be048886957cec357258, type: 3}
   currentLevelPosition:
-    x: 1
+    x: 0
     y: 0
   inDebug: 0
   transitionSpeed: 1

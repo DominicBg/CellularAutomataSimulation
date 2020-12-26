@@ -43,7 +43,7 @@ public class WorldLevel : MonoBehaviour
         }
         else
         {
-            transitionInfo.transitionRatio += GameManager.deltaTime * transitionSpeed;
+            transitionInfo.transitionRatio += GameManager.DeltaTime * transitionSpeed;
             if (transitionInfo.transitionRatio >= 1)
             {
                 transitionInfo.isInTransition = false;

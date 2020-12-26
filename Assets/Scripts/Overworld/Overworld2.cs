@@ -60,15 +60,19 @@ public class Overworld2 : OverworldBase
 
         normals.Dispose();
 
-        NativeArray<LightSource> lights = new NativeArray<LightSource>(0, Allocator.TempJob);
-        new FogElement.FogRenderingJob()
-        {
-            outputColor = backgroundColors,
-            settings = fogSettings,
-            tickBlock = tickBlock,
-            lightSources = lights
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-        lights.Dispose();
+        //NativeArray<LightSource> lights = new NativeArray<LightSource>(0, Allocator.TempJob);
+        //NativeArray<int2> positions = new NativeArray<int2>(0, Allocator.TempJob);
+        //new FogElement.FogRenderingJob()
+        //{
+        //    outputColor = backgroundColors,
+        //    settings = fogSettings,
+        //    tickBlock = tickBlock,
+        //    lightSources = lights,
+        //    lightPositions = positions
+
+
+        //}.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        //lights.Dispose();
 
 
 
