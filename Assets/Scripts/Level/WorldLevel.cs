@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    public LevelContainer[] levelContainerPrefabList = default;
+    //public LevelContainer[] levelContainerPrefabList = default;
 
     public Dictionary<int2, LevelContainer> levels;
     public int2 currentLevelPosition;
@@ -20,14 +20,15 @@ public class WorldLevel : MonoBehaviour
 
     public void LoadLevel()
     {
+        LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
         levels = new Dictionary<int2, LevelContainer>();
-        for (int i = 0; i < levelContainerPrefabList.Length; i++)
+        for (int i = 0; i < levelContainers.Length; i++)
         {
-            LevelContainer instance = Instantiate(levelContainerPrefabList[i]);
-            levels.Add(levelContainerPrefabList[i].levelPosition, instance);
+            //LevelContainer instance = Instantiate(levelContainerPrefabList[i]);
+            levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
 
-            LevelContainerData data = instance.GetComponent<LevelContainerData>();
-            instance.Init(data.LoadMap());
+            LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
+            levelContainers[i].Init(data.LoadMap());
         }
     }
 

@@ -52,24 +52,27 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
             return;
         }
 
-        WorldLevel prefab = GameManager.Instance.worldLevel;
+        WorldLevel prefab = GameManager.Instance.worldLevelPrefab;
+
+        //Save everygrid?
         LevelContainer currentLevel = currentWorldLevel.levels[(int2)viewPosition];
         LevelContainerData data = currentLevel.GetComponent<LevelContainerData>();
         data.SaveGrid(grid);
 
-        for (int i = 0; i < prefab.levelContainerPrefabList.Length; i++)
-        {
-            if (math.all(prefab.levelContainerPrefabList[i].levelPosition == (int2)viewPosition))
-            {
+
+        //for (int i = 0; i < prefab.levelContainerPrefabList.Length; i++)
+        //{
+        //    if (math.all(prefab.levelContainerPrefabList[i].levelPosition == (int2)viewPosition))
+        //    {
 #if UNITY_EDITOR
 
-                string path = AssetDatabase.GetAssetPath(prefab.levelContainerPrefabList[i]);               
-                PrefabUtility.SaveAsPrefabAsset(data.gameObject, path);
+                string path = AssetDatabase.GetAssetPath(prefab);               
+                PrefabUtility.SaveAsPrefabAsset(currentWorldLevel.gameObject, path);
                 AssetDatabase.SaveAssets();
-                Debug.Log("Asset saved");
+                Debug.Log(prefab + " Asset saved");
 #endif
-            }
-        }
+        //    }
+        //}
     }
 
     public void OnUpdate()

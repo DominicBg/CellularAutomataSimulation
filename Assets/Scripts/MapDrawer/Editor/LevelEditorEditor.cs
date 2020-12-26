@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(GameLevelEditorManager))]
@@ -27,9 +28,11 @@ public class LevelEditorEditor : Editor
         {
             levelEditor.Load();
         }
-        if (GUILayout.Button("Reset level"))
+        if (GUILayout.Button("Select Current"))
         {
-            levelEditor.ResetLevelData();
+
+            Selection.activeObject = (MonoBehaviour)levelEditor.currentWorldLevel.levels[(int2)levelEditor.viewPosition];
+            EditorGUIUtility.PingObject(Selection.activeObject);
         }
 
     }

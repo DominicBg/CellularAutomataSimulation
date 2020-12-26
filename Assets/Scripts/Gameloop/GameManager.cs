@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameMainMenuManager gameMainMenuManager = default;
 
     public GameStateEnum firstState;
-    public WorldLevel worldLevel;
-    public WorldLevel GetWorldLevelInstance() => Instantiate(worldLevel);
+    public WorldLevel worldLevelPrefab;
+    public WorldLevel GetWorldLevelInstance() => Instantiate(worldLevelPrefab);
 
 
     [SerializeField] PhysiXVIIScriptable physiXVIIScriptable = default;
