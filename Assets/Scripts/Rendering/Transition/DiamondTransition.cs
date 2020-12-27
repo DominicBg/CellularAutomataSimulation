@@ -14,6 +14,7 @@ public class DiamondTransition : TransitionBase
 
     public override void Transition(ref NativeArray<Color32> outputColors, ref NativeArray<Color32> firstImage, ref NativeArray<Color32> secondImage, float t)
     {
+        t = t * t;
         //t = ease(t);
         new DiamondTransitionJob()
         {

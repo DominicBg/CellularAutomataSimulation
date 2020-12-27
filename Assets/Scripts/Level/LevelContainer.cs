@@ -15,7 +15,6 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public LevelEntrance[] entrances;
     public ParticleSpawnerElements particleSpawnerElements;
 
-    public TickBlock tickBlock;
     public Map map;
 
     public void OnValidate()
@@ -28,14 +27,13 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public void Init(Map map)
     {
         this.map = map;
-        tickBlock.Init();
         for (int i = 0; i < levelElements.Length; i++)
         {
             levelElements[i].Init(map, this);
         }
     }
 
-    public void OnUpdate()
+    public void OnUpdate(ref TickBlock tickBlock)
     {
         tickBlock.UpdateTick();
 
@@ -60,34 +58,34 @@ public class LevelContainer : MonoBehaviour, IDisposable
         }
     }
 
-    public void PreRender(ref NativeArray<Color32> outputcolor)
+    public void PreRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
                 levelElements[i].PreRender(ref outputcolor, ref tickBlock);
     }
 
-    public void Render(ref NativeArray<Color32> outputcolor)
+    public void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {   
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
                 levelElements[i].Render(ref outputcolor, ref tickBlock);
      }
 
-    public void PostRender(ref NativeArray<Color32> outputcolor)
+    public void PostRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
                 levelElements[i].PostRender(ref outputcolor, ref tickBlock);
     }
 
-    public void RenderUI(ref NativeArray<Color32> outputcolor)
+    public void RenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
             levelElements[i].RenderUI(ref outputcolor, ref tickBlock);
 
     }
-    public void RenderDebug(ref NativeArray<Color32> outputcolor)
+    public void RenderDebug(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
             levelElements[i].RenderDebug(ref outputcolor, ref tickBlock);

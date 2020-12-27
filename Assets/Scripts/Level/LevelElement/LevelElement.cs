@@ -11,7 +11,7 @@ public abstract class LevelElement : MonoBehaviour
 
     public bool isEnable = true;
     public bool isVisible = true;
-    public LevelContainer levelContainer;
+    [HideInInspector] public LevelContainer levelContainer;
 
     public void Init(Map map, LevelContainer levelContainer)
     {

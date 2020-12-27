@@ -16,13 +16,12 @@ public struct SlideTransitionJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        t = math.saturate(t);
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
 
         int size = isHorizontal ? GameManager.GridSizes.x : GameManager.GridSizes.y;
 
         int offset = (int)(t * size);
-        offset = math.clamp(offset, 0, size);
+        offset = math.clamp(offset, 0, size - 1);
 
         int2 samplePos = GetSamplePos(pos, size, offset, out bool useSecondImage);
 

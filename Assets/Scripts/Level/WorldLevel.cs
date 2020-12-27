@@ -11,26 +11,44 @@ public class WorldLevel : MonoBehaviour
 
     WorldObject[] worldObjects;
     public Dictionary<int2, LevelContainer> levels;
+    public Dictionary<LevelContainer, LevelContainerGroup> levelsGroups;
     public int2 currentLevelPosition;
 
     public bool inDebug = false;
 
     public LevelContainer CurrentLevel => levels[currentLevelPosition];
+    public LevelContainerGroup CurrentLevelGroup => levelsGroups[CurrentLevel];
+
     public float transitionSpeed = 1;
     TransitionInfo transitionInfo;
+    TickBlock tickBlock;
 
     public void LoadLevel()
     {
+        tickBlock.Init();
         worldObjects = GetComponentsInChildren<WorldObject>();
 
         LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
+
         levels = new Dictionary<int2, LevelContainer>();
+
         for (int i = 0; i < levelContainers.Length; i++)
         {
             levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
-
             LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
             levelContainers[i].Init(data.LoadMap());
+        }
+
+        //Link container to groups
+        levelsGroups = new Dictionary<LevelContainer, LevelContainerGroup>();
+        LevelContainerGroup[] levelContainerGroups = GetComponentsInChildren<LevelContainerGroup>();
+        for (int i = 0; i < levelContainerGroups.Length; i++)
+        {
+            var group = levelContainerGroups[i];
+            for (int j = 0; j < group.levelContainers.Length; j++)
+            {
+                levelsGroups.Add(group.levelContainers[j], group);
+            }
         }
 
         for (int i = 0; i < worldObjects.Length; i++)
@@ -48,10 +66,10 @@ public class WorldLevel : MonoBehaviour
 
         if (!transitionInfo.isInTransition)
         {
-            levels[currentLevelPosition].OnUpdate();
+            levels[currentLevelPosition].OnUpdate(ref tickBlock);
             for (int i = 0; i < worldObjects.Length; i++)
                 //update according to current level, might put tickBlock in worldLevel
-                worldObjects[i].OnUpdate(ref levels[worldObjects[i].currentLevel].tickBlock);
+                worldObjects[i].OnUpdate(ref tickBlock);
         }
         else
         {
@@ -84,65 +102,98 @@ public class WorldLevel : MonoBehaviour
 
     public void OnRender()
     {
-        //TODO add global effect in rendering here?
-
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
-        if(transitionInfo.isInTransition)
+
+        LevelContainerGroup levelContainerGroup = CurrentLevelGroup;
+        if (transitionInfo.isInTransition)
         {
             RenderTransition(ref outputColors);
         }
         else
         {
-            RenderLevelContainer(levels[currentLevelPosition], ref outputColors);
-        }
 
-        PostProcessManager.Instance.Render(ref outputColors, ref levels[currentLevelPosition].tickBlock);
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> backgroundColors);
+            levelContainerGroup.RenderBackground(ref backgroundColors, ref tickBlock, currentLevelPosition);
+            RenderLevelContainer(levels[currentLevelPosition], ref outputColors);
+
+            //to be consistent with transition
+            GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
+
+            backgroundColors.Dispose();
+            //levelContainerGroup.RenderBackground(ref outputColors, ref tickBlock, currentLevelPosition);
+            levelContainerGroup.RenderForeground(ref outputColors, ref tickBlock, currentLevelPosition);
+        }
+        PostProcessManager.Instance.Render(ref outputColors, ref tickBlock);
         GridRenderer.RenderToScreen(outputColors);
     }
 
     public void RenderLevelContainer(LevelContainer levelContainer, ref NativeArray<Color32> outputColors)
     {
-        ref TickBlock currentTickBlock = ref levelContainer.tickBlock;
-
-        //Nasty shit, maybe transfer worldObject in WorldContainer?
-        levelContainer.PreRender(ref outputColors);
+        levelContainer.PreRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
-                worldObjects[i].PreRender(ref outputColors, ref currentTickBlock);
+                worldObjects[i].PreRender(ref outputColors, ref tickBlock);
 
-        levelContainer.Render(ref outputColors);
+        levelContainer.Render(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
-                worldObjects[i].Render(ref outputColors, ref currentTickBlock);
+                worldObjects[i].Render(ref outputColors, ref tickBlock);
 
-        levelContainer.PostRender(ref outputColors);
+        levelContainer.PostRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
-                worldObjects[i].PostRender(ref outputColors, ref currentTickBlock);
+                worldObjects[i].PostRender(ref outputColors, ref tickBlock);
 
-        levelContainer.RenderUI(ref outputColors);
+        levelContainer.RenderUI(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
-                worldObjects[i].RenderUI(ref outputColors, ref currentTickBlock);
+                worldObjects[i].RenderUI(ref outputColors, ref tickBlock);
 
         if (inDebug)
         {
-            levelContainer.RenderDebug(ref outputColors);
+            //levelContainer.RenderDebug(ref outputColors, ref tickBlock);
             for (int i = 0; i < worldObjects.Length; i++)
                 if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
-                    worldObjects[i].RenderDebug(ref outputColors, ref currentTickBlock);
+                    worldObjects[i].RenderDebug(ref outputColors, ref tickBlock);
         }
     }
 
     void RenderTransition(ref NativeArray<Color32> outputColors)
     {
+        int2 transitionPosition = transitionInfo.entrance.levelContainer.levelPosition;
+
         GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
         GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
 
-        RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
-        RenderLevelContainer(levels[transitionInfo.entrance.levelContainer.levelPosition], ref transitionColors);
+        LevelContainerGroup currentGroup = levelsGroups[levels[currentLevelPosition]];
+        LevelContainerGroup transitionGroup = levelsGroups[levels[transitionPosition]];
 
-        transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
+        bool sameGroup = currentGroup == transitionGroup;
+
+        if(sameGroup)
+        {
+
+            float2 lerpLevelPosition = math.lerp(currentLevelPosition, transitionPosition, transitionInfo.transitionRatio);
+            GridRenderer.GetBlankTexture(out NativeArray<Color32> backgroundColors);
+            currentGroup.RenderBackground(ref backgroundColors, ref tickBlock, lerpLevelPosition);
+
+            RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
+            RenderLevelContainer(levels[transitionPosition], ref transitionColors);
+
+            transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
+
+            GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
+            backgroundColors.Dispose();
+        }
+        else
+        {
+            currentGroup.RenderBackground(ref currentColors, ref tickBlock, currentLevelPosition);
+            transitionGroup.RenderBackground(ref transitionColors, ref tickBlock, currentLevelPosition);
+            RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
+            RenderLevelContainer(levels[transitionPosition], ref transitionColors);
+
+            transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
+        }
 
         currentColors.Dispose();
         transitionColors.Dispose();    

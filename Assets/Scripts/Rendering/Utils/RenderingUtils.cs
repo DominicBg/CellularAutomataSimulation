@@ -43,7 +43,8 @@ public static class RenderingUtils
             Transparency(color1.r, color2.r, t),
             Transparency(color1.g, color2.g, t),
             Transparency(color1.b, color2.b, t),
-            1
+            math.max(color1.a, color2.a)
+            //1
             ).Clamp01();
     }
 

@@ -8,7 +8,6 @@ public class LevelExit : LevelObject
 {
     public int2 sizes;
     public LevelEntrance entrance;
-
     public TransitionBase transition;
     PlayerElement player;
 
@@ -27,7 +26,6 @@ public class LevelExit : LevelObject
     {
         if(GetBound().IntersectWith(player.GetBound()))
         {
-
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
             worldLevel.StartTransition(entrance, transition);

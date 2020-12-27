@@ -25,6 +25,7 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public LevelContainer mainMenuLevelPrefab;
     LevelContainer mainMenuLevel;
+    TickBlock tickBlock;
 
     //Debug
     public float t;
@@ -46,23 +47,21 @@ public class GameMainMenuManager : MonoBehaviour, State
         lightRender.Init();
         darkRender.Init();
 
-
         //Load simulation
         mainMenuLevel = Instantiate(mainMenuLevelPrefab);
         LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
         mainMenuLevel.Init(data.LoadMap());
-        //mainMenuLevel.Init(levelData.LoadMap());
 
+        tickBlock.Init();
     }
 
     public void OnUpdate()
     {
-        mainMenuLevel.OnUpdate();
+        mainMenuLevel.OnUpdate(ref tickBlock);
     }
 
     public void OnRender()
     {
-        ref TickBlock tickBlock = ref mainMenuLevel.tickBlock;
         float noiseValue = noise.cnoise((float2)(tickBlock.tick * randomSpeed));
         noiseValue = MathUtils.unorm(noiseValue);
 

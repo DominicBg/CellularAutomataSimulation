@@ -56,7 +56,7 @@ public class GemObject : LevelObject, ILightSource
         {
             float t = MathUtils.unorm(math.sin(tickBlock.tick * flashSpeed + offsynch));
             int radius = (int)math.lerp(flashRadiusMin, flashRadiusMax, t);
-            GridRenderer.DrawEllipse(ref outputColor, position, radius, color, Color.clear, blend);
+            GridRenderer.DrawEllipse(ref outputColor, position, radius, color, new Color32(0,0,0,0), blend);
         }
     }
 }

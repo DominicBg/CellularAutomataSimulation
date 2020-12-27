@@ -23,8 +23,9 @@ public class FogElement : LevelElement
 
     public override void PostRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
     {
-        NativeArray<LightSource> lightSources = new NativeArray<LightSource>(sources.Length, Allocator.TempJob);
-        NativeArray<int2> lightPositions = new NativeArray<int2>(sources.Length, Allocator.TempJob);
+        int length = sources == null ? 0 : sources.Length;
+        NativeArray<LightSource> lightSources = new NativeArray<LightSource>(length, Allocator.TempJob);
+        NativeArray<int2> lightPositions = new NativeArray<int2>(length, Allocator.TempJob);
         for (int i = 0; i < lightSources.Length; i++)
         {
             LightSource source = sources[i].GetLightSource(out int2 pos);

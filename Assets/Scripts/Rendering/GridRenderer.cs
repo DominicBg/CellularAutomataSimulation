@@ -93,6 +93,12 @@ public class GridRenderer : MonoBehaviour
         new ApplyTextureJob(outputColor, texture, blending, useAlphaMask).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
+    public static void ApplyTextureBehind(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> behindTexture, BlendingMode blending = BlendingMode.Normal)
+    {
+        new ApplyTextureBehindJob(outputColor, behindTexture, blending).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    }
+
+
     /// <summary>
     /// Apply colorsB ontop colorsA
     /// </summary>

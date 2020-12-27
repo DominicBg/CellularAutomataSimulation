@@ -16,7 +16,7 @@ public class SlideTransition : TransitionBase
     {
         bool isHorizontal = direction == Direction.LeftToRight || direction == Direction.RightToLeft;
         bool isInverted = direction == Direction.RightToLeft || direction == Direction.DownToUp;
-
+        t = t * t;
         t = (isInverted) ? 1 - t : t;
         new SlideTransitionJob()
         {

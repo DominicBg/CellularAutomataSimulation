@@ -50,7 +50,7 @@ public class SmokeParticleSystem
         }
     }
 
-    public void Render(ref NativeArray<Color32> outputColor, BlendingMode blending = BlendingMode.Normal)
+    public void Render(ref NativeArray<Color32> outputColor, BlendingMode blending = BlendingMode.Transparency)
     {
         GridRenderer.ApplyTexture(ref outputColor, ref smokeColors, blending);
     }

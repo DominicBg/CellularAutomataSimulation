@@ -27,15 +27,21 @@ public struct StarBackgroundRendering : IRenderableAnimated
         };
     }
 
-    public void Render(ref NativeArray<Color32> colorArray, int tick)
+    public void Render(ref NativeArray<Color32> colorArray, int tick, float2 offset)
     {
         new ShiningStarBackgroundJob()
         {
             colors = colorArray,
             maxSizes = GameManager.GridSizes,
             settings = this,
-            tick = tick
+            tick = tick,
+            offset = offset
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    }
+
+    public void Render(ref NativeArray<Color32> colorArray, int tick)
+    {
+        Render(ref colorArray, tick, 0);
     }
 }
 
@@ -46,6 +52,9 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
     public int2 maxSizes;
     public int tick;
     public StarBackgroundRendering settings;
+    public float2 offset;
+
+    //add offset
 
     public void Execute(int index)
     {
@@ -72,8 +81,8 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 var random = MathUtils.CreateRandomAtPosition(currentCellIndex, settings.seed);
 
                 //Find closest star
-                int2 starPosition = gridBound.RandomPointInBound(ref random);
                 float starDistance = random.NextFloat();
+                int2 starPosition = gridBound.RandomPointInBound(ref random) - (int2)(offset * starDistance);
 
                 if (math.all(position == starPosition))
                 {
