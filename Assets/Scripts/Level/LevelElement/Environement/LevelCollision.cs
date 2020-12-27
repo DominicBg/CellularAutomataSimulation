@@ -10,9 +10,8 @@ public class LevelCollision : LevelElement
     NativeArray<Color32> nativeTexture;
     public bool hasCollision;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         nativeTexture = RenderingUtils.GetNativeArray(texture, Allocator.Persistent);
 
         if(hasCollision)

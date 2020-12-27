@@ -16,9 +16,8 @@ public class ParticleProps : LevelObject
     NativeGrid<bool> isParticles;
 
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         nativeSprite = new NativeSprite(texture);
         isParticles = new NativeGrid<bool>(nativeSprite.sizes, Allocator.Persistent);
 

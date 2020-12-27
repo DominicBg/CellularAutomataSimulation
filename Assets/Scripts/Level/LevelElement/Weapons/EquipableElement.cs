@@ -25,9 +25,8 @@ public abstract class EquipableElement : WorldObject
         player = GetLevelElement<PlayerElement>();
     }
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
         spriteAnimator.framePerImage = baseSettings.framePerImage;
     }

@@ -10,10 +10,6 @@ public abstract class PhysicObject : WorldObject
 {
     public PhysicData physicData;
 
-    public override void Init(Map map)
-    {
-        this.map = map;
-    }
 
     protected void IniPhysicData(Texture2D collisionTexture)
     {

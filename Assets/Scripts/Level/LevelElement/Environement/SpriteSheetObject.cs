@@ -10,9 +10,8 @@ public class SpriteSheetObject : LevelObject
     SpriteAnimator spriteAnimator;
     public bool inBackground;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         spriteAnimator = new SpriteAnimator(spriteSheetScriptable.spriteSheet);
     }
 

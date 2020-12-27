@@ -21,9 +21,8 @@ public class PlayerElement : PhysicObject, ILightSource
         return physicData.physicBound.GetCollisionBound(position);
     }
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
         IniPhysicData(settings.collisionTexture);
     }

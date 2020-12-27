@@ -9,9 +9,8 @@ public class Jetpack : EquipableElement
     public JetpackScriptable settings => (JetpackScriptable)baseSettings;
     private int currentFuel;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         currentFuel = settings.fuelCapacity;
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
     }

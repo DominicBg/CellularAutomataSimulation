@@ -31,7 +31,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
         tickBlock.Init();
         for (int i = 0; i < levelElements.Length; i++)
         {
-            levelElements[i].Init(map);
+            levelElements[i].Init(map, this);
         }
     }
 

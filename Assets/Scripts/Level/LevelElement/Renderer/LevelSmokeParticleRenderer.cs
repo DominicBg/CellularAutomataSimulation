@@ -17,9 +17,8 @@ public class LevelSmokeParticleRenderer : LevelParticleRenderer
     private float currentDelay;
     public bool inBackground;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         smokeParticleSystem = new SmokeParticleSystem();
     }
 

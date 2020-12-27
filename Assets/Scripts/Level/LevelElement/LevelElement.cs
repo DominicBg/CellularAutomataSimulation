@@ -11,12 +11,16 @@ public abstract class LevelElement : MonoBehaviour
 
     public bool isEnable = true;
     public bool isVisible = true;
+    public LevelContainer levelContainer;
 
-
-    public virtual void Init(Map map)
+    public void Init(Map map, LevelContainer levelContainer)
     {
         this.map = map;
+        this.levelContainer = levelContainer;
+        OnInit();
     }
+
+    public virtual void OnInit() { }
 
     public abstract void OnUpdate(ref TickBlock tickBlock);
     public virtual void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock) { }

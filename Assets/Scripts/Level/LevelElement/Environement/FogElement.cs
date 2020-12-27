@@ -11,9 +11,8 @@ public class FogElement : LevelElement
     public FogSettings settings;
     ILightSource[] sources;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         sources = GetInterfaces<ILightSource>();
     }
 

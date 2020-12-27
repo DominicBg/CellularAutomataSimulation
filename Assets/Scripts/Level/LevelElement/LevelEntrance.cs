@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class LevelEntrance : LevelObject
 {
-    public int id;
     public int2 sizes;
     public override void OnUpdate(ref TickBlock tickBlock)
     {

@@ -7,15 +7,13 @@ using UnityEngine;
 public class LevelExit : LevelObject
 {
     public int2 sizes;
-    public int2 nextLevelContainerPosition;
-    public int nextLevelEntrance;
+    public LevelEntrance entrance;
 
     public TransitionBase transition;
     PlayerElement player;
 
-    public override void Init(Map map)
+    public override void OnInit()
     {
-        base.Init(map);
         //nasto
         player = FindObjectOfType<PlayerElement>();
     }
@@ -32,7 +30,7 @@ public class LevelExit : LevelObject
 
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
-            worldLevel.StartTransition(nextLevelContainerPosition, nextLevelEntrance, transition);
+            worldLevel.StartTransition(entrance, transition);
             Debug.Log("next level");
         }
     }

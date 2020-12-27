@@ -21,14 +21,12 @@ public class WorldLevel : MonoBehaviour
 
     public void LoadLevel()
     {
-        //add WorldElements
         worldObjects = GetComponentsInChildren<WorldObject>();
 
         LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
         levels = new Dictionary<int2, LevelContainer>();
         for (int i = 0; i < levelContainers.Length; i++)
         {
-            //LevelContainer instance = Instantiate(levelContainerPrefabList[i]);
             levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
 
             LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
@@ -37,7 +35,8 @@ public class WorldLevel : MonoBehaviour
 
         for (int i = 0; i < worldObjects.Length; i++)
         {
-            worldObjects[i].Init(CurrentLevel.map);
+
+            worldObjects[i].Init(CurrentLevel.map, null);
         }
     }
 
@@ -67,21 +66,14 @@ public class WorldLevel : MonoBehaviour
     void OnTransitionFinished()
     {
         transitionInfo.isInTransition = false;
-        currentLevelPosition = transitionInfo.nextLevelContainerPosition;
+        currentLevelPosition = transitionInfo.entrance.levelContainer.levelPosition;
 
-        //Bind entrance by refs
-        LevelEntrance[] levelEntrances = CurrentLevel.entrances;
-        for (int i = 0; i < levelEntrances.Length; i++)
-        {
-            if (transitionInfo.nextEntranceID == levelEntrances[i].id)
-            {
-                //eww
-                PlayerElement player =FindObjectOfType<PlayerElement>();
-                player.position = levelEntrances[i].position;
-                player.physicData.position = player.position;
-                player.physicData.velocity = 0;
-            }
-        }
+        //eww
+        PlayerElement player = FindObjectOfType<PlayerElement>();
+        player.position = transitionInfo.entrance.position;
+        player.physicData.position = player.position;
+        player.physicData.velocity = 0;
+     
 
         for (int i = 0; i < worldObjects.Length; i++)
         {
@@ -148,7 +140,7 @@ public class WorldLevel : MonoBehaviour
         GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
 
         RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
-        RenderLevelContainer(levels[transitionInfo.nextLevelContainerPosition], ref transitionColors);
+        RenderLevelContainer(levels[transitionInfo.entrance.levelContainer.levelPosition], ref transitionColors);
 
         transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
 
@@ -156,13 +148,12 @@ public class WorldLevel : MonoBehaviour
         transitionColors.Dispose();    
     }
 
-    public void StartTransition(int2 nextPosition, int nextEntranceID, TransitionBase transition)
+    public void StartTransition(LevelEntrance entrance, TransitionBase transition)
     {
         transitionInfo = new TransitionInfo()
         {
             isInTransition = true,
-            nextEntranceID = nextEntranceID,
-            nextLevelContainerPosition = nextPosition,
+            entrance = entrance,
             transition = transition,
             transitionRatio = 0
         };
@@ -185,10 +176,9 @@ public class WorldLevel : MonoBehaviour
 
     public struct TransitionInfo
     {
-        public  float transitionRatio;
-        public  int2 nextLevelContainerPosition;
-        public  bool isInTransition;
-        public  int nextEntranceID;
+        public float transitionRatio;
+        public bool isInTransition;
+        public LevelEntrance entrance;
         public TransitionBase transition;
     }
 }
