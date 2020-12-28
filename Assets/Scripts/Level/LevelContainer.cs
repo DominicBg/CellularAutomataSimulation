@@ -16,6 +16,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public ParticleSpawnerElements particleSpawnerElements;
 
     public Map map;
+    public NativeList<int2> particleSmokeEvent;
 
     public void OnValidate()
     {
@@ -31,6 +32,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
         {
             levelElements[i].Init(map, this);
         }
+        particleSmokeEvent = new NativeList<int2>(Allocator.Persistent);
     }
 
     public void OnUpdate(ref TickBlock tickBlock)
@@ -46,8 +48,12 @@ public class LevelContainer : MonoBehaviour, IDisposable
             nativeParticleSpawners = particleSpawners,
             tickBlock = tickBlock,
             deltaTime = GameManager.DeltaTime,
-            settings = GameManager.PhysiXVIISetings
+            settings = GameManager.PhysiXVIISetings,
+            particleSmokeEvent = particleSmokeEvent
         }.Run();
+
+        HandleParticleEvents(ref tickBlock);
+
 
         //lol
         for (int i = 0; i < particleSpawnerElements.particleSpawners.Length; i++)
@@ -61,6 +67,19 @@ public class LevelContainer : MonoBehaviour, IDisposable
         {
             if(levelElements[i].isEnable)
                 levelElements[i].OnUpdate(ref tickBlock);
+        }
+    }
+
+    void HandleParticleEvents(ref TickBlock tickBlock)
+    {
+        //eww
+        if (particleSmokeEvent.Length >= 0)
+        {
+            var smokeRenderer = GetComponentInChildren<LevelSmokeParticleRenderer>();
+            for (int i = 0; i < particleSmokeEvent.Length; i++)
+            {
+                smokeRenderer.EmitParticle(particleSmokeEvent[i], ref tickBlock);
+            }
         }
     }
 
@@ -99,6 +118,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
     public void Dispose()
     {
+        particleSmokeEvent.Dispose();
         map.Dispose();
         for (int i = 0; i < levelElements.Length; i++)
             levelElements[i].Dispose();

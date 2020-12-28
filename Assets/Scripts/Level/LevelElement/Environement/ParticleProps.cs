@@ -9,9 +9,6 @@ public class ParticleProps : LevelObject
     [SerializeField] ParticleType particleType = ParticleType.None;
     [SerializeField] Texture2D texture = default;
 
-    //might need to be more complex lol
-    [SerializeField] LevelParticleRenderer emitterOnParticleChange = default;
-
     NativeSprite nativeSprite;
     NativeGrid<bool> isParticles;
 
@@ -52,7 +49,6 @@ public class ParticleProps : LevelObject
                 if (isParticles[x, y] && map.InBound(mapPos) && map.GetParticleType(mapPos) != particleType)
                 {
                     isParticles[x, y] = false;
-                    emitterOnParticleChange?.EmitParticle(mapPos, ref tickBlock);
                 }
             }
         }
@@ -71,7 +67,6 @@ public class ParticleProps : LevelObject
                 {
                     outputColor[index] = nativeSprite.pixels[x, y];
                 }
-
             }
         }
     }

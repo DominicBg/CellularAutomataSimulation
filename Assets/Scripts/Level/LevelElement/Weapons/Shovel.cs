@@ -55,6 +55,37 @@ public class Shovel : EquipableElement
                 }
             }
         }
+        //try move up one position
+        PhysicBound playerPhysicbound = player.physicData.physicBound;
+        Bound playerOverBound = playerPhysicbound.GetTopCollisionBound(player.physicData.gridPosition + new int2(0, 1));
+        Bound playerUnderBound = playerPhysicbound.GetBottomCollisionBound(player.physicData.gridPosition + new int2(0, 1));
+
+        playerOverBound.GetPositionsGrid(out NativeArray<int2> headCollisions, Allocator.Temp);
+        playerUnderBound.GetPositionsGrid(out NativeArray<int2> feetCollisions, Allocator.Temp);
+
+        bool isBlocked = false;
+        var physixSettings = GameManager.PhysiXVIISetings;
+        for (int i = 0; i < headCollisions.Length; i++)
+        {
+            if (!(map.CanPush(headCollisions[i], in physixSettings) || map.IsFreePosition(headCollisions[i])))
+            {
+                isBlocked = true;
+            }
+        }
+        if(!isBlocked)
+        {
+            map.RemoveSpriteAtPosition(player.physicData.gridPosition, ref playerPhysicbound);
+            for (int i = 0; i < headCollisions.Length; i++)
+            {
+                map.SwapParticles(headCollisions[i], feetCollisions[i]);
+            }
+            player.physicData.position += new float2(0, 1);
+            player.physicData.gridPosition = (int2)player.physicData.position;
+            //map.SetSpriteAtPosition(player.physicData.gridPosition, ref playerPhysicbound);
+
+        }
+        headCollisions.Dispose();
+        feetCollisions.Dispose();
     }
 
     void ThrowParticle(int2 pos, int2 localPos, float2 dir, int2 startOffset, ref TickBlock tickBlock)

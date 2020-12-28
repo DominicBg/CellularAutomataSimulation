@@ -286,7 +286,8 @@ public unsafe struct Map
 
     public bool CanPush(int2 position, in PhysiXVIISetings settings)
     {
-        return CanPush(GetParticleType(position), in settings);
+        ParticleType type = GetParticleType(position);
+        return CanPush(type, in settings);
     }
     public bool CanPush(ParticleType type, in PhysiXVIISetings settings)
     {

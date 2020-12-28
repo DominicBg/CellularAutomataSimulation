@@ -14,8 +14,13 @@ public struct CellularAutomataJob : IJob
     public PhysiXVIISetings settings;
     public float deltaTime;
 
+    //output event
+    public NativeList<int2> particleSmokeEvent;
+
     public void Execute()
     {
+        particleSmokeEvent.Clear();
+
         map.ClearDirtyGrid();
         map.UpdateParticleTick();
         UpdateSimulation();
@@ -382,6 +387,7 @@ public struct CellularAutomataJob : IJob
             if(surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.woodBehaviour.tickBeforeTurnToCinder)
             {
                 map.SetParticleType(pos, ParticleType.Cinder);
+                particleSmokeEvent.Add(pos);
             }
         }
         surrounding.Dispose();
@@ -394,6 +400,7 @@ public struct CellularAutomataJob : IJob
             if (surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.stringBehaviour.tickBeforeTurnToCinder)
             {
                 map.SetParticleType(pos, ParticleType.Cinder);
+                particleSmokeEvent.Add(pos);
             }
         }
         surrounding.Dispose();

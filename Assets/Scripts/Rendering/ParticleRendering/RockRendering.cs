@@ -127,6 +127,6 @@ public struct RockRendering: IParticleRenderer
 
     public Color32 GetColor(int2 position, ref TickBlock tickBlock)
     {
-        throw new System.NotImplementedException();
+        return Color.black;
     }
 }
