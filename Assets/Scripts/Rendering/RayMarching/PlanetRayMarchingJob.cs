@@ -67,7 +67,9 @@ public struct PlanetRayMarchingJob : IJobParallelFor
         {
             shadowcolor.ReduceResolution(settings.colorResolution);
             shadowcolor.a = settings.shadowAlpha;
-            Color iceColor = ParticleRenderUtil.GetColorForType(gridPosition, settings.particleType, ref particleRendering, ref tickBlock);
+            //eww
+            Map map = new Map();
+            Color iceColor = ParticleRenderUtil.GetColorForType(gridPosition, settings.particleType, ref particleRendering, ref tickBlock, ref map);
             outputColor[index] = RenderingUtils.Blend(iceColor, shadowcolor, settings.blendingMode);
         }
     }

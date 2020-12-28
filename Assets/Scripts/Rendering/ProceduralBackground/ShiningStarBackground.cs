@@ -54,8 +54,6 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
     public StarBackgroundRendering settings;
     public float2 offset;
 
-    //add offset
-
     public void Execute(int index)
     {
         int2 cellSize = maxSizes / settings.density;

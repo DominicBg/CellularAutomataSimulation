@@ -36,7 +36,7 @@ MonoBehaviour:
   settings:
     noiseSpeed: 0.123
     moveAmplitude: 1.37
-    fadeOffFactor: 0.51
+    fadeOffFactor: 0
     dispersionFactor: 0.86
     windForce:
       x: 2.5

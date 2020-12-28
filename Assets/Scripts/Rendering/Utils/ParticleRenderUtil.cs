@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class ParticleRenderUtil
 {
-    public static Color32 GetColorForType(int2 position, ParticleType type, ref ParticleRendering particleRendering, ref TickBlock tickBlock)
+    public static Color32 GetColorForType(int2 position, ParticleType type, ref ParticleRendering particleRendering, ref TickBlock tickBlock, ref Map map)
     {
         switch (type)
         {
@@ -21,7 +21,7 @@ public static class ParticleRenderUtil
             case ParticleType.Ice:
                 return particleRendering.iceRendering.GetColor(position, ref tickBlock);
             case ParticleType.Rock:
-                return particleRendering.rockRendering.GetColor(position, ref tickBlock);
+                return particleRendering.rockRendering.GetColor(position, ref tickBlock, ref map);
             case ParticleType.Rubble:
                 return particleRendering.rubbleColor.GetColor(position, ref tickBlock);
             case ParticleType.TitleDisintegration:
@@ -35,7 +35,9 @@ public static class ParticleRenderUtil
                 return particleRendering.cinderRendering.GetColor(position, ref tickBlock);
             case ParticleType.Wood:
                 return particleRendering.woodRendering.GetColor(position, ref tickBlock);
-  
+            case ParticleType.String:
+                return particleRendering.stringRendering.GetColor(position, ref tickBlock);
+
             default:
                 return Color.black;
         }

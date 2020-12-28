@@ -9,7 +9,6 @@ using UnityEngine;
 [System.Serializable]
 public struct BlackholeSettings
 {
-    public int2 centerPoint;
     public float duration;
     public float waveSpeed;
     public float intensityMin;
@@ -22,6 +21,7 @@ public struct BlackholeJob : IJobParallelFor
     [ReadOnly] public NativeArray<Color32> inputColors;
     public NativeArray<Color32> outputColors;
 
+    public int2 position;
     public BlackholeSettings settings;
     public float t;
 
@@ -32,7 +32,7 @@ public struct BlackholeJob : IJobParallelFor
 
         //t = math.sin(t * math.PI);
 
-        float2 diff = settings.centerPoint - position;
+        float2 diff = position - position;
 
         float waveInnerRadius = t * settings.waveSpeed;
         float distSq = math.lengthsq(diff);

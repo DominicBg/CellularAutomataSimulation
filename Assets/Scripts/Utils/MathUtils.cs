@@ -62,4 +62,8 @@ public static class MathUtils
         return new float2(r1 * math.cos(theta), r1 * math.sin(theta));
     }
 
+    public static float3 NormalStrength(float3 normal, float strength)
+    {
+        return new float3(normal.x * strength, normal.y * strength, math.lerp(1, normal.z, math.saturate(strength)));
+    }
 }

@@ -1,22 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-
-
-[System.Serializable]
-public struct ShockwaveSettings
-{
-    public int2 centerPoint;
-    public int radiusThickness;
-    public float duration;
-    public float waveSpeed;
-    public float intensity;
-}
-
+using static PostProcessManager;
 
 [BurstCompile]
 public struct ShockwaveJob : IJobParallelFor
@@ -25,6 +12,7 @@ public struct ShockwaveJob : IJobParallelFor
     public NativeArray<Color32> outputColors;
     public ShockwaveSettings settings;
 
+    public int2 position;
     public TickBlock tickBlock;
     public int startTick;
 
@@ -36,7 +24,7 @@ public struct ShockwaveJob : IJobParallelFor
         //rofl add curve system pls
         t = 1 - (1-t) * (1 - t) * (1 - t) * (1 - t) * (1 - t);
 
-        float2 diff = settings.centerPoint - position;
+        float2 diff = this.position - position;
 
         float waveInnerRadius = t * settings.waveSpeed;
         float waveOuterRadius = t * settings.waveSpeed + settings.radiusThickness;

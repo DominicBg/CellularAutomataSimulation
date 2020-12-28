@@ -124,4 +124,14 @@ public class Shovel : EquipableElement
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
     }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            PlayerElement player = FindObjectOfType<PlayerElement>();
+            currentLevel = player.currentLevel;
+            position = player.position;
+        }
+    }
 }

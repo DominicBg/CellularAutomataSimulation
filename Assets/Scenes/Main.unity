@@ -1462,8 +1462,24 @@ MonoBehaviour:
     rockRendering:
       rockColor: {r: 0.26272696, g: 0.30810022, b: 0.4528302, a: 1}
       crackColor: {r: 0.19508722, g: 0.20843716, b: 0.3018868, a: 1}
-      noiseCrackThreshold: 0.76
-      noiseScale: 0.32
+      crackColor2: {r: 0.12793697, g: 0.13783078, b: 0.21698111, a: 1}
+      crackColor3: {r: 0.066571735, g: 0.06756062, b: 0.0754717, a: 1}
+      noiseCrackThreshold: 0.25
+      noiseCrackThreshold2: 0.5
+      noiseCrackThreshold3: 0.89
+      noiseScale: 0.07
+      noiseScale2: 0
+      lerp: 0
+      lightPos:
+        x: 21.5
+        y: 43.83
+        z: 73.2
+      showNormal: 0
+      showDot: 0
+      showHeight: 0
+      minThresholdCrack3: 0
+      lightRatio: 0
+      clampHeight: 0.7
     rubbleColor:
       rockColor: {r: 0.20799218, g: 0.24561678, b: 0.3584906, a: 1}
       crackColor: {r: 0.13817194, g: 0.14692852, b: 0.21698111, a: 1}
@@ -1509,6 +1525,13 @@ MonoBehaviour:
       color:
         serializedVersion: 2
         rgba: 4279512679
+    stringRendering:
+      color1:
+        serializedVersion: 2
+        rgba: 4279972448
+      color2:
+        serializedVersion: 2
+        rgba: 4280962712
     cinderRendering:
       speed: 0.025
       spread: 125.2531
@@ -1644,7 +1667,7 @@ MonoBehaviour:
   gameLevelEditorManager: {fileID: 24019101}
   gameOverworldManager: {fileID: 494699174}
   gameMainMenuManager: {fileID: 746556379}
-  firstState: 0
+  firstState: 1
   worldLevelPrefab: {fileID: 0}
   physiXVIIScriptable: {fileID: 11400000, guid: d8bf304d3a543b242ba8d46eb5dceb00, type: 2}
   particleBehaviourScriptable: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}

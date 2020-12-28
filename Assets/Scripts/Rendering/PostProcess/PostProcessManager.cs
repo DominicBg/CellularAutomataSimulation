@@ -45,26 +45,28 @@ public class PostProcessManager
         };
     }
 
-    public static void EnqueueShockwave(in ShockwaveSettings settings, int tick)
+    public static void EnqueueShockwave(in ShockwaveSettings settings, int2 position, int tick)
     {
         Instance.shockwaveAnimation = new Animation<ShockwaveSettings>()
         {
             tick = tick,
             settings = settings,
-            isActive = true
+            isActive = true,
+            position = position
         };
     }
-    public static void EnqueueBlackHole(in BlackholeSettings settings, int tick)
+    public static void EnqueueBlackHole(in BlackholeSettings settings, int2 position, int tick)
     {
         Instance.blackholeAnimation = new Animation<BlackholeSettings>()
         {
             settings = settings,
             tick = tick,
-            isActive = true
+            isActive = true,
+            position = position
         };
     }
 
-    public static void EnqueuIllusion(in IllusionEffectSettings settings, int tick)
+    public static void EnqueueIllusion(in IllusionEffectSettings settings, int tick)
     {
         Instance.illusionAnimation = new Animation<IllusionEffectSettings>()
         {
@@ -89,24 +91,25 @@ public class PostProcessManager
         if (!ShouldUpdate(ref shakeAnimation, ref tickBlock, shakeAnimation.settings.duration, out float duration))
             return;
 
-        //add in screenshake?
+        ////add in screenshake?
         float t = duration / shakeAnimation.settings.duration;
-        float falloff = 1 - t * t * t;
-        float p = tickBlock.tick * shakeAnimation.settings.speed;
-        float x = noise.cnoise(new float2(p, 100)) * shakeAnimation.settings.intensity * falloff;
-        float y = noise.cnoise(new float2(100, p)) * shakeAnimation.settings.intensity * falloff;
+        //float falloff = 1 - t * t * t;
+        //float p = tickBlock.tick * shakeAnimation.settings.speed;
+        //float x = noise.cnoise(new float2(p, 100)) * shakeAnimation.settings.intensity * falloff;
+        //float y = noise.cnoise(new float2(100, p)) * shakeAnimation.settings.intensity * falloff;
 
-        int2 offset = new int2((int)x, (int)y);
-        if (math.all(offset == 0))
-            return;
+        //int2 offset = new int2((int)x, (int)y);
+        //if (math.all(offset == 0))
+        //    return;
 
         NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
-        new ShakeScreenJobs()
+        new ShakeScreenJob()
         {
             outputColors = outputColors,
             inputColors = inputColors,
-            offset = offset,
-            blendWithOriginal = shakeAnimation.settings.blendWithOriginal
+            t = t,
+            tickBlock = tickBlock,
+            settings = shakeAnimation.settings
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         inputColors.Dispose();
         return;
@@ -127,9 +130,9 @@ public class PostProcessManager
         {
             black = inverted ? color1 : color2,
             white = inverted ? color2 : color1,
+            outputColors = outputColors,
             blendWithOriginal = screenFlashAnimation.settings.blendWithOriginal,
             threshold = screenFlashAnimation.settings.threshold,
-            outputColors = outputColors,
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
@@ -144,9 +147,10 @@ public class PostProcessManager
         {
            inputColors = inputColors,
            outputColors = outputColors,
-           settings = shockwaveAnimation.settings,
            tickBlock = tickBlock,
-           startTick = shockwaveAnimation.tick
+           settings = shockwaveAnimation.settings,
+           startTick = shockwaveAnimation.tick,
+           position = shockwaveAnimation.position
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         inputColors.Dispose();
     }
@@ -166,8 +170,9 @@ public class PostProcessManager
         {
             inputColors = inputColors,
             outputColors = outputColors,
+            t = t,
             settings = blackholeAnimation.settings,
-            t = t
+            position = blackholeAnimation.position
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         inputColors.Dispose();
     }
@@ -214,6 +219,7 @@ public class PostProcessManager
         public T settings;
         public int tick;
         public bool isActive;
+        public int2 position;
     }
 
     //Settings
@@ -237,15 +243,15 @@ public class PostProcessManager
         public float blendWithOriginal;
     }
 
-    //[System.Serializable]
-    //public struct ShockwaveSettings
-    //{
-    //    public int2 centerPoint;
-    //    public int radiusThickness;
-    //    public float duration;
-    //    public float waveSpeed;
-    //    public float intensity;
-    //}
+    [System.Serializable]
+    public struct ShockwaveSettings
+    {
+        public int radiusThickness;
+        public float duration;
+        public float waveSpeed;
+        public float intensity;
+    }
 
-   
+
+
 }

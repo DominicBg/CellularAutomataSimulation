@@ -26,7 +26,7 @@ public class ParticleGun : GunBaseElement
         pos1 += GetKickOffset();
 
         ref ParticleRendering particleRendering = ref GridRenderer.Instance.particleRendering;
-        outputcolor[ArrayHelper.PosToIndex(pos1, GameManager.GridSizes)] = ParticleRenderUtil.GetColorForType(pos1, type, ref particleRendering, ref tickBlock);
+        outputcolor[ArrayHelper.PosToIndex(pos1, GameManager.GridSizes)] = ParticleRenderUtil.GetColorForType(pos1, type, ref particleRendering, ref tickBlock, ref map);
     }
 
     protected override void OnEquip()

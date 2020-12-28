@@ -28,11 +28,13 @@ public struct CellularAutomataJob : IJob
         for (int i = 0; i < nativeParticleSpawners.Length; i++)
         {
             var spawner = nativeParticleSpawners[i];
-            bool canEmit = spawner.notTickBounded || (tickBlock.tick >= spawner.startTick && tickBlock.tick <= spawner. endTick);
+            bool canEmit = spawner.particleSpawnCount != 0;
 
             if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
             {
+                spawner.particleSpawnCount--;
                 map.SetParticleType(spawner.spawnPosition, spawner.particleType);
+                nativeParticleSpawners[i] = spawner;
             }
         }
     }
@@ -101,6 +103,9 @@ public struct CellularAutomataJob : IJob
                 break;
             case ParticleType.Wood:
                 UpdateWoodParticle(particle, pos);
+                break;
+            case ParticleType.String:
+                UpdateStringParticle(particle, pos);
                 break;
 
             //Others
@@ -381,6 +386,19 @@ public struct CellularAutomataJob : IJob
         }
         surrounding.Dispose();
     }
+    void UpdateStringParticle(Particle particle, int2 pos)
+    {
+        var surrounding = GetSurroundingParticle(pos);
+        for (int i = 0; i < surrounding.Length; i++)
+        {
+            if (surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.stringBehaviour.tickBeforeTurnToCinder)
+            {
+                map.SetParticleType(pos, ParticleType.Cinder);
+            }
+        }
+        surrounding.Dispose();
+    }
+
 
     void UpdateCinderParticle(Particle particle, int2 pos)
     {

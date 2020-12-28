@@ -68,8 +68,8 @@ public class WorldLevel : MonoBehaviour
         {
             levels[currentLevelPosition].OnUpdate(ref tickBlock);
             for (int i = 0; i < worldObjects.Length; i++)
-                //update according to current level, might put tickBlock in worldLevel
-                worldObjects[i].OnUpdate(ref tickBlock);
+                if(worldObjects[i].isEnable) //update according to current level, might put tickBlock in worldLevel
+                    worldObjects[i].OnUpdate(ref tickBlock);
         }
         else
         {
@@ -129,6 +129,7 @@ public class WorldLevel : MonoBehaviour
 
     public void RenderLevelContainer(LevelContainer levelContainer, ref NativeArray<Color32> outputColors)
     {
+        //add world object is visible
         levelContainer.PreRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
@@ -151,7 +152,7 @@ public class WorldLevel : MonoBehaviour
 
         if (inDebug)
         {
-            //levelContainer.RenderDebug(ref outputColors, ref tickBlock);
+            levelContainer.RenderDebug(ref outputColors, ref tickBlock);
             for (int i = 0; i < worldObjects.Length; i++)
                 if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
                     worldObjects[i].RenderDebug(ref outputColors, ref tickBlock);

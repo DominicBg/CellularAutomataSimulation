@@ -38,7 +38,7 @@ public struct ApplyParticleRenderToTextureJob : IJobParallelFor
         int2 pos = ArrayHelper.IndexToPos(i, map.Sizes);
         if (textureColor[i].a > 0)
         {
-            Color32 color = ParticleRenderUtil.GetColorForType(pos, particleType, ref particleRendering, ref tickBlock);
+            Color32 color = ParticleRenderUtil.GetColorForType(pos, particleType, ref particleRendering, ref tickBlock, ref map);
             colorArray[i] = RenderingUtils.Blend(colorArray[i], color, blending);
         }
     }

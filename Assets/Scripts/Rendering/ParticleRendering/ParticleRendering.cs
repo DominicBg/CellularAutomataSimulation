@@ -11,6 +11,7 @@ public struct ParticleRendering
     public RubbleRendering rubbleColor;
     public FireRendering fireRendering;
     public WoodRendering woodRendering;
+    public StringRendering stringRendering;
     public CinderRendering cinderRendering;
     public Color mudColor;
     public Color snowColor;

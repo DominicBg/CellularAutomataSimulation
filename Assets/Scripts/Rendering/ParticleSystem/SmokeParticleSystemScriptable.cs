@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SmokeParticleSystemScriptable", menuName = "XVII/ParticleSystem/SmokeParticleSystemScriptable", order = 1)]
+[CreateAssetMenu(fileName = "SmokeParticleSystemScriptable", menuName = "Effects/ParticleSystem/SmokeParticleSystemScriptable", order = 1)]
 public class SmokeParticleSystemScriptable : ScriptableObject
 {
     public SmokeParticleSystemEmitter emitter;

@@ -24,6 +24,9 @@ public enum ParticleType
     Fire,
     Cinder,
     Wood,
+    String,
+
+    //Other
     Player,
 
     //Misc

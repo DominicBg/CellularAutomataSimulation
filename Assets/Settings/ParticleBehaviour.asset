@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: ParticleBehaviour
   m_EditorClassIdentifier: 
   particleBehaviour:
-    gravity:
-      accelerationPerFrame:
-        x: 0
-        y: -0.4
     floaty:
       sinSpeed: 0
       sinOffset:
@@ -30,6 +26,8 @@ MonoBehaviour:
       chanceDespawn: 0.0001
     woodBehaviour:
       tickBeforeTurnToCinder: 30
+    stringBehaviour:
+      tickBeforeTurnToCinder: 1
     cinderBehaviour:
       minimumSurroundingCinder: 4
       tickBeforeDisapear: 120

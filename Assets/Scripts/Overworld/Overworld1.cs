@@ -100,7 +100,7 @@ public class Overworld1 : OverworldBase
             float2 noisePosition = finalPos * planetSettings.rockScaling + rotation;
             float noiseValue = MathUtils.unorm(noise.cnoise(noisePosition));
 
-            outputColor[index] = rockRendering.GetColorWithNoiseValue(noiseValue);
+            outputColor[index] = rockRendering.GetColorWithNoiseValue(noiseValue, position);
         }
 
         void GenerateFloatingSand(int index, int2 position, float alpha)

@@ -48,6 +48,12 @@ public class LevelContainer : MonoBehaviour, IDisposable
             deltaTime = GameManager.DeltaTime,
             settings = GameManager.PhysiXVIISetings
         }.Run();
+
+        //lol
+        for (int i = 0; i < particleSpawnerElements.particleSpawners.Length; i++)
+        {
+            particleSpawnerElements.particleSpawners[i].particleSpawnCount = particleSpawners[i].particleSpawnCount;
+        }
         particleSpawners.Dispose();
 
         //Update elements

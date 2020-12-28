@@ -7,6 +7,7 @@ public struct ParticleBehaviour
     public WaterBehaviour water;
     public TitleDisentegrateBehaviour titleDisentegrate;
     public WoodBehaviour woodBehaviour;
+    public StringBehaviour stringBehaviour;
     public CinderBehaviour cinderBehaviour;
 
 
@@ -26,6 +27,11 @@ public struct ParticleBehaviour
 
     [System.Serializable]
     public struct WoodBehaviour
+    {
+        public int tickBeforeTurnToCinder;
+    }
+    [System.Serializable]
+    public struct StringBehaviour
     {
         public int tickBeforeTurnToCinder;
     }

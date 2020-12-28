@@ -10,7 +10,7 @@ public static class Explosive
         public float strength;
     }
 
-    public static void SetExplosive(int2 position, ref Settings settings, Map map)
+    public static void SetExplosive(int2 position, in Settings settings, Map map)
     {
         new ExplosiveJob() { position = position, map = map, settings = settings }.Run();
     }
