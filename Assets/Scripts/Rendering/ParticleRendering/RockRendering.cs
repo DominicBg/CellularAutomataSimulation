@@ -59,7 +59,7 @@ public struct RockRendering: IParticleRenderer
     float GetHeightAtPosition(float2 position)
     {
         float heightAtPosition = 1 - (noise.cellular(position)).x;
-        float clampHeight = math.remap(-1, 1, minclampHeight, maxclampHeight, noise.cnoise(position));
+        float clampHeight = math.remap(-1, 1, minclampHeight, maxclampHeight, noise.cnoise(position * 0.1f));
 
         //fast remap 0, 1
         return math.min(heightAtPosition, clampHeight) * (1f / clampHeight);
