@@ -42,11 +42,11 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, TickBlock tickBlock)
+    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, int2 currentLevel)
     {
         using (S_SimulationRender.Auto())
         {
-            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock, currentLevel).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         }
     }
 

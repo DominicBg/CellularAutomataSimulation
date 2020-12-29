@@ -23,7 +23,7 @@ MonoBehaviour:
     rotationSpeed:
       x: 0.01
       y: 0.005
-    rockScaling: 0.18
+    rockScaling: 0.1
   sandSettings:
     radius: 25
     minSandRatio: 0.01

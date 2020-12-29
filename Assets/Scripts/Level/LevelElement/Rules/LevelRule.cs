@@ -27,7 +27,7 @@ public abstract class LevelRule : LevelElement
             playerFinished = true;
             OnLevelFinish();
 
-            playerElement.currentEquip.isVisible = false;
+            playerElement.currentEquipMouse.isVisible = false;
         }
     }
 

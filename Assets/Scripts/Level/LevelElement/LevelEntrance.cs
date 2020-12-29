@@ -13,7 +13,7 @@ public class LevelEntrance : LevelObject
 
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        GridRenderer.DrawBound(ref outputColors, GetBound(), new Color32(0, 0, 255, 100));
+        GridRenderer.DrawBound(ref outputColors, GetBound(), new Color32(100, 100, 255, 200));
     }
 
     public override Bound GetBound()

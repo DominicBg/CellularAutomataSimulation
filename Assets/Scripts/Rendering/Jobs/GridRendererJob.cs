@@ -11,13 +11,15 @@ public struct GridRendererJob : IJobParallelFor
     Map map;
     ParticleRendering particleRendering;
     TickBlock tickBlock;
+    int2 currentLevel;
 
-    public GridRendererJob(NativeArray<Color32> colorArray, Map map, ParticleRendering particleRendering, TickBlock tickBlock)
+    public GridRendererJob(NativeArray<Color32> colorArray, Map map, ParticleRendering particleRendering, TickBlock tickBlock, int2 currentLevel)
     {
         this.colorArray = colorArray;
         this.map = map;
         this.particleRendering = particleRendering;
         this.tickBlock = tickBlock;
+        this.currentLevel = currentLevel;
     }
 
     public void Execute(int i)
@@ -25,7 +27,8 @@ public struct GridRendererJob : IJobParallelFor
         int2 pos = ArrayHelper.IndexToPos(i, map.Sizes);
         if (map.GetParticleType(pos) != ParticleType.None)
         {
-            Color32 color = ParticleRenderUtil.GetColorForType(pos, map.GetParticleType(pos), ref particleRendering, ref tickBlock, ref map);
+            int2 mapOffset = currentLevel * GameManager.GridSizes;
+            Color32 color = ParticleRenderUtil.GetColorForType(pos + mapOffset, map.GetParticleType(pos), ref particleRendering, ref tickBlock, ref map);
             colorArray[i] = color;
         }
     }

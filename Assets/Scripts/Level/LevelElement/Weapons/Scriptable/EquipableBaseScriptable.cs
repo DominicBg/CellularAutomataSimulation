@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "EquipableBaseScriptable", menuName = "Equipable/EquipableBaseScriptable", order = 1)]
 public class EquipableBaseScriptable : ScriptableObject
 {
     [Header("Equipable")]

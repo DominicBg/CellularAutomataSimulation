@@ -11,7 +11,9 @@ public class PlayerElement : PhysicObject, ILightSource
     public PlayerControlSettings settings;
 
     public SpriteAnimator spriteAnimator;
-    [HideInInspector] public EquipableElement currentEquip;
+    [HideInInspector] public EquipableElement currentEquipMouse;
+    [HideInInspector] public EquipableElement currentEquipQ;
+
     int lookDirection;
     public bool lookLeft;
 
@@ -40,11 +42,16 @@ public class PlayerElement : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(currentEquip != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        if(currentEquipMouse != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
             bool isAltButton = Input.GetMouseButton(1);
-            currentEquip.Use(position, isAltButton);
+            currentEquipMouse.Use(position, isAltButton);
         }
+        if (currentEquipQ != null && InputCommand.IsButtonDown(KeyCode.Q))
+        {
+            currentEquipQ.Use(position, false);
+        }
+
 
         int2 direction = new int2(InputCommand.Direction.x, 0);
         lookDirection = direction.x;
@@ -85,14 +92,23 @@ public class PlayerElement : PhysicObject, ILightSource
         HandlePhysic();
     }
 
-    public void Equip(EquipableElement weapon)
+    public void EquipMouse(EquipableElement equipable)
     {
-        if(currentEquip != null)
+        if(currentEquipMouse != null)
         {
-            currentEquip.Unequip(position);
+            currentEquipMouse.Unequip(position);
         }
 
-        currentEquip = weapon;
+        currentEquipMouse = equipable;
+    }
+    public void EquipQ(EquipableElement equipable)
+    {
+        if (currentEquipQ != null)
+        {
+            currentEquipQ.Unequip(position);
+        }
+
+        currentEquipQ = equipable;
     }
 
     public override void Dispose()

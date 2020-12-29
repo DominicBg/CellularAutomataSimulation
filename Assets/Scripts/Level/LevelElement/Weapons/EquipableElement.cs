@@ -37,7 +37,7 @@ public abstract class EquipableElement : WorldObject
         {
             isEquiped = true;
             //isVisible = false;
-            player.Equip(this);
+            player.EquipMouse(this);
             OnEquip();
         }
 

@@ -17,6 +17,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
     public Map map;
     public NativeList<int2> particleSmokeEvent;
+    public bool updateSimulation = true;
 
     public void OnValidate()
     {
@@ -39,28 +40,29 @@ public class LevelContainer : MonoBehaviour, IDisposable
     {
         tickBlock.UpdateTick();
 
-        //Update simulation
-        var particleSpawners = GetParticleSpawner();
-        new CellularAutomataJob()
+        if(updateSimulation)
         {
-            behaviour = GameManager.ParticleBehaviour,
-            map = map,
-            nativeParticleSpawners = particleSpawners,
-            tickBlock = tickBlock,
-            deltaTime = GameManager.DeltaTime,
-            settings = GameManager.PhysiXVIISetings,
-            particleSmokeEvent = particleSmokeEvent
-        }.Run();
+            var particleSpawners = GetParticleSpawner();
+            new CellularAutomataJob()
+            {
+                behaviour = GameManager.ParticleBehaviour,
+                map = map,
+                nativeParticleSpawners = particleSpawners,
+                tickBlock = tickBlock,
+                deltaTime = GameManager.DeltaTime,
+                settings = GameManager.PhysiXVIISetings,
+                particleSmokeEvent = particleSmokeEvent
+            }.Run();
 
-        HandleParticleEvents(ref tickBlock);
+            HandleParticleEvents(ref tickBlock);
 
-
-        //lol
-        for (int i = 0; i < particleSpawnerElements.particleSpawners.Length; i++)
-        {
-            particleSpawnerElements.particleSpawners[i].particleSpawnCount = particleSpawners[i].particleSpawnCount;
+            //lol
+            for (int i = 0; i < particleSpawnerElements.particleSpawners.Length; i++)
+            {
+                particleSpawnerElements.particleSpawners[i].particleSpawnCount = particleSpawners[i].particleSpawnCount;
+            }
+            particleSpawners.Dispose();
         }
-        particleSpawners.Dispose();
 
         //Update elements
         for (int i = 0; i < levelElements.Length; i++)

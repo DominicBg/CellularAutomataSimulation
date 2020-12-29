@@ -43,7 +43,7 @@ public class MainMenuLightRender : IDisposable
     {
         var pass1 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         starBackground.Render(ref pass1, tickBlock.tick);
-        GridRenderer.ApplyMapPixels(ref pass1, map, tickBlock);
+        GridRenderer.ApplyMapPixels(ref pass1, map, ref tickBlock, 0);
         title.Render(ref pass1);
 
         var pass2 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
