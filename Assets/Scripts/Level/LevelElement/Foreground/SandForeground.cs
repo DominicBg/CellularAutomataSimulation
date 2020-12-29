@@ -17,7 +17,8 @@ public class SandForeground : LevelForeground
             outputColors = outputColors,
             settings = settings,
             tickBlock = tickBlock,
-            sandRendering = GridRenderer.Instance.particleRendering.sandRendering
+            sandRendering = GridRenderer.Instance.particleRendering.sandRendering,
+            levelOffset = levelPosition * GameManager.GridSizes
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
@@ -28,15 +29,17 @@ public class SandForeground : LevelForeground
         public Settings settings;
         public TickBlock tickBlock;
         public SandRendering sandRendering;
+        public float2 levelOffset;
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            float2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            pos += levelOffset;
             float2 offset = tickBlock.tick * settings.speed;
             float2 offset2 = tickBlock.tick * settings.speed2;
 
-            float2 posNoise = (float2)pos * settings.scale + offset;
-            float2 posNoise2 = (float2)pos * settings.scale2 + offset2;
+            float2 posNoise = pos * settings.scale + offset;
+            float2 posNoise2 = pos * settings.scale2 + offset2;
 
             float yBoost = pos.y * settings.yBoost;
 
@@ -47,7 +50,7 @@ public class SandForeground : LevelForeground
             granularNoise = MathUtils.ReduceResolution(granularNoise, settings.resolution);
 
 
-            Color color = sandRendering.GetColor(pos, ref tickBlock);
+            Color color = sandRendering.GetColor((int2)pos, ref tickBlock);
             color.a = noisevalue * granularNoise * settings.maxAlpha + yBoost;
             outputColors[index] = RenderingUtils.Blend(outputColors[index], color, settings.blending);
         }

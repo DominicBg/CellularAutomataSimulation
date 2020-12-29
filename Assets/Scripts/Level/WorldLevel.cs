@@ -120,7 +120,6 @@ public class WorldLevel : MonoBehaviour
             GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
 
             backgroundColors.Dispose();
-            //levelContainerGroup.RenderBackground(ref outputColors, ref tickBlock, currentLevelPosition);
             levelContainerGroup.RenderForeground(ref outputColors, ref tickBlock, currentLevelPosition);
         }
         PostProcessManager.Instance.Render(ref outputColors, ref tickBlock);
@@ -173,7 +172,6 @@ public class WorldLevel : MonoBehaviour
 
         if(sameGroup)
         {
-
             float2 lerpLevelPosition = math.lerp(currentLevelPosition, transitionPosition, transitionInfo.transitionRatio);
             GridRenderer.GetBlankTexture(out NativeArray<Color32> backgroundColors);
             currentGroup.RenderBackground(ref backgroundColors, ref tickBlock, lerpLevelPosition);
@@ -181,11 +179,14 @@ public class WorldLevel : MonoBehaviour
             RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
             RenderLevelContainer(levels[transitionPosition], ref transitionColors);
 
+            //currentGroup.RenderForeground(ref currentColors, ref tickBlock, currentLevelPosition);
 
             transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
-            currentGroup.RenderForeground(ref outputColors, ref tickBlock, currentLevelPosition);
 
             GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
+
+            currentGroup.RenderForeground(ref outputColors, ref tickBlock, lerpLevelPosition);
+
             backgroundColors.Dispose();
         }
         else

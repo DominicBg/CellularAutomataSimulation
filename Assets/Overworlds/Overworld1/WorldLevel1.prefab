@@ -2326,7 +2326,7 @@ MonoBehaviour:
     scale2: 0.11
     maxAlpha: 0.15
     blending: 1
-    yBoost: 0.0025
+    yBoost: 0.004
     resolution: 8.8
 --- !u!1 &4639830795529042868
 GameObject:
