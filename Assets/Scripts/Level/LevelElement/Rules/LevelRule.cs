@@ -6,18 +6,15 @@ using UnityEngine;
 public abstract class LevelRule : LevelElement
 {
     public PlayerElement playerElement;
-    public GoalElement goalElement;
+    public LevelObject goalElement;
 
     protected bool playerFinished;
     protected int tickFinished;
 
-
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(playerFinished)
-        {
-            tickFinished++;
-        }
+        if (playerFinished)
+            return;
 
         Bound playerBound = playerElement.GetBound();
         Bound goalBound = goalElement.GetBound();
@@ -25,9 +22,8 @@ public abstract class LevelRule : LevelElement
         {
             Debug.Log("BRAVO");
             playerFinished = true;
+            tickFinished = tickBlock.tick;
             OnLevelFinish();
-
-            playerElement.currentEquipMouse.isVisible = false;
         }
     }
 

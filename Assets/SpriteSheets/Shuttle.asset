@@ -18,3 +18,16 @@ MonoBehaviour:
     - animationName: Idle
       sprites:
       - {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
+    - animationName: RedLight
+      sprites:
+      - {fileID: 2800000, guid: fe02eac5feb27384582700c7b055db4c, type: 3}
+      - {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
+    - animationName: GreenLight
+      sprites:
+      - {fileID: 2800000, guid: 7c33af00b816ca64bb58c84803fd05fe, type: 3}
+      - {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
+    - animationName: Fly
+      sprites:
+      - {fileID: 2800000, guid: 71788484e3a01fc4787ae4109db6644a, type: 3}
+      - {fileID: 2800000, guid: bee7fc3d26427e84aa7a9ffe9fd3d85d, type: 3}
+      - {fileID: 2800000, guid: 54957bf219ba4e1419d662eb43b73052, type: 3}

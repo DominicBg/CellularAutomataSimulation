@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class World1GemShrineElement : LevelObject
 {
-    [SerializeField] int2 sizes;
-    [SerializeField] PlayerElement player;
-    [SerializeField] TimeGemElement timeGem;
+    [SerializeField] int2 sizes = 0;
+    [SerializeField] PlayerElement player = default;
+    [SerializeField] TimeGemElement timeGem = default;
 
     private void OnValidate()
     {

@@ -56,6 +56,8 @@ public class WorldLevel : MonoBehaviour
 
             worldObjects[i].Init(CurrentLevel.map, null);
         }
+
+        PostProcessManager.Instance = new PostProcessManager();
     }
 
     public void OnUpdate()
@@ -130,29 +132,29 @@ public class WorldLevel : MonoBehaviour
         //add world object is visible
         levelContainer.PreRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                 worldObjects[i].PreRender(ref outputColors, ref tickBlock);
 
         levelContainer.Render(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                 worldObjects[i].Render(ref outputColors, ref tickBlock);
 
         levelContainer.PostRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                 worldObjects[i].PostRender(ref outputColors, ref tickBlock);
 
         levelContainer.RenderUI(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                 worldObjects[i].RenderUI(ref outputColors, ref tickBlock);
 
         if (inDebug)
         {
             levelContainer.RenderDebug(ref outputColors, ref tickBlock);
             for (int i = 0; i < worldObjects.Length; i++)
-                if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition))
+                if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                     worldObjects[i].RenderDebug(ref outputColors, ref tickBlock);
         }
     }

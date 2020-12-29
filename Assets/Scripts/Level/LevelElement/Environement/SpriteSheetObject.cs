@@ -41,4 +41,9 @@ public class SpriteSheetObject : LevelObject
         base.Dispose();
         spriteAnimator.Dispose();
     }
+
+    public void PlayAnimation(int animation)
+    {
+        spriteAnimator.SetAnimation(animation);
+    }
 }

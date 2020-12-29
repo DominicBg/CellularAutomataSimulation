@@ -19,7 +19,7 @@ public struct ShakeScreenJob : IJobParallelFor
     {
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
 
-        float falloff = 1 - t * t * t;
+        float falloff = settings.useFalloff ? 1 - t * t * t : 1;
         float p = tickBlock.tick * settings.speed;
         float x = noise.cnoise(new float2(p, 100)) * settings.intensity * falloff;
         float y = noise.cnoise(new float2(100, p)) * settings.intensity * falloff;

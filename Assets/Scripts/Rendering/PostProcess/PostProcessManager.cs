@@ -7,18 +7,8 @@ using UnityEngine;
 
 public class PostProcessManager
 {
-    static PostProcessManager _instance;
-    public static PostProcessManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = new PostProcessManager();
-
-            return _instance;
-        }
-    }
-
+    public static PostProcessManager Instance;
+    
     Animation<ShakeSettings> shakeAnimation;
     Animation<ScreenFlashSettings> screenFlashAnimation;
     Animation<ShockwaveSettings> shockwaveAnimation;
@@ -222,13 +212,13 @@ public class PostProcessManager
         public int2 position;
     }
 
-    //Settings
     [System.Serializable]
     public struct ShakeSettings 
     {
         public float intensity;
         public float duration;
         public float speed;
+        public bool useFalloff;
         public float blendWithOriginal;
     }
 

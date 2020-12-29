@@ -12,7 +12,6 @@ public class ParticleProps : LevelObject
     NativeSprite nativeSprite;
     NativeGrid<bool> isParticles;
 
-
     public override void OnInit()
     {
         nativeSprite = new NativeSprite(texture);
