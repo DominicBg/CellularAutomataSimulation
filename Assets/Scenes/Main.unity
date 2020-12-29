@@ -1460,26 +1460,27 @@ MonoBehaviour:
       reflectionXDifference: 0.05
       reflectionShineAngle: -0.005
     rockRendering:
-      rockColor: {r: 0.26272696, g: 0.30810022, b: 0.4528302, a: 1}
-      crackColor: {r: 0.19508722, g: 0.20843716, b: 0.3018868, a: 1}
-      crackColor2: {r: 0.12793697, g: 0.13783078, b: 0.21698111, a: 1}
-      crackColor3: {r: 0.066571735, g: 0.06756062, b: 0.0754717, a: 1}
-      noiseCrackThreshold: 0.25
-      noiseCrackThreshold2: 0.5
-      noiseCrackThreshold3: 0.89
-      noiseScale: 0.07
-      noiseScale2: 0
-      lerp: 0
+      lightColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+      mediumColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+      darkColor: {r: 0.12941177, g: 0.13725491, b: 0.21568628, a: 1}
+      veryDarkColor: {r: 0.05887328, g: 0.05887328, b: 0.084905684, a: 1}
+      borderColor: {r: 0.105882354, g: 0.105882354, b: 0.16078432, a: 1}
+      lightThreshold: 0.9
+      mediumThreshold: 0.81
+      darkThreshold: 0.4
+      noiseScale: 0.09
       lightPos:
-        x: 21.5
-        y: 43.83
-        z: 73.2
+        x: 50
+        y: 50
+        z: 42.23
       showNormal: 0
       showDot: 0
       showHeight: 0
-      minThresholdCrack3: 0
-      lightRatio: 0
-      clampHeight: 0.7
+      minThresholdCrack: -0.2
+      resolution: 14.1
+      minclampHeight: 0.65
+      maxclampHeight: 0.9
+      ditherRange: 0.13
     rubbleColor:
       rockColor: {r: 0.20799218, g: 0.24561678, b: 0.3584906, a: 1}
       crackColor: {r: 0.13817194, g: 0.14692852, b: 0.21698111, a: 1}

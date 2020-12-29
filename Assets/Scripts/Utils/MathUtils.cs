@@ -66,4 +66,10 @@ public static class MathUtils
     {
         return new float3(normal.x * strength, normal.y * strength, math.lerp(1, normal.z, math.saturate(strength)));
     }
+
+    public static float ReduceResolution(float x, float resolution)
+    {
+        return math.floor(x * resolution) / resolution;
+    }
 }
+

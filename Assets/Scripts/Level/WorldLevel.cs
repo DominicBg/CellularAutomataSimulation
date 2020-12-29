@@ -181,7 +181,9 @@ public class WorldLevel : MonoBehaviour
             RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
             RenderLevelContainer(levels[transitionPosition], ref transitionColors);
 
+
             transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
+            currentGroup.RenderForeground(ref outputColors, ref tickBlock, currentLevelPosition);
 
             GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
             backgroundColors.Dispose();
@@ -189,9 +191,11 @@ public class WorldLevel : MonoBehaviour
         else
         {
             currentGroup.RenderBackground(ref currentColors, ref tickBlock, currentLevelPosition);
-            transitionGroup.RenderBackground(ref transitionColors, ref tickBlock, currentLevelPosition);
+            transitionGroup.RenderBackground(ref transitionColors, ref tickBlock, transitionPosition);
             RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
             RenderLevelContainer(levels[transitionPosition], ref transitionColors);
+            currentGroup.RenderForeground(ref currentColors, ref tickBlock, currentLevelPosition);
+            transitionGroup.RenderForeground(ref transitionColors, ref tickBlock, transitionPosition);
 
             transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
         }

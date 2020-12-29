@@ -8,13 +8,15 @@ public class LevelContainerGroup : MonoBehaviour
 {
     public LevelContainer[] levelContainers;
     public LevelBackground[] backgrounds;
-    //forgrounds
+    public LevelForeground[] foregrounds;
 
     public void OnValidate()
     {
         levelContainers = GetComponentsInChildren<LevelContainer>();
         backgrounds = GetComponents<LevelBackground>();
+        foregrounds = GetComponents<LevelForeground>();
     }
+
 
     public void RenderBackground(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, float2 currentLevel)
     {
@@ -24,7 +26,7 @@ public class LevelContainerGroup : MonoBehaviour
 
     public void RenderForeground(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, float2 currentLevel)
     {
-        //for (int i = 0; i < backgrounds.Length; i++)
-        //    backgrounds[i].Render(ref outputcolor, ref tickBlock, currentLevel);
+        for (int i = 0; i < foregrounds.Length; i++)
+            foregrounds[i].Render(ref outputcolor, ref tickBlock, currentLevel);
     }
 }
