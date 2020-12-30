@@ -122,9 +122,9 @@ public class PlayerElement : PhysicObject, ILightSource
         return settings.lightSourceSettings.lightSource;
     }
 
-    public override void UpdateLevelMap(int2 newLevel, Map map)
+    public override void UpdateLevelMap(int2 newLevel, Map map, LevelContainer levelContainer)
     {
-        base.UpdateLevelMap(newLevel, map);
+        base.UpdateLevelMap(newLevel, map, levelContainer);
         currentLevel = newLevel;
     }
 }

@@ -36,6 +36,11 @@ public static class MathUtils
         return new float2(r * cos, r * sin);
     }
 
+    public static float2 Rotate(float2 v, float a)
+    {
+        math.sincos(a, out float s, out float c);
+        return new float2(v.x * c - v.y * s, v.x * s + v.y * c);
+    }
 
     public static float2 Spherize(int2 center, int2 position, float radius)
     {

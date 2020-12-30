@@ -11,7 +11,10 @@ public class Shovel : EquipableElement
     List<int2> debugPositions = new List<int2>();
 
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
-    {
+    {     
+        if (!levelContainer.updateSimulation)
+            return;
+
         debugPositions.Clear();
 
         float2 dir = math.normalize(settings.throwDirVelocity);

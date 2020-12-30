@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ExplosiveEffectScriptable", menuName = "Effect/ExplosiveEffectScriptable", order = 1)]
+[CreateAssetMenu(fileName = "ExplosiveEffectScriptable", menuName = "Effects/ExplosiveEffectScriptable", order = 1)]
 public class ExplosiveEffectScriptable : ScriptableObject
 {
     public PostProcessManager.ShockwaveSettings shockwaveSettings;

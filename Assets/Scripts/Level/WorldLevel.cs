@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    //public LevelContainer[] levelContainerPrefabList = default;
-
     WorldObject[] worldObjects;
     public Dictionary<int2, LevelContainer> levels;
     public Dictionary<LevelContainer, LevelContainerGroup> levelsGroups;
@@ -53,8 +51,8 @@ public class WorldLevel : MonoBehaviour
 
         for (int i = 0; i < worldObjects.Length; i++)
         {
-
-            worldObjects[i].Init(CurrentLevel.map, null);
+            worldObjects[i].Init(CurrentLevel.map, CurrentLevel);
+            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
         }
 
         PostProcessManager.Instance = new PostProcessManager();
@@ -97,7 +95,7 @@ public class WorldLevel : MonoBehaviour
 
         for (int i = 0; i < worldObjects.Length; i++)
         {
-            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map);
+            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
         }
     }
 

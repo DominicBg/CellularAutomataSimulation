@@ -143,9 +143,9 @@ public abstract class EquipableElement : WorldObject
     }
 
     //Make sure to follow in the map
-    public override void UpdateLevelMap(int2 newLevel, Map map)
+    public override void UpdateLevelMap(int2 newLevel, Map map, LevelContainer levelContainer)
     {
-        base.UpdateLevelMap(newLevel, map);
+        base.UpdateLevelMap(newLevel, map, levelContainer);
         if (isEquiped)
             currentLevel = newLevel;
     }
