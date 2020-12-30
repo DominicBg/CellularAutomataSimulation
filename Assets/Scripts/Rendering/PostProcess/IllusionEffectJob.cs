@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
-public struct IllusionEffectSettings
+public struct IllusionEffectSettings : IPostEffect
 {
     public float minIntensity;
     public float intensity;

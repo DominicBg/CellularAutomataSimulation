@@ -6,19 +6,24 @@ using Unity.Jobs;
 using Unity.Collections;
 
 
-
 [BurstCompile]
 public struct MonochromeFilterJob : IJobParallelFor
 {
-    public float threshold;
-    public Color32 black;
-    public Color32 white;
-    public float blendWithOriginal;
+    [System.Serializable]
+    public struct Settings
+    {
+        public float threshold;
+        public Color32 color1;
+        public Color32 color2;
+        public float blendWithOriginal;
+    }
+
+    public Settings settings;
     public NativeArray<Color32> outputColors;
     public void Execute(int i)
     {
         float t = RenderingUtils.Luminance(outputColors[i]);
-        Color32 flashColor = t > threshold ? white : black;
-        outputColors[i] = Color32.Lerp(outputColors[i], flashColor, blendWithOriginal);
+        Color32 flashColor = t > settings.threshold ? settings .color1: settings.color2;
+        outputColors[i] = Color32.Lerp(outputColors[i], flashColor, settings.blendWithOriginal);
     }
 }

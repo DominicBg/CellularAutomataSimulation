@@ -18,16 +18,17 @@ MonoBehaviour:
     waveSpeed: 25
     intensity: 0.94
   screenFlashSettings:
-    color1:
-      serializedVersion: 2
-      rgba: 4294506744
-    color2:
-      serializedVersion: 2
-      rgba: 4278190080
-    threshold: 0.6
+    jobSettings:
+      threshold: 0.7
+      color1:
+        serializedVersion: 2
+        rgba: 4294967295
+      color2:
+        serializedVersion: 2
+        rgba: 4278190080
+      blendWithOriginal: 0.75
     duration: 0.2
     interval: 2
-    blendWithOriginal: 0.36
   shakeSettings:
     intensity: 12
     duration: 1

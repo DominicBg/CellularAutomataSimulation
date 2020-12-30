@@ -24,12 +24,13 @@ public class SmokeParticleSystem
     public void Update(ref SmokeParticleSystemSettings settings, ref TickBlock tickBlock)
     {
         NativeArray<Color32> input = new NativeArray<Color32>(smokeColors, Allocator.TempJob);
-        new ParticleEffectSmokeDispersionJob()
+        new DispersionBlurImageJob()
         {
             inputColors = input,
             outputColors = smokeColors,
             tickBlock = tickBlock,
-            settings = settings,
+            dispersionFactor = settings.dispersionFactor,
+            fadeOff = settings.fadeOffFactor
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
         input.Dispose();

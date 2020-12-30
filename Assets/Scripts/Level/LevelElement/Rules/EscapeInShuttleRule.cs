@@ -70,8 +70,8 @@ public class EscapeInShuttleRule : LevelRule
 
                         phase = Phase.Shake;
                         tickFinished = tickBlock.tick;
-                        PostProcessManager.EnqueueShake(in shakeSettings, tickBlock.tick);
-                        PostProcessManager.EnqueueShockwave(in shockWaveSettings, goalElement.GetBound().center, tickBlock.tick);
+                        PostProcessManager.EnqueueShake(in shakeSettings);
+                        PostProcessManager.EnqueueShockwave(in shockWaveSettings, goalElement.GetBound().center);
                     }
 
                     break;
@@ -83,7 +83,7 @@ public class EscapeInShuttleRule : LevelRule
                         phase = Phase.Travel;
                         tickFinished = tickBlock.tick;
                         shuttleSpriteSheet.PlayAnimation((int)ShuttleAnim.Fly);
-                        PostProcessManager.EnqueueShake(in flyShakeSettings, tickBlock.tick);
+                        PostProcessManager.EnqueueShake(in flyShakeSettings);
                     }
                     else
                     {

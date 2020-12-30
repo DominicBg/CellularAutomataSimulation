@@ -14,58 +14,67 @@ public class PostProcessManager
     Animation<ShockwaveSettings> shockwaveAnimation;
     Animation<BlackholeSettings> blackholeAnimation;
     Animation<IllusionEffectSettings> illusionAnimation;
+    int currentTick;
 
-    public static void EnqueueShake(in ShakeSettings settings, int tick)
+    //FrameEffect<IllusionEffectSettings> illusionEffect;
+    //Dictionary<System.Type, FrameEffect<IPostEffect>> frameDictionary = new Dictionary<System.Type, FrameEffect<IPostEffect>>();
+
+
+    public static void EnqueueShake(in ShakeSettings settings)
     {
         Instance.shakeAnimation = new Animation<ShakeSettings>()
         {
             settings = settings,
-            tick = tick,
+            tick = Instance.currentTick,
             isActive = true
         };
     }
 
-    public static void EnqueueScreenFlash(in ScreenFlashSettings settings, int tick)
+    public static void EnqueueScreenFlash(in ScreenFlashSettings settings)
     {
         Instance.screenFlashAnimation = new Animation<ScreenFlashSettings>()
         {
-            tick = tick,
+            tick = Instance.currentTick,
             settings = settings,
             isActive = true
         };
     }
 
-    public static void EnqueueShockwave(in ShockwaveSettings settings, int2 position, int tick)
+    public static void EnqueueShockwave(in ShockwaveSettings settings, int2 position)
     {
         Instance.shockwaveAnimation = new Animation<ShockwaveSettings>()
         {
-            tick = tick,
+            tick = Instance.currentTick,
             settings = settings,
             isActive = true,
             position = position
         };
     }
-    public static void EnqueueBlackHole(in BlackholeSettings settings, int2 position, int tick)
+    public static void EnqueueBlackHole(in BlackholeSettings settings, int2 position)
     {
         Instance.blackholeAnimation = new Animation<BlackholeSettings>()
         {
             settings = settings,
-            tick = tick,
+            tick = Instance.currentTick,
             isActive = true,
             position = position
         };
     }
 
-    public static void EnqueueIllusion(in IllusionEffectSettings settings, int tick)
+    public static void EnqueueIllusion(in IllusionEffectSettings settings)
     {
         Instance.illusionAnimation = new Animation<IllusionEffectSettings>()
         {
             settings = settings,
-            tick = tick,
+            tick = Instance.currentTick,
             isActive = true
         };
     }
 
+    public void Update(ref TickBlock tickBlock)
+    {
+        currentTick = tickBlock.tick;
+    }
 
     public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
@@ -74,6 +83,9 @@ public class PostProcessManager
         RenderShockwave(ref outputColors, ref tickBlock);
         RenderBlackHole(ref outputColors, ref tickBlock);
         RenderIllusion(ref outputColors, ref tickBlock);
+
+        //UpdateEffects(ref outputColors, ref tickBlock);
+
     }
 
     void RenderShake(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
@@ -81,16 +93,7 @@ public class PostProcessManager
         if (!ShouldUpdate(ref shakeAnimation, ref tickBlock, shakeAnimation.settings.duration, out float duration))
             return;
 
-        ////add in screenshake?
         float t = duration / shakeAnimation.settings.duration;
-        //float falloff = 1 - t * t * t;
-        //float p = tickBlock.tick * shakeAnimation.settings.speed;
-        //float x = noise.cnoise(new float2(p, 100)) * shakeAnimation.settings.intensity * falloff;
-        //float y = noise.cnoise(new float2(100, p)) * shakeAnimation.settings.intensity * falloff;
-
-        //int2 offset = new int2((int)x, (int)y);
-        //if (math.all(offset == 0))
-        //    return;
 
         NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
         new ShakeScreenJob()
@@ -113,16 +116,17 @@ public class PostProcessManager
 
         bool inverted = (duration % intervalDuration * 2) < intervalDuration;
 
-        Color32 color1 = screenFlashAnimation.settings.color1;
-        Color32 color2 = screenFlashAnimation.settings.color2;
+        Color32 color1 = screenFlashAnimation.settings.jobSettings.color1;
+        Color32 color2 = screenFlashAnimation.settings.jobSettings.color2;
+        MonochromeFilterJob.Settings jobSettings = screenFlashAnimation.settings.jobSettings;
 
+        jobSettings.color1 = inverted ? color1 : color2;
+        jobSettings.color2 = inverted ? color2 : color1;
         new MonochromeFilterJob()
         {
-            black = inverted ? color1 : color2,
-            white = inverted ? color2 : color1,
+            settings = jobSettings,
             outputColors = outputColors,
-            blendWithOriginal = screenFlashAnimation.settings.blendWithOriginal,
-            threshold = screenFlashAnimation.settings.threshold,
+            
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
@@ -184,8 +188,6 @@ public class PostProcessManager
         inputColors.Dispose();
     }
 
-
-
     public bool ShouldUpdate<T>(ref Animation<T> animation, ref TickBlock tickBlock, float settingsDuration, out float duration)
     {
         duration = 0;
@@ -203,6 +205,55 @@ public class PostProcessManager
         return true;
     }
 
+    //public PostProcessManager()
+    //{
+    //    frameDictionary.Add(typeof(IllusionEffectSettings), new FrameEffect<IPostEffect>());
+    //}
+
+    //public static void SetEffect(in IPostEffect settings)
+    //{
+    //    System.Type type = settings.GetType();
+    //    FrameEffect<IPostEffect> data = Instance.frameDictionary[type];
+    //    data.settings = settings;
+    //    data.isEnabled = true;
+    //    Instance.frameDictionary[type] = data;
+    //}
+
+    //private void UpdateEffects(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    //{
+    //    foreach(var frameEffect in frameDictionary.Values)
+    //    {
+    //        if(frameEffect.isEnabled)
+    //        {
+    //            var type = frameEffect.settings.GetType();
+    //            if (type == typeof(IllusionEffectSettings))
+    //            {
+    //                NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+    //                new IllusionEffectJob()
+    //                {
+    //                    outputColors = outputColors,
+    //                    settings = (IllusionEffectSettings)frameEffect.settings,
+    //                    inputColors = inputColors,
+    //                    t = tickBlock.tick,
+                        
+    //                }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    //                inputColors.Dispose();
+    //            }
+
+    //            //FrameEffect<IPostEffect> data = Instance.frameDictionary[type];
+    //            //data.isEnabled = false;
+    //            //Instance.frameDictionary[type] = data;
+    //        }
+    //    }
+    //}
+
+
+
+    //public struct FrameEffect<T>
+    //{
+    //    public T settings;
+    //    public bool isEnabled;
+    //}    
 
     public struct Animation<T>
     {
@@ -225,12 +276,9 @@ public class PostProcessManager
     [System.Serializable]
     public struct ScreenFlashSettings
     {
-        public Color32 color1;
-        public Color32 color2;
-        public float threshold;
+        public MonochromeFilterJob.Settings jobSettings;
         public float duration;
         public int interval;
-        public float blendWithOriginal;
     }
 
     [System.Serializable]

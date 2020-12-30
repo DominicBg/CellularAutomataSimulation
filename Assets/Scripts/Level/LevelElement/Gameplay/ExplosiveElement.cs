@@ -33,9 +33,9 @@ public class ExplosiveElement : LevelElement
     private void Explode(int2 position, ref TickBlock tickBlock)
     {
         Explosive.SetExplosive(position, in settings.explosiveSettings, map);
-        PostProcessManager.EnqueueShake(in settings.shakeSettings, tickBlock.tick);
-        PostProcessManager.EnqueueScreenFlash(in settings.screenFlashSettings, tickBlock.tick);
-        PostProcessManager.EnqueueShockwave(in settings.shockwaveSettings, position, tickBlock.tick);
+        PostProcessManager.EnqueueShake(in settings.shakeSettings);
+        PostProcessManager.EnqueueScreenFlash(in settings.screenFlashSettings);
+        PostProcessManager.EnqueueShockwave(in settings.shockwaveSettings, position);
         //isEnable = false;
         //target.isVisible = false;
         //target.isEnable = false;

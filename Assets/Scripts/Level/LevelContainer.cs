@@ -38,8 +38,6 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
     public void OnUpdate(ref TickBlock tickBlock)
     {
-        tickBlock.UpdateTick();
-
         if(updateSimulation)
         {
             var particleSpawners = GetParticleSpawner();

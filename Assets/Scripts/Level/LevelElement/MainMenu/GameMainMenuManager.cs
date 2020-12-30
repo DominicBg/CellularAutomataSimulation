@@ -18,7 +18,6 @@ public class GameMainMenuManager : MonoBehaviour, State
     public int glitchSpeed;
     public int2 minStride;
     public int2 maxStride;
-    public int2 particleDestroyerPosition;
 
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
@@ -57,7 +56,13 @@ public class GameMainMenuManager : MonoBehaviour, State
 
     public void OnUpdate()
     {
+        tickBlock.UpdateTick();
         mainMenuLevel.OnUpdate(ref tickBlock);
+
+        if(InputCommand.IsButtonDown(KeyCode.Space))
+        {
+            GameManager.Instance.SetOverworld();
+        }
     }
 
     public void OnRender()

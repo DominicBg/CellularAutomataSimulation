@@ -260,7 +260,30 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
         else
         {
             var colors = RenderLevelContainer((int2)viewPosition);
+            DrawPreview(ref colors);
             GridRenderer.RenderToScreen(colors);
+        }
+    }
+    
+    void DrawPreview(ref NativeArray<Color32> outputColors)
+    {
+        int2 sizes = GameManager.GridSizes;
+        int2 pos = GridPicker.GetGridPosition(sizes);
+
+        int halfSize = brushSize / 2;
+        int extra = brushSize % 2 == 0 ? 0 : 1;
+
+        for (int x = -halfSize; x < halfSize + extra; x++)
+        {
+            for (int y = -halfSize; y < halfSize + extra; y++)
+            {
+                int2 pixelPos = new int2(pos.x + x, pos.y + y);
+                if(GridHelper.InBound(pixelPos, GameManager.GridSizes))
+                {
+                    int index = ArrayHelper.PosToIndex(pixelPos, GameManager.GridSizes);
+                    outputColors[index] = Color.gray;
+                }
+            }
         }
     }
 

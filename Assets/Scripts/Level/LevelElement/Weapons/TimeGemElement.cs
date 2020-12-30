@@ -15,6 +15,10 @@ public class TimeGemElement : EquipableElement
 
     [SerializeField] DisabledTimeGemJob.Settings disabledSettings;
     [SerializeField] EnabledTimeGemJob.Settings enabledSettings;
+    [SerializeField] IllusionEffectSettings illusionSettings;
+    [SerializeField] float dispersion;
+    [SerializeField] float fadeoff;
+
 
     NativeArray<Color32> previousColor;
 
@@ -47,19 +51,43 @@ public class TimeGemElement : EquipableElement
         if(timeStopped)
         {
             Debug.Log("Time shall never be altered");
-            PostProcessManager.EnqueueScreenFlash(in onEnableFlash, tickBlock.tick);
-            PostProcessManager.EnqueueShockwave(in shockwave, position, tickBlock.tick);
+            PostProcessManager.EnqueueScreenFlash(in onEnableFlash);
+            PostProcessManager.EnqueueShockwave(in shockwave, position);
+            PostProcessManager.EnqueueIllusion(in illusionSettings);
         }
         else
         {
             Debug.Log("Release time.. from its chains");
-            PostProcessManager.EnqueueScreenFlash(in onDisableFlash, tickBlock.tick);
+            PostProcessManager.EnqueueScreenFlash(in onDisableFlash);
+            for (int i = 0; i < previousColor.Length; i++)
+            {
+                previousColor[i] = Color.clear;
+            }
         }
 
-        LevelContainer[] containers = FindObjectsOfType<LevelContainer>();
-        for (int i = 0; i < containers.Length; i++)
+        var worldLevel = FindObjectOfType<WorldLevel>();
+        worldLevel.updatLevelElement = !timeStopped;
+    }
+
+    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    {
+        if (timeStopped)
         {
-            containers[i].updateSimulation = !timeStopped;
+            NativeArray<Color32> input = new NativeArray<Color32>(previousColor, Allocator.TempJob);
+            new DispersionBlurImageJob()
+            {
+                inputColors = input,
+                dispersionFactor = dispersion,
+                fadeOff = fadeoff,
+                outputColors = previousColor,
+                tickBlock = tickBlock
+            }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+            player.Render(ref previousColor, ref tickBlock);
+            input.Dispose();
+        }
+        else
+        {
+            //reset previous color?
         }
     }
 
@@ -67,9 +95,11 @@ public class TimeGemElement : EquipableElement
     {
         if (!isEquiped)
             return;
+
         int2 center = player.GetBound().center;
         if (timeStopped)
         {
+            //PostProcessManager.SetEffect(illusionSettings);
             new EnabledTimeGemJob()
             {
                 center = center,
@@ -77,11 +107,6 @@ public class TimeGemElement : EquipableElement
                 outputColors = outputColors,
                 settings = enabledSettings
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-
-            for (int i = 0; i < previousColor.Length; i++)
-            {
-                previousColor[i] = outputColors[i];
-            }
         }
         else
         {
@@ -93,7 +118,6 @@ public class TimeGemElement : EquipableElement
                 tickBlock = tickBlock
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         }
-        //base.Render(ref outputcolor, ref tickBlock);
     }
 
     public override void Dispose()
@@ -183,7 +207,7 @@ public class TimeGemElement : EquipableElement
         public void Execute(int index)
         {
             Color color = previousColor[index];
-            color.a = settings.blending;
+            color.a = math.min(settings.blending, color.a);
             outputColors[index] = RenderingUtils.Blend(outputColors[index], color, settings.blendingMode);
         }
     }

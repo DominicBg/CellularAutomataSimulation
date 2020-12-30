@@ -32,6 +32,6 @@ public class GridPicker : MonoBehaviour
 
         int x = (int)math.remap(0, resolution.x, -xExtra, gridSizes.x + xExtra, result.x);
         int y = (int)math.remap(0, resolution.y, 0, gridSizes.y, result.y);
-        return new int2(x, y);
+        return math.clamp(new int2(x, y), 0, GameManager.GridSizes -1);
     }
 }

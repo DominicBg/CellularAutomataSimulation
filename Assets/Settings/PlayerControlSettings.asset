@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerControlSettings
   m_EditorClassIdentifier: 
   acceleration: 175
-  stopMovingDamping: 0.75
+  stopMovingDamping: 0.823
   turiningDamping: 0.05
   movingDamping: 0.3
   dampingForce: 10

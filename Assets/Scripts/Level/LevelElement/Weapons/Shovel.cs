@@ -11,9 +11,14 @@ public class Shovel : EquipableElement
     List<int2> debugPositions = new List<int2>();
 
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
-    {     
-        if (!levelContainer.updateSimulation)
+    {
+        //eww
+        var worldLevel = FindObjectOfType<WorldLevel>();
+        if (!worldLevel.updatLevelElement)
+        {
             return;
+        }
+  
 
         debugPositions.Clear();
 
