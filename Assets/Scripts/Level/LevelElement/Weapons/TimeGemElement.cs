@@ -182,13 +182,9 @@ public class TimeGemElement : EquipableElement
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
-            //uv mapping?
-
             Color color = previousColor[index];
             color.a = settings.blending;
             outputColors[index] = RenderingUtils.Blend(outputColors[index], color, settings.blendingMode);
-
         }
     }
 

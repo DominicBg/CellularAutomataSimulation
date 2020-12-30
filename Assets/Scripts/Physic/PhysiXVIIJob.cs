@@ -31,7 +31,7 @@ public struct PhysiXVIIJob : IJob
         if (isGrounded && !(physicData.velocity.y > 0))
         {
             physicData.velocity.y = 0; //set parallel of gravity
-            physicData.velocity *= settings.friction;
+            //physicData.velocity *= settings.friction;
         }
         else
         {
@@ -39,7 +39,7 @@ public struct PhysiXVIIJob : IJob
         }
 
         float2 currentPosition = physicData.position;
-        float2 nextPosition = currentPosition + (physicData.velocity + physicData.controlledVelocity) * deltaTime;
+        float2 nextPosition = currentPosition + physicData.velocity * deltaTime;
         int2 currentGridPosition = physicData.gridPosition;
 
 
@@ -52,7 +52,7 @@ public struct PhysiXVIIJob : IJob
         {
             int inclination = GetTerrainInclination(ref physicData, nextGridPosition, isGrounded);
             float inclinationSlowDown = inclination == 0 ? 1 : settings.slopeSlow;
-            nextPosition = currentPosition + (physicData.velocity + physicData.controlledVelocity) * deltaTime * inclinationSlowDown;
+            nextPosition = currentPosition + physicData.velocity * deltaTime * inclinationSlowDown;
             HandlePhysics(ref physicData, nextPosition, isGrounded);
         }
 
@@ -184,7 +184,9 @@ public struct PhysiXVIIJob : IJob
         }
 
         float absorbtion = (horizontalAbsorbtion + verticalAbsorbtion) * 0.5f;
-        physicData.velocity = math.reflect(physicData.velocity, normal) * absorbtion;
+         
+        //make thing smoother?
+        physicData.velocity = math.reflect(physicData.velocity, normal) * 0.1f; // absorbtion;
     }
 
     unsafe void CalculateObjectParticleCollisionBound(ref PhysicData physicData, Bound bound, out float absorbtion)
@@ -199,7 +201,7 @@ public struct PhysiXVIIJob : IJob
             if(particle.type != ParticleType.Player && particle.type != ParticleType.None)
             {
                 float mass = settings.mass[(int)particle.type];
-                PhysiXVII.ComputeElasticCollision(physicData.gridPosition, pos[i], physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
+                PhysiXVII.ComputeElasticCollision(physicData.position, pos[i] + particle.fracPosition, physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
             
                 //Add player?
                 particle.velocity = outv2;

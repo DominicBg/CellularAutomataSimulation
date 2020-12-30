@@ -12,10 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b1ff579ab83fc479470c3a98eacfd0, type: 3}
   m_Name: PlayerControlSettings
   m_EditorClassIdentifier: 
-  movementSpeed: 3000
-  airAcceleration: 0
-  airMovementSpeed: 150
-  jumpForce: 80
+  acceleration: 175
+  stopMovingDamping: 0.75
+  turiningDamping: 0.05
+  movingDamping: 0.3
+  dampingForce: 10
+  pressJumpBuffer: 0.2
+  jumpForce: 90
+  inAirJumpThreshold: 0.2
+  releaseJumpButtonCutoff: 0.5
   spriteSheet:
     spriteSheetName: Astro
     spriteAnimations:

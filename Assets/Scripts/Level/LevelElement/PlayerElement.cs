@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using static FogElement;
 
 public class PlayerElement : PhysicObject, ILightSource
 {
@@ -13,10 +12,12 @@ public class PlayerElement : PhysicObject, ILightSource
     public SpriteAnimator spriteAnimator;
     [HideInInspector] public EquipableElement currentEquipMouse;
     [HideInInspector] public EquipableElement currentEquipQ;
+    [HideInInspector] public bool lookLeft;
 
     int lookDirection;
-    public bool lookLeft;
-
+    bool canJump;
+    float inAirDuration;
+    float pressJumpBufferDuration;
 
     public override Bound GetBound()
     {
@@ -42,7 +43,7 @@ public class PlayerElement : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(currentEquipMouse != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        if (currentEquipMouse != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
             bool isAltButton = Input.GetMouseButton(1);
             currentEquipMouse.Use(position, isAltButton);
@@ -53,16 +54,26 @@ public class PlayerElement : PhysicObject, ILightSource
         }
 
 
-        int2 direction = new int2(InputCommand.Direction.x, 0);
-        lookDirection = direction.x;
+        float2 direction = new float2(InputCommand.Direction.x, 0);
+        lookDirection = (int)math.sign(direction.x);
 
         bool isGrounded = IsGrounded();
+    
+        UpdateAnimation(direction, isGrounded);
 
-        if(!isGrounded)
+        UpdateMovement(direction, isGrounded);
+        UpdateJump(isGrounded);
+
+        HandlePhysic();
+    }
+
+    private void UpdateAnimation(float2 direction, bool isGrounded)
+    {
+        if (!isGrounded)
         {
             spriteAnimator.SetAnimation(2);
         }
-        else  if (direction.x == 0)
+        else if (direction.x == 0)
         {
             spriteAnimator.SetAnimation(0);
         }
@@ -71,26 +82,56 @@ public class PlayerElement : PhysicObject, ILightSource
             spriteAnimator.SetAnimation(1);
         }
         spriteAnimator.Update();
+    }
 
+    private void UpdateMovement(float2 direction, bool isGrounded)
+    {
+        physicData.velocity.x += direction.x * settings.acceleration * GameManager.DeltaTime;
+        float damping;
+        if (math.abs(direction.x) < 0.01f)
+            damping = settings.stopMovingDamping;
+        else if (math.sign(direction.x) != math.sign(physicData.velocity.x))
+            damping = settings.turiningDamping;
+        else
+            damping = settings.movingDamping;
+
+        physicData.velocity.x *= math.pow(1 - damping, GameManager.DeltaTime * settings.dampingForce);
+    }
+
+    private void UpdateJump(bool isGrounded)
+    {
         if (isGrounded)
         {
-            physicData.controlledVelocity = (float2)direction * settings.movementSpeed * GameManager.DeltaTime;
+            canJump = true;
+            inAirDuration = 0;
         }
-        else 
+        else
         {
-            physicData.controlledVelocity = (float2)direction * settings.airMovementSpeed * GameManager.DeltaTime;
-            physicData.velocity += (float2)direction * settings.airMovementSpeed * GameManager.DeltaTime;
+            inAirDuration += GameManager.DeltaTime;
+
+            //Control jump height
+            if(physicData.velocity.y > 0 && InputCommand.IsButtonUp(KeyCode.Space))
+            {
+                physicData.velocity.y *= settings.releaseJumpButtonCutoff;
+            }
+
         }
 
-        if (isGrounded && InputCommand.IsButtonDown(KeyCode.Space))
+        pressJumpBufferDuration -= GameManager.DeltaTime;
+        if (InputCommand.IsButtonDown(KeyCode.Space))
         {
-            if (physicData.velocity.y < 0)
-                physicData.velocity.y = 0;
-
-            physicData.velocity += new float2(0, settings.jumpForce);
+            pressJumpBufferDuration = settings.pressJumpBuffer;
         }
-        HandlePhysic();
+
+        if (canJump && inAirDuration < settings.inAirJumpThreshold && pressJumpBufferDuration > 0)
+        {
+            physicData.velocity = new float2(physicData.velocity.x, settings.jumpForce);
+            canJump = false;
+            pressJumpBufferDuration = 0;
+        }
     }
+
+
 
     public void EquipMouse(EquipableElement equipable)
     {
