@@ -10,16 +10,27 @@ public struct World1GemRMJob : IJobParallelFor
 {
     public TickBlock tickBlock;
 
-    public DiamondSettings dsettings;
-    public CameraSettings csettings;
+    public CameraTransform camera;
+    public DiamondSettings diamond;
+    public RenderSettings render;
+    public PillarSettings pillar;
     public NativeArray<Color32> outputColor;
+
     public NativeArray<float3> normals;
+    public NativeArray<Color32> edgeColor;
 
  
     const float derivativeDelta = 0.0001f;
+    [System.Serializable]
+    public struct CameraTransform
+    {
+        public float3 pitchYawRoll;
+        public float3 lookAtPosition;
+        public float distance;
+    }
 
     [System.Serializable]
-    public struct CameraSettings
+    public struct RenderSettings
     {
         public float cameraDepth;
         public float2 scales;
@@ -51,10 +62,35 @@ public struct World1GemRMJob : IJobParallelFor
     {
         public float3 diamondPosition;
         public float3 axis;
+        public float3 pivot;
         public float height;
         public float boxAngle;
         public float3 cubeCutoutSizes;
         public float cubeCutoutY;
+
+        public Color32 edgeColor;
+        public const int materialID = 1;
+    }
+
+    [System.Serializable]
+    public struct PillarSettings
+    {
+        [Header("Transform")]
+        public float3 boxTopSize;
+        public float3 boxTopPosition;
+
+        public float3 boxPillarSize;
+        public float3 boxPillarPosition;
+
+        public float3 boxBottom1Size;
+        public float3 boxBottom1Position;
+
+        public float3 boxBottom2Size;
+        public float3 boxBottom2Position;
+
+        [Header("Colors")]
+        public Color4Dither color4Dither;
+        public const int materialID = 2;
     }
 
     struct Result
@@ -64,53 +100,74 @@ public struct World1GemRMJob : IJobParallelFor
         public int numberSteps;
         public float3 normal;
         public float depth;
+        public int materialID;
     }
 
     float DistanceFunction(float3 position, float t)
     {
         float diamond = DiamondDistance(position, t);
+        float pillar = PillarDistance(position, t);
+        return math.min(diamond, pillar);
+    }
 
-        return diamond;
-
+    int GetMaterialID(float3 position, float t)
+    {
+        float diamond = DiamondDistance(position, t);
+        float pillar = PillarDistance(position, t);
+        return (diamond < pillar) ? DiamondSettings.materialID : PillarSettings.materialID;
     }
 
     float DiamondDistance(float3 position, float t)
     {
-        position = Translate(position, dsettings.diamondPosition);
-        position = RotateAroundAxisUnsafe(position, dsettings.axis, t);
+        position = Translate(position, diamond.diamondPosition);
+        position = RotateAroundAxisUnsafe(position - diamond.pivot, diamond.axis, t);
+        position += diamond.pivot;
 
         float3 pyramidPos = position;
         //Mirror pyramid on the xz plane
         pyramidPos.y = math.abs(pyramidPos.y);
-        float pyramidBottom1 = sdPyramid(pyramidPos, dsettings.height);
-        float pyramidBottom2 = sdPyramid(RotateYQuater(pyramidPos), dsettings.height);
+        float pyramidBottom1 = sdPyramid(pyramidPos, diamond.height);
+        float pyramidBottom2 = sdPyramid(RotateYQuater(pyramidPos), diamond.height);
 
         float3 boxPos = position;
-        float cutoutCube = sdBox(boxPos + math.up() * dsettings.cubeCutoutY, dsettings.cubeCutoutSizes);
+        float cutoutCube = sdBox(boxPos + math.up() * diamond.cubeCutoutY, diamond.cubeCutoutSizes);
         return math.max(cutoutCube, math.max(pyramidBottom1, pyramidBottom2));
     }
 
     float PillarDistance(float3 position, float t)
     {
-        return 0;
+        float boxTop = sdBox(position - pillar.boxTopPosition, pillar.boxTopSize);
+        float boxPillar = sdBox(position - pillar.boxPillarPosition, pillar.boxPillarSize);
+        float boxBottom1 = sdBox(position - pillar.boxBottom1Position, pillar.boxBottom1Size);
+        float boxBottom2 = sdBox(position - pillar.boxBottom2Position, pillar.boxBottom2Size);
+
+        return math.min(boxTop, math.min(boxPillar, math.min(boxBottom1, boxBottom2)));
     }
 
     public void Execute(int index)
     {
         int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
 
-        float2 uv = ((float2)gridPosition / GameManager.GridSizes - 0.5f) / csettings.scales;
-        float3 ro = new float3(uv.x, uv.y, csettings.cameraDepth);
-        float3 rd = new float3(0, 0, 1);
+        float2 uv = ((float2)gridPosition / GameManager.GridSizes - 0.5f) / render.scales;
+        quaternion fromLookAt = quaternion.Euler(math.radians(camera.pitchYawRoll));
+
+        float3 dir = math.mul(fromLookAt, new float3(0, 0, 1));
+
+        float3 position = camera.lookAtPosition + dir * camera.distance;
+        quaternion rotation = quaternion.LookRotation(-dir, math.up());
+        float3 ro = position + math.mul(rotation, new float3(uv.x, uv.y, 0));
+        float3 rd = math.mul(rotation, new float3(0, 0, 1)); 
 
         //precompute
-        dsettings.axis = math.normalize(dsettings.axis);
+        diamond.axis = math.normalize(diamond.axis);
 
         Result result = RayMarch(ro, rd);
 
-        Color colorFront = CalculateColor(outputColor[index], result).ReduceResolution(csettings.resolution);
-        //colorBack.a = settings.backBlend;
+        Color colorFront = CalculateColor(gridPosition, outputColor[index], ref result).ReduceResolution(render.resolution);
+
         normals[index] = result.normal;
+        edgeColor[index] = GetEdgeColor(ref result);
+
         outputColor[index] = colorFront;
     }
 
@@ -118,7 +175,7 @@ public struct World1GemRMJob : IJobParallelFor
     {
         float dt = derivativeDelta;
 
-        float t = tickBlock.tick * csettings.speed;
+        float t = tickBlock.tick * render.speed;
         float d = DistanceFunction(position, t);
         float dx = DistanceFunction(position + new float3(dt, 0, 0), t);
         float dy = DistanceFunction(position + new float3(0, dt, 0), t);
@@ -133,16 +190,16 @@ public struct World1GemRMJob : IJobParallelFor
 
         float3 currentPosition = ro;
         float currentDistance = 0;
-        float t = tickBlock.tick * csettings.speed;
+        float t = tickBlock.tick * render.speed;
 
         int i;
-        for (i = 0; i < csettings.maxStep; i++)
+        for (i = 0; i < render.maxStep; i++)
         {
             float distance = DistanceFunction(currentPosition, t);
             currentDistance += distance;
             currentPosition += rd * distance;
 
-            if(distance < csettings.stopThreshold)
+            if(distance < render.stopThreshold)
             {
                 break;
             }
@@ -152,42 +209,80 @@ public struct World1GemRMJob : IJobParallelFor
         result.pos = currentPosition;
         result.distance = currentDistance;
         result.normal = GetNormal(currentPosition);
-        result.depth = CalculateDepth(currentPosition, rd, t); ;
+        result.depth = CalculateDepth(currentPosition, rd, t);
+        result.materialID = GetMaterialID(currentPosition, t);
         return result;
     }
 
     float CalculateDepth(float3 currentPos, float3 rd, float t)
     {
         float depth = 0;
-        for (int i = 0; i < csettings.depthMaxStep; i++)
+        for (int i = 0; i < render.depthMaxStep; i++)
         {
-            currentPos += rd * csettings.depthStepSize;
+            currentPos += rd * render.depthStepSize;
 
             float distance = DistanceFunction(currentPos, t);
             if(distance >= 0)
             {
                 return depth;
             }
-            depth += csettings.depthStepSize;
+            depth += render.depthStepSize;
         }
         return depth;
     }
 
-    Color CalculateColor(Color currentColor, Result result)
+    Color CalculateColor(int2 gridPosition, Color currentColor, ref Result result)
     {
-        if (result.distance < csettings.distanceThreshold)
+        switch(result.materialID)
         {
-            float lightT = math.saturate(math.dot(math.normalize(csettings.lightPosition), result.normal) + csettings.baseIntensity);
-            float depthRatio = result.depth / csettings.depthMaxSize;
-            Color lightColor = lightT  * csettings.color;
+            case DiamondSettings.materialID: return CalculateDiamondColor(currentColor, ref result);
+            case PillarSettings.materialID: return CalculatePillarColor(gridPosition, ref result);
+        }
+     
+        return Color.clear;
+    }
+
+    Color CalculateDiamondColor(Color currentColor, ref Result result)
+    {
+        if (result.distance < render.distanceThreshold)
+        {
+            float lightT = math.saturate(MathUtils.unorm(math.dot(math.normalize(render.lightPosition), result.normal)) + render.baseIntensity);
+            float depthRatio = result.depth / render.depthMaxSize;
+            Color lightColor = lightT  * render.color;
             currentColor.a = depthRatio;
-            return RenderingUtils.Blend(lightColor, currentColor, csettings.blendDepth);
+            return RenderingUtils.Blend(lightColor, currentColor, render.blendDepth);
         }
-        else if (result.numberSteps > csettings.maxStep * csettings.shineIntensity)
+        else if (result.numberSteps > render.maxStep * render.shineIntensity)
         {
-            float t = math.remap(csettings.maxStep * csettings.shineIntensity, csettings.maxStep, 0, 1, result.numberSteps);
-            return t * csettings.color;
+            float t = math.remap(render.maxStep * render.shineIntensity, render.maxStep, 0, 1, result.numberSteps);
+            return t * render.color;
         }
+        return Color.clear;
+    }
+
+    Color CalculatePillarColor(int2 gridPosition, ref Result result)
+    {
+        if (result.distance < render.distanceThreshold)
+        {
+            float lightT = CalculateLight(result.normal);
+            Color lightColor = pillar.color4Dither.GetColorWitLightValue(lightT, gridPosition);
+            return lightColor;
+        }
+        return Color.clear;
+    }
+
+    float CalculateLight(float3 normal)
+    {
+        return math.saturate(MathUtils.unorm(math.dot(math.normalize(render.lightPosition), normal)) + render.baseIntensity);
+    }
+
+    Color32 GetEdgeColor(ref Result result)
+    {
+        switch (result.materialID)
+        {
+            case DiamondSettings.materialID: return diamond.edgeColor;
+        }
+
         return Color.clear;
     }
 }

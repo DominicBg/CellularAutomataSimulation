@@ -13,13 +13,14 @@ public struct RayMarchingEdgeDetectorJob : IJobParallelFor
     [System.Serializable]
     public struct RayMarchingEdgeDetectorSettings
     {
-        public Color32 color;
         public float dotThreshold;
         public BlendingMode blendingMode;
     }
 
     public NativeArray<Color32> outputColor;
     [ReadOnly] public NativeArray<float3> normals;
+    public NativeArray<Color32> edgeColor;
+
     public RayMarchingEdgeDetectorSettings settings;
     public void Execute(int index)
     {
@@ -27,13 +28,11 @@ public struct RayMarchingEdgeDetectorJob : IJobParallelFor
 
         bool hardEdge = false;
         hardEdge |= HardEdge(index, position, new int2(1, 0));
-        //hardEdge |= HardEdge(index, position, new int2(-1, 0));
         hardEdge |= HardEdge(index, position, new int2(0, 1));
-        //hardEdge |= HardEdge(index, position, new int2(0, -1));
 
         if(hardEdge)
         {
-            outputColor[index] = RenderingUtils.Blend(outputColor[index], settings.color, settings.blendingMode);
+            outputColor[index] = RenderingUtils.Blend(outputColor[index], edgeColor[index], settings.blendingMode);
         }
 
     }

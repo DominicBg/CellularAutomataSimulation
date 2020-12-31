@@ -1070,7 +1070,7 @@ MonoBehaviour:
   currentLevelPosition:
     x: 4
     y: -1
-  inDebug: 1
+  inDebug: 0
   transitionSpeed: 1
   updateWorldElement: 1
   updatLevelElement: 1

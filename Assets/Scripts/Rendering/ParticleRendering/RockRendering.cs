@@ -4,6 +4,8 @@ using UnityEngine;
 [System.Serializable]
 public struct RockRendering: IParticleRenderer
 {
+    //Add color4dither
+
     public Color lightColor;
     public Color mediumColor;
     public Color darkColor;

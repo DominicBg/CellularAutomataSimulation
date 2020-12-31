@@ -12,19 +12,115 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba0360bc590c0f41812469c441e1917, type: 3}
   m_Name: World1GemContextScriptable
   m_EditorClassIdentifier: 
+  cameraSettings:
+    cameraDepth: 0
+    scales:
+      x: 0.25
+      y: 0.25
+    lightPosition:
+      x: 1.97
+      y: 1.04
+      z: -3.38
+    distanceThreshold: 6.44
+    speed: 0.02
+    maxStep: 94
+    stopThreshold: 0.03
+    color: {r: 1, g: 0.6324958, b: 0, a: 1}
+    baseIntensity: 0.2
+    shineIntensity: 0.78
+    resolution: 99
+    colorForDepthMin: {r: 1, g: 1, b: 1, a: 1}
+    colorForDepthMax: {r: 0.6981132, g: 0, b: 0.25494763, a: 1}
+    blendDepthRatio: -2
+    blendDepth: 0
+    depthMaxStep: 25
+    depthStepSize: 0.05
+    depthMinSize: 2
+    depthMaxSize: 2
   diamondSettings:
     diamondPosition:
       x: 0
-      y: 0
-      z: 0
+      y: 0.34
+      z: 5
     axis:
-      x: 0
-      y: 0
+      x: 0.05
+      y: 1
       z: 0
-    height: 0
+    pivot:
+      x: 0
+      y: -0.88
+      z: 0
+    height: 0.74
     boxAngle: 0
     cubeCutoutSizes:
+      x: 1
+      y: 0.8
+      z: 1
+    cubeCutoutY: 0.54
+    edgeColor:
+      serializedVersion: 2
+      rgba: 939541759
+  pillarSettings:
+    boxTopSize:
+      x: 0.25
+      y: 0.05
+      z: 0.25
+    boxTopPosition:
       x: 0
-      y: 0
+      y: -0.76
+      z: 5
+    boxPillarSize:
+      x: 0.1
+      y: 0.3
+      z: 0.1
+    boxPillarPosition:
+      x: 0
+      y: -1.19
+      z: 5
+    boxBottom1Size:
+      x: 0.25
+      y: 0.05
+      z: 0.25
+    boxBottom1Position:
+      x: 0
+      y: -1.56
+      z: 5
+    boxBottom2Size:
+      x: 0.3
+      y: 0.1
+      z: 0.3
+    boxBottom2Position:
+      x: 0
+      y: -1.76
+      z: 5
+    color4Dither:
+      lightColor: {r: 0.9578586, g: 0.9684094, b: 0.990566, a: 1}
+      mediumColor: {r: 0.71595764, g: 0.7768416, b: 0.8773585, a: 1}
+      darkColor: {r: 0.5268779, g: 0.5307227, b: 0.6037736, a: 1}
+      veryDarkColor: {r: 0.33454967, g: 0.33906257, b: 0.3962264, a: 1}
+      lightThreshold: 0
+      mediumThreshold: 0
+      darkThreshold: 0
+      ditherRange: 0
+  cameraTransform:
+    pitchYawRoll:
+      x: -35
+      y: 45
       z: 0
-    cubeCutoutY: 0
+    lookAtPosition:
+      x: 0
+      y: -0.25
+      z: 5
+    distance: 5
+  edgeDetectionSettings:
+    dotThreshold: 0.81
+    blendingMode: 1
+  minPitchYawRoll:
+    x: -45
+    y: -15
+    z: 0
+  maxPitchYawRoll:
+    x: 45
+    y: 135
+    z: 0
+  speed: 90
