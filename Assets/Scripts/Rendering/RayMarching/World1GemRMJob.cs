@@ -18,6 +18,7 @@ public struct World1GemRMJob : IJobParallelFor
  
     const float derivativeDelta = 0.0001f;
 
+    [System.Serializable]
     public struct CameraSettings
     {
         public float cameraDepth;

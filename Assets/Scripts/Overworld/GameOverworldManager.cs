@@ -6,7 +6,7 @@ using static OverworldBase;
 using Unity.Collections;
 using Unity.Mathematics;
 
-public class GameOverworldManager : MonoBehaviour, State
+public class GameOverworldManager : MonoBehaviour, IGameState
 {
     public int currentOverworld = 0;
     public OverworldBase[] overworlds;

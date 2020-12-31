@@ -8,7 +8,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.State
+public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameState
 {
     [Header("Editing")]
     public bool isEditing;

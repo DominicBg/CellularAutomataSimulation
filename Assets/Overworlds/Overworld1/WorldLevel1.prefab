@@ -782,13 +782,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleSpawners:
-  - chanceSpawn: 0.001
+  - chanceSpawn: 0.02
     spawnPosition:
       x: 25
       y: 98
     particleType: 2
     particleSpawnCount: -1
-  - chanceSpawn: 0.001
+  - chanceSpawn: 0.02
     spawnPosition:
       x: 40
       y: 99
@@ -1068,8 +1068,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevelPosition:
-    x: -1
-    y: 0
+    x: 4
+    y: -1
   inDebug: 1
   transitionSpeed: 1
   updateWorldElement: 1
@@ -3667,8 +3667,8 @@ MonoBehaviour:
     x: 52
     y: 23
   currentLevel:
-    x: -1
-    y: 0
+    x: 4
+    y: -1
   player: {fileID: 2563869793123011104}
   baseSettings: {fileID: 11400000, guid: 6299bbc7620cef745b87e114acef3cd6, type: 2}
   isEquiped: 0
@@ -3875,6 +3875,8 @@ MonoBehaviour:
   inBackground: 1
   player: {fileID: 2563869793123011104}
   timeGem: {fileID: 2914735830960690175}
+  context:
+    settings: {fileID: 11400000, guid: 9ec44d834a62a844b84312fbf57a9b19, type: 2}
 --- !u!1 &6337033089128977178
 GameObject:
   m_ObjectHideFlags: 0

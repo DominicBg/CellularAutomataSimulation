@@ -7,24 +7,28 @@ namespace FiniteStateMachine
 {
     public class StateMachine<T>
     {
-        private State currentState = null;
-        private State previousState = null;
-        private Dictionary<T, State> dictionary = new Dictionary<T, State>();
+        private IGameState currentState = null;
+        private IGameState previousState = null;
+        private Dictionary<T, IGameState> dictionary = new Dictionary<T, IGameState>();
 
         private T currentStateEnum;
 
-        Action<State> m_onStartCallback;
-        Action<State> m_onUpdateCallback;
-        Action<State> m_onEndCallback; 
+        Action<IGameState> m_onStartCallback;
+        Action<IGameState> m_onUpdateCallback;
+        Action<IGameState> m_onEndCallback; 
 
-        public void AddState(State state, T enumState, Action<State> OnStartCallback = null, Action<State> OnUpdateCallback = null, Action<State> OnEndCallback = null)
+        public void AddState(IGameState state, T enumState, Action<IGameState> OnStartCallback = null, Action<IGameState> OnUpdateCallback = null, Action<IGameState> OnEndCallback = null)
         {
-            dictionary.Add(enumState, state);
+            if (!dictionary.ContainsKey(enumState))
+                dictionary.Add(enumState, state);
+            else
+                dictionary[enumState] = state;
+
             m_onStartCallback = OnStartCallback;
             m_onUpdateCallback = OnUpdateCallback;
             m_onEndCallback = OnEndCallback;
         }
-
+     
         public void Update()
         {
             currentState.OnUpdate();
@@ -41,7 +45,7 @@ namespace FiniteStateMachine
 
         public void SetState(T enumState)
         {
-            State state = dictionary[enumState];
+            IGameState state = dictionary[enumState];
 
             currentState?.OnEnd();
             m_onEndCallback?.Invoke(currentState);
@@ -65,7 +69,7 @@ namespace FiniteStateMachine
         }
     }
 
-    public interface State
+    public interface IGameState
     {
         void OnStart();
         void OnUpdate();

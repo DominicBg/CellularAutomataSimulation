@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class GameLevelManager : MonoBehaviour, FiniteStateMachine.State
+public class GameLevelManager : MonoBehaviour, FiniteStateMachine.IGameState
 {
     public WorldLevel currentWorldLevel;
 

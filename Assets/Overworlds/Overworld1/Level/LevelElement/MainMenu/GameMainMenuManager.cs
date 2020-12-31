@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Jobs;
 
-public class GameMainMenuManager : MonoBehaviour, State
+public class GameMainMenuManager : MonoBehaviour, IGameState
 {
     public MainMenuLightRender lightRender; 
     public MainMenuDarkRender darkRender; 

@@ -33,6 +33,11 @@ public class GridRenderer : MonoBehaviour
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
     }
+    public static NativeArray<Color32> GetBlankTexture()
+    {
+        return new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+    }
+
     public static void GetBlankTexture(out NativeArray<Color32> outputColor, Color baseColor)
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);

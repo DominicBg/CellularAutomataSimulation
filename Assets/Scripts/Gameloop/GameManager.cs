@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
-    public enum GameStateEnum { MainMenu, Overworld, Level, LevelEditor }
+    public enum GameStateEnum { MainMenu, Overworld, Level, LevelEditor, Context }
 
     StateMachine<GameStateEnum> m_stateMachine;
 
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] ParticleBehaviourScriptable particleBehaviourScriptable = default;
 
     float currentDeltaTime;
-
+    GameContext currentContext;
 
     private void Awake()
     {
@@ -76,8 +76,18 @@ public class GameManager : MonoBehaviour
         if(currentDeltaTime >= DeltaTime)
         {
             InputCommand.Update();
-            m_stateMachine.Update();
-            m_stateMachine.Render();
+
+            if(currentContext != null)
+            {
+                currentContext.OnUpdate();
+                currentContext.OnRender();
+            }
+            else
+            { 
+                m_stateMachine.Update();
+                m_stateMachine.Render();
+            }
+
             currentDeltaTime -= DeltaTime;
 
             //Safety
@@ -112,7 +122,18 @@ public class GameManager : MonoBehaviour
         m_stateMachine.SetState(state);
     }
 
-    public void EditorPingManager(State state)
+    public void SetContext(GameContext context)
+    {
+        currentContext = context;
+        currentContext.OnStart();
+    }
+    public void ExitContext()
+    {
+        currentContext.OnEnd();
+        currentContext = null;
+    }
+
+    public void EditorPingManager(IGameState state)
     {
 #if UNITY_EDITOR
         Selection.activeObject = (MonoBehaviour)state;
