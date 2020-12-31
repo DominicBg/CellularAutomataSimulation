@@ -10,9 +10,10 @@ public class World1GemContextScriptable : ScriptableObject
     public World1GemRMJob.DiamondSettings diamondSettings;
     public World1GemRMJob.PillarSettings pillarSettings;
     public World1GemRMJob.CameraTransform cameraTransform;
+    public World1GemRMJob.LightSettings light;
     public RayMarchingEdgeDetectorJob.RayMarchingEdgeDetectorSettings edgeDetectionSettings;
 
-    public float3 minPitchYawRoll;
-    public float3 maxPitchYawRoll;
+    public float minPitch;
+    public float maxPitch;
     public float speed;
 }

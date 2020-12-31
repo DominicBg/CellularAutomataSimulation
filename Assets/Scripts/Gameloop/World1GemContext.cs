@@ -34,7 +34,8 @@ public class World1GemContext : GameContext
             render = settings.cameraSettings,
             diamond = settings.diamondSettings,
             pillar = settings.pillarSettings,
-            camera = cameraTransform
+            light = settings.light,
+            camera = cameraTransform,
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
         new RayMarchingEdgeDetectorJob()
@@ -63,7 +64,7 @@ public class World1GemContext : GameContext
         tickBlock.UpdateTick();
 
         cameraTransform.pitchYawRoll += new float3(InputCommand.Direction.y, InputCommand.Direction.x, 0) * settings.speed * GameManager.DeltaTime;
-        cameraTransform.pitchYawRoll = math.clamp(cameraTransform.pitchYawRoll, settings.minPitchYawRoll, settings.maxPitchYawRoll);
+        cameraTransform.pitchYawRoll.x = math.clamp(cameraTransform.pitchYawRoll.x, settings.minPitch, settings.maxPitch);
 
         if (InputCommand.IsButtonDown(KeyCode.Escape))
             ExitContext();

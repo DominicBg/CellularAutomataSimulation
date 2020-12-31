@@ -18,16 +18,16 @@ MonoBehaviour:
       x: 0.25
       y: 0.25
     lightPosition:
-      x: 1.97
-      y: 1.04
-      z: -3.38
+      x: 0.62
+      y: 1.15
+      z: 2.12
     distanceThreshold: 6.44
     speed: 0.02
     maxStep: 94
     stopThreshold: 0.03
     color: {r: 1, g: 0.6324958, b: 0, a: 1}
     baseIntensity: 0.2
-    shineIntensity: 0.78
+    shineIntensity: 0.74
     resolution: 99
     colorForDepthMin: {r: 1, g: 1, b: 1, a: 1}
     colorForDepthMax: {r: 0.6981132, g: 0, b: 0.25494763, a: 1}
@@ -60,6 +60,15 @@ MonoBehaviour:
     edgeColor:
       serializedVersion: 2
       rgba: 939541759
+    color4Dither:
+      lightColor: {r: 1, g: 0.97186005, b: 0.7877358, a: 1}
+      mediumColor: {r: 1, g: 0.78845644, b: 0, a: 1}
+      darkColor: {r: 0.9716981, g: 0.5087761, b: 0, a: 1}
+      veryDarkColor: {r: 0.5754717, g: 0.19180872, b: 0.029859383, a: 1}
+      lightThreshold: 0.95
+      mediumThreshold: 0.85
+      darkThreshold: 0.59
+      ditherRange: 0.015
   pillarSettings:
     boxTopSize:
       x: 0.25
@@ -96,12 +105,12 @@ MonoBehaviour:
     color4Dither:
       lightColor: {r: 0.9578586, g: 0.9684094, b: 0.990566, a: 1}
       mediumColor: {r: 0.71595764, g: 0.7768416, b: 0.8773585, a: 1}
-      darkColor: {r: 0.5268779, g: 0.5307227, b: 0.6037736, a: 1}
-      veryDarkColor: {r: 0.33454967, g: 0.33906257, b: 0.3962264, a: 1}
-      lightThreshold: 0
-      mediumThreshold: 0
-      darkThreshold: 0
-      ditherRange: 0
+      darkColor: {r: 0.4316038, g: 0.43879712, b: 0.5754717, a: 1}
+      veryDarkColor: {r: 0.31991965, g: 0.24313726, b: 0.34117648, a: 1}
+      lightThreshold: 0.95
+      mediumThreshold: 0.85
+      darkThreshold: 0.59
+      ditherRange: 0.015
   cameraTransform:
     pitchYawRoll:
       x: -35
