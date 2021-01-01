@@ -56,6 +56,9 @@ public class GameManager : MonoBehaviour
     }
     private void OnDestroy()
     {
+        if (currentContext != null)
+            currentContext.OnEnd();
+
         m_stateMachine.ForceClose();
     }
     private void Start()
@@ -80,7 +83,7 @@ public class GameManager : MonoBehaviour
             if(currentContext != null)
             {
                 currentContext.OnUpdate();
-                currentContext.OnRender();
+                currentContext?.OnRender();
             }
             else
             { 

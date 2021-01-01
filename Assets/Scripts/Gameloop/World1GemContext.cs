@@ -12,9 +12,12 @@ public class World1GemContext : GameContext
     public System.Action OnEndCallBack;
     [SerializeField] World1GemContextScriptable settings;
     [SerializeField] World1GemRMJob.CameraTransform cameraTransform;
+    NativeArray<Color32> astroTexture;
+    int2 astroSizes;
 
     public override void OnEnd()
     {
+        astroTexture.Dispose();
         OnEndCallBack.Invoke();
     }
 
@@ -31,8 +34,12 @@ public class World1GemContext : GameContext
             normals = normals,
             edgeColor = edgeColor,
 
+            astroTexture = astroTexture,
+            astroTextureSizes = astroSizes,
+
             render = settings.cameraSettings,
             diamond = settings.diamondSettings,
+            astro = settings.astroSettings,
             pillar = settings.pillarSettings,
             light = settings.light,
             camera = cameraTransform,
@@ -55,7 +62,8 @@ public class World1GemContext : GameContext
     {
         Debug.Log("Start context");
         tickBlock.Init();
-
+        astroTexture = RenderingUtils.GetNativeArray(settings.astroTexture, Allocator.Persistent);
+        astroSizes = new int2(settings.astroTexture.width, settings.astroTexture.height);
         cameraTransform = settings.cameraTransform;
     }
 

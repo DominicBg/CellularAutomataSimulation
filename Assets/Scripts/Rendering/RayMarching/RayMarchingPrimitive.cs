@@ -72,6 +72,14 @@ public static class RayMarchingPrimitive
         return math.sqrt((d2 + q.z * q.z) / m2) * math.sign(math.max(q.z, -p.y));
     }
 
+    [BurstCompile]
+    public static float sdCapsule(float3 p, float3 a, float3 b, float r)
+    {
+        float3 pa = p - a, ba = b - a;
+        float h = math.clamp(math.dot(pa, ba) / math.dot(ba, ba), 0.0f, 1.0f);
+        return math.length(pa - ba * h) - r;
+    }
+
 
     //Helper
 
