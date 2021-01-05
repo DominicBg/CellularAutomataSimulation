@@ -19,6 +19,10 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public NativeList<int2> particleSmokeEvent;
     public bool updateSimulation = true;
 
+    ILightSource[] sources;
+
+    public NativeArray<LightSource> lightSources;
+
     public void OnValidate()
     {
         levelElements = GetComponentsInChildren<LevelElement>();
@@ -34,6 +38,9 @@ public class LevelContainer : MonoBehaviour, IDisposable
             levelElements[i].Init(map, this);
         }
         particleSmokeEvent = new NativeList<int2>(Allocator.Persistent);
+
+        sources = GetComponentsInChildren<ILightSource>();
+        lightSources = new NativeArray<LightSource>(sources.Length, Allocator.Persistent);
     }
 
     public void OnUpdate(ref TickBlock tickBlock)
@@ -60,6 +67,11 @@ public class LevelContainer : MonoBehaviour, IDisposable
                 particleSpawnerElements.particleSpawners[i].particleSpawnCount = particleSpawners[i].particleSpawnCount;
             }
             particleSpawners.Dispose();
+        }
+
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            lightSources[i] = sources[i].GetLightSource(tickBlock.tick);
         }
 
         //Update elements
@@ -118,6 +130,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
     public void Dispose()
     {
+        lightSources.Dispose();
         particleSmokeEvent.Dispose();
         map.Dispose();
         for (int i = 0; i < levelElements.Length; i++)
@@ -136,5 +149,10 @@ public class LevelContainer : MonoBehaviour, IDisposable
 
         NativeArray<ParticleSpawner> particleSpawners = new NativeArray<ParticleSpawner>(particleSpawnerElements.particleSpawners, Allocator.Persistent);
         return particleSpawners;
+    }
+
+    public int2 GetGlobalOffset()
+    {
+        return levelPosition * GameManager.GridSizes;
     }
 }

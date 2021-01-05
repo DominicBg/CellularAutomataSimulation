@@ -44,6 +44,7 @@ public struct PlanetRayMarchingJob : IJobParallelFor
     public PlanetRayMarchingSettings settings;
     public ParticleRendering particleRendering;
     public NativeArray<Color32> outputColor;
+    [ReadOnly] public NativeArray<LightSource> lightSources;
 
     const int maxStep = 100;
     const float threshold = 0.01f;
@@ -69,7 +70,7 @@ public struct PlanetRayMarchingJob : IJobParallelFor
             shadowcolor.a = settings.shadowAlpha;
             //eww
             Map map = new Map();
-            Color iceColor = ParticleRenderUtil.GetColorForType(gridPosition, settings.particleType, ref particleRendering, ref tickBlock, ref map);
+            Color iceColor = ParticleRenderUtil.GetColorForType(gridPosition, settings.particleType, ref particleRendering, ref tickBlock, ref map, lightSources);
             outputColor[index] = RenderingUtils.Blend(iceColor, shadowcolor, settings.blendingMode);
         }
     }

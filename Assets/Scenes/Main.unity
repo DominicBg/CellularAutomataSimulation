@@ -425,7 +425,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 3
   m_VolumeTrigger: {fileID: 0}
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
@@ -1487,6 +1487,15 @@ MonoBehaviour:
       reflectionXDifference: 0.05
       reflectionShineAngle: -0.005
     rockRendering:
+      color4Dither:
+        lightColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+        mediumColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+        darkColor: {r: 0.12941177, g: 0.13725491, b: 0.21568628, a: 1}
+        veryDarkColor: {r: 0.05882353, g: 0.05882353, b: 0.08627451, a: 1}
+        lightThreshold: 0.9
+        mediumThreshold: 0.81
+        darkThreshold: 0.4
+        ditherRange: 0.09
       lightColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
       mediumColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
       darkColor: {r: 0.12941177, g: 0.13725491, b: 0.21568628, a: 1}
@@ -1496,12 +1505,8 @@ MonoBehaviour:
       mediumThreshold: 0.81
       darkThreshold: 0.4
       noiseScale: 0.09
-      lightPos:
-        x: 50
-        y: 50
-        z: 42.23
       showNormal: 0
-      showDot: 0
+      showIntensity: 0
       showHeight: 0
       minThresholdCrack: -0.2
       resolution: 14.1

@@ -47,18 +47,18 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, int2 currentLevel)
+    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, int2 currentLevel, NativeArray<LightSource> lightSources)
     {
         using (S_SimulationRender.Auto())
         {
-            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock, currentLevel).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock, currentLevel, lightSources).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         }
     }
 
-    public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, BlendingMode blending, ParticleType particleType)
+    public static void ApplyParticleRenderToTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> textureColor, Map map, TickBlock tickBlock, NativeArray<LightSource> lightSources, BlendingMode blending, ParticleType particleType)
     {
         //todo profile
-        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, blending, particleType).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        new ApplyParticleRenderToTextureJob(outputColor, textureColor, map, Instance.particleRendering, tickBlock, lightSources, blending, particleType).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     public static void DrawEllipse(ref NativeArray<Color32> outputColor, int2 position, int2 radius, Color32 innerColor, Color32 outerColor, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)

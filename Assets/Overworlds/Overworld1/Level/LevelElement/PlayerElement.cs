@@ -157,15 +157,14 @@ public class PlayerElement : PhysicObject, ILightSource
         spriteAnimator.Dispose();
     }
 
-    public LightSource GetLightSource(out int2 position)
-    {
-        position = GetBound().center;
-        return settings.lightSourceSettings.lightSource;
-    }
-
     public override void UpdateLevelMap(int2 newLevel, Map map, LevelContainer levelContainer)
     {
         base.UpdateLevelMap(newLevel, map, levelContainer);
         currentLevel = newLevel;
+    }
+
+    public LightSource GetLightSource(int tick)
+    {
+        return settings.lightSourceSettings.GetLightSource(position + levelContainer.GetGlobalOffset(), tick);
     }
 }

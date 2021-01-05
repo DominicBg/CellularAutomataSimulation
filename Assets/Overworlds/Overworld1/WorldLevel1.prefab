@@ -561,10 +561,12 @@ MonoBehaviour:
     x: 4
     y: -1
   levelElements:
+  - {fileID: 7747440777827076776}
   - {fileID: 9181345439205530890}
   - {fileID: 4081409285550589316}
   - {fileID: 7743024192729371110}
   - {fileID: 1443870477344516532}
+  - {fileID: 5460863661478705009}
   - {fileID: 4748375865891694286}
   - {fileID: 3831437354857834889}
   entrances:
@@ -2752,7 +2754,6 @@ GameObject:
   - component: {fileID: 5252029932963904492}
   - component: {fileID: 1204354058258233863}
   - component: {fileID: 5333691217909088425}
-  - component: {fileID: 4909742287519280501}
   - component: {fileID: 8020403895623392945}
   m_Layer: 0
   m_Name: Outside
@@ -2828,43 +2829,6 @@ MonoBehaviour:
       y: 32.64
     sinOffsetAmplitude: 5
   offset: 10
---- !u!114 &4909742287519280501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4546453280418017857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f014ddeed9d9d734a941a2cafe652630, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 0
-  isVisible: 0
-  levelContainer: {fileID: 0}
-  settings:
-    colorA:
-      serializedVersion: 2
-      rgba: 4294008389
-    colorB:
-      serializedVersion: 2
-      rgba: 4204278127
-    minAlpha: 0.2
-    maxAlpha: 0.3
-    noiseSpeed: 1
-    colorSpeed:
-      x: 5
-      y: 5
-    movingSpeed:
-      x: 1
-      y: 2
-    noiseScale:
-      x: 0.01
-      y: 0.03
-    lightRatio: 1
-    blending: 1
-    resolution: 150
 --- !u!114 &8020403895623392945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3179,46 +3143,6 @@ MonoBehaviour:
   player: {fileID: 8158140519718239430}
   baseSettings: {fileID: 11400000, guid: e01716da2ee2c4548bdfe8223b50e2e1, type: 2}
   isEquiped: 0
-  onEnableFlash:
-    jobSettings:
-      threshold: 0
-      color1:
-        serializedVersion: 2
-        rgba: 0
-      color2:
-        serializedVersion: 2
-        rgba: 0
-      blendWithOriginal: 0
-    duration: 0
-    interval: 0
-  onDisableFlash:
-    jobSettings:
-      threshold: 0
-      color1:
-        serializedVersion: 2
-        rgba: 0
-      color2:
-        serializedVersion: 2
-        rgba: 0
-      blendWithOriginal: 0
-    duration: 0
-    interval: 0
-  shockwave:
-    radiusThickness: 0
-    duration: 0
-    waveSpeed: 0
-    intensity: 0
-  enabledSettings:
-    blending: 0
-    blendingMode: 0
-  illusionSettings:
-    minIntensity: 5.04
-    intensity: 1.03
-    speed: 1.67
-    duration: 1
-    yoffset: 3.85
-  dispersion: 0.2
-  fadeoff: 0.05
 --- !u!1 &5149957738635238956
 GameObject:
   m_ObjectHideFlags: 0
@@ -3462,8 +3386,12 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   levelContainer: {fileID: 7403344119333759973}
+  position:
+    x: 0
+    y: 0
   target: {fileID: 5737141750647969487}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 0
 --- !u!1 &5455350867133375296
 GameObject:
   m_ObjectHideFlags: 0
@@ -3763,6 +3691,7 @@ GameObject:
   - component: {fileID: 121995473859250923}
   - component: {fileID: 7743024192729371110}
   - component: {fileID: 1443870477344516532}
+  - component: {fileID: 5460863661478705009}
   m_Layer: 0
   m_Name: GameplayElements
   m_TagString: Untagged
@@ -3833,6 +3762,27 @@ MonoBehaviour:
         y: 0
         z: 0
       distance: 0
+--- !u!114 &5460863661478705009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5940610174391523827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 1443870477344516532}
+  lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 1
 --- !u!1 &6337033089128977178
 GameObject:
   m_ObjectHideFlags: 0
@@ -4357,8 +4307,12 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   levelContainer: {fileID: 7316625884062747208}
+  position:
+    x: 0
+    y: 0
   target: {fileID: 138045428088032645}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 0
 --- !u!1 &7771478537162839696
 GameObject:
   m_ObjectHideFlags: 0
@@ -4499,6 +4453,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1242410648131263181}
+  - component: {fileID: 7747440777827076776}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4520,6 +4475,27 @@ Transform:
   m_Father: {fileID: 8078171971642060042}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7747440777827076776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7944563581825956968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 50
+    y: 50
+  target: {fileID: 0}
+  lightSource: {fileID: 11400000, guid: a989441bfb1377849925baa9148b514e, type: 2}
+  useTarget: 0
 --- !u!1 &8152958358937613636
 GameObject:
   m_ObjectHideFlags: 0
@@ -4945,8 +4921,12 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 0
+    y: 0
   target: {fileID: 5231127975922733796}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 0
 --- !u!1 &9002807373911276911
 GameObject:
   m_ObjectHideFlags: 0

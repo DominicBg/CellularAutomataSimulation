@@ -1,9 +1,10 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class ParticleRenderUtil
 {
-    public static Color32 GetColorForType(int2 position, ParticleType type, ref ParticleRendering particleRendering, ref TickBlock tickBlock, ref Map map)
+    public static Color32 GetColorForType(int2 position, ParticleType type, ref ParticleRendering particleRendering, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         switch (type)
         {
@@ -21,7 +22,7 @@ public static class ParticleRenderUtil
             case ParticleType.Ice:
                 return particleRendering.iceRendering.GetColor(position, ref tickBlock);
             case ParticleType.Rock:
-                return particleRendering.rockRendering.GetColor(position, ref tickBlock, ref map);
+                return particleRendering.rockRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Rubble:
                 return particleRendering.rubbleColor.GetColor(position, ref tickBlock);
             case ParticleType.TitleDisintegration:

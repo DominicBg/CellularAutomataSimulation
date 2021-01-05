@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -6,22 +7,23 @@ public struct RockRendering: IParticleRenderer
 {
     //Add color4dither
 
-    public Color lightColor;
-    public Color mediumColor;
-    public Color darkColor;
-    public Color veryDarkColor;
+    public Color4Dither color4Dither;
+    //public Color lightColor;
+    //public Color mediumColor;
+    //public Color darkColor;
+    //public Color veryDarkColor;
 
     public Color borderColor;
 
-    public float lightThreshold;
-    public float mediumThreshold;
-    public float darkThreshold;
+    //public float lightThreshold;
+    //public float mediumThreshold;
+    //public float darkThreshold;
     public float noiseScale;
   
     [Header("test")]
-    public float3 lightPos;
+    //public float3 lightPos;
     public bool showNormal;
-    public bool showDot;
+    public bool showIntensity;
     public bool showHeight;
     public float minThresholdCrack;
 
@@ -30,7 +32,7 @@ public struct RockRendering: IParticleRenderer
     public float maxclampHeight;
     public float ditherRange;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         if (HaveNonRockInSurrounding(position, ref map))
             return borderColor;
@@ -43,7 +45,7 @@ public struct RockRendering: IParticleRenderer
             return new Color(heightAtPosition, heightAtPosition, heightAtPosition, 1);
 
         if (heightAtPosition < minThresholdCrack)
-            return veryDarkColor;
+            return color4Dither.veryDarkColor;
 
         float3 normal = GetNormalAtPosition(heightAtPosition, positionScaled);
         normal = math.floor(normal * resolution) / resolution;
@@ -51,11 +53,18 @@ public struct RockRendering: IParticleRenderer
         if (showNormal)
             return new Color(normal.x, normal.y, normal.z, 1);
 
-        float dot = math.dot(math.normalize(lightPos - new float3(position.x, position.y, 0)), normal);
-        if (showDot)
-            return new Color(dot, dot, dot, 1);
+        float intensity = 0;
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            float currentIntensity = lightSources[i].GetLightAtPosition(position, normal, out Color _);
+            //float dot = math.dot(math.normalize(lightSources[i] - new float3(position.x, position.y, 0)), normal);
+            intensity = math.max(currentIntensity, intensity);
+        }
 
-        return GetColorWithNoiseValue(dot, position);
+        if (showIntensity)
+            return new Color(intensity, intensity, intensity, 1);
+
+        return color4Dither.GetColorWitLightValue(intensity, position);
     }
 
     float GetHeightAtPosition(float2 position)
@@ -94,38 +103,38 @@ public struct RockRendering: IParticleRenderer
         return false;
     }
 
-    public Color32 GetColorWithNoiseValue(float noiseValue, int2 position)
-    {
-        bool checker = (position.x + position.y) % 2 == 0;
-        if (noiseValue > lightThreshold)
-        {
-            return lightColor;
-        }
-        else if(noiseValue > lightThreshold - ditherRange)
-        {
-            return checker ? lightColor : mediumColor;
-        }
-        else if (noiseValue > mediumThreshold)
-        {
-            return mediumColor;
-        }
-        else if (noiseValue > mediumThreshold - ditherRange)
-        {
-            return checker ? mediumColor : darkColor;
-        }
-        else if (noiseValue > darkThreshold)
-        {
-            return darkColor;
-        }
-        else if (noiseValue > darkThreshold - ditherRange)
-        {
-            return checker ? darkColor : veryDarkColor;
-        }
-        else
-        {
-            return veryDarkColor;
-        }
-    }
+    //public Color32 GetColorWithNoiseValue(float noiseValue, int2 position)
+    //{
+    //    bool checker = (position.x + position.y) % 2 == 0;
+    //    if (noiseValue > lightThreshold)
+    //    {
+    //        return lightColor;
+    //    }
+    //    else if(noiseValue > lightThreshold - ditherRange)
+    //    {
+    //        return checker ? lightColor : mediumColor;
+    //    }
+    //    else if (noiseValue > mediumThreshold)
+    //    {
+    //        return mediumColor;
+    //    }
+    //    else if (noiseValue > mediumThreshold - ditherRange)
+    //    {
+    //        return checker ? mediumColor : darkColor;
+    //    }
+    //    else if (noiseValue > darkThreshold)
+    //    {
+    //        return darkColor;
+    //    }
+    //    else if (noiseValue > darkThreshold - ditherRange)
+    //    {
+    //        return checker ? darkColor : veryDarkColor;
+    //    }
+    //    else
+    //    {
+    //        return veryDarkColor;
+    //    }
+    //}
 
     public Color32 GetColor(int2 position, ref TickBlock tickBlock)
     {

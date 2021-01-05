@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using static FogElement;
 
 public class GemObject : LevelObject, ILightSource
 {
     public Color32 color;
     public GemShine[] gemShines;
-    public LightSourceScriptable lightSource;
+    public GlowingLightSourceScriptable lightSource;
 
     public override Bound GetBound()
     {
@@ -37,11 +36,11 @@ public class GemObject : LevelObject, ILightSource
     {
     }
 
-    public LightSource GetLightSource(out int2 position)
-    {
-        position = this.position;
-        return lightSource.lightSource;
+    public LightSource GetLightSource(int tick)
+    {     
+        return lightSource.GetLightSource(position, tick);
     }
+
 
     [System.Serializable]
     public struct GemShine

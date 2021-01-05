@@ -75,7 +75,7 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
 
         if (showGlitch)
         {
-            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map);
+            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
             var darkTexture = darkRender.Render(ref tickBlock);
 
             InterlaceTextureSettings glitchSettings = new InterlaceTextureSettings();
@@ -88,7 +88,7 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         }
         else if (showlight)
         {
-            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map);
+            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
             GridRenderer.RenderToScreen(lightTexture);
         }
         else

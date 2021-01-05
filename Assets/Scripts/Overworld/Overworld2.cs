@@ -18,7 +18,7 @@ public class Overworld2 : OverworldBase
     public GemRayMarchingJob.Settings gemSettings;
     public RayMarchingEdgeDetectorJob.RayMarchingEdgeDetectorSettings edgeSettings;
     //private FunctionPointer<RayMarcher.RaymarcherFunc> func;
-    public FogElement.FogSettings fogSettings;
+    //public FogElement.FogSettings fogSettings;
 
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {

@@ -20,5 +20,6 @@ public struct ParticleRendering
 
 public interface IParticleRenderer
 {
+    //Soon add map + light sources
     Color32 GetColor(int2 position, ref TickBlock tickBlock);
 }

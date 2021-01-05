@@ -39,15 +39,15 @@ public class MainMenuLightRender : IDisposable
         smokeParticle.Dispose();
     }
 
-    public NativeArray<Color32> Render(ref TickBlock tickBlock, ref Map map)
+    public NativeArray<Color32> Render(ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         var pass1 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
         starBackground.Render(ref pass1, tickBlock.tick);
-        GridRenderer.ApplyMapPixels(ref pass1, map, ref tickBlock, 0);
+        GridRenderer.ApplyMapPixels(ref pass1, map, ref tickBlock, 0, lightSources);
         title.Render(ref pass1);
 
         var pass2 = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref sandBackground.nativeTexture, map, tickBlock, sandBackground.blending, ParticleType.Sand);
+        GridRenderer.ApplyParticleRenderToTexture(ref pass2, ref sandBackground.nativeTexture, map, tickBlock, lightSources, sandBackground.blending, ParticleType.Sand);
         campFire.Render(ref pass2);
         shadowRendering.Render(ref pass2, tickBlock.tick);
 
