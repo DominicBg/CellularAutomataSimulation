@@ -2460,7 +2460,7 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   levelContainer: {fileID: 2465377336937180212}
-  playerElement: {fileID: 2563869793123011104}
+  playerElement: {fileID: 0}
   goalElement: {fileID: 6581960644401127330}
   openLightDuration: 1
   shakeDuration: 2
@@ -3124,6 +3124,101 @@ MonoBehaviour:
   sizes:
     x: 5
     y: 5
+--- !u!1 &5025704259887784793
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3770966745888243400}
+  - component: {fileID: 838555337014438327}
+  m_Layer: 0
+  m_Name: TimeGem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3770966745888243400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5025704259887784793}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3096133071131707875}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &838555337014438327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5025704259887784793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769a7e871ff2bd64db8e8c81daeeee1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 52
+    y: 23
+  currentLevel:
+    x: 4
+    y: -1
+  player: {fileID: 8158140519718239430}
+  baseSettings: {fileID: 11400000, guid: e01716da2ee2c4548bdfe8223b50e2e1, type: 2}
+  isEquiped: 0
+  onEnableFlash:
+    jobSettings:
+      threshold: 0
+      color1:
+        serializedVersion: 2
+        rgba: 0
+      color2:
+        serializedVersion: 2
+        rgba: 0
+      blendWithOriginal: 0
+    duration: 0
+    interval: 0
+  onDisableFlash:
+    jobSettings:
+      threshold: 0
+      color1:
+        serializedVersion: 2
+        rgba: 0
+      color2:
+        serializedVersion: 2
+        rgba: 0
+      blendWithOriginal: 0
+    duration: 0
+    interval: 0
+  shockwave:
+    radiusThickness: 0
+    duration: 0
+    waveSpeed: 0
+    intensity: 0
+  enabledSettings:
+    blending: 0
+    blendingMode: 0
+  illusionSettings:
+    minIntensity: 5.04
+    intensity: 1.03
+    speed: 1.67
+    duration: 1
+    yoffset: 3.85
+  dispersion: 0.2
+  fadeoff: 0.05
 --- !u!1 &5149957738635238956
 GameObject:
   m_ObjectHideFlags: 0
@@ -3555,9 +3650,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3096133071131707875}
-  - component: {fileID: 2563869793123011104}
-  - component: {fileID: 8415567470186725150}
-  - component: {fileID: 2914735830960690175}
   m_Layer: 0
   m_Name: Gameplay
   m_TagString: Untagged
@@ -3575,159 +3667,13 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 3770966745888243400}
+  - {fileID: 6863592107845076858}
+  - {fileID: 6871137255618449829}
   m_Father: {fileID: 6176266064442670241}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2563869793123011104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5877179123447976093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 4817974911097257835}
-  position:
-    x: 21
-    y: 13
-  currentLevel:
-    x: -1
-    y: 0
-  physicData:
-    position:
-      x: 21
-      y: 13
-    displacement:
-      x: 0
-      y: 0
-    velocity:
-      x: 0
-      y: 0
-    gridPosition:
-      x: 21
-      y: 13
-    mass: 0
-    inclinaison: 0
-  debugBoundFlag: 0
-  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-  currentEquipMouse: {fileID: 0}
-  currentEquipQ: {fileID: 0}
-  lookLeft: 0
---- !u!114 &8415567470186725150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5877179123447976093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 4817974911097257835}
-  position:
-    x: 49
-    y: 15
-  currentLevel:
-    x: 3
-    y: 0
-  player: {fileID: 2563869793123011104}
-  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
-  isEquiped: 0
---- !u!114 &2914735830960690175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5877179123447976093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 769a7e871ff2bd64db8e8c81daeeee1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 0}
-  position:
-    x: 52
-    y: 23
-  currentLevel:
-    x: 4
-    y: -1
-  player: {fileID: 2563869793123011104}
-  baseSettings: {fileID: 11400000, guid: 6299bbc7620cef745b87e114acef3cd6, type: 2}
-  isEquiped: 0
-  onEnableFlash:
-    jobSettings:
-      threshold: 0
-      color1:
-        serializedVersion: 2
-        rgba: 0
-      color2:
-        serializedVersion: 2
-        rgba: 0
-      blendWithOriginal: 0
-    duration: 0.2
-    interval: 2
-  onDisableFlash:
-    jobSettings:
-      threshold: 0
-      color1:
-        serializedVersion: 2
-        rgba: 0
-      color2:
-        serializedVersion: 2
-        rgba: 0
-      blendWithOriginal: 0
-    duration: 0.2
-    interval: 2
-  shockwave:
-    radiusThickness: 25
-    duration: 1
-    waveSpeed: 25
-    intensity: 0.5
-  disabledSettings:
-    innerRadius: 5
-    outerRadius: 11
-    innerColor:
-      serializedVersion: 2
-      rgba: 453035495
-    outerColor:
-      serializedVersion: 2
-      rgba: 1543525375
-    radialColor:
-      serializedVersion: 2
-      rgba: 1962934271
-    blending: 2
-    rotationSpeed: 0.1
-    angleThreshold: 6.6
-    spread: 4.11
-  enabledSettings:
-    blending: 0.86
-    blendingMode: 1
-  illusionSettings:
-    minIntensity: 5.04
-    intensity: 1.03
-    speed: 1.67
-    duration: 1
-    yoffset: 3.85
-  dispersion: 0.2
-  fadeoff: 0.05
 --- !u!1 &5913519947106656451
 GameObject:
   m_ObjectHideFlags: 0
@@ -3873,10 +3819,20 @@ MonoBehaviour:
     y: 51
   spriteSheetScriptable: {fileID: 11400000, guid: a45ceb0da8bb6a746b099c6a13d1eab8, type: 2}
   inBackground: 1
-  player: {fileID: 2563869793123011104}
-  timeGem: {fileID: 2914735830960690175}
+  player: {fileID: 8158140519718239430}
+  timeGem: {fileID: 838555337014438327}
   context:
     settings: {fileID: 11400000, guid: 9ec44d834a62a844b84312fbf57a9b19, type: 2}
+    cameraTransform:
+      pitchYawRoll:
+        x: 0
+        y: 0
+        z: 0
+      lookAtPosition:
+        x: 0
+        y: 0
+        z: 0
+      distance: 0
 --- !u!1 &6337033089128977178
 GameObject:
   m_ObjectHideFlags: 0
@@ -4403,6 +4359,137 @@ MonoBehaviour:
   levelContainer: {fileID: 7316625884062747208}
   target: {fileID: 138045428088032645}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+--- !u!1 &7771478537162839696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6863592107845076858}
+  - component: {fileID: 8158140519718239430}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6863592107845076858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7771478537162839696}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3096133071131707875}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8158140519718239430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7771478537162839696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 823c522d180a1da45bc4fcb99b966952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 21
+    y: 13
+  currentLevel:
+    x: 4
+    y: -1
+  physicData:
+    position:
+      x: 21
+      y: 13
+    displacement:
+      x: 0
+      y: 0
+    velocity:
+      x: 0
+      y: 0
+    gridPosition:
+      x: 21
+      y: 13
+    mass: 0
+    inclinaison: 0
+  debugBoundFlag: 0
+  settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}
+  spriteAnimator:
+    currentAnim: 0
+    currentFrame: 0
+    framePerImage: 10
+  currentEquipMouse: {fileID: 0}
+  currentEquipQ: {fileID: 0}
+  lookLeft: 0
+--- !u!1 &7905928875645155056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6871137255618449829}
+  - component: {fileID: 7855621461986511823}
+  m_Layer: 0
+  m_Name: Shovel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6871137255618449829
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7905928875645155056}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3096133071131707875}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7855621461986511823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7905928875645155056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc820e8f7a2cf0d4c85845457f0e8c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 49
+    y: 15
+  currentLevel:
+    x: 3
+    y: 0
+  player: {fileID: 8158140519718239430}
+  baseSettings: {fileID: 11400000, guid: 7c501fb033d7e07449954bcbe3b952c4, type: 2}
+  isEquiped: 0
 --- !u!1 &7944563581825956968
 GameObject:
   m_ObjectHideFlags: 0

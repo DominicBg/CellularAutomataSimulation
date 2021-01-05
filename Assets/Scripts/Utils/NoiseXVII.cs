@@ -21,6 +21,11 @@ public static class NoiseXVII
         return f / 0.9375f;
     }
 
+    public static float fbm4r_3x(float2 p, float2 offset)
+    {
+       return fbm4r(p + fbm4r(offset + p + fbm4r(p)));
+    }
+
     public static float fbm4(float2 p)
     {
         float f = 0f;
@@ -32,7 +37,10 @@ public static class NoiseXVII
 
         return f / 0.9375f;
     }
-
+    public static float fbm4_3x(float2 p, float2 offset)
+    {
+        return fbm4r(p + fbm4(offset + p + fbm4r(p)));
+    }
 
     public static float fbm6(float2 p)
     {

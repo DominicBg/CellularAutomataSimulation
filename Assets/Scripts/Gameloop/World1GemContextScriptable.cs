@@ -17,5 +17,5 @@ public class World1GemContextScriptable : ScriptableObject
     public float minPitch;
     public float maxPitch;
     public float speed;
-    public Texture2D astroTexture;
+    //public Texture2D astroTexture;
 }

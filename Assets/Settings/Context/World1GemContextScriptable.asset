@@ -17,8 +17,8 @@ MonoBehaviour:
     scales:
       x: 0.3
       y: 0.3
-    distanceThreshold: 6.44
-    speed: 0.01
+    distanceThreshold: 25
+    speed: 0.005
     maxStep: 94
     stopThreshold: 0.03
     shineIntensity: 0.75
@@ -31,7 +31,8 @@ MonoBehaviour:
     depthStepSize: 0.05
     depthMinSize: 2
     depthMaxSize: 2
-    reflectionCount: 3
+    reflectionCount: 5
+    maxReflectionDist: 155
   diamondSettings:
     diamondPosition:
       x: 0
@@ -68,10 +69,10 @@ MonoBehaviour:
       ditherRange: 0.2
     shineColor: {r: 1, g: 1, b: 1, a: 1}
     reflection:
-      reflectNormalAjust: 1
-      reflectionRatio: 0.5
-      reflectionDistMax: 1
-      blending: 2
+      reflectNormalAjust: 0.1
+      reflectionRatio: 0.3
+      reflectionDistMax: 255
+      blending: 1
   pillarSettings:
     boxTopSize:
       x: 0.25
@@ -117,14 +118,88 @@ MonoBehaviour:
     reflection:
       reflectNormalAjust: 0.1
       reflectionRatio: 0.3
-      reflectionDistMax: 1
+      reflectionDistMax: 25
       blending: 1
   astroSettings:
     position:
       x: 0
-      y: 0
+      y: -0.54
+      z: 3.72
+    headPosition:
+      x: 0
+      y: -0.09
       z: 0
-    size: 0
+    headSize: 0.45
+    bodyPos:
+      x: 0
+      y: -0.73
+      z: 0
+    bodySize: 0.3
+    armStartPos:
+      x: 0.3
+      y: -0.55
+      z: 0
+    armEndStartPos:
+      x: 0.44
+      y: -0.37
+      z: 0.4
+    armThicc: 0.1
+    legStartPos:
+      x: 0.17
+      y: -1.05
+      z: 0
+    legEndStartPos:
+      x: 0.18
+      y: -1.21
+      z: 0
+    legThicc: 0.08
+    smooth: 0.12
+    headSinAmp: 0.03
+    headSinFreq: 0.05
+    upperBodySinAmp: 0.02
+    upperBodySinFreq: 0.05
+    upperBodyOffsynch: 1.5
+    color4Dither:
+      lightColor: {r: 1, g: 1, b: 1, a: 1}
+      mediumColor: {r: 0.8867924, g: 0.8867924, b: 0.8867924, a: 1}
+      darkColor: {r: 0.6372375, g: 0.6670244, b: 0.754717, a: 1}
+      veryDarkColor: {r: 0.5286579, g: 0.53322285, b: 0.6792453, a: 1}
+      lightThreshold: 0.99
+      mediumThreshold: 0.8
+      darkThreshold: 0.6
+      ditherRange: 0.05
+    reflection:
+      reflectNormalAjust: 0.1
+      reflectionRatio: 0.05
+      reflectionDistMax: 255
+      blending: 1
+    glassPosition:
+      x: 0
+      y: -0.08
+      z: 0.06
+    glassSize: 0.43
+    glassBoxCutoffPosition:
+      x: 0
+      y: 0.09
+      z: 0.09
+    glassBoxCutoffSize:
+      x: 1
+      y: 0.34
+      z: 1
+    glassColor4Dither:
+      lightColor: {r: 0.33962262, g: 0.28085232, b: 0.16820931, a: 1}
+      mediumColor: {r: 0.1981132, g: 0.16540584, b: 0.16540584, a: 1}
+      darkColor: {r: 0, g: 0, b: 0, a: 1}
+      veryDarkColor: {r: 0, g: 0, b: 0, a: 1}
+      lightThreshold: 0.9999
+      mediumThreshold: 0.77
+      darkThreshold: 0.5
+      ditherRange: 0.1
+    glassReflection:
+      reflectNormalAjust: 0.1
+      reflectionRatio: 0.68
+      reflectionDistMax: 255
+      blending: 1
   cameraTransform:
     pitchYawRoll:
       x: -35
@@ -137,10 +212,12 @@ MonoBehaviour:
     distance: 5
   light:
     position:
-      x: -3.9
-      y: 9.34
-      z: 3.62
-    intensity: 12.52
+      x: 0
+      y: 0
+      z: 5.26
+    intensityMin: 2.5
+    intensityMax: 2
+    lightSin: 0.025
     color: {r: 1, g: 1, b: 1, a: 1}
     normalize: 1
     useSquare: 0
@@ -150,4 +227,3 @@ MonoBehaviour:
   minPitch: -89
   maxPitch: 89
   speed: 90
-  astroTexture: {fileID: 2800000, guid: e8ab0cf02c5b88e4eb3e79bea0f5aa9e, type: 3}

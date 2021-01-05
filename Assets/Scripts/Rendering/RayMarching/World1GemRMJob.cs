@@ -21,8 +21,8 @@ public struct World1GemRMJob : IJobParallelFor
     public NativeArray<float3> normals;
     public NativeArray<Color32> edgeColor;
 
-    [ReadOnly] public NativeArray<Color32> astroTexture;
-    public int2 astroTextureSizes;
+    //[ReadOnly] public NativeArray<Color32> astroTexture;
+    //public int2 astroTextureSizes;
 
     const float derivativeDelta = 0.0001f;
     [System.Serializable]
@@ -282,6 +282,9 @@ public struct World1GemRMJob : IJobParallelFor
         //precompute animation trigo
         astroHeadSinOffset = math.up() * math.sin(astro.headSinFreq * tickBlock.tick) * astro.headSinAmp;
         astroUpperBodySinOffset = math.up() * math.sin(astro.upperBodySinFreq * tickBlock.tick + astro.upperBodyOffsynch) * astro.upperBodySinAmp;
+        diamond.axis = math.normalize(diamond.axis);
+        diamondPos = diamond.diamondPosition + math.up() * diamond.sinHeightAmp * math.sin(diamond.sinHeightFreq * tickBlock.tick);
+
 
         int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
 
@@ -298,11 +301,6 @@ public struct World1GemRMJob : IJobParallelFor
         rayInfo.ro = position +math.mul(cameraRotation, new float3(uv.x, uv.y, 0));
         rayInfo.rd = math.mul(cameraRotation, new float3(0, 0, 1));
         rayInfo.gridPos = gridPosition;
-
-        //precompute
-        //this doesn't get saved after the job
-        diamond.axis = math.normalize(diamond.axis);
-        diamondPos = diamond.diamondPosition + math.up() * diamond.sinHeightAmp * math.sin(diamond.sinHeightFreq * tickBlock.tick);
 
         Result result = RayMarch(rayInfo.ro, rayInfo.rd);
 
@@ -459,9 +457,16 @@ public struct World1GemRMJob : IJobParallelFor
         {
             //reflect once
             float3 reflectNormal = math.reflect(rayInfo.rd, result.normal);
+            float3 ro = result.pos + reflectNormal * reflection.reflectNormalAjust;
+            float3 rd = reflectNormal;
+
             Result reflResult = RayMarch(result.pos + reflectNormal * reflection.reflectNormalAjust, reflectNormal);
             if (reflResult.hasHit)
             {
+                RayInfo newRayInfo = rayInfo;
+                newRayInfo.ro = ro;
+                newRayInfo.rd = rd;
+
                 Color reflectionColor = CalculateColor(in rayInfo, in reflResult, reflectionCount - 1);
                 float distFadeoff = 1 - math.saturate(reflResult.distance / reflection.reflectionDistMax);
                 reflectionColor.a = reflection.reflectionRatio * distFadeoff;

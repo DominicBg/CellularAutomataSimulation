@@ -7,7 +7,7 @@ public class World1GemShrineElement : SpriteSheetObject
 {
     [SerializeField] PlayerElement player = default;
     [SerializeField] TimeGemElement timeGem = default;
-    [SerializeField] World1GemContext context;
+    [SerializeField] World1GemContext context = default;
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
