@@ -8,9 +8,10 @@ public class GlowingLightSourceScriptable : LightSourceScriptable
     public Glowing glowingRadius;
     public Color color;
     public float z;
+    public float fadeoff;
 
     public override LightSource GetLightSource(int2 position, int tick)
     {
-        return LightSource.Point(new float3(position.x, position.y, z), glowingRadius.EvaluateGlow(tick), glowingIntensity.EvaluateGlow(tick), color);
+        return LightSource.PointLight(new float3(position.x, position.y, z), glowingRadius.EvaluateGlow(tick), fadeoff, glowingIntensity.EvaluateGlow(tick), color);
     }
 }

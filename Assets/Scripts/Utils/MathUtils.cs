@@ -76,5 +76,10 @@ public static class MathUtils
     {
         return math.floor(x * resolution) / resolution;
     }
+
+    public static float RemapSaturate(float from1, float to1, float from2, float to2, float x)
+    {
+        return math.lerp(from2, to2, math.saturate(math.unlerp(from1, to1, x)));
+    }
 }
 

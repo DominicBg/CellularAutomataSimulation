@@ -11,7 +11,7 @@ public struct DirectionLightSettings
 
     public LightSource GetLightSource()
     {
-        return LightSource.Directional(direction, intensity, color);
+        return LightSource.DirectionalLight(direction, intensity, color);
     }
 }
 
@@ -22,10 +22,11 @@ public struct PointLightSettings
     public float radius;
     public Color color;
     public float z;
+    public float fadeoff;
 
     public LightSource GetLightSource(float2 position)
     {
-        return LightSource.Point(new float3(position.x, position.y, z), radius, intensity, color);
+        return LightSource.PointLight(new float3(position.x, position.y, z), radius, fadeoff, intensity, color);
     }
 }
 

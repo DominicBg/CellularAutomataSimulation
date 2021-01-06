@@ -5,32 +5,20 @@ using UnityEngine;
 [System.Serializable]
 public struct RockRendering: IParticleRenderer
 {
-    //Add color4dither
-
     public Color4Dither color4Dither;
-    //public Color lightColor;
-    //public Color mediumColor;
-    //public Color darkColor;
-    //public Color veryDarkColor;
-
     public Color borderColor;
-
-    //public float lightThreshold;
-    //public float mediumThreshold;
-    //public float darkThreshold;
-    public float noiseScale;
-  
-    [Header("test")]
-    //public float3 lightPos;
-    public bool showNormal;
-    public bool showIntensity;
-    public bool showHeight;
-    public float minThresholdCrack;
 
     public float resolution;
     public float minclampHeight;
     public float maxclampHeight;
-    public float ditherRange;
+    public float noiseScale;
+
+    [Header("debug")]
+    public bool showNormal;
+    public bool showIntensity;
+    public bool showHeight;
+    public bool showLightColor;
+    public float minThresholdCrack;
 
     public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
@@ -54,17 +42,22 @@ public struct RockRendering: IParticleRenderer
             return new Color(normal.x, normal.y, normal.z, 1);
 
         float intensity = 0;
+        Color currentColor = Color.black;
         for (int i = 0; i < lightSources.Length; i++)
         {
-            float currentIntensity = lightSources[i].GetLightAtPosition(position, normal, out Color _);
-            //float dot = math.dot(math.normalize(lightSources[i] - new float3(position.x, position.y, 0)), normal);
-            intensity = math.max(currentIntensity, intensity);
+            float currentIntensity = lightSources[i].GetLightAtPosition(position, normal, currentColor, out Color lightColor);
+            intensity += currentIntensity;
+            currentColor += lightColor;
+            //currentColor = lightSources[i].BlendWithLight(currentColor, currentIntensity);
         }
+        intensity = math.saturate(intensity);
 
         if (showIntensity)
             return new Color(intensity, intensity, intensity, 1);
+        if (showLightColor)
+            return currentColor;
 
-        return color4Dither.GetColorWitLightValue(intensity, position);
+        return color4Dither.GetColorWitLightValue(intensity, position) * currentColor;
     }
 
     float GetHeightAtPosition(float2 position)
@@ -102,39 +95,6 @@ public struct RockRendering: IParticleRenderer
 
         return false;
     }
-
-    //public Color32 GetColorWithNoiseValue(float noiseValue, int2 position)
-    //{
-    //    bool checker = (position.x + position.y) % 2 == 0;
-    //    if (noiseValue > lightThreshold)
-    //    {
-    //        return lightColor;
-    //    }
-    //    else if(noiseValue > lightThreshold - ditherRange)
-    //    {
-    //        return checker ? lightColor : mediumColor;
-    //    }
-    //    else if (noiseValue > mediumThreshold)
-    //    {
-    //        return mediumColor;
-    //    }
-    //    else if (noiseValue > mediumThreshold - ditherRange)
-    //    {
-    //        return checker ? mediumColor : darkColor;
-    //    }
-    //    else if (noiseValue > darkThreshold)
-    //    {
-    //        return darkColor;
-    //    }
-    //    else if (noiseValue > darkThreshold - ditherRange)
-    //    {
-    //        return checker ? darkColor : veryDarkColor;
-    //    }
-    //    else
-    //    {
-    //        return veryDarkColor;
-    //    }
-    //}
 
     public Color32 GetColor(int2 position, ref TickBlock tickBlock)
     {

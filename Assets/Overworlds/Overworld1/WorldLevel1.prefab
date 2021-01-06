@@ -1070,8 +1070,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevelPosition:
-    x: 4
-    y: -1
+    x: -1
+    y: 0
   inDebug: 0
   transitionSpeed: 1
   updateWorldElement: 1
@@ -2284,6 +2284,7 @@ MonoBehaviour:
     x: 0
     y: 0
   levelElements:
+  - {fileID: 1500991491587198346}
   - {fileID: 1242497326203517925}
   - {fileID: 2218913607270967619}
   - {fileID: 5114036643424673979}
@@ -3013,6 +3014,7 @@ MonoBehaviour:
   - {fileID: 5987171958965865547}
   - {fileID: 5231127975922733796}
   - {fileID: 5558265964722685385}
+  - {fileID: 8123165661778142417}
   - {fileID: 7056654230536812695}
   - {fileID: 5173906399511830806}
   - {fileID: 1265725646717322291}
@@ -3391,7 +3393,7 @@ MonoBehaviour:
     y: 0
   target: {fileID: 5737141750647969487}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
-  useTarget: 0
+  useTarget: 1
 --- !u!1 &5455350867133375296
 GameObject:
   m_ObjectHideFlags: 0
@@ -4062,6 +4064,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2888360055322185718}
+  - component: {fileID: 1500991491587198346}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4083,6 +4086,27 @@ Transform:
   m_Father: {fileID: 3432655416790099858}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1500991491587198346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7144126430532178204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 0}
+  lightSource: {fileID: 11400000, guid: 1b9b2f94acf886f429f49381095fa756, type: 2}
+  useTarget: 0
 --- !u!1 &7403344119333759968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4308,11 +4332,11 @@ MonoBehaviour:
   isVisible: 1
   levelContainer: {fileID: 7316625884062747208}
   position:
-    x: 0
-    y: 0
+    x: 5
+    y: 15
   target: {fileID: 138045428088032645}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
-  useTarget: 0
+  useTarget: 1
 --- !u!1 &7771478537162839696
 GameObject:
   m_ObjectHideFlags: 0
@@ -4363,8 +4387,8 @@ MonoBehaviour:
     x: 21
     y: 13
   currentLevel:
-    x: 4
-    y: -1
+    x: -1
+    y: 0
   physicData:
     position:
       x: 21
@@ -4843,6 +4867,7 @@ GameObject:
   - component: {fileID: 5987171958965865547}
   - component: {fileID: 5231127975922733796}
   - component: {fileID: 5558265964722685385}
+  - component: {fileID: 8123165661778142417}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4926,6 +4951,27 @@ MonoBehaviour:
     y: 0
   target: {fileID: 5231127975922733796}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 1
+--- !u!114 &8123165661778142417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8939128818329626235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 0}
+  lightSource: {fileID: 11400000, guid: 1b9b2f94acf886f429f49381095fa756, type: 2}
   useTarget: 0
 --- !u!1 &9002807373911276911
 GameObject:

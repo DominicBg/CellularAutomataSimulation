@@ -10,6 +10,6 @@ public class DirectionalLightSourceScriptable : LightSourceScriptable
 
     public override LightSource GetLightSource(int2 position, int tick)
     {
-        return LightSource.Directional(direction, intensity, color);
+        return LightSource.DirectionalLight(direction, intensity, color);
     }
 }

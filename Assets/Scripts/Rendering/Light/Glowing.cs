@@ -3,8 +3,8 @@
 [System.Serializable]
 public struct Glowing
 {
-    public int min;
-    public int max;
+    public float min;
+    public float max;
     public float offsynch;
     public float speed;
 
@@ -16,10 +16,10 @@ public struct Glowing
 [System.Serializable]
 public struct Glowing2
 {
-    public int innerRadiusMin;
-    public int innerRadiusMax;
-    public int outerRadiusMin;
-    public int outerRadiusMax;
+    public float innerRadiusMin;
+    public float innerRadiusMax;
+    public float outerRadiusMin;
+    public float outerRadiusMax;
     public float offsynch;
     public float offsynch2;
     public float speed;
