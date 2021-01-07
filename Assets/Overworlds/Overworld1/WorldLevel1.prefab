@@ -561,7 +561,6 @@ MonoBehaviour:
     x: 4
     y: -1
   levelElements:
-  - {fileID: 7747440777827076776}
   - {fileID: 9181345439205530890}
   - {fileID: 4081409285550589316}
   - {fileID: 7743024192729371110}
@@ -2284,7 +2283,6 @@ MonoBehaviour:
     x: 0
     y: 0
   levelElements:
-  - {fileID: 1500991491587198346}
   - {fileID: 1242497326203517925}
   - {fileID: 2218913607270967619}
   - {fileID: 5114036643424673979}
@@ -2756,6 +2754,7 @@ GameObject:
   - component: {fileID: 1204354058258233863}
   - component: {fileID: 5333691217909088425}
   - component: {fileID: 8020403895623392945}
+  - component: {fileID: 7248260211517698093}
   m_Layer: 0
   m_Name: Outside
   m_TagString: Untagged
@@ -2855,6 +2854,27 @@ MonoBehaviour:
     blending: 1
     yBoost: 0.004
     resolution: 8.8
+--- !u!114 &7248260211517698093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4546453280418017857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 0}
+  lightSource: {fileID: 11400000, guid: 1b9b2f94acf886f429f49381095fa756, type: 2}
+  useTarget: 0
 --- !u!1 &4552765339855207326
 GameObject:
   m_ObjectHideFlags: 0
@@ -3014,7 +3034,6 @@ MonoBehaviour:
   - {fileID: 5987171958965865547}
   - {fileID: 5231127975922733796}
   - {fileID: 5558265964722685385}
-  - {fileID: 8123165661778142417}
   - {fileID: 7056654230536812695}
   - {fileID: 5173906399511830806}
   - {fileID: 1265725646717322291}
@@ -3959,6 +3978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3577068729432999793}
   - component: {fileID: 4191046735799591612}
+  - component: {fileID: 7744419850936588456}
   m_Layer: 0
   m_Name: Cavern
   m_TagString: Untagged
@@ -4003,6 +4023,27 @@ MonoBehaviour:
   - {fileID: 4738889151701891457}
   backgrounds: []
   foregrounds: []
+--- !u!114 &7744419850936588456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6803530205866061854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 0}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 0}
+  lightSource: {fileID: 11400000, guid: a989441bfb1377849925baa9148b514e, type: 2}
+  useTarget: 0
 --- !u!1 &6974948381329140034
 GameObject:
   m_ObjectHideFlags: 0
@@ -4064,7 +4105,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2888360055322185718}
-  - component: {fileID: 1500991491587198346}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4086,27 +4126,6 @@ Transform:
   m_Father: {fileID: 3432655416790099858}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1500991491587198346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7144126430532178204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 0}
-  position:
-    x: 0
-    y: 0
-  target: {fileID: 0}
-  lightSource: {fileID: 11400000, guid: 1b9b2f94acf886f429f49381095fa756, type: 2}
-  useTarget: 0
 --- !u!1 &7403344119333759968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4477,7 +4496,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1242410648131263181}
-  - component: {fileID: 7747440777827076776}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4499,27 +4517,6 @@ Transform:
   m_Father: {fileID: 8078171971642060042}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7747440777827076776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7944563581825956968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 0}
-  position:
-    x: 50
-    y: 50
-  target: {fileID: 0}
-  lightSource: {fileID: 11400000, guid: a989441bfb1377849925baa9148b514e, type: 2}
-  useTarget: 0
 --- !u!1 &8152958358937613636
 GameObject:
   m_ObjectHideFlags: 0
@@ -4867,7 +4864,6 @@ GameObject:
   - component: {fileID: 5987171958965865547}
   - component: {fileID: 5231127975922733796}
   - component: {fileID: 5558265964722685385}
-  - component: {fileID: 8123165661778142417}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4952,27 +4948,6 @@ MonoBehaviour:
   target: {fileID: 5231127975922733796}
   lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
   useTarget: 1
---- !u!114 &8123165661778142417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8939128818329626235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 0}
-  position:
-    x: 0
-    y: 0
-  target: {fileID: 0}
-  lightSource: {fileID: 11400000, guid: 1b9b2f94acf886f429f49381095fa756, type: 2}
-  useTarget: 0
 --- !u!1 &9002807373911276911
 GameObject:
   m_ObjectHideFlags: 0

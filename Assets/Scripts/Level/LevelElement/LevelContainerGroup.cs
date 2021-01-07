@@ -10,11 +10,17 @@ public class LevelContainerGroup : MonoBehaviour
     public LevelBackground[] backgrounds;
     public LevelForeground[] foregrounds;
 
+    public ILightSource[] lightSources; 
+
     public void OnValidate()
     {
         levelContainers = GetComponentsInChildren<LevelContainer>();
         backgrounds = GetComponents<LevelBackground>();
         foregrounds = GetComponents<LevelForeground>();
+    }
+    private void Awake()
+    {
+        lightSources = GetComponents<ILightSource>();
     }
 
 

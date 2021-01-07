@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: LightSourceMedium
   m_EditorClassIdentifier: 
   glowingIntensity:
-    min: 1
+    min: 1.5
     max: 2
     offsynch: 0
     speed: 0.02
   glowingRadius:
-    min: 25
+    min: 30
     max: 35
     offsynch: 0
     speed: 0.02
-  color: {r: 1, g: 0.42001867, b: 0, a: 0}
+  color: {r: 1, g: 0.48557156, b: 0, a: 1}
   z: 25
   fadeoff: 10

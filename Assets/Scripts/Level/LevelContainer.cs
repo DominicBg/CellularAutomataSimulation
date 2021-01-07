@@ -19,7 +19,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
     public NativeList<int2> particleSmokeEvent;
     public bool updateSimulation = true;
 
-    ILightSource[] sources;
+    List<ILightSource> sources = new List<ILightSource>();
 
     public NativeArray<LightSource> lightSources;
 
@@ -39,8 +39,12 @@ public class LevelContainer : MonoBehaviour, IDisposable
         }
         particleSmokeEvent = new NativeList<int2>(Allocator.Persistent);
 
-        sources = GetComponentsInChildren<ILightSource>();
-        lightSources = new NativeArray<LightSource>(sources.Length, Allocator.Persistent);
+        GetComponentsInChildren(sources);
+        LevelContainerGroup parentGroup = GetComponentInParent<LevelContainerGroup>();
+        if(parentGroup != null && parentGroup.lightSources != null)
+            sources.AddRange(parentGroup.lightSources);
+
+        lightSources = new NativeArray<LightSource>(sources.Count, Allocator.Persistent);
     }
 
     public void OnUpdate(ref TickBlock tickBlock)

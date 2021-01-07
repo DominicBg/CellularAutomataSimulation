@@ -16,5 +16,5 @@ MonoBehaviour:
     x: 0
     y: -3.42
     z: 0
-  intensity: 0.6
-  color: {r: 0, g: 0.38750005, b: 1, a: 0}
+  intensity: 0.7
+  color: {r: 0.72156864, g: 0.75620127, b: 1, a: 1}

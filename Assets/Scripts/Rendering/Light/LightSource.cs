@@ -68,7 +68,7 @@ public struct LightSource
     float DirectionalLightIntensity(float3 normal, Color pixelColor, out Color ligthColor)
     {
         float nDotDir = math.saturate(math.dot(direction, normal));
-        ligthColor = Blend(pixelColor, 1);
+        ligthColor = Blend(pixelColor, this.intensity);
         return nDotDir * intensity;
     }
 
