@@ -26,6 +26,7 @@ public class LevelExit : LevelObject
     {
         if(GetBound().IntersectWith(player.GetBound()))
         {
+            map.RemoveSpriteAtPosition(player.position, ref player.physicData.physicBound);
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
             worldLevel.StartTransition(entrance, transition);

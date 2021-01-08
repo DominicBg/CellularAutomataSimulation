@@ -58,7 +58,7 @@ public class SmokeParticleSystem
 
     public void Dispose()
     {
-        smokeColors.Dispose();
-        smokeParticles.Dispose();
+        smokeColors.TryDispose();
+        smokeParticles.TryDispose();
     }
 }

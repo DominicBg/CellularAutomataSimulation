@@ -54,13 +54,15 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
     }
-    private void OnDestroy()
+
+    void OnApplicationQuit()
     {
         if (currentContext != null)
             currentContext.OnEnd();
 
         m_stateMachine.ForceClose();
     }
+
     private void Start()
     {
         m_stateMachine = new StateMachine<GameStateEnum>();

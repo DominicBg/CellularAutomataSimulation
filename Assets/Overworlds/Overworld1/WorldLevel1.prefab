@@ -3802,7 +3802,7 @@ MonoBehaviour:
     x: 0
     y: 0
   target: {fileID: 1443870477344516532}
-  lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  lightSource: {fileID: 11400000, guid: a8028d1807f85d846bb44086e46c82e7, type: 2}
   useTarget: 1
 --- !u!1 &6337033089128977178
 GameObject:

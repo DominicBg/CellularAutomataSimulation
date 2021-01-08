@@ -274,7 +274,7 @@ public class TimeGemElement : EquipableElement
         Color Nebula(int2 pos)
         {
             float2 offset = (float2)pos * settings.fbmScale + tickBlock.tick * settings.fbmOffset;
-            float fbm = MathUtils.unorm(NoiseXVII.fbm4r(offset + offset + NoiseXVII.fbm4r(offset)));
+            float fbm = MathUtils.unorm(NoiseXVII.fbm4r(offset + NoiseXVII.fbm4r((float2)pos * settings.fbmScale)));
             return settings.backgroundColor.GetColorWitLightValue(fbm, pos);
         }
     }

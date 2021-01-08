@@ -13,7 +13,7 @@ public struct LayerTexture : IRenderable, IDisposable
 
     public void Dispose()
     {
-        nativeTexture.Dispose();
+        nativeTexture.TryDispose();
     }
 
     public void Init()
