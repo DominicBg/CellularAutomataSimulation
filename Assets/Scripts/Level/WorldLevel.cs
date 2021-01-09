@@ -159,6 +159,10 @@ public class WorldLevel : MonoBehaviour
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
                 worldObjects[i].Render(ref outputColors, ref worldTickBlock);
 
+        //render light?
+        LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset());
+
+
         levelContainer.PostRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)

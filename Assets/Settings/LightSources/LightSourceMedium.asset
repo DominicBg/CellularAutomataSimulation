@@ -18,10 +18,10 @@ MonoBehaviour:
     offsynch: 0
     speed: 0.02
   glowingRadius:
-    min: 35
-    max: 45
+    min: 25
+    max: 35
     offsynch: 0
     speed: 0.02
-  color: {r: 1, g: 0.48557156, b: 0, a: 0.63529414}
-  z: 25
+  color: {r: 1, g: 0.48557156, b: 0, a: 0.49411765}
+  z: 5
   fadeoff: 5

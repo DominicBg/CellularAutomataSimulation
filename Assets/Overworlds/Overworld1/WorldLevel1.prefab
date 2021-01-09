@@ -1,5 +1,79 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &48846596557370866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3745944964371149804}
+  - component: {fileID: 6392100366097022497}
+  - component: {fileID: 2598665704639477836}
+  m_Layer: 0
+  m_Name: FireCamp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3745944964371149804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48846596557370866}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8905031313119271663}
+  m_Father: {fileID: 5529149791743228146}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6392100366097022497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48846596557370866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdfeee43e8a2db14780d837cfd28d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 31
+    y: 8
+  spriteSheetScriptable: {fileID: 11400000, guid: 4e720201e99a72948a9e7b32ff373e4e, type: 2}
+  inBackground: 1
+--- !u!114 &2598665704639477836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48846596557370866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 0
+    y: 0
+  target: {fileID: 6392100366097022497}
+  lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
+  useTarget: 1
 --- !u!1 &202922783432708785
 GameObject:
   m_ObjectHideFlags: 0
@@ -1815,6 +1889,59 @@ MonoBehaviour:
     y: 58
   entrance: {fileID: 2013073282848822364}
   transition: {fileID: 11400000, guid: 34cafd8f13a11c04f97ae35854009180, type: 2}
+--- !u!1 &2853410559895032716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8905031313119271663}
+  - component: {fileID: 7554260010453271872}
+  m_Layer: 0
+  m_Name: FireCampParticle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8905031313119271663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2853410559895032716}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3745944964371149804}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7554260010453271872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2853410559895032716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e2cf70c7c719438263cfa3379858b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnable: 1
+  isVisible: 1
+  levelContainer: {fileID: 4817974911097257835}
+  position:
+    x: 33
+    y: 10
+  settings: {fileID: 11400000, guid: b95b489e40bf0264396efc0e8c87693c, type: 2}
+  autoEmit: 1
+  delayEmitParticle: 0.1
+  inBackground: 1
 --- !u!1 &2881277306484494552
 GameObject:
   m_ObjectHideFlags: 0
@@ -3031,9 +3158,9 @@ MonoBehaviour:
     x: -1
     y: 0
   levelElements:
-  - {fileID: 5987171958965865547}
-  - {fileID: 5231127975922733796}
-  - {fileID: 5558265964722685385}
+  - {fileID: 6392100366097022497}
+  - {fileID: 2598665704639477836}
+  - {fileID: 7554260010453271872}
   - {fileID: 7056654230536812695}
   - {fileID: 5173906399511830806}
   - {fileID: 1265725646717322291}
@@ -4861,9 +4988,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5529149791743228146}
-  - component: {fileID: 5987171958965865547}
-  - component: {fileID: 5231127975922733796}
-  - component: {fileID: 5558265964722685385}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4881,73 +5005,11 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.06716061, y: -1.0785847, z: -1.6823359}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 3745944964371149804}
   m_Father: {fileID: 4817974911097257834}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5987171958965865547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8939128818329626235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd0e2cf70c7c719438263cfa3379858b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 4817974911097257835}
-  position:
-    x: 33
-    y: 10
-  settings: {fileID: 11400000, guid: b95b489e40bf0264396efc0e8c87693c, type: 2}
-  autoEmit: 1
-  delayEmitParticle: 0.1
-  inBackground: 0
---- !u!114 &5231127975922733796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8939128818329626235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdfeee43e8a2db14780d837cfd28d7ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 4817974911097257835}
-  position:
-    x: 31
-    y: 8
-  spriteSheetScriptable: {fileID: 11400000, guid: 4e720201e99a72948a9e7b32ff373e4e, type: 2}
-  inBackground: 0
---- !u!114 &5558265964722685385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8939128818329626235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be0823a2f9a6dc6458ad68adf03efe52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
-  levelContainer: {fileID: 4817974911097257835}
-  position:
-    x: 0
-    y: 0
-  target: {fileID: 5231127975922733796}
-  lightSource: {fileID: 11400000, guid: c2e5531ea3d3af549a57da99d9de44eb, type: 2}
-  useTarget: 1
 --- !u!1 &9002807373911276911
 GameObject:
   m_ObjectHideFlags: 0

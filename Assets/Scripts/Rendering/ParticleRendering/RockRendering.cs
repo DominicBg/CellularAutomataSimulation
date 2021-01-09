@@ -19,6 +19,7 @@ public struct RockRendering: IParticleRenderer
     public bool showHeight;
     public bool showLightColor;
     public float minThresholdCrack;
+    public bool highestIntensityOnly;
 
     public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
@@ -42,22 +43,22 @@ public struct RockRendering: IParticleRenderer
             return new Color(normal.x, normal.y, normal.z, 1);
 
         float intensity = 0;
-        Color currentColor = Color.black;
         for (int i = 0; i < lightSources.Length; i++)
         {
-            float currentIntensity = lightSources[i].GetLightAtPosition(position, normal, currentColor, out Color lightColor);
-            intensity += currentIntensity;
-            currentColor += lightColor;
-            //currentColor = lightSources[i].BlendWithLight(currentColor, currentIntensity);
+            float currentIntensity = lightSources[i].GetLightIntensity(position, normal);
+
+            if (highestIntensityOnly)
+                intensity = math.max(intensity, currentIntensity);
+            else
+                intensity += currentIntensity;
         }
+
         intensity = math.saturate(intensity);
 
         if (showIntensity)
             return new Color(intensity, intensity, intensity, 1);
-        if (showLightColor)
-            return currentColor;
 
-        return color4Dither.GetColorWitLightValue(intensity, position) * currentColor;
+        return color4Dither.GetColorWitLightValue(intensity, position);
     }
 
     float GetHeightAtPosition(float2 position)
