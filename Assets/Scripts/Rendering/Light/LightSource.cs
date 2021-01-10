@@ -72,7 +72,7 @@ public struct LightSource
     }
     float GetLightSurfaceIntensity(float3 position, float3 normal)
     {
-        float3 diff = position - this.position;
+        float3 diff = this.position - position;
         float3 dir = math.normalize(diff);
         switch (type)
         {

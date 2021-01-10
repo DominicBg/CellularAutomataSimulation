@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: CavernDirectionalLightScriptable
   m_EditorClassIdentifier: 
   direction:
-    x: 0
-    y: -3.42
-    z: 1.75
-  intensity: 0.56
-  color: {r: 0.10377358, g: 0.15974134, b: 0.41509432, a: 0.12941177}
+    x: -0.69
+    y: -6.3
+    z: 1.55
+  intensity: 0.8
+  color: {r: 0.051886797, g: 0.08107312, b: 0.20754719, a: 0.2627451}
+  resolution: 25

@@ -2588,7 +2588,7 @@ MonoBehaviour:
   isEnable: 1
   isVisible: 1
   levelContainer: {fileID: 2465377336937180212}
-  playerElement: {fileID: 0}
+  playerElement: {fileID: 8158140519718239430}
   goalElement: {fileID: 6581960644401127330}
   openLightDuration: 1
   shakeDuration: 2

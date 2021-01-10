@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -14,9 +15,11 @@ public class GridRenderer : MonoBehaviour
     public ParticleRendering particleRendering;
 
     static ProfilerMarker S_SimulationRender = new ProfilerMarker("GridRenderer.SimulationRender");
-    static ProfilerMarker s_SpriteRender = new ProfilerMarker("GridRenderer.SpriteRendering");
 
     [SerializeField] RawImage m_renderer = default;
+    [SerializeField] TextMeshProUGUI m_rendererText = default;
+    [SerializeField] MeshRenderer m_cubeRenderer;
+
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;
 
@@ -154,5 +157,31 @@ public class GridRenderer : MonoBehaviour
         outputColor.Dispose();
         m_texture.Apply();
         Instance.m_renderer.texture = m_texture;
+        Instance.m_cubeRenderer.sharedMaterial.SetTexture("_MainTex", m_texture);
     }
+    public static void RenderToText(NativeArray<Color32> outputColor)
+    {
+        NativeArray<char> outputASCII = new NativeArray<char>(outputColor.Length, Allocator.TempJob);
+        new ASCIIRenderJob()
+        {
+            outputColors = outputColor,
+            outputASCII = outputASCII
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+        //cache it
+        System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+        for (int i = 0; i < outputASCII.Length; i++)
+        {
+            stringBuilder.Append(outputASCII[i]);
+            if ((i + 1) % GameManager.GridSizes.x == 0)
+                stringBuilder.Append('\n');
+        }
+        Instance.m_rendererText.text = stringBuilder.ToString();
+
+        outputASCII.Dispose();
+        outputColor.Dispose();
+    }
+
+
+
 }

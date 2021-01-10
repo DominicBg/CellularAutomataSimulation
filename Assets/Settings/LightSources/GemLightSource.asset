@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: GemLightSource
   m_EditorClassIdentifier: 
   glowingIntensity:
-    min: 0.5
+    min: 1
     max: 2
     offsynch: 0
     speed: 0.03
   glowingRadius:
-    min: 35
+    min: 45
     max: 50
     offsynch: 0
     speed: 0.03
-  color: {r: 1, g: 0.7651566, b: 0, a: 0.5686275}
-  z: 30.12
+  color: {r: 1, g: 0.7651566, b: 0, a: 0.07058824}
+  z: 3.17
   fadeoff: 15
+  resolution: 50
