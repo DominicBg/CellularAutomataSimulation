@@ -160,7 +160,7 @@ public class WorldLevel : MonoBehaviour
                 worldObjects[i].Render(ref outputColors, ref worldTickBlock);
 
         //render light?
-        LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset());
+        LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset(), GridRenderer.Instance.lightRendering.settings);
 
 
         levelContainer.PostRender(ref outputColors, ref tickBlock);

@@ -16,9 +16,9 @@ public static class RenderingUtils
             case BlendingMode.Transparency:
                 return Transparency(color1, color2, color2.a);
             case BlendingMode.Additive:
-                return (color1 + color2).Clamp01();
+                return (color1 + color2).Saturate();
             case BlendingMode.Multiply:
-                return (color1 * color2).Clamp01();
+                return (color1 * color2).Saturate();
             case BlendingMode.Screen:
                 return Screen(color1, color2);
             case BlendingMode.Overlay:
@@ -33,6 +33,11 @@ public static class RenderingUtils
         return color2;
     }
 
+    public static Color BlendTransparentAdditive(Color color1, Color color2, float transparency, float additive)
+    {
+        return (Transparency(color1, color2, transparency) + color2 * additive).Saturate();
+    }
+
     public static float Transparency(float a, float b, float t)
     {
         return (1 - t) * a + t * b;
@@ -44,7 +49,7 @@ public static class RenderingUtils
             Transparency(color1.g, color2.g, t),
             Transparency(color1.b, color2.b, t),
             math.max(color1.a, color2.a)
-            ).Clamp01();
+            ).Saturate();
     }
 
     public static float Overlay(float a, float b)
@@ -54,7 +59,7 @@ public static class RenderingUtils
 
     public static Color Overlay(Color color1, Color color2)
     {
-        return new Color(Overlay(color1.r, color2.r), Overlay(color1.g, color2.g), Overlay(color1.b, color2.b), Overlay(color1.a, color2.a)).Clamp01();
+        return new Color(Overlay(color1.r, color2.r), Overlay(color1.g, color2.g), Overlay(color1.b, color2.b), Overlay(color1.a, color2.a)).Saturate();
     }
 
     public static float Screen(float a, float b)
@@ -63,7 +68,7 @@ public static class RenderingUtils
     }
     public static Color Screen(Color color1, Color color2)
     {
-        return new Color(Screen(color1.r, color2.r), Screen(color1.g, color2.g), Screen(color1.b, color2.b), Screen(color1.a, color2.a)).Clamp01();
+        return new Color(Screen(color1.r, color2.r), Screen(color1.g, color2.g), Screen(color1.b, color2.b), Screen(color1.a, color2.a)).Saturate();
     }
 
     public static float Luminance(Color color)
@@ -82,7 +87,7 @@ public static class RenderingUtils
         return new NativeArray<Color32>(texture.GetPixels32(), allocator);
     }
 
-    public static Color Clamp01(this Color color)
+    public static Color Saturate(this Color color)
     {
         return new Color(math.saturate(color.r), math.saturate(color.g), math.saturate(color.b), math.saturate(color.a));
     }

@@ -19,6 +19,7 @@ public class GridRenderer : MonoBehaviour
     [SerializeField] RawImage m_renderer = default;
     [SerializeField] TextMeshProUGUI m_rendererText = default;
     [SerializeField] MeshRenderer m_cubeRenderer;
+    public LightRenderingScriptable lightRendering;
 
     public static GridPostProcess postProcess;
     private static Texture2D m_texture;

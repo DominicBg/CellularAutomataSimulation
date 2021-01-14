@@ -8,13 +8,13 @@ using UnityEngine;
 
 public static class LightRenderer
 {
-    public static void AddLight(ref NativeArray<Color32> outputColors, ref NativeArray<LightSource> lightSources, int2 offset, BlendingMode blendingMode = BlendingMode.Transparency)
+    public static void AddLight(ref NativeArray<Color32> outputColors, ref NativeArray<LightSource> lightSources, int2 offset, in LightRenderingSettings settings)
     {
         new AddLightJob()
         {
             outputColors = outputColors,
             lightSources = lightSources,
-            blendingMode = blendingMode,
+            settings = settings,
             offset = offset
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
@@ -24,18 +24,19 @@ public static class LightRenderer
     {
         public NativeArray<Color32> outputColors;
         [ReadOnly] public NativeArray<LightSource> lightSources;
-        public BlendingMode blendingMode;
         public int2 offset;
+        public LightRenderingSettings settings;
 
         public void Execute(int index)
         {
             int2 pixelPos = ArrayHelper.IndexToPos(index, GameManager.GridSizes); 
             Color color = outputColors[index];
+
             for (int i = 0; i < lightSources.Length; i++)
             {
-                color = lightSources[i].Blend(pixelPos + offset, color, blendingMode);
+                color = lightSources[i].Blend(pixelPos + offset, color, settings.lightBlending);
             }
-            outputColors[index] = color;
+            outputColors[index] = RenderingUtils.BlendTransparentAdditive(outputColors[index], color, color.a, settings.additiveRatio);
         }
     }
 }
