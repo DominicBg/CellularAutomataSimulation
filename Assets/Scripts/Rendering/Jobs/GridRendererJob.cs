@@ -31,7 +31,7 @@ public struct GridRendererJob : IJobParallelFor
         {
             int2 mapOffset = currentLevel * GameManager.GridSizes;
             Color32 color = ParticleRenderUtil.GetColorForType(pos + mapOffset, map.GetParticleType(pos), ref particleRendering, ref tickBlock, ref map, lightSources);
-            colorArray[i] = color;
+            colorArray[i] = (color == Color.clear) ? colorArray[i]: color;
         }
     }
 }

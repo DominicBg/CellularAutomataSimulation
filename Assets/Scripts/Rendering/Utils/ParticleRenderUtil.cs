@@ -40,7 +40,7 @@ public static class ParticleRenderUtil
                 return particleRendering.stringRendering.GetColor(position, ref tickBlock);
 
             default:
-                return Color.black;
+                return Color.clear;
         }
     }
 }
