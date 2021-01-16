@@ -45,6 +45,7 @@ public class LevelContainer : MonoBehaviour, IDisposable
             sources.AddRange(parentGroup.lightSources);
 
         lightSources = new NativeArray<LightSource>(sources.Count, Allocator.Persistent);
+        UpdateLightSources();
     }
 
     public void OnUpdate(ref TickBlock tickBlock)
@@ -73,16 +74,30 @@ public class LevelContainer : MonoBehaviour, IDisposable
             particleSpawners.Dispose();
         }
 
-        for (int i = 0; i < lightSources.Length; i++)
-        {
-            lightSources[i] = sources[i].GetLightSource(tickBlock.tick);
-        }
+        UpdateLightSources(tickBlock.tick);
 
         //Update elements
         for (int i = 0; i < levelElements.Length; i++)
         {
             if(levelElements[i].isEnable)
                 levelElements[i].OnUpdate(ref tickBlock);
+        }
+    }
+    public void OnLateUpdate(ref TickBlock tickBlock)
+    {
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            if (levelElements[i].isEnable)
+                levelElements[i].OnLateUpdate(ref tickBlock);
+        }
+    }
+
+
+    void UpdateLightSources(int tick = 0)
+    {
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            lightSources[i] = sources[i].GetLightSource(tick);
         }
     }
 

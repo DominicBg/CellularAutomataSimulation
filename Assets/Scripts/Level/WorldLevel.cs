@@ -89,6 +89,16 @@ public class WorldLevel : MonoBehaviour
                 for (int i = 0; i < worldObjects.Length; i++)
                     if(worldObjects[i].isEnable) //update according to current level, might put tickBlock in worldLevel
                         worldObjects[i].OnUpdate(ref worldTickBlock);
+
+            if (updatLevelElement)
+                levels[currentLevelPosition].OnLateUpdate(ref tickBlock);
+
+            if (updateWorldElement)
+                for (int i = 0; i < worldObjects.Length; i++)
+                    if (worldObjects[i].isEnable) 
+                        worldObjects[i].OnLateUpdate(ref worldTickBlock);
+
+
         }
         else
         {

@@ -22,11 +22,11 @@ public class LevelExit : LevelObject
         return new Bound(position, sizes);
     }
 
-    public override void OnUpdate(ref TickBlock tickBlock)
+    public override void OnLateUpdate(ref TickBlock tickBlock)
     {
         if(GetBound().IntersectWith(player.GetBound()))
         {
-            map.RemoveSpriteAtPosition(player.position, ref player.physicData.physicBound);
+            map.RemoveSpriteAtPosition(player.physicData.gridPosition, ref player.physicData.physicBound);
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
             worldLevel.StartTransition(entrance, transition);

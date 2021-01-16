@@ -22,7 +22,8 @@ public abstract class LevelElement : MonoBehaviour
 
     public virtual void OnInit() { }
 
-    public abstract void OnUpdate(ref TickBlock tickBlock);
+    public virtual void OnUpdate(ref TickBlock tickBlock) { }
+    public virtual void OnLateUpdate(ref TickBlock tickBlock) { }
     public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
 
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
