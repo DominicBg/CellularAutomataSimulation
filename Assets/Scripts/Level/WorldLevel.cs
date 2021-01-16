@@ -7,7 +7,9 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    WorldObject[] worldObjects;
+   // WorldObject[] worldObjects;
+
+    WorldLevelContainer worldLevelContainer;
     public Dictionary<int2, LevelContainer> levels;
     public Dictionary<LevelContainer, LevelContainerGroup> levelsGroups;
     public int2 currentLevelPosition;
@@ -33,8 +35,8 @@ public class WorldLevel : MonoBehaviour
         worldTickBlock.Init();
         postProcessTickBlock.Init();
 
-        worldObjects = GetComponentsInChildren<WorldObject>();
-
+        //worldObjects = GetComponentsInChildren<WorldObject>();
+        worldLevelContainer = GetComponentInChildren<WorldLevelContainer>();
         LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
 
         levels = new Dictionary<int2, LevelContainer>();
@@ -58,11 +60,14 @@ public class WorldLevel : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < worldObjects.Length; i++)
-        {
-            worldObjects[i].Init(CurrentLevel.map, CurrentLevel);
-            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
-        }
+        //for (int i = 0; i < worldObjects.Length; i++)
+        //{
+        //    worldObjects[i].Init(CurrentLevel.map, CurrentLevel);
+        //    worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
+        //}
+
+        worldLevelContainer.Init(CurrentLevel.map, CurrentLevel);
+        worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
 
         PostProcessManager.Instance = new PostProcessManager();
     }
@@ -86,18 +91,13 @@ public class WorldLevel : MonoBehaviour
                 levels[currentLevelPosition].OnUpdate(ref tickBlock);
 
             if(updateWorldElement)
-                for (int i = 0; i < worldObjects.Length; i++)
-                    if(worldObjects[i].isEnable) //update according to current level, might put tickBlock in worldLevel
-                        worldObjects[i].OnUpdate(ref worldTickBlock);
+                worldLevelContainer.OnUpdate(ref tickBlock);
 
             if (updatLevelElement)
                 levels[currentLevelPosition].OnLateUpdate(ref tickBlock);
 
             if (updateWorldElement)
-                for (int i = 0; i < worldObjects.Length; i++)
-                    if (worldObjects[i].isEnable) 
-                        worldObjects[i].OnLateUpdate(ref worldTickBlock);
-
+                worldLevelContainer.OnLateUpdate(ref tickBlock);
 
         }
         else
@@ -122,12 +122,8 @@ public class WorldLevel : MonoBehaviour
         player.position = transitionInfo.entrance.position;
         player.physicData.position = player.position;
         player.physicData.velocity = 0;
-     
 
-        for (int i = 0; i < worldObjects.Length; i++)
-        {
-            worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
-        }
+        worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
     }
 
 
@@ -160,35 +156,24 @@ public class WorldLevel : MonoBehaviour
     {
         //add world object is visible
         levelContainer.PreRender(ref outputColors, ref tickBlock);
-        for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
-                worldObjects[i].PreRender(ref outputColors, ref worldTickBlock);
-
+        worldLevelContainer.PreRender(ref outputColors, ref worldTickBlock);
+     
         levelContainer.Render(ref outputColors, ref tickBlock);
-        for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
-                worldObjects[i].Render(ref outputColors, ref worldTickBlock);
+        worldLevelContainer.Render(ref outputColors, ref worldTickBlock);
 
-        //render light?
         LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset(), GridRenderer.Instance.lightRendering.settings);
 
 
         levelContainer.PostRender(ref outputColors, ref tickBlock);
-        for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
-                worldObjects[i].PostRender(ref outputColors, ref worldTickBlock);
-
+        worldLevelContainer.PostRender(ref outputColors, ref worldTickBlock);
+      
         levelContainer.RenderUI(ref outputColors, ref tickBlock);
-        for (int i = 0; i < worldObjects.Length; i++)
-            if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
-                worldObjects[i].RenderUI(ref outputColors, ref worldTickBlock);
-
+        worldLevelContainer.RenderUI(ref outputColors, ref worldTickBlock);
+    
         if (inDebug)
         {
             levelContainer.RenderDebug(ref outputColors, ref tickBlock);
-            for (int i = 0; i < worldObjects.Length; i++)
-                if (math.all(worldObjects[i].currentLevel == levelContainer.levelPosition) && worldObjects[i].isVisible)
-                    worldObjects[i].RenderDebug(ref outputColors, ref worldTickBlock);
+            worldLevelContainer.RenderDebug(ref outputColors, ref worldTickBlock);
         }
     }
 
@@ -250,10 +235,7 @@ public class WorldLevel : MonoBehaviour
 
     public void Dispose()
     {
-        for (int i = 0; i < worldObjects.Length; i++)
-        {
-            worldObjects[i].Dispose();
-        }
+        worldLevelContainer.Dispose();
         foreach (var level in levels.Values)
         {
             level.Dispose();

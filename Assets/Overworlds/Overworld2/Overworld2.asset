@@ -155,10 +155,10 @@ MonoBehaviour:
     blendingMode: 1
   cloudSettings:
     steps: 100
-    stepSize: 0.5
+    stepSize: 0.2
     scale: 1
     scaleNoiseWorly: 1.85
-    scaleNoisePerlin: 2.04
+    scaleNoisePerlin: 9.68
     position:
       x: 0
       y: 0
@@ -180,7 +180,7 @@ MonoBehaviour:
     alphaMultiplier: 0.05
     rotationSpeed: 0.005
     rotationAmp: 1.11
-    forwardSpeed: 0.1
+    forwardSpeed: 0.05
   topColor: {r: 0, g: 0.059113264, b: 1, a: 1}
   bottomColor: {r: 0, g: 0.9441266, b: 1, a: 1}
   resolution: 2555

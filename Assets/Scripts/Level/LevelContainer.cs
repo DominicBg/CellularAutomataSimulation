@@ -8,7 +8,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(LevelContainer))]
-public class LevelContainer : MonoBehaviour, IDisposable
+public class LevelContainer : MonoBehaviour, IDisposable, ILevelContainer
 {
     public int2 levelPosition;
     public LevelElement[] levelElements;
@@ -79,10 +79,11 @@ public class LevelContainer : MonoBehaviour, IDisposable
         //Update elements
         for (int i = 0; i < levelElements.Length; i++)
         {
-            if(levelElements[i].isEnable)
+            if (levelElements[i].isEnable)
                 levelElements[i].OnUpdate(ref tickBlock);
         }
     }
+
     public void OnLateUpdate(ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
@@ -122,11 +123,11 @@ public class LevelContainer : MonoBehaviour, IDisposable
     }
 
     public void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
-    {   
+    {
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
                 levelElements[i].Render(ref outputcolor, ref tickBlock);
-     }
+    }
 
     public void PostRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {

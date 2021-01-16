@@ -16,6 +16,6 @@ MonoBehaviour:
     x: -0.69
     y: -6.3
     z: 1.55
-  intensity: 0.8
+  intensity: 0.65
   color: {r: 0.051886797, g: 0.08107312, b: 0.20754719, a: 0.2627451}
   resolution: 25
