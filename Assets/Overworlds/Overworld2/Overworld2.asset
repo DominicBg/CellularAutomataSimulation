@@ -151,30 +151,36 @@ MonoBehaviour:
     depthMinSize: 2
     depthMaxSize: 2
   edgeSettings:
-    color:
-      serializedVersion: 2
-      rgba: 268406714
     dotThreshold: 0.9
     blendingMode: 1
-  fogSettings:
-    colorA:
-      serializedVersion: 2
-      rgba: 4294902528
-    colorB:
-      serializedVersion: 2
-      rgba: 4286840862
-    minAlpha: 0
-    maxAlpha: 0.69
-    noiseSpeed: 5
-    colorSpeed:
-      x: 25
-      y: 25
-    movingSpeed:
-      x: 5
-      y: 5
-    noiseScale:
-      x: 0.02
-      y: 0.02
-    lightRatio: 2.76
-    blending: 0
-    resolution: 25
+  cloudSettings:
+    steps: 100
+    stepSize: 0.5
+    scale: 1
+    scaleNoiseWorly: 1.85
+    scaleNoisePerlin: 2.04
+    position:
+      x: 0
+      y: 0
+      z: 0
+    noiseRatio: 0.39
+    cloudColor: {r: 0.6816818, g: 0.6745283, b: 1, a: 1}
+    cloudDenseColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
+    sunDirection:
+      x: 1
+      y: 1
+      z: 0
+    sunColor: {r: 1, g: 0.85925096, b: 0.7607843, a: 1}
+    diffuseRatio: 2.2
+    exponent: -0.03
+    maxHeight: 155
+    fadeDist: 4.19
+    noiseAlpha: 1
+    resolution: 2555
+    alphaMultiplier: 0.05
+    rotationSpeed: 0.005
+    rotationAmp: 1.11
+    forwardSpeed: 0.1
+  topColor: {r: 0, g: 0.059113264, b: 1, a: 1}
+  bottomColor: {r: 0, g: 0.9441266, b: 1, a: 1}
+  resolution: 2555

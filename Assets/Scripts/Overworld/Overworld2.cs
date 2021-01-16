@@ -20,9 +20,14 @@ public class Overworld2 : OverworldBase
     //private FunctionPointer<RayMarcher.RaymarcherFunc> func;
     //public FogElement.FogSettings fogSettings;
 
+    public CloudRenderingJob.Settings cloudSettings;
+    public Color topColor;
+    public Color bottomColor;
+    public int resolution;
+
     public override void GetBackgroundColors(out NativeArray<Color32> backgroundColors, ref TickBlock tickBlock)
     {
-        GridRenderer.GetBlankTexture(out backgroundColors);
+        GridRenderer.GetGradientTexture(out backgroundColors, topColor, bottomColor, resolution);
 
         //new ShiningStarBackgroundJob()
         //{
@@ -41,24 +46,24 @@ public class Overworld2 : OverworldBase
         //    particleRendering = GridRenderer.Instance.particleRendering
         //}.Schedule(GameManager.GridLength, 100).Complete();
 
-        NativeArray<float3> normals = new NativeArray<float3>(GameManager.GridLength, Allocator.TempJob);
-        new GemRayMarchingJob()
-        {
-            outputColor = backgroundColors,
-            settings = gemSettings,
-            normals = normals,
-            tickBlock = tickBlock
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-        // RaymarchingManager.Instance.RenderImage(ref backgroundColors);
+        //NativeArray<float3> normals = new NativeArray<float3>(GameManager.GridLength, Allocator.TempJob);
+        //new GemRayMarchingJob()
+        //{
+        //    outputColor = backgroundColors,
+        //    settings = gemSettings,
+        //    normals = normals,
+        //    tickBlock = tickBlock
+        //}.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        //// RaymarchingManager.Instance.RenderImage(ref backgroundColors);
 
-        new RayMarchingEdgeDetectorJob()
-        {
-            outputColor = backgroundColors,
-            normals = normals,
-            settings = edgeSettings
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        //new RayMarchingEdgeDetectorJob()
+        //{
+        //    outputColor = backgroundColors,
+        //    normals = normals,
+        //    settings = edgeSettings
+        //}.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
-        normals.Dispose();
+        //normals.Dispose();
 
         //NativeArray<LightSource> lights = new NativeArray<LightSource>(0, Allocator.TempJob);
         //NativeArray<int2> positions = new NativeArray<int2>(0, Allocator.TempJob);
@@ -97,6 +102,14 @@ public class Overworld2 : OverworldBase
         //    settings = testSettings,
         //    func = func
         //}.Schedule(GameManager.GridLength, 100).Complete();
+
+        new CloudRenderingJob()
+        {
+            outputColors = backgroundColors,
+            settings = cloudSettings,
+            tickBlock = tickBlock
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
     }
 
     [BurstCompile]

@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd17681b8d25908469cda928ed9f68ca, type: 3}
   m_Name: LightRenderingScriptable
   m_EditorClassIdentifier: 
+  settings:
+    additiveRatio: 0.312
+    lightBlending: 0

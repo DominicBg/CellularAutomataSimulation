@@ -726,7 +726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &403327660
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1060,7 +1060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &412216245
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1917,6 +1917,8 @@ MonoBehaviour:
     titleDisintegration: {r: 1, g: 1, b: 1, a: 1}
   m_renderer: {fileID: 412216246}
   m_rendererText: {fileID: 403327661}
+  m_cubeRenderer: {fileID: 0}
+  lightRendering: {fileID: 11400000, guid: d88ed8eb411531443a4100a53380543b, type: 2}
 --- !u!4 &1286533893
 Transform:
   m_ObjectHideFlags: 0

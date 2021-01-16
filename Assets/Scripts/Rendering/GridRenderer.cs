@@ -50,6 +50,19 @@ public class GridRenderer : MonoBehaviour
             outputColor[i] = baseColor;
         }
     }
+    public static void GetGradientTexture(out NativeArray<Color32> outputColor, Color topColor, Color bottomColor, int resolution)
+    {
+        outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
+        for (int x = 0; x < GameManager.GridSizes.x; x++)
+        {
+            for (int y = 0; y < GameManager.GridSizes.y; y++)
+            {
+                int i = y * GameManager.GridSizes.x + x;
+                float t = MathUtils.ReduceResolution((float)y / GameManager.GridSizes.y, resolution);
+                outputColor[i] = Color.Lerp(topColor, bottomColor,t);
+            }
+        }
+    }
 
     public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, int2 currentLevel, NativeArray<LightSource> lightSources)
     {
@@ -158,7 +171,7 @@ public class GridRenderer : MonoBehaviour
         outputColor.Dispose();
         m_texture.Apply();
         Instance.m_renderer.texture = m_texture;
-        Instance.m_cubeRenderer.sharedMaterial.SetTexture("_MainTex", m_texture);
+        //Instance.m_cubeRenderer.sharedMaterial.SetTexture("_MainTex", m_texture);
     }
     public static void RenderToText(NativeArray<Color32> outputColor)
     {
