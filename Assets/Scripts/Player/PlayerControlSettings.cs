@@ -4,10 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerControlSettings", menuName = "PlayerControlSettings", order = 1)]
 public class PlayerControlSettings : ScriptableObject
 {
-    //public float movementSpeed = 150;
-    //public float airAcceleration = 5;
-    //public float airMovementSpeed = 75;
-
     [Header("Movement")]
     [Range(0, 1)] public float acceleration;
     [Range(0, 1)] public float stopMovingDamping = .9f;

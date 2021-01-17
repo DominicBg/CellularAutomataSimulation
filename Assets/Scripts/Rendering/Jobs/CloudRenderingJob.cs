@@ -44,6 +44,8 @@ public struct CloudRenderingJob : IJobParallelFor
         public float rotationSpeed;
         public float rotationAmp;
         public float forwardSpeed;
+
+        public BlendingMode blending;
     }
 
     public void Execute(int index)
@@ -64,7 +66,8 @@ public struct CloudRenderingJob : IJobParallelFor
         float3 rd = math.normalize(new float3(pos.x, pos.y, 1));
 
         Color backgroundColor = outputColors[index];
-        outputColors[index] = RayMarching(ro, rd, backgroundColor).ReduceResolution(settings.resolution);
+        Color raymarchingcolor = RayMarching(ro, rd, backgroundColor).ReduceResolution(settings.resolution);
+        outputColors[index] = RenderingUtils.Blend(backgroundColor, raymarchingcolor, settings.blending);
     }
 
     Color RayMarching(float3 ro, float3 rd, Color bgColor)

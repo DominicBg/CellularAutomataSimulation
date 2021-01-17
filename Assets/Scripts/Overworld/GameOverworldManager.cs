@@ -13,8 +13,6 @@ public class GameOverworldManager : MonoBehaviour, IGameState
 
     UINavigationGraph navigationGraph;
     OverworldBase m_currentOverworld;
-    // NativeSprite[] m_nativeSprites;
-    //int2[] positions;
 
     TickBlock tickBlock;
 

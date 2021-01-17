@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public abstract class LevelElement : MonoBehaviour
+public abstract class LevelElement : MonoBehaviour, IRenderable
 {
     //References
     protected Map map;
@@ -24,9 +24,9 @@ public abstract class LevelElement : MonoBehaviour
 
     public virtual void OnUpdate(ref TickBlock tickBlock) { }
     public virtual void OnLateUpdate(ref TickBlock tickBlock) { }
-    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
+    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 
-    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
+    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
     public virtual void RenderUI(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
     public virtual void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
@@ -50,5 +50,10 @@ public abstract class LevelElement : MonoBehaviour
     {
         //lol
         return transform.parent.GetComponentsInChildren<T>();
+    }
+
+    public void Render(ref NativeArray<Color32> colorArray)
+    {
+        throw new System.NotImplementedException();
     }
 }

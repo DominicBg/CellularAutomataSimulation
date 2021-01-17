@@ -45,13 +45,10 @@ public class EscapeInShuttleRule : LevelRule
             playerElement.currentEquipQ.isVisible = false;
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
-    {
-    }
 
-    public override void OnUpdate(ref TickBlock tickBlock)
+    public override void OnLateUpdate(ref TickBlock tickBlock)
     {
-        base.OnUpdate(ref tickBlock);
+        base.OnLateUpdate(ref tickBlock);
         SpriteSheetObject shuttleSpriteSheet = (SpriteSheetObject)goalElement;
 
         if(playerFinished)

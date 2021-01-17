@@ -14,6 +14,8 @@ public struct CellularAutomataJob : IJob
     public PhysiXVIISetings settings;
     public float deltaTime;
 
+    public Bound updateBound;
+
     //output event
     public NativeList<int2> particleSmokeEvent;
 
@@ -46,14 +48,18 @@ public struct CellularAutomataJob : IJob
 
     void UpdateSimulation()
     {
+        int2 start = updateBound.bottomLeft;
+        int2 end = updateBound.topRight;
+
        // if (tickBlock.tick % 2 == 0)
         {
-            for (int x = 0; x < map.Sizes.x; x++)
+            for (int x = start.x; x < end.x; x++)
             {
-                for (int y = 0; y < map.Sizes.y; y++)
+                for (int y = start.y; y < end.y; y++)
                 {
                     int2 pos = new int2(x, y);
-                    UpdateParticleBehaviour(pos);
+                    if(map.InBound(pos))
+                        UpdateParticleBehaviour(pos);
                 }
             }
         }
@@ -180,7 +186,7 @@ public struct CellularAutomataJob : IJob
         particle.velocity *= settings.frictions[(int)particle.type] * settings.absorbtion[(int)particle.type];
         map.SetParticle(pos, particle, false);
 
-        return false;
+        return particle.InFreeFall();
     }
 
     bool TryFloatyFalling(Particle particle, int2 pos)

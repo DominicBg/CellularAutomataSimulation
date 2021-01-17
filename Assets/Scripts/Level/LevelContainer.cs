@@ -119,14 +119,14 @@ public class LevelContainer : MonoBehaviour, IDisposable, ILevelContainer
     {
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
-                levelElements[i].PreRender(ref outputcolor, ref tickBlock);
+                levelElements[i].PreRender(ref outputcolor, ref tickBlock, 0);
     }
 
     public void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
         for (int i = 0; i < levelElements.Length; i++)
             if (levelElements[i].isVisible)
-                levelElements[i].Render(ref outputcolor, ref tickBlock);
+                levelElements[i].Render(ref outputcolor, ref tickBlock, 0);
     }
 
     public void PostRender(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)

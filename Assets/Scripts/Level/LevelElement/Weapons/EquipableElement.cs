@@ -106,11 +106,12 @@ public abstract class EquipableElement : WorldObject
     protected abstract void OnUnequip();
 
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
-        int2 renderPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : position;
+        //offset might need to be based on renderPos
+        int2 finalPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : renderPos;
         bool isFlipped = isEquiped ? player.lookLeft : false;
-        spriteAnimator.Render(ref outputcolor, renderPos, isFlipped);
+        spriteAnimator.Render(ref outputcolor, finalPos, isFlipped);
     }
 
     public override Bound GetBound()

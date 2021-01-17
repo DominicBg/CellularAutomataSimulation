@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class SpriteSheetObject : LevelObject
@@ -25,15 +26,15 @@ public class SpriteSheetObject : LevelObject
         spriteAnimator.Update();
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         if(!inBackground)
-            spriteAnimator.Render(ref outputColor, position, false);
+            spriteAnimator.Render(ref outputColor, renderPos, false);
     }
-    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         if(inBackground)
-            spriteAnimator.Render(ref outputColor, position, false);
+            spriteAnimator.Render(ref outputColor, renderPos, false);
     }
 
     public override void Dispose()

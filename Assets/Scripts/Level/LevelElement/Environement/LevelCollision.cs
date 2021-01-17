@@ -32,7 +32,7 @@ public class LevelCollision : LevelElement
     {
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         GridRenderer.ApplyTexture(ref outputColor, ref nativeTexture);
     }

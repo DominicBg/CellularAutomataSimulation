@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Overworld1
   m_EditorClassIdentifier: 
   navigationGraphPrefab: {fileID: 7294499005119523509, guid: 9dffbbc2ed0bc804982a2fb1f87ef813, type: 3}
-  levelPrefab: {fileID: 5026943076903704041, guid: e2693a981d9d034499b21376ec6bb6b2, type: 3}
+  levelPrefab: {fileID: 5026943076903704041, guid: e30c8395df118174798e0eeb766269b4, type: 3}
   planetSettings:
     position:
       x: 50

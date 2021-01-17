@@ -36,7 +36,7 @@ public class WorldLevelContainer : MonoBehaviour, ILevelContainer
     {
         for (int i = 0; i < worldObjects.Length; i++)
             if (math.all(worldObjects[i].currentLevel == levelPosition) && worldObjects[i].isVisible)
-                worldObjects[i].Render(ref outputColors, ref tickBlock);
+                worldObjects[i].Render(ref outputColors, ref tickBlock, 0);
 
     }
     public void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)

@@ -61,7 +61,7 @@ public class TimeGemElement : EquipableElement
         worldLevel.updatLevelElement = !timeStopped;
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         if (!isEquiped)
             return;
@@ -98,7 +98,7 @@ public class TimeGemElement : EquipableElement
         alphas.Dispose();
     }
 
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPosition)
     {
         if (!isEquiped)
             return;
@@ -115,7 +115,9 @@ public class TimeGemElement : EquipableElement
                 outputColors = previousColor,
                 tickBlock = tickBlock
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-            player.Render(ref previousColor, ref tickBlock);
+
+            //might break
+            player.Render(ref previousColor, ref tickBlock, renderPosition);
             input.Dispose();
 
             new SlowTimeBlurEffectGemJob()

@@ -7,12 +7,20 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-   // WorldObject[] worldObjects;
+    // WorldObject[] worldObjects;
+
+    public float2 pixelCameraPos;
+    PixelCamera pixelCamera;
+    public PixelScene pixelScene;
+    public PixelSceneData pixelSceneData;
+
 
     WorldLevelContainer worldLevelContainer;
     public Dictionary<int2, LevelContainer> levels;
     public Dictionary<LevelContainer, LevelContainerGroup> levelsGroups;
     public int2 currentLevelPosition;
+
+    LevelObject[] levelObjects;
 
     public bool inDebug = false;
 
@@ -28,46 +36,50 @@ public class WorldLevel : MonoBehaviour
 
     public bool updateWorldElement = true;
     public bool updatLevelElement = true;
+    public bool usePixelCamera;
 
     public void LoadLevel()
     {
+        pixelCamera = new PixelCamera(GameManager.GridSizes);
+
         tickBlock.Init();
         worldTickBlock.Init();
         postProcessTickBlock.Init();
 
+        levelObjects = FindObjectsOfType<LevelObject>();
+
+        Map map = pixelSceneData.LoadMap();
+        pixelScene.Init(map);
+
         //worldObjects = GetComponentsInChildren<WorldObject>();
-        worldLevelContainer = GetComponentInChildren<WorldLevelContainer>();
-        LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
 
-        levels = new Dictionary<int2, LevelContainer>();
 
-        for (int i = 0; i < levelContainers.Length; i++)
-        {
-            levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
-            LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
-            levelContainers[i].Init(data.LoadMap());
-        }
+        //worldLevelContainer = GetComponentInChildren<WorldLevelContainer>();
+        //LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
 
-        //Link container to groups
-        levelsGroups = new Dictionary<LevelContainer, LevelContainerGroup>();
-        LevelContainerGroup[] levelContainerGroups = GetComponentsInChildren<LevelContainerGroup>();
-        for (int i = 0; i < levelContainerGroups.Length; i++)
-        {
-            var group = levelContainerGroups[i];
-            for (int j = 0; j < group.levelContainers.Length; j++)
-            {
-                levelsGroups.Add(group.levelContainers[j], group);
-            }
-        }
+        //levels = new Dictionary<int2, LevelContainer>();
 
-        //for (int i = 0; i < worldObjects.Length; i++)
+        //for (int i = 0; i < levelContainers.Length; i++)
         //{
-        //    worldObjects[i].Init(CurrentLevel.map, CurrentLevel);
-        //    worldObjects[i].UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
+        //    levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
+        //    LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
+        //    levelContainers[i].Init(data.LoadMap());
         //}
 
-        worldLevelContainer.Init(CurrentLevel.map, CurrentLevel);
-        worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
+        ////Link container to groups
+        //levelsGroups = new Dictionary<LevelContainer, LevelContainerGroup>();
+        //LevelContainerGroup[] levelContainerGroups = GetComponentsInChildren<LevelContainerGroup>();
+        //for (int i = 0; i < levelContainerGroups.Length; i++)
+        //{
+        //    var group = levelContainerGroups[i];
+        //    for (int j = 0; j < group.levelContainers.Length; j++)
+        //    {
+        //        levelsGroups.Add(group.levelContainers[j], group);
+        //    }
+        //}
+
+        //worldLevelContainer.Init(CurrentLevel.map, CurrentLevel);
+        //worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
 
         PostProcessManager.Instance = new PostProcessManager();
     }
@@ -85,29 +97,31 @@ public class WorldLevel : MonoBehaviour
 
         postProcessTickBlock.UpdateTick();
 
-        if (!transitionInfo.isInTransition)
-        {
-            if(updatLevelElement)
-                levels[currentLevelPosition].OnUpdate(ref tickBlock);
+        pixelScene.OnUpdate(ref tickBlock, (int2)pixelCameraPos);
 
-            if(updateWorldElement)
-                worldLevelContainer.OnUpdate(ref tickBlock);
+        //if (!transitionInfo.isInTransition)
+        //{
+        //    if(updatLevelElement)
+        //        levels[currentLevelPosition].OnUpdate(ref tickBlock);
 
-            if (updatLevelElement)
-                levels[currentLevelPosition].OnLateUpdate(ref tickBlock);
+        //    if(updateWorldElement)
+        //        worldLevelContainer.OnUpdate(ref tickBlock);
 
-            if (updateWorldElement)
-                worldLevelContainer.OnLateUpdate(ref tickBlock);
+        //    if (updatLevelElement)
+        //        levels[currentLevelPosition].OnLateUpdate(ref tickBlock);
 
-        }
-        else
-        {
-            transitionInfo.transitionRatio += GameManager.DeltaTime * transitionSpeed;
-            if (transitionInfo.transitionRatio >= 1)
-            {
-                OnTransitionFinished();
-            }
-        }
+        //    if (updateWorldElement)
+        //        worldLevelContainer.OnLateUpdate(ref tickBlock);
+
+        //}
+        //else
+        //{
+        //    transitionInfo.transitionRatio += GameManager.DeltaTime * transitionSpeed;
+        //    if (transitionInfo.transitionRatio >= 1)
+        //    {
+        //        OnTransitionFinished();
+        //    }
+        //}
 
         PostProcessManager.Instance.Update(ref postProcessTickBlock);
     }
@@ -129,7 +143,15 @@ public class WorldLevel : MonoBehaviour
 
     public void OnRender()
     {
+        if(usePixelCamera)
+        {
+            pixelCamera.Render((int2)pixelCameraPos, levelObjects, ref tickBlock, inDebug);
+            return;
+        }
+
+
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+
 
         LevelContainerGroup levelContainerGroup = CurrentLevelGroup;
         if (transitionInfo.isInTransition)
@@ -235,12 +257,17 @@ public class WorldLevel : MonoBehaviour
 
     public void Dispose()
     {
-        worldLevelContainer.Dispose();
-        foreach (var level in levels.Values)
-        {
-            level.Dispose();
-            Destroy(level.gameObject);
-        }
+        pixelScene.Dispose();
+        worldLevelContainer?.Dispose();
+
+        if (levels != null)
+        { 
+            foreach (var level in levels.Values)
+            {
+                level.Dispose();
+                Destroy(level.gameObject);
+            }
+           }
         levels.Clear();
         Destroy(gameObject);
     }

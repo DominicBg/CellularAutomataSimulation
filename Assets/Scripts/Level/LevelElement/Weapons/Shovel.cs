@@ -132,15 +132,15 @@ public class Shovel : EquipableElement
         return desiredPos;
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
         int2 renderOffset = playAnim ? baseSettings.equipedOffset + settings.animOffset : baseSettings.equipedOffset;
-        int2 renderPos = isEquiped ? GetEquipOffset(renderOffset) : position;
+        int2 finalRenderPos = isEquiped ? GetEquipOffset(renderOffset) : renderPos;
         bool2 flipped;
         flipped.x = isEquiped ? player.lookLeft : false;
         flipped.y = isEquiped && playAnim;
-        spriteAnimator.Render(ref outputcolor, renderPos, flipped);
+        spriteAnimator.Render(ref outputcolor, finalRenderPos, flipped);
     }
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)

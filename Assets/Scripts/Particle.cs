@@ -9,6 +9,11 @@ public struct Particle
     public float2 velocity;
     public int tickIdle;
     public float2 fracPosition;
+
+    public bool InFreeFall()
+    {
+        return math.any(math.abs(velocity) > 0.5f);
+    }
 }
 
 public enum ParticleType

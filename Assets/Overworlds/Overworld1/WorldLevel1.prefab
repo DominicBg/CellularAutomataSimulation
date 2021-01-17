@@ -1142,6 +1142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64535aa2821e9d44ab99c876e6ee660c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pixelCameraPos:
+    x: 0
+    y: 0
   currentLevelPosition:
     x: -1
     y: 0
@@ -1149,6 +1152,7 @@ MonoBehaviour:
   transitionSpeed: 1
   updateWorldElement: 1
   updatLevelElement: 1
+  usePixelCamera: 1
 --- !u!1 &1862063444055971714
 GameObject:
   m_ObjectHideFlags: 0
@@ -2555,6 +2559,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f55bccc66bf1345b306c24c1762018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldObjects:
+  - {fileID: 838555337014438327}
+  - {fileID: 8158140519718239430}
+  - {fileID: 7855621461986511823}
 --- !u!1 &3799650587969126948
 GameObject:
   m_ObjectHideFlags: 0

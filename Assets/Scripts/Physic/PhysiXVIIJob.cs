@@ -56,8 +56,8 @@ public struct PhysiXVIIJob : IJob
             HandlePhysics(ref physicData, nextPosition, isGrounded);
         }
 
-        physicData.position = math.clamp(physicData.position, 0, GameManager.GridSizes);
-        physicData.gridPosition = math.clamp(physicData.gridPosition, 0, GameManager.GridSizes);
+        //physicData.position = math.clamp(physicData.position, 0, GameManager.GridSizes);
+        //physicData.gridPosition = math.clamp(physicData.gridPosition, 0, GameManager.GridSizes);
         physicDataReference.Value = physicData;
 
         map.RemoveSpriteAtPosition(currentGridPosition, ref physicData.physicBound);
@@ -201,7 +201,8 @@ public struct PhysiXVIIJob : IJob
             if(particle.type != ParticleType.Player && particle.type != ParticleType.None)
             {
                 float mass = settings.mass[(int)particle.type];
-                PhysiXVII.ComputeElasticCollision(physicData.position, pos[i] + particle.fracPosition, physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
+                float2 centerPos = physicData.physicBound.GetCollisionBound(physicData.gridPosition).center + math.frac(physicData.position);
+                PhysiXVII.ComputeElasticCollision(centerPos, pos[i] + particle.fracPosition, physicData.velocity, particle.velocity, physicData.mass, mass, out float2 outv1, out float2 outv2);
             
                 //Add player?
                 particle.velocity = outv2;

@@ -30,14 +30,14 @@ public class PlayerElement : PhysicObject, ILightSource
         IniPhysicData(settings.collisionTexture);
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         if(lookDirection != 0)
         {
             lookLeft = lookDirection == -1;
         }
 
-        spriteAnimator.Render(ref outputcolor, position, lookLeft);
+        spriteAnimator.Render(ref outputcolor, renderPos, lookLeft);
         DebugAllPhysicBound(ref outputcolor);
     }
 
@@ -130,7 +130,6 @@ public class PlayerElement : PhysicObject, ILightSource
             pressJumpBufferDuration = 0;
         }
     }
-
 
 
     public void EquipMouse(EquipableElement equipable)

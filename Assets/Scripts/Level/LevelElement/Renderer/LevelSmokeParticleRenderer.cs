@@ -42,12 +42,12 @@ public class LevelSmokeParticleRenderer : LevelParticleRenderer
     }
 
 
-    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         if(inBackground)
             smokeParticleSystem.Render(ref outputColor, BlendingMode.Transparency);
     }
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         if (!inBackground)
             smokeParticleSystem.Render(ref outputColor, BlendingMode.Transparency);

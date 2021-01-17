@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
-public struct LayerTextureSheet : IRenderableAnimated, IDisposable
+public struct LayerTextureSheet : ITextureRenderableAnimated, IDisposable
 {
     public Texture2D[] textures;
     public int tickPerTexture;

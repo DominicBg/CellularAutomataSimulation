@@ -2032,7 +2032,7 @@ MonoBehaviour:
   gameLevelEditorManager: {fileID: 24019101}
   gameOverworldManager: {fileID: 494699174}
   gameMainMenuManager: {fileID: 746556379}
-  firstState: 0
+  firstState: 1
   worldLevelPrefab: {fileID: 0}
   physiXVIIScriptable: {fileID: 11400000, guid: d8bf304d3a543b242ba8d46eb5dceb00, type: 2}
   particleBehaviourScriptable: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}

@@ -67,7 +67,7 @@ public class MainMenuLightRender : IDisposable
     }
 
     [System.Serializable]
-    public struct FireRendering : IRenderableAnimated
+    public struct FireRendering : ITextureRenderableAnimated
     {
         public int2 position;
         public Color32[] colors;
@@ -90,7 +90,7 @@ public class MainMenuLightRender : IDisposable
     }
 
     [System.Serializable]
-    public struct ShadowRendering : IRenderableAnimated
+    public struct ShadowRendering : ITextureRenderableAnimated
     {
         public int2 position;
         public Color32[] colors;

@@ -15,13 +15,14 @@ public class GemObject : LevelObject, ILightSource
         return new Bound(position, 5);
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
-        int pos1 = ArrayHelper.PosToIndex(position, GameManager.GridSizes);
-        int pos2 = ArrayHelper.PosToIndex(position + 1, GameManager.GridSizes);
+        //to keep?
+        //int pos1 = ArrayHelper.PosToIndex(renderPos, GameManager.GridSizes);
+        //int pos2 = ArrayHelper.PosToIndex(renderPos + 1, GameManager.GridSizes);
 
-        outputColor[pos1] = color;
-        outputColor[pos2] = color;
+        //outputColor[pos1] = color;
+        //outputColor[pos2] = color;
     }
 
     public override void PostRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)

@@ -7,7 +7,7 @@ using static GameMainMenuManager;
 
 
 [System.Serializable]
-public struct VoronoiRendering : IRenderableAnimated
+public struct VoronoiRendering : ITextureRenderableAnimated
 {
     public int2 density;
     public uint seed;

@@ -2,12 +2,12 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-public interface IRenderable
+public interface ITextureRenderable
 {
     void Render(ref NativeArray<Color32> colorArray);
 }
 
-public interface IRenderableAnimated
+public interface ITextureRenderableAnimated
 {
     void Render(ref NativeArray<Color32> colorArray, int tick);
 }

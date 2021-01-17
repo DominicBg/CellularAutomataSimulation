@@ -29,13 +29,12 @@ public class ReflectiveSurface : LevelObject
 
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         reflectiveColors = new NativeArray<Color32>(sizes.x * sizes.y, Allocator.TempJob);
-        Bound bound = GetBound();
         new PreReflectingJob()
         {
-            bound = bound,
+            bound = new Bound(renderPos, sizes),
             outputColors = outputColor,
             tickBlock = tickBlock,
             reflectiveColors = reflectiveColors

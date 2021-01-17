@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
-public struct StarBackgroundRendering : IRenderableAnimated
+public struct StarBackgroundRendering : ITextureRenderableAnimated
 {
     public int2 density;
     public int radius;

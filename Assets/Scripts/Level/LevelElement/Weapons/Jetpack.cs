@@ -52,7 +52,7 @@ public class Jetpack : EquipableElement
     {
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         if (isEquiped)
         {
@@ -62,10 +62,11 @@ public class Jetpack : EquipableElement
                 offset.x = -offset.x;
 
             offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
+            //based on player render pos
             spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset, false);
         }
         else
-            spriteAnimator.Render(ref outputcolor, position, false);
+            spriteAnimator.Render(ref outputcolor, renderPos, false);
     }
 
     public override void RenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)

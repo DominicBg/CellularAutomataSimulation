@@ -30,13 +30,14 @@ public abstract class GunBaseElement : EquipableElement
         cooldownShoot = math.max(cooldownShoot - 1, 0);
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {     
-        int2 renderPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : position;
+        //might need to add offset
+        int2 finalRenderPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : renderPos;
         int2 kickOffset = GetKickOffset();
         bool isFlipped = isEquiped ? player.lookLeft : false;
 
-        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset, isFlipped);
+        spriteAnimator.Render(ref outputcolor, finalRenderPos + kickOffset, isFlipped);
     }
 
     protected int2 GetKickOffset()

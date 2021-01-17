@@ -154,33 +154,34 @@ MonoBehaviour:
     dotThreshold: 0.9
     blendingMode: 1
   cloudSettings:
-    steps: 100
-    stepSize: 0.2
+    steps: 50
+    stepSize: 0.5
     scale: 1
-    scaleNoiseWorly: 1.85
-    scaleNoisePerlin: 9.68
+    scaleNoiseWorly: 1
+    scaleNoisePerlin: 6
     position:
       x: 0
       y: 0
       z: 0
-    noiseRatio: 0.39
-    cloudColor: {r: 0.6816818, g: 0.6745283, b: 1, a: 1}
-    cloudDenseColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
+    noiseRatio: -0.33
+    cloudColor: {r: 1, g: 1, b: 1, a: 1}
+    cloudDenseColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
     sunDirection:
-      x: 1
-      y: 1
+      x: 5.63
+      y: -0.2
       z: 0
-    sunColor: {r: 1, g: 0.85925096, b: 0.7607843, a: 1}
-    diffuseRatio: 2.2
+    sunColor: {r: 1, g: 0.8563836, b: 0.5707547, a: 1}
+    diffuseRatio: 13.59
     exponent: -0.03
     maxHeight: 155
     fadeDist: 4.19
-    noiseAlpha: 1
-    resolution: 2555
+    noiseAlpha: 1.6
+    resolution: 255
     alphaMultiplier: 0.05
-    rotationSpeed: 0.005
+    rotationSpeed: 0.002
     rotationAmp: 1.11
-    forwardSpeed: 0.05
-  topColor: {r: 0, g: 0.059113264, b: 1, a: 1}
-  bottomColor: {r: 0, g: 0.9441266, b: 1, a: 1}
-  resolution: 2555
+    forwardSpeed: 0.01
+    blending: 1
+  topColor: {r: 0.514151, g: 0.54273033, b: 1, a: 1}
+  bottomColor: {r: 0.26853323, g: 0, b: 1, a: 1}
+  resolution: 89

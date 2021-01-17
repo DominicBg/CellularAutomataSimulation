@@ -11,7 +11,7 @@ public abstract class LevelRule : LevelElement
     protected bool playerFinished;
     protected int tickFinished;
 
-    public override void OnUpdate(ref TickBlock tickBlock)
+    public override void OnLateUpdate(ref TickBlock tickBlock)
     {
         if (playerFinished)
             return;

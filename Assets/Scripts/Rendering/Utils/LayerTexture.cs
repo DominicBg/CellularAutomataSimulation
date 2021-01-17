@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
-public struct LayerTexture : IRenderable, IDisposable
+public struct LayerTexture : ITextureRenderable, IDisposable
 {
     public Texture2D texture;
     public BlendingMode blending;
