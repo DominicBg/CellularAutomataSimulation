@@ -41,7 +41,7 @@ public class Shovel : EquipableElement
             ascOrder = !ascOrder;
 
         //todo stop loops if blocked?
-        int2 offset = GetEquipOffset(settings.lookingOffset);
+        int2 offset = GetEquipOffset(position, settings.lookingOffset);
         for (int y = 0; y < settings.shovelSize.y; y++)
         {
             if (ascOrder)
@@ -136,7 +136,7 @@ public class Shovel : EquipableElement
     {
         bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
         int2 renderOffset = playAnim ? baseSettings.equipedOffset + settings.animOffset : baseSettings.equipedOffset;
-        int2 finalRenderPos = isEquiped ? GetEquipOffset(renderOffset) : renderPos;
+        int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
         bool2 flipped;
         flipped.x = isEquiped ? player.lookLeft : false;
         flipped.y = isEquiped && playAnim;

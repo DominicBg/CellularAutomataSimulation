@@ -17,11 +17,16 @@ public struct Bound
     public int2 center => new int2(position.x + sizes.x / 2, position.y + sizes.y / 2);
 
 
-    public Bound(int2 position, int2 sizes)
+    public Bound(int2 bottomLeft, int2 sizes)
     {
-        this.position = position;
+        this.position = bottomLeft;
         this.sizes = sizes;
     }
+    public static Bound CenterAligned(int2 center, int2 sizes)
+    {
+        return new Bound(center - sizes / 2, sizes);
+    }
+
 
     public void GetPositionsGrid(out NativeArray<int2> positions, Allocator allocator = Allocator.Temp)
     {

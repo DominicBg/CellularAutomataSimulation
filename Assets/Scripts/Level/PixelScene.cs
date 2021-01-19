@@ -32,12 +32,14 @@ public class PixelScene : MonoBehaviour
         {
             NativeArray<ParticleSpawner> spawners = new NativeArray<ParticleSpawner>(0, Allocator.TempJob);
             NativeList<int2> smokeEvents = new NativeList<int2>(25, Allocator.TempJob);
+            Bound updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
+
             //var particleSpawners = GetParticleSpawner();
             new CellularAutomataJob()
             {
                 behaviour = GameManager.ParticleBehaviour,
                 map = map,
-                updateBound = new Bound(updatePos, GameManager.GridSizes),
+                updateBound = updateBound,
                 nativeParticleSpawners = spawners,
                 tickBlock = tickBlock,
                 deltaTime = GameManager.DeltaTime,
@@ -68,5 +70,9 @@ public class PixelScene : MonoBehaviour
     public void Dispose()
     {
         map.Dispose();
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            levelElements[i].Dispose();
+        }
     }
 }

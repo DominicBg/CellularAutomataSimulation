@@ -9,6 +9,8 @@ public class WorldLevel : MonoBehaviour
 {
     // WorldObject[] worldObjects;
 
+    public PlayerElement player;
+    public float cameraSmooth;
     public float2 pixelCameraPos;
     PixelCamera pixelCamera;
     public PixelScene pixelScene;
@@ -97,7 +99,9 @@ public class WorldLevel : MonoBehaviour
 
         postProcessTickBlock.UpdateTick();
 
+        pixelCameraPos = math.lerp(pixelCameraPos, player.GetBound().center, GameManager.DeltaTime * cameraSmooth);
         pixelScene.OnUpdate(ref tickBlock, (int2)pixelCameraPos);
+
 
         //if (!transitionInfo.isInTransition)
         //{
@@ -268,7 +272,7 @@ public class WorldLevel : MonoBehaviour
                 Destroy(level.gameObject);
             }
            }
-        levels.Clear();
+        levels?.Clear();
         Destroy(gameObject);
     }
 

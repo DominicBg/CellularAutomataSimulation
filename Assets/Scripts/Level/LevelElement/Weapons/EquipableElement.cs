@@ -109,7 +109,7 @@ public abstract class EquipableElement : WorldObject
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         //offset might need to be based on renderPos
-        int2 finalPos = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) : renderPos;
+        int2 finalPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
         bool isFlipped = isEquiped ? player.lookLeft : false;
         spriteAnimator.Render(ref outputcolor, finalPos, isFlipped);
     }
@@ -119,13 +119,13 @@ public abstract class EquipableElement : WorldObject
         return new Bound(position, spriteAnimator.nativeSpriteSheet.spriteSizes);
     }
 
-    protected int2 GetEquipOffset(int2 offset)
+    protected int2 GetEquipOffset(int2 position, int2 offset)
     {
         if (player.lookLeft)
             offset.x = -offset.x;
 
         offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
-        return player.GetBound().center + offset;
+        return position + (player.GetBound().center + offset);
     }
     protected int2 GetAjustedOffset(int2 offset)
     {

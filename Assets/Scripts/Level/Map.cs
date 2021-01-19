@@ -118,22 +118,27 @@ public unsafe struct Map
         return particleGrid[pos];
     }
     
-    public void UpdateParticleTick()
+    public void UpdateParticleTick(Bound updateBound)
     {
-        for (int x = 0; x < Sizes.x; x++)
+        int2 min = updateBound.bottomLeft;
+        int2 max = updateBound.topRight;
+        for (int x = min.x; x < max.x; x++)
         {
-            for (int y = 0; y < Sizes.y; y++)
+            for (int y = min.y; y < max.y; y++)
             {
-                Particle p = particleGrid[x, y];
-                p.tickIdle++;
-                particleGrid[x, y] = p;
+                if(InBound(new int2(x ,y)))
+                {
+                    Particle p = particleGrid[x, y];
+                    p.tickIdle++;
+                    particleGrid[x, y] = p;
+                }
             }
         }
     }
 
     public int2 SimulateParticlePhysic(int2 from, int2 to, out bool hasCollision, out int2 collisionPos)
     {
-        to = math.clamp(to, -1, GameManager.GridSizes);
+        to = math.clamp(to, -1, Sizes);
 
         int2 diff = to - from;
         int maxSteps = math.abs(diff.x) + math.abs(diff.y);

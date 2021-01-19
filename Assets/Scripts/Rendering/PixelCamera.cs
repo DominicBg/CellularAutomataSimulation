@@ -30,7 +30,7 @@ public class PixelCamera
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
         renderingObjects.Clear();
-        Bound viewPortBound = new Bound(cameraPos, viewPort);
+        Bound viewPortBound = new Bound(cameraPos - viewPort/2, viewPort);
 
         //maybe do it more optimzied lol
         for (int i = 0; i < levelObjects.Length; i++)
@@ -43,35 +43,35 @@ public class PixelCamera
         int count = renderingObjects.Count;
         int renderCount = alwaysRenderables.Count;
 
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].PreRender(ref outputColors, ref tickBlock, cameraPos);
-
-
         for (int i = 0; i < count; i++)
-            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
+            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
+
+
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].Render(ref outputColors, ref tickBlock, cameraPos);
+        for (int i = 0; i < count; i++)
+            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
 
         //LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset(), GridRenderer.Instance.lightRendering.settings);
 
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].PostRender(ref outputColors, ref tickBlock);
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].PostRender(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
-
         for (int i = 0; i < count; i++)
-            renderingObjects[i].RenderUI(ref outputColors, ref tickBlock);
+            renderingObjects[i].PostRender(ref outputColors, ref tickBlock);
+
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].RenderUI(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
+        for (int i = 0; i < count; i++)
+            renderingObjects[i].RenderUI(ref outputColors, ref tickBlock);
 
         if (inDebug)
         {
-            for (int i = 0; i < count; i++)
-                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock);
             for (int i = 0; i < renderCount; i++)
                 alwaysRenderables[i].RenderDebug(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
+            for (int i = 0; i < count; i++)
+                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock);
         }
 
         GridRenderer.RenderToScreen(outputColors);
@@ -79,6 +79,6 @@ public class PixelCamera
 
     int2 GetRenderPosition(int2 cameraPos, LevelObject levelObject)
     {
-        return levelObject.position - cameraPos;
+        return levelObject.position - (cameraPos - viewPort / 2);
     }
 }

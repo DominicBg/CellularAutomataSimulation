@@ -23,7 +23,7 @@ public class ParticleGun : GunBaseElement
     {
         //FIX render POS
         base.Render(ref outputcolor, ref tickBlock, renderPos);
-        int2 pos1 = isEquiped ? GetEquipOffset(baseSettings.equipedOffset) + GetAjustedOffset(settings.particleOffset) : position + settings.particleOffset;
+        int2 pos1 = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) + GetAjustedOffset(settings.particleOffset) : renderPos + settings.particleOffset;
         pos1 += GetKickOffset();
 
         ref ParticleRendering particleRendering = ref GridRenderer.Instance.particleRendering;

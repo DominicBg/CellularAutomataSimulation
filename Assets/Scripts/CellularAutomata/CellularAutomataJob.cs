@@ -24,7 +24,7 @@ public struct CellularAutomataJob : IJob
         particleSmokeEvent.Clear();
 
         map.ClearDirtyGrid();
-        map.UpdateParticleTick();
+        map.UpdateParticleTick(updateBound);
         UpdateSimulation();
 
         SpawnParticles();
