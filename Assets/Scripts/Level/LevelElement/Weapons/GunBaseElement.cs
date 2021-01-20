@@ -33,11 +33,11 @@ public abstract class GunBaseElement : EquipableElement
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {     
         //might need to add offset
-        int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
+      //  int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
         int2 kickOffset = GetKickOffset();
         bool isFlipped = isEquiped ? player.lookLeft : false;
 
-        spriteAnimator.Render(ref outputcolor, finalRenderPos + kickOffset, isFlipped);
+        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset, isFlipped);
     }
 
     protected int2 GetKickOffset()

@@ -8,7 +8,7 @@ using UnityEngine;
 public class PixelScene : MonoBehaviour
 {
     public LevelElement[] levelElements;
-    Map map;
+    public Map map;
     bool updateSimulation = true;
 
     public void OnValidate()

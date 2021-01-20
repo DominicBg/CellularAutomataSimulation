@@ -16,16 +16,16 @@ public class PixelCamera
         renderingObjects = new List<LevelObject>(100);
         alwaysRenderables = new List<IAlwaysRenderable>(100);
 
-        //hack
+        ////hack
 
-        var roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-        for (int i = 0; i < roots.Length; i++)
-        {
-            alwaysRenderables.AddRange(roots[i].GetComponentsInChildren<IAlwaysRenderable>());
-        }
+        //var roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+        //for (int i = 0; i < roots.Length; i++)
+        //{
+        //    alwaysRenderables.AddRange(roots[i].GetComponentsInChildren<IAlwaysRenderable>());
+        //}
     }
 
-    public void Render(int2 cameraPos, LevelObject[] levelObjects, ref TickBlock tickBlock, bool inDebug)
+    public NativeArray<Color32> Render(int2 cameraPos, LevelObject[] levelObjects, IAlwaysRenderable[] alwaysRenderables, ref TickBlock tickBlock, bool inDebug)
     {
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
@@ -35,24 +35,24 @@ public class PixelCamera
         //maybe do it more optimzied lol
         for (int i = 0; i < levelObjects.Length; i++)
         {
-            if(viewPortBound.IntersectWith(levelObjects[i].GetBound()))
+            if(levelObjects[i] != null && viewPortBound.IntersectWith(levelObjects[i].GetBound()))
                 renderingObjects.Add(levelObjects[i]);
         }
 
 
         int count = renderingObjects.Count;
-        int renderCount = alwaysRenderables.Count;
+        int renderCount = alwaysRenderables.Length;
 
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].PreRender(ref outputColors, ref tickBlock, cameraPos);
         for (int i = 0; i < count; i++)
-            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
+            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
 
 
         for (int i = 0; i < renderCount; i++)
             alwaysRenderables[i].Render(ref outputColors, ref tickBlock, cameraPos);
         for (int i = 0; i < count; i++)
-            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i]));
+            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
 
         //LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset(), GridRenderer.Instance.lightRendering.settings);
 
@@ -74,11 +74,12 @@ public class PixelCamera
                 renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock);
         }
 
-        GridRenderer.RenderToScreen(outputColors);
+        //GridRenderer.RenderToScreen(outputColors);
+        return outputColors;
     }
 
-    int2 GetRenderPosition(int2 cameraPos, LevelObject levelObject)
+    public int2 GetRenderPosition(int2 cameraPos, int2 position)
     {
-        return levelObject.position - (cameraPos - viewPort / 2);
+        return position - (cameraPos - viewPort / 2);
     }
 }

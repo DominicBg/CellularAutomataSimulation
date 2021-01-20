@@ -23,13 +23,13 @@ public class ParticleGun : GunBaseElement
     {
         //FIX render POS
         base.Render(ref outputcolor, ref tickBlock, renderPos);
-        int2 pos1 = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) + GetAjustedOffset(settings.particleOffset) : renderPos + settings.particleOffset;
-        pos1 += GetKickOffset();
+        //int2 pos1 = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) + GetAjustedOffset(settings.particleOffset) : renderPos + settings.particleOffset;
+        //pos1 += GetKickOffset();
 
-        ref ParticleRendering particleRendering = ref GridRenderer.Instance.particleRendering;
+        //ref ParticleRendering particleRendering = ref GridRenderer.Instance.particleRendering;
         //render 1 particles lol
-        outputcolor[ArrayHelper.PosToIndex(pos1, GameManager.GridSizes)] =
-            ParticleRenderUtil.GetColorForType(pos1, type, ref particleRendering, ref tickBlock, ref map, levelContainer.lightSources);
+        //outputcolor[ArrayHelper.PosToIndex(pos1, GameManager.GridSizes)] =
+        //    ParticleRenderUtil.GetColorForType(pos1, type, ref particleRendering, ref tickBlock, ref map, levelContainer.lightSources);
     }
 
     protected override void OnEquip()

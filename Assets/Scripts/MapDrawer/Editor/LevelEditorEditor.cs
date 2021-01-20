@@ -22,8 +22,9 @@ public class LevelEditorEditor : Editor
         if (GUILayout.Button("Select Current"))
         {
 
-            Selection.activeObject = (MonoBehaviour)levelEditor.currentWorldLevel.levels[(int2)levelEditor.viewPosition];
-            EditorGUIUtility.PingObject(Selection.activeObject);
+
+            //Selection.activeObject = (MonoBehaviour)levelEditor.currentWorldLevel.levels[(int2)levelEditor.viewPosition];
+            //EditorGUIUtility.PingObject(Selection.activeObject);
         }
 
     }

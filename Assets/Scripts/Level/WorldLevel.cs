@@ -12,7 +12,7 @@ public class WorldLevel : MonoBehaviour
     public PlayerElement player;
     public float cameraSmooth;
     public float2 pixelCameraPos;
-    PixelCamera pixelCamera;
+    public PixelCamera pixelCamera;
     public PixelScene pixelScene;
     public PixelSceneData pixelSceneData;
 
@@ -23,6 +23,7 @@ public class WorldLevel : MonoBehaviour
     public int2 currentLevelPosition;
 
     LevelObject[] levelObjects;
+    IAlwaysRenderable[] alwaysRenderable;
 
     public bool inDebug = false;
 
@@ -48,10 +49,10 @@ public class WorldLevel : MonoBehaviour
         worldTickBlock.Init();
         postProcessTickBlock.Init();
 
-        levelObjects = FindObjectsOfType<LevelObject>();
+        levelObjects = GetComponentsInChildren<LevelObject>();
+        alwaysRenderable = GetComponentsInChildren<IAlwaysRenderable>();
 
-        Map map = pixelSceneData.LoadMap();
-        pixelScene.Init(map);
+        pixelScene.Init(pixelSceneData.LoadMap());
 
         //worldObjects = GetComponentsInChildren<WorldObject>();
 
@@ -144,12 +145,17 @@ public class WorldLevel : MonoBehaviour
         worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
     }
 
+    public NativeArray<Color32> GetPixelCameraRender()
+    {
+        return pixelCamera.Render((int2)pixelCameraPos, levelObjects, alwaysRenderable, ref tickBlock, inDebug); ;
+    }
 
     public void OnRender()
     {
         if(usePixelCamera)
         {
-            pixelCamera.Render((int2)pixelCameraPos, levelObjects, ref tickBlock, inDebug);
+            var pixels = GetPixelCameraRender();
+            GridRenderer.RenderToScreen(pixels);
             return;
         }
 

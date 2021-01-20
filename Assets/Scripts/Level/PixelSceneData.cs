@@ -40,7 +40,12 @@ public class PixelSceneData : MonoBehaviour
         ParticleType[,] particleGrid = ArrayHelper.GetGridFromArray(grid, internalSizes);
         return new Map(particleGrid, internalSizes);
     }
-
+    public void SaveMap(ParticleType[,] particleGrid, int2 sizes)
+    {
+        this.sizes = sizes;
+        internalSizes = sizes;
+        grid = ArrayHelper.GetArrayFromGrid(particleGrid, sizes);
+    }
     //handle resizes without losing everything lol
 }
 

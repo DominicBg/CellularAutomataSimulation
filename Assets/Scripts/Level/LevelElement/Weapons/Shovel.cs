@@ -41,7 +41,7 @@ public class Shovel : EquipableElement
             ascOrder = !ascOrder;
 
         //todo stop loops if blocked?
-        int2 offset = GetEquipOffset(position, settings.lookingOffset);
+        //int2 offset = GetEquipOffset(position, settings.lookingOffset);
         for (int y = 0; y < settings.shovelSize.y; y++)
         {
             if (ascOrder)
@@ -49,7 +49,7 @@ public class Shovel : EquipableElement
                 for (int x = 0; x < settings.shovelSize.x; x++)
                 {
                     int2 localPos = new int2(x, y);
-                    int2 pos = offset + localPos;
+                    int2 pos = position + localPos;
                     ThrowParticle(pos, localPos,  dir, startOffset, ref tickBlock);
                 }
             }
@@ -58,7 +58,7 @@ public class Shovel : EquipableElement
                 for (int x = settings.shovelSize.x - 1; x >= 0; x--)
                 {
                     int2 localPos = new int2(x, y);
-                    int2 pos = offset + localPos;
+                    int2 pos = position + localPos;
                     ThrowParticle(pos, localPos, dir, startOffset, ref tickBlock);
                 }
             }
@@ -135,12 +135,12 @@ public class Shovel : EquipableElement
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
-        int2 renderOffset = playAnim ? baseSettings.equipedOffset + settings.animOffset : baseSettings.equipedOffset;
-        int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
+        int2 animOffset = playAnim ? settings.animOffset :0;
+        //int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
         bool2 flipped;
         flipped.x = isEquiped ? player.lookLeft : false;
         flipped.y = isEquiped && playAnim;
-        spriteAnimator.Render(ref outputcolor, finalRenderPos, flipped);
+        spriteAnimator.Render(ref outputcolor, renderPos + animOffset, flipped);
     }
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
