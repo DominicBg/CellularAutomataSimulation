@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: LightSourceSmall
   m_EditorClassIdentifier: 
   glowingIntensity:
-    min: 2
-    max: 3
+    min: 0.5
+    max: 1
     offsynch: 1
     speed: 0.01
   glowingRadius:
@@ -22,7 +22,7 @@ MonoBehaviour:
     max: 30
     offsynch: 0
     speed: 0.01
-  color: {r: 0.8301887, g: 0.3798505, b: 0.3798505, a: 1}
+  color: {r: 0.83137256, g: 0.6897576, b: 0.38039216, a: 0.3137255}
   z: 25
-  fadeoff: 5
+  fadeoff: 17.06
   resolution: 25

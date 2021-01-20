@@ -164,6 +164,6 @@ public class PlayerElement : PhysicObject, ILightSource
 
     public LightSource GetLightSource(int tick)
     {
-        return settings.lightSourceSettings.GetLightSource(position + levelContainer.GetGlobalOffset(), tick);
+        return settings.lightSourceSettings.GetLightSource(position, tick);
     }
 }

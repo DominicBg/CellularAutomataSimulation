@@ -127,7 +127,7 @@ public class Shovel : EquipableElement
     int2 GetDesiredPosition(int2 pos, int2 localPos, int2 startOffset, float2 dir)
     {
         int2 desiredPos = pos + startOffset + new int2((int)math.sign(dir.x) * (int)(settings.yshifting * localPos.y), 0);
-        desiredPos = math.clamp(desiredPos, 0, GameManager.GridSizes - 1);
+        desiredPos = math.clamp(desiredPos, 0, map.Sizes - 1);
 
         return desiredPos;
     }

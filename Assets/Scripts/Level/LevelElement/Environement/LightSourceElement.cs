@@ -20,7 +20,6 @@ public class LightSourceElement : LevelElement, ILightSource
     public LightSource GetLightSource(int tick)
     {
         int2 pos = useTarget ? target.GetBound().center : position;
-        int2 offset = levelContainer == null ? 0 : levelContainer.GetGlobalOffset();
-        return lightSource.GetLightSource(pos + offset, tick);
+        return lightSource.GetLightSource(pos, tick);
     }
 }
