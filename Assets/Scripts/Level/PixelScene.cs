@@ -22,7 +22,7 @@ public class PixelScene : MonoBehaviour
         for (int i = 0; i < levelElements.Length; i++)
         {
             //to remove null
-            levelElements[i].Init(map, null);
+            levelElements[i].Init(map);
         }
     }
 
@@ -30,7 +30,6 @@ public class PixelScene : MonoBehaviour
     {
         if (updateSimulation)
         {
-            NativeArray<ParticleSpawner> spawners = new NativeArray<ParticleSpawner>(0, Allocator.TempJob);
             NativeList<int2> smokeEvents = new NativeList<int2>(25, Allocator.TempJob);
             Bound updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
 
@@ -40,13 +39,11 @@ public class PixelScene : MonoBehaviour
                 behaviour = GameManager.ParticleBehaviour,
                 map = map,
                 updateBound = updateBound,
-                nativeParticleSpawners = spawners,
                 tickBlock = tickBlock,
                 deltaTime = GameManager.DeltaTime,
                 settings = GameManager.PhysiXVIISetings,
                 particleSmokeEvent = smokeEvents
             }.Run();
-            spawners.Dispose();
             smokeEvents.Dispose();
             //HandleParticleEvents(ref tickBlock);
 

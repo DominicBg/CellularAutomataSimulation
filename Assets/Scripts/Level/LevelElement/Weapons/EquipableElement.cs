@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public abstract class EquipableElement : WorldObject
+public abstract class EquipableElement : LevelObject
 {
     [HideInInspector] public PlayerElement player;
     public EquipableBaseScriptable baseSettings;
@@ -22,6 +22,7 @@ public abstract class EquipableElement : WorldObject
 
     public void OnValidate()
     {
+        base.OnValidate();
         player = GetLevelElement<PlayerElement>();
     }
 
@@ -141,14 +142,6 @@ public abstract class EquipableElement : WorldObject
     {
         base.Dispose();
         spriteAnimator.Dispose();
-    }
-
-    //Make sure to follow in the map
-    public override void UpdateLevelMap(int2 newLevel, Map map, LevelContainer levelContainer)
-    {
-        base.UpdateLevelMap(newLevel, map, levelContainer);
-        if (isEquiped)
-            currentLevel = newLevel;
     }
 
     struct UseRequest

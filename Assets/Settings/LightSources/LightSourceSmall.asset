@@ -16,7 +16,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
     offsynch: 1
-    speed: 0.01
+    speed: 0.02
   glowingRadius:
     min: 25
     max: 30

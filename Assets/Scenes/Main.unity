@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 24019102}
   - component: {fileID: 24019101}
+  - component: {fileID: 24019103}
   m_Layer: 0
   m_Name: GameLevelEditorManager
   m_TagString: Untagged
@@ -156,6 +157,11 @@ MonoBehaviour:
   type: 0
   brushSize: 2
   currentWorldLevel: {fileID: 0}
+  pixelSceneData:
+    grid: 
+    sizes:
+      x: 0
+      y: 0
   movingSpeed: 100
   inDebugView: 1
 --- !u!4 &24019102
@@ -172,6 +178,21 @@ Transform:
   m_Father: {fileID: 1372262967}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &24019103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24019100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 855838beb9889da44b48cd2de521321b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sizes:
+    x: 0
+    y: 0
 --- !u!1 &29838630
 GameObject:
   m_ObjectHideFlags: 0

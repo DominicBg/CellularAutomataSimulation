@@ -143,7 +143,7 @@ public class Shovel : EquipableElement
         spriteAnimator.Render(ref outputcolor, renderPos + animOffset, flipped);
     }
 
-    public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         for (int i = 0; i < debugPositions.Count; i++)
         {
@@ -169,7 +169,6 @@ public class Shovel : EquipableElement
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             PlayerElement player = FindObjectOfType<PlayerElement>();
-            currentLevel = player.currentLevel;
             position = player.position;
         }
     }

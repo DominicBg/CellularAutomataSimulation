@@ -22,8 +22,8 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
     [Header("References")]
     public ParticleBehaviourScriptable partaicleBehaviour;
 
-    public LevelContainer mainMenuLevelPrefab;
-    LevelContainer mainMenuLevel;
+    //public LevelContainer mainMenuLevelPrefab;
+    //LevelContainer mainMenuLevel;
     TickBlock tickBlock;
 
     //Debug
@@ -35,10 +35,10 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         lightRender.Dispose();
         darkRender.Dispose();
 
-        if(mainMenuLevel != null)
-            mainMenuLevel.Dispose();
+        //if(mainMenuLevel != null)
+        //    mainMenuLevel.Dispose();
 
-        mainMenuLevel = null;
+        //mainMenuLevel = null;
     }
 
     public void OnStart()
@@ -47,9 +47,9 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         darkRender.Init();
 
         //Load simulation
-        mainMenuLevel = Instantiate(mainMenuLevelPrefab);
-        LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
-        mainMenuLevel.Init(data.LoadMap());
+      //  mainMenuLevel = Instantiate(mainMenuLevelPrefab);
+     //   LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
+      //  mainMenuLevel.Init(data.LoadMap());
 
         tickBlock.Init();
     }
@@ -57,7 +57,7 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
-        mainMenuLevel.OnUpdate(ref tickBlock);
+     //   mainMenuLevel.OnUpdate(ref tickBlock);
 
         if(InputCommand.IsButtonDown(KeyCode.Space))
         {
@@ -73,29 +73,30 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         bool showlight = noiseValue < lightThreshold;
         bool showGlitch = noiseValue > lightThreshold && noiseValue < glitchThreshold;
 
-        if (showGlitch)
-        {
-            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
-            var darkTexture = darkRender.Render(ref tickBlock);
+        //FIX ME
+        //if (showGlitch)
+        //{
+        //    var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
+        //    var darkTexture = darkRender.Render(ref tickBlock);
 
-            InterlaceTextureSettings glitchSettings = new InterlaceTextureSettings();
-            glitchSettings.stride = tickBlock.random.NextInt2(minStride, maxStride);
-            glitchSettings.inverted = tickBlock.tick % glitchSpeed * 2 < glitchSpeed;
+        //    InterlaceTextureSettings glitchSettings = new InterlaceTextureSettings();
+        //    glitchSettings.stride = tickBlock.random.NextInt2(minStride, maxStride);
+        //    glitchSettings.inverted = tickBlock.tick % glitchSpeed * 2 < glitchSpeed;
 
-            var result = GridRenderer.InterlaceColors(ref lightTexture, ref darkTexture, ref glitchSettings);
-            GridRenderer.RenderToScreen(result);
+        //    var result = GridRenderer.InterlaceColors(ref lightTexture, ref darkTexture, ref glitchSettings);
+        //    GridRenderer.RenderToScreen(result);
 
-        }
-        else if (showlight)
-        {
-            var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
-            GridRenderer.RenderToScreen(lightTexture);
-        }
-        else
-        {
-            var darkTexture = darkRender.Render(ref tickBlock);
-            GridRenderer.RenderToScreen(darkTexture);
-        }
+        //}
+        //else if (showlight)
+        //{
+        //    var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);
+        //    GridRenderer.RenderToScreen(lightTexture);
+        //}
+        //else
+        //{
+        //    var darkTexture = darkRender.Render(ref tickBlock);
+        //    GridRenderer.RenderToScreen(darkTexture);
+        //}
     }
 
 }

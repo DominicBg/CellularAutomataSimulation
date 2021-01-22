@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ParticleDestroyerElement : LevelObject
@@ -15,9 +16,9 @@ public class ParticleDestroyerElement : LevelObject
         map.SetParticleType(position, ParticleType.None);
     }
 
-    public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
-        int index = ArrayHelper.PosToIndex(position, GameManager.GridSizes);
+        int index = ArrayHelper.PosToIndex(renderPos, GameManager.GridSizes);
         outputColor[index] = Color.red;
     }
 }

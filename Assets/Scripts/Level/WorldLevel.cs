@@ -17,9 +17,6 @@ public class WorldLevel : MonoBehaviour
     public PixelSceneData pixelSceneData;
 
 
-    WorldLevelContainer worldLevelContainer;
-    public Dictionary<int2, LevelContainer> levels;
-    public Dictionary<LevelContainer, LevelContainerGroup> levelsGroups;
     public int2 currentLevelPosition;
 
     LevelObject[] levelObjects;
@@ -27,9 +24,6 @@ public class WorldLevel : MonoBehaviour
     ILightSource[] lightSources;
 
     public bool inDebug = false;
-
-    public LevelContainer CurrentLevel => levels[currentLevelPosition];
-    public LevelContainerGroup CurrentLevelGroup => levelsGroups[CurrentLevel];
 
     public float transitionSpeed = 1;
     TransitionInfo transitionInfo;
@@ -102,27 +96,11 @@ public class WorldLevel : MonoBehaviour
 
         postProcessTickBlock.UpdateTick();
 
-        pixelCameraPos = math.lerp(pixelCameraPos, player.GetBound().center, GameManager.DeltaTime * cameraSmooth);
+        pixelCameraPos = math.lerp(pixelCameraPos, new float2(player.GetBound().center.x, 75), GameManager.DeltaTime * cameraSmooth);
         pixelScene.OnUpdate(ref tickBlock, (int2)pixelCameraPos);
-
-
 
         PostProcessManager.Instance.Update(ref postProcessTickBlock);
     }
-
-    //void OnTransitionFinished()
-    //{
-    //    transitionInfo.isInTransition = false;
-    //    currentLevelPosition = transitionInfo.entrance.levelContainer.levelPosition;
-
-    //    //eww
-    //    PlayerElement player = FindObjectOfType<PlayerElement>();
-    //    player.position = transitionInfo.entrance.position;
-    //    player.physicData.position = player.position;
-    //    player.physicData.velocity = 0;
-
-    //    worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
-    //}
 
     public NativeArray<Color32> GetPixelCameraRender()
     {
@@ -133,8 +111,10 @@ public class WorldLevel : MonoBehaviour
             lightSources =lightSources,
             map = pixelScene.map
         };
-        return pixelCamera.Render((int2)pixelCameraPos, renderData, ref tickBlock, inDebug);
+        pixelCamera.cameraPos = (int2)pixelCameraPos;
+        return pixelCamera.Render(renderData, ref tickBlock, inDebug);
     }
+
 
     public void OnRender()
     {
@@ -255,17 +235,6 @@ public class WorldLevel : MonoBehaviour
     public void Dispose()
     {
         pixelScene.Dispose();
-        worldLevelContainer?.Dispose();
-
-        if (levels != null)
-        { 
-            foreach (var level in levels.Values)
-            {
-                level.Dispose();
-                Destroy(level.gameObject);
-            }
-           }
-        levels?.Clear();
         Destroy(gameObject);
     }
 

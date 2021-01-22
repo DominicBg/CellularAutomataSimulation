@@ -34,8 +34,8 @@ public class LevelExit : LevelObject
         }
     }
 
-    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        GridRenderer.DrawBound(ref outputColors, GetBound(), new Color32(255, 169, 100, 200));
+        GridRenderer.DrawBound(ref outputColors, new Bound(renderPos, sizes), new Color32(255, 169, 100, 200));
     }
 }

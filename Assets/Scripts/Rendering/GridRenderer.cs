@@ -100,14 +100,14 @@ public class GridRenderer : MonoBehaviour
         {
             colors[i] = color;
         }
-        new ApplyPixelsJob(outputColor, positions, colors, GameManager.GridSizes, blending).Run();
+        new ApplyPixelsJob(outputColor, positions, colors, blending).Run();
         positions.Dispose();
         colors.Dispose();
     }
 
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {
-        new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, GameManager.GridSizes, blending).Run();
+        new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, blending).Run();
     }
 
     public static void ApplyTexture(ref NativeArray<Color32> outputColor, ref NativeArray<Color32> texture, BlendingMode blending = BlendingMode.Normal, bool useAlphaMask = false)

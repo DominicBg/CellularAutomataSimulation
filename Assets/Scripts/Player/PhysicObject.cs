@@ -6,7 +6,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-public abstract class PhysicObject : WorldObject
+public abstract class PhysicObject : LevelObject
 {
     public PhysicData physicData;
 

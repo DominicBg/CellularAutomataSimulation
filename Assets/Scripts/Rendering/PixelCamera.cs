@@ -6,26 +6,15 @@ using UnityEngine;
 
 public class PixelCamera
 {
-    //set the camera position here
+    public int2 cameraPos;
     int2 viewPort;
     List<LevelObject> renderingObjects;
-    //List<IAlwaysRenderable> alwaysRenderables;
 
     public PixelCamera(int2 viewPort)
     {
         this.viewPort = viewPort;
         renderingObjects = new List<LevelObject>(100);
-        //alwaysRenderables = new List<IAlwaysRenderable>(100);
-
-        ////hack
-
-        //var roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-        //for (int i = 0; i < roots.Length; i++)
-        //{
-        //    alwaysRenderables.AddRange(roots[i].GetComponentsInChildren<IAlwaysRenderable>());
-        //}
     }
-
 
     //have a prerender pass that computes the lights positions n filtering
     public struct RenderData
@@ -36,7 +25,7 @@ public class PixelCamera
         public Map map;
     }
 
-    public NativeArray<Color32> Render(int2 cameraPos, RenderData renderData, ref TickBlock tickBlock, bool inDebug)
+    public NativeArray<Color32> Render(RenderData renderData, ref TickBlock tickBlock, bool inDebug)
     {
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
@@ -88,10 +77,11 @@ public class PixelCamera
         if (inDebug)
         {
             for (int i = 0; i < renderCount; i++)
-                alwaysRenderables[i].RenderDebug(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
+                alwaysRenderables[i].RenderDebug(ref outputColors, ref tickBlock, 0);
             for (int i = 0; i < count; i++)
-                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock);
+                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
         }
+
 
         nativeLights.Dispose();
 
@@ -116,5 +106,10 @@ public class PixelCamera
     int2 GetRenderingOffset(int2 cameraPos)
     {
         return -(cameraPos - viewPort / 2);
+    }
+
+    public Bound GetViewingBound()
+    {
+        return Bound.CenterAligned(cameraPos, viewPort);
     }
 }

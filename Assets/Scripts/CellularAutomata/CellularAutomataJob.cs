@@ -7,7 +7,7 @@ using static ParticleBehaviour;
 [BurstCompile]
 public struct CellularAutomataJob : IJob
 {
-    public NativeArray<ParticleSpawner> nativeParticleSpawners;
+    //public NativeArray<ParticleSpawner> nativeParticleSpawners;
     public TickBlock tickBlock;
     public Map map;
     public ParticleBehaviour behaviour;
@@ -27,24 +27,24 @@ public struct CellularAutomataJob : IJob
         map.UpdateParticleTick(updateBound);
         UpdateSimulation();
 
-        SpawnParticles();
+        //SpawnParticles();
     }
 
-    void SpawnParticles()
-    {
-        for (int i = 0; i < nativeParticleSpawners.Length; i++)
-        {
-            var spawner = nativeParticleSpawners[i];
-            bool canEmit = spawner.particleSpawnCount != 0;
+    //void SpawnParticles()
+    //{
+    //    for (int i = 0; i < nativeParticleSpawners.Length; i++)
+    //    {
+    //        var spawner = nativeParticleSpawners[i];
+    //        bool canEmit = spawner.particleSpawnCount != 0;
 
-            if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
-            {
-                spawner.particleSpawnCount--;
-                map.SetParticleType(spawner.spawnPosition, spawner.particleType);
-                nativeParticleSpawners[i] = spawner;
-            }
-        }
-    }
+    //        if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
+    //        {
+    //            spawner.particleSpawnCount--;
+    //            map.SetParticleType(spawner.spawnPosition, spawner.particleType);
+    //            nativeParticleSpawners[i] = spawner;
+    //        }
+    //    }
+    //}
 
     void UpdateSimulation()
     {

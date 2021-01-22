@@ -7,43 +7,27 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-public class PixelSceneData : MonoBehaviour
+
+[System.Serializable]
+public class PixelSceneData
 {
     [HideInInspector] public ParticleType[] grid;
-    public int2 sizes;
+    [HideInInspector] public int2 sizes;
 
-    [/*HideInInspector, */SerializeField] private int2 internalSizes;
-
-    [ContextMenu("Init")]
-    public void Init()
+    public void CreateEmpty(int2 sizes)
     {
-        internalSizes = sizes;
         grid = new ParticleType[sizes.x * sizes.y];
-    }
-
-    [ContextMenu("Randomize")]
-    public void Randomize()
-    {
-        Init();
-        for (int x = 0; x < sizes.x; x++)
-        {
-            for (int y = 0; y < sizes.y; y++)
-            {
-                float noiseValue = noise.cnoise(new float2(x, y) * 0.1f);
-                grid[x + y * sizes.x] = noiseValue > .25f ? ParticleType.Rock : (noiseValue > .15f) ? ParticleType.Sand : ParticleType.None; 
-            }
-        }
+        this.sizes = sizes;
     }
 
     public Map LoadMap()
     {
-        ParticleType[,] particleGrid = ArrayHelper.GetGridFromArray(grid, internalSizes);
-        return new Map(particleGrid, internalSizes);
+        ParticleType[,] particleGrid = ArrayHelper.GetGridFromArray(grid, sizes);
+        return new Map(particleGrid, sizes);
     }
     public void SaveMap(ParticleType[,] particleGrid, int2 sizes)
     {
         this.sizes = sizes;
-        internalSizes = sizes;
         grid = ArrayHelper.GetArrayFromGrid(particleGrid, sizes);
     }
     //handle resizes without losing everything lol

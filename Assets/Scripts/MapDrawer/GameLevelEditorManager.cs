@@ -21,12 +21,13 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     Stack<List<ParticleChange>> controlZ = new Stack<List<ParticleChange>>(50);
     List<ParticleChange> currentList;
+
     HashSet<int2> dirtyPixels = new HashSet<int2>();
     bool isRecording;
 
     public WorldLevel currentWorldLevel;
+    public PixelSceneData pixelSceneData;
 
-    //private bool inFreeView;
     public float movingSpeed = 5;
     public bool inDebugView;
     public void OnStart()
@@ -39,13 +40,23 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         if (currentWorldLevel != null)
             currentWorldLevel.Dispose();
 
+
         currentWorldLevel = GameManager.Instance.GetWorldLevelInstance();
         currentWorldLevel.LoadLevel();
+        pixelSceneData = currentWorldLevel.pixelSceneData;
     }
+    public void Reload()
+    {
+        currentWorldLevel.pixelScene.map.Dispose();
+        Map map = pixelSceneData.LoadMap();
+        currentWorldLevel.pixelScene.map = map;
+    }
+
     public void Save()
     {
         WorldLevel prefab = GameManager.Instance.worldLevelPrefab;
-        currentWorldLevel.pixelSceneData.SaveMap(grid, currentWorldLevel.pixelScene.map.Sizes);
+        pixelSceneData.SaveMap(grid, currentWorldLevel.pixelScene.map.Sizes);
+        currentWorldLevel.pixelSceneData = pixelSceneData;
 
 #if UNITY_EDITOR
         string path = AssetDatabase.GetAssetPath(prefab);               
@@ -113,33 +124,40 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     void FillGridWithCurrentMapParticle()
     {
-        //ONLY UPDATE VIEW PORT
-
         Map map = currentWorldLevel.pixelScene.map;
         if (grid == null || grid.Length != map.ArrayLength)
             grid = new ParticleType[map.Sizes.x, map.Sizes.y];
 
-        for (int x = 0; x < map.Sizes.x; x++)
+        Bound bound = currentWorldLevel.pixelCamera.GetViewingBound();
+        int2 min = bound.bottomLeft;
+        int2 max = bound.topRight;
+        for (int x = min.x; x < max.x; x++)
         {
-            for (int y = 0; y < map.Sizes.y; y++)
+            for (int y = min.y; y < max.y; y++)
             {
-                grid[x, y] = map.GetParticleType(new int2(x, y));
+                int2 pos = new int2(x, y);
+                if(map.InBound(pos))
+                    grid[x, y] = map.GetParticleType(new int2(x, y));
             }
         }
     }
 
     void UpdateMapParticles()
     {
-        //ONLY UPDATE VIEW PORT
-
         Map map = currentWorldLevel.pixelScene.map;
-        for (int x = 0; x < map.Sizes.x; x++)
+        Bound bound = currentWorldLevel.pixelCamera.GetViewingBound();
+        int2 min = bound.bottomLeft;
+        int2 max = bound.topRight;
+
+        for (int x = min.x; x < max.x; x++)
         {
-            for (int y = 0; y < map.Sizes.y; y++)
+            for (int y = min.y; y < max.y; y++)
             {
-                map.SetParticleType(new int2(x, y), grid[x, y]);
+                int2 pos = new int2(x, y);
+                if (map.InBound(pos))
+                    map.SetParticleType(new int2(x, y), grid[x, y]);
             }
-        }        
+        }
     }
 
     private void DrawPixel(int2 sizes, int2 pixelPos)
@@ -164,15 +182,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     public void OnRender()
     {
         var pixels = currentWorldLevel.GetPixelCameraRender();
-        //Keep
-        //    //var particleSpawner = levelContainer.GetParticleSpawner();
-        //    //for (int i = 0; i < particleSpawner.Length; i++)
-        //    //{
-        //    //    var spawner = particleSpawner[i];
-        //    //    int index = ArrayHelper.PosToIndex(spawner.spawnPosition, GameManager.GridSizes);
-        //    //    outputColors[index] = Color.white;
-        //    //}
-        //    //particleSpawner.Dispose();
         DrawPreview(ref pixels);
         GridRenderer.RenderToScreen(pixels);
     }
@@ -211,5 +220,6 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         public int2 position;
         public ParticleType previousType;
     }
+
 }
 

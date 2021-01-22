@@ -11,13 +11,16 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
 
     public bool isEnable = true;
     public bool isVisible = true;
-    [HideInInspector] public LevelContainer levelContainer;
 
-    public void Init(Map map, LevelContainer levelContainer)
+    public void Init(Map map)
     {
         this.map = map;
-        this.levelContainer = levelContainer;
         OnInit();
+    }
+
+    public void OnValidate()
+    {
+        GetComponentInParent<PixelScene>()?.OnValidate();
     }
 
     public virtual void OnInit() { }
@@ -29,7 +32,7 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
     public virtual void RenderUI(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
-    public virtual void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
+    public virtual void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 
     public virtual void Dispose()
     {
