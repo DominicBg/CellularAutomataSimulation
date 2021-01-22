@@ -32,6 +32,8 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     public bool inDebugView;
     public void OnStart()
     {
+        controlZ.Clear();
+        dirtyPixels.Clear();
         Load();
     }
 
