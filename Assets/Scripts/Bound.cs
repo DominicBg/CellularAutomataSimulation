@@ -74,6 +74,11 @@ public struct Bound
         return !(otherBound.max.x < min.x || otherBound.min.x > max.x || otherBound.max.y < min.y || otherBound.min.y > max.y);
     }
 
+    public int2 ProjectPointOnbound(int2 point)
+    {
+        return math.clamp(point, min, max);
+    }
+
     public int2 RandomPointInBound(ref TickBlock tickblock)
     {
         return tickblock.random.NextInt2(min, max + 1);

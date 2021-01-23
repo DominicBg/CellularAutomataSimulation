@@ -62,6 +62,12 @@ public class PixelScene : MonoBehaviour
             if (levelElements[i].isEnable)
                 levelElements[i].OnUpdate(ref tickBlock);
         }
+
+        for (int i = 0; i < levelElements.Length; i++)
+        {
+            if (levelElements[i].isEnable)
+                levelElements[i].OnLateUpdate(ref tickBlock);
+        }
     }
 
     public void Dispose()

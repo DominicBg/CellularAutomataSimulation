@@ -6,12 +6,18 @@ using UnityEngine;
 
 public class PixelCamera
 {
-    public int2 cameraPos;
+    PixelCameraTransform transform;
     int2 viewPort;
     List<LevelObject> renderingObjects;
-
-    public PixelCamera(int2 viewPort)
+    public int2 position
     {
+        get => transform.position;
+        set => transform.position = value;
+    }
+
+    public PixelCamera(PixelCameraTransform transform, int2 viewPort)
+    {
+        this.transform = transform;
         this.viewPort = viewPort;
         renderingObjects = new List<LevelObject>(100);
     }
@@ -30,7 +36,7 @@ public class PixelCamera
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
         renderingObjects.Clear();
-        Bound viewPortBound = new Bound(cameraPos - viewPort/2, viewPort);
+        Bound viewPortBound = new Bound(position - viewPort/2, viewPort);
 
         //maybe do it more optimzied lol
         for (int i = 0; i < renderData.levelObjects.Length; i++)
@@ -46,21 +52,21 @@ public class PixelCamera
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].PreRender(ref outputColors, ref tickBlock, cameraPos);
+            alwaysRenderables[i].PreRender(ref outputColors, ref tickBlock, position);
         for (int i = 0; i < count; i++)
-            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
+            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
 
         //Render Map
-        GridRenderer.ApplyMapPixels(ref outputColors, renderData.map, ref tickBlock, cameraPos, nativeLights);
+        GridRenderer.ApplyMapPixels(ref outputColors, renderData.map, ref tickBlock, position, nativeLights);
 
         //Render
         for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].Render(ref outputColors, ref tickBlock, cameraPos);
+            alwaysRenderables[i].Render(ref outputColors, ref tickBlock, position);
         for (int i = 0; i < count; i++)
-            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
+            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
 
         //Render Light
-        LightRenderer.AddLight(ref outputColors, ref nativeLights, GetRenderingOffset(cameraPos), GridRenderer.Instance.lightRendering.settings);
+        LightRenderer.AddLight(ref outputColors, ref nativeLights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
 
         //Render PostRender
         for (int i = 0; i < renderCount; i++)
@@ -79,12 +85,10 @@ public class PixelCamera
             for (int i = 0; i < renderCount; i++)
                 alwaysRenderables[i].RenderDebug(ref outputColors, ref tickBlock, 0);
             for (int i = 0; i < count; i++)
-                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(cameraPos, renderingObjects[i].position));
+                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
         }
 
-
         nativeLights.Dispose();
-
         return outputColors;
     }
 
@@ -98,18 +102,18 @@ public class PixelCamera
         return nativeLights;
     }
 
-    public int2 GetRenderPosition(int2 cameraPos, int2 position)
+    public int2 GetRenderPosition(int2 position)
     {
-        return position + GetRenderingOffset(cameraPos);
+        return position + GetRenderingOffset();
     }
 
-    int2 GetRenderingOffset(int2 cameraPos)
+    int2 GetRenderingOffset()
     {
-        return -(cameraPos - viewPort / 2);
+        return -(position - viewPort / 2);
     }
 
     public Bound GetViewingBound()
     {
-        return Bound.CenterAligned(cameraPos, viewPort);
+        return Bound.CenterAligned(position, viewPort);
     }
 }

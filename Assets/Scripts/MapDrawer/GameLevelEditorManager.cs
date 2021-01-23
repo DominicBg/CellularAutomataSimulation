@@ -27,7 +27,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     public WorldLevel currentWorldLevel;
     public PixelSceneData pixelSceneData;
-
+    public float2 viewPos;
     public float movingSpeed = 5;
     public bool inDebugView;
     public void OnStart()
@@ -75,7 +75,8 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         if (InputCommand.IsButtonHeld(KeyCode.LeftShift))
             multiplier = 3;
 
-        currentWorldLevel.pixelCameraPos += InputCommand.Direction * movingSpeed * GameManager.DeltaTime * multiplier;
+        viewPos += InputCommand.Direction * movingSpeed * GameManager.DeltaTime * multiplier;
+        currentWorldLevel.pixelCamera.position = (int2)viewPos;
 
         FillGridWithCurrentMapParticle();
         DrawPixels();
@@ -99,7 +100,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
         if (isEditing && isRecording)
         {
-            int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes) + (int2)currentWorldLevel.pixelCameraPos - GameManager.GridSizes/2;
+            int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes) + currentWorldLevel.pixelCamera.position - GameManager.GridSizes/2;
 
             int halfSize = brushSize / 2;
             int extra = brushSize % 2 == 0 ? 0 : 1;

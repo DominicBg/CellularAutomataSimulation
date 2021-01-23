@@ -7,17 +7,10 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    // WorldObject[] worldObjects;
-
     public PlayerElement player;
-    public float cameraSmooth;
-    public float2 pixelCameraPos;
     public PixelCamera pixelCamera;
     public PixelScene pixelScene;
     public PixelSceneData pixelSceneData;
-
-
-    public int2 currentLevelPosition;
 
     LevelObject[] levelObjects;
     IAlwaysRenderable[] alwaysRenderable;
@@ -38,7 +31,6 @@ public class WorldLevel : MonoBehaviour
 
     public void LoadLevel()
     {
-        pixelCamera = new PixelCamera(GameManager.GridSizes);
 
         tickBlock.Init();
         worldTickBlock.Init();
@@ -49,36 +41,7 @@ public class WorldLevel : MonoBehaviour
         lightSources = GetComponentsInChildren<ILightSource>();
 
         pixelScene.Init(pixelSceneData.LoadMap());
-
-        //worldObjects = GetComponentsInChildren<WorldObject>();
-
-
-        //worldLevelContainer = GetComponentInChildren<WorldLevelContainer>();
-        //LevelContainer[] levelContainers = GetComponentsInChildren<LevelContainer>();
-
-        //levels = new Dictionary<int2, LevelContainer>();
-
-        //for (int i = 0; i < levelContainers.Length; i++)
-        //{
-        //    levels.Add(levelContainers[i].levelPosition, levelContainers[i]);
-        //    LevelContainerData data = levelContainers[i].GetComponent<LevelContainerData>();
-        //    levelContainers[i].Init(data.LoadMap());
-        //}
-
-        ////Link container to groups
-        //levelsGroups = new Dictionary<LevelContainer, LevelContainerGroup>();
-        //LevelContainerGroup[] levelContainerGroups = GetComponentsInChildren<LevelContainerGroup>();
-        //for (int i = 0; i < levelContainerGroups.Length; i++)
-        //{
-        //    var group = levelContainerGroups[i];
-        //    for (int j = 0; j < group.levelContainers.Length; j++)
-        //    {
-        //        levelsGroups.Add(group.levelContainers[j], group);
-        //    }
-        //}
-
-        //worldLevelContainer.Init(CurrentLevel.map, CurrentLevel);
-        //worldLevelContainer.UpdateLevelMap(currentLevelPosition, CurrentLevel.map, CurrentLevel);
+        pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.GridSizes);
 
         PostProcessManager.Instance = new PostProcessManager();
     }
@@ -96,8 +59,8 @@ public class WorldLevel : MonoBehaviour
 
         postProcessTickBlock.UpdateTick();
 
-        pixelCameraPos = math.lerp(pixelCameraPos, new float2(player.GetBound().center.x, 75), GameManager.DeltaTime * cameraSmooth);
-        pixelScene.OnUpdate(ref tickBlock, (int2)pixelCameraPos);
+        //pixelCameraPos = math.lerp(pixelCameraPos, new float2(player.GetBound().center), GameManager.DeltaTime * cameraSmooth);
+        pixelScene.OnUpdate(ref tickBlock, pixelCamera.position);
 
         PostProcessManager.Instance.Update(ref postProcessTickBlock);
     }
@@ -111,7 +74,6 @@ public class WorldLevel : MonoBehaviour
             lightSources =lightSources,
             map = pixelScene.map
         };
-        pixelCamera.cameraPos = (int2)pixelCameraPos;
         return pixelCamera.Render(renderData, ref tickBlock, inDebug);
     }
 
