@@ -51,11 +51,11 @@ namespace FiniteStateMachine
             m_onEndCallback?.Invoke(currentState);
 
             currentState = state;
+            currentStateEnum = enumState;
 
             currentState?.OnStart();
             m_onStartCallback?.Invoke(currentState);
 
-            currentStateEnum = enumState;
         }
 
         public void ResetState()
@@ -67,6 +67,8 @@ namespace FiniteStateMachine
         {
             currentState?.OnEnd();
         }
+
+        public T GetCurrentState() => currentStateEnum;
     }
 
     public interface IGameState

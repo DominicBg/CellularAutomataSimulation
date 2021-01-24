@@ -15,9 +15,6 @@ public class ReflectiveSurface : LevelObject
     public BlendingMode reflectionBlending;
 
     public float t;
-    public float cellularTest = 0.01f;
-    public float cellularMagnitude = 5;
-    public float2 seed;
 
     private NativeArray<Color32> reflectiveColors;
 

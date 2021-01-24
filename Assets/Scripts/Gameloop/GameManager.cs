@@ -138,6 +138,9 @@ public class GameManager : MonoBehaviour
         currentContext = null;
     }
 
+    public static GameStateEnum CurrentState => Instance.m_stateMachine.GetCurrentState();
+
+
     public void EditorPingManager(IGameState state)
     {
 #if UNITY_EDITOR

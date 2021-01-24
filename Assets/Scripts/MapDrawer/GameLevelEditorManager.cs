@@ -56,6 +56,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     public void Save()
     {
+        if(GameManager.CurrentState != GameManager.GameStateEnum.LevelEditor)
+        {
+            Debug.LogError("You need to be in LevelEditor mode to save");
+            return;
+        }
+
         WorldLevel prefab = GameManager.Instance.worldLevelPrefab;
         pixelSceneData.SaveMap(grid, currentWorldLevel.pixelScene.map.Sizes);
         currentWorldLevel.pixelSceneData = pixelSceneData;

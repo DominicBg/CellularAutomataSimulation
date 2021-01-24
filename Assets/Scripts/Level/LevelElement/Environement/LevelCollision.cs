@@ -4,6 +4,8 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
+//obscelete
+
 public class LevelCollision : LevelElement
 {
     [SerializeField] Texture2D texture = default;
@@ -21,7 +23,6 @@ public class LevelCollision : LevelElement
                 if(nativeTexture[i].a != 0)
                 {
                     int2 position = ArrayHelper.IndexToPos(i, GameManager.GridSizes);
-                    //Add static collision?
                     map.SetParticleType(position, ParticleType.Rock);
                 }
             }

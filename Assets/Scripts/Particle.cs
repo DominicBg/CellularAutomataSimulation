@@ -33,6 +33,7 @@ public enum ParticleType
 
     //Other
     Player,
+    Collision,
 
     //Misc
     TitleDisintegration,

@@ -32,6 +32,9 @@ public static class ParticleRenderUtil
             case ParticleType.Player:
                 //Gets overriden when trying the sprite
                 return Color.clear;
+            case ParticleType.Collision:
+                //Should be baked in the map
+                return Color.yellow;
             case ParticleType.Cinder:
                 return particleRendering.cinderRendering.GetColor(position, ref tickBlock);
             case ParticleType.Wood:

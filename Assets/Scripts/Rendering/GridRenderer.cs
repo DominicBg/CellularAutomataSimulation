@@ -144,7 +144,7 @@ public class GridRenderer : MonoBehaviour
         return outputColor;
     }
 
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, NativeSprite sprite, int2 position, bool isflipped = false)
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool isflipped = false, bool centerAligned = false)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
         {
@@ -152,7 +152,7 @@ public class GridRenderer : MonoBehaviour
             {
                 int xx = (!isflipped) ? x : sprite.sizes.x - x - 1;
 
-                int2 texturePos = new int2(x, y) + position;
+                int2 texturePos = new int2(x, y) + position - (centerAligned ? sprite.sizes/2 : 0);
                 if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[xx, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);

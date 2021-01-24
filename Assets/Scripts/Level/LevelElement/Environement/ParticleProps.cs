@@ -17,17 +17,21 @@ public class ParticleProps : LevelObject
         nativeSprite = new NativeSprite(texture);
         isParticles = new NativeGrid<bool>(nativeSprite.sizes, Allocator.Persistent);
 
-        for (int x = 0; x < nativeSprite.sizes.x; x++)
+        //A bit hackish, but don't bake into the map if editing
+        if(GameManager.CurrentState != GameManager.GameStateEnum.LevelEditor)
         {
-            for (int y = 0; y < nativeSprite.sizes.y; y++)
+            for (int x = 0; x < nativeSprite.sizes.x; x++)
             {
-                bool isParticle = nativeSprite.pixels[x, y].a != 0;
-                isParticles[x, y] = isParticle;
-
-                if (isParticle)
+                for (int y = 0; y < nativeSprite.sizes.y; y++)
                 {
-                    int2 mapPos = position + new int2(x, y);
-                    map.SetParticleType(mapPos, particleType);
+                    bool isParticle = nativeSprite.pixels[x, y].a != 0;
+                    isParticles[x, y] = isParticle;
+
+                    if (isParticle)
+                    {
+                        int2 mapPos = position + new int2(x, y);
+                        map.SetParticleType(mapPos, particleType);
+                    }
                 }
             }
         }
