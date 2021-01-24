@@ -80,12 +80,19 @@ public class GameLevelEditorFunctions : MonoBehaviour
             for (int y = 0; y < smallSizes.y; y++)
             {
                 int index = x + y * oldSizes.x;
-                int newIndex = (x - offset.x) + (y + offset.y) * newSizes.x;
-                if (newIndex < editorManager.pixelSceneData.grid.Length && index < grid.Length)
+                int newIndex = (x + offset.x) + (y + offset.y) * newSizes.x;
+                if (newIndex < editorManager.pixelSceneData.grid.Length && newIndex >= 0 && index < grid.Length)
                     newGrid[newIndex] = grid[index];
             }
         }
         editorManager.pixelSceneData.grid = newGrid;
         editorManager.Reload();
+
+        var elements = FindObjectsOfType<LevelObject>();
+        for (int i = 0; i < elements.Length; i++)
+        {
+            if (elements[i] is LevelObject)
+                ((LevelObject)elements[i]).position += offset;
+        }
     }
 }

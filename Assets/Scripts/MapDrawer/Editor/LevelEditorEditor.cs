@@ -19,13 +19,20 @@ public class LevelEditorEditor : Editor
         {
             levelEditor.Load();
         }
-        if (GUILayout.Button("Select Current"))
+
+        GUILayout.Space(15);
+
+        //show partial scene
+        var partialScenes = FindObjectsOfType<PixelPartialScene>();
+        for (int i = 0; i < partialScenes.Length; i++)
         {
-
-
-            //Selection.activeObject = (MonoBehaviour)levelEditor.currentWorldLevel.levels[(int2)levelEditor.viewPosition];
-            //EditorGUIUtility.PingObject(Selection.activeObject);
+            if (GUILayout.Button("Show " + partialScenes[i].name))
+            {
+                for (int j = 0; j < partialScenes.Length; j++)
+                {
+                    partialScenes[j].SetActive(i == j);
+                }
+            }
         }
-
     }
 }
