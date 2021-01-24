@@ -24,8 +24,8 @@ MonoBehaviour:
   framePerImage: 5
   frameCooldown: 15
   shovelSize:
-    x: 12
-    y: 12
+    x: 15
+    y: 15
   lookingOffset:
     x: 2
     y: -3

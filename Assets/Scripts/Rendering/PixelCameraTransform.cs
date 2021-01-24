@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,6 +6,7 @@ public class PixelCameraTransform : LevelObject
 {
     public LevelObject target;
     public int2 focusSizes = 25;
+    public int2 boundOffset;
 
     public override void OnInit()
     {
@@ -17,7 +16,7 @@ public class PixelCameraTransform : LevelObject
 
     public override Bound GetBound()
     {
-        return Bound.CenterAligned(position, focusSizes);
+        return Bound.CenterAligned(position - boundOffset, focusSizes);
     }
 
     public override void OnLateUpdate(ref TickBlock tickBlock)
@@ -34,6 +33,6 @@ public class PixelCameraTransform : LevelObject
 
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        GridRenderer.DrawBound(ref outputColors, Bound.CenterAligned(renderPos, focusSizes), Color.cyan * 0.35f, BlendingMode.Transparency);
+        GridRenderer.DrawBound(ref outputColors, Bound.CenterAligned(renderPos - boundOffset, focusSizes), Color.cyan * 0.35f, BlendingMode.Transparency);
     }
 }

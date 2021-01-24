@@ -25,11 +25,11 @@ public class GemObject : LevelObject, ILightSource
         //outputColor[pos2] = color;
     }
 
-    public override void PostRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock)
+    public override void PostRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         for (int i = 0; i < gemShines.Length; i++)
         {
-            gemShines[i].Render(position, ref outputColor, ref tickBlock);
+            gemShines[i].Render(renderPos, ref outputColor, ref tickBlock);
         }
     }
 

@@ -80,8 +80,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
         FillGridWithCurrentMapParticle();
         DrawPixels();
-        UpdateMapParticles();
-        
+        UpdateMapParticles();       
     }
 
     private void DrawPixels()
@@ -129,7 +128,17 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     {
         Map map = currentWorldLevel.pixelScene.map;
         if (grid == null || grid.Length != map.ArrayLength)
+        {
+            //copy whole map
             grid = new ParticleType[map.Sizes.x, map.Sizes.y];
+            for (int x = 0; x < map.Sizes.x; x++)
+            {
+                for (int y = 0; y < map.Sizes.y; y++)
+                {
+                    grid[x, y] = map.GetParticleType(new int2(x, y));
+                }
+            }
+        }
 
         Bound bound = currentWorldLevel.pixelCamera.GetViewingBound();
         int2 min = bound.bottomLeft;
@@ -140,7 +149,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
             {
                 int2 pos = new int2(x, y);
                 if(map.InBound(pos))
-                    grid[x, y] = map.GetParticleType(new int2(x, y));
+                    grid[x, y] = map.GetParticleType(pos);
             }
         }
     }

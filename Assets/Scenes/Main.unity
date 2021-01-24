@@ -162,6 +162,9 @@ MonoBehaviour:
     sizes:
       x: 0
       y: 0
+  viewPos:
+    x: 0
+    y: 0
   movingSpeed: 100
   inDebugView: 1
 --- !u!4 &24019102
@@ -1492,7 +1495,6 @@ MonoBehaviour:
     x: 50
     y: 5
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
-  mainMenuLevelPrefab: {fileID: 5479903869181738649, guid: a3eed2d183653c44aa106f58b01ce1e1, type: 3}
   t: 0.5
   diamondSize: 7
 --- !u!1 &886483091
@@ -1831,7 +1833,7 @@ MonoBehaviour:
         y: 0.05
       sandColor: {r: 1, g: 0.9692407, b: 0.5330188, a: 1}
       shimmerColor: {r: 1, g: 0.99215686, b: 0.8627451, a: 1}
-      waveColor: {r: 1, g: 0.92721975, b: 0.5137255, a: 1}
+      waveColor: {r: 0.9528302, g: 0.75137204, b: 0.4988875, a: 1}
     iceRendering:
       thresholdShineReflection: 0.8
       reflectionShineSpeed: -0.05

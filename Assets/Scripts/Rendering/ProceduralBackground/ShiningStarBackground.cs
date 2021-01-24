@@ -13,6 +13,7 @@ public struct StarBackgroundRendering : ITextureRenderableAnimated
     public float speed;
     public float2 sinOffsetScale;
     public float sinOffsetAmplitude;
+    [Range(0, 1)] public float maxAlpha;
 
     public static StarBackgroundRendering Default()
     {
@@ -27,7 +28,7 @@ public struct StarBackgroundRendering : ITextureRenderableAnimated
         };
     }
 
-    public void Render(ref NativeArray<Color32> colorArray, int tick, float2 offset)
+    public void Render(ref NativeArray<Color32> colorArray, int tick, int2 offset)
     {
         new ShiningStarBackgroundJob()
         {
@@ -52,14 +53,14 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
     public int2 maxSizes;
     public int tick;
     public StarBackgroundRendering settings;
-    public float2 offset;
+    public int2 offset;
 
     public void Execute(int index)
     {
         int2 cellSize = maxSizes / settings.density;
 
         //Find grid position and the corresponding cell
-        int2 position = ArrayHelper.IndexToPos(index, maxSizes);
+        int2 position = ArrayHelper.IndexToPos(index, maxSizes) + offset;
         int2 cellIndex = MathUtils.quantize(position, cellSize);
 
         float alpha = 0;
@@ -70,8 +71,8 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 int2 currentCellIndex = cellIndex + new int2(x, y);
 
                 //out of map cell
-                if (!GridHelper.InBound(currentCellIndex, settings.density))
-                    continue;
+                //if (!GridHelper.InBound(currentCellIndex, settings.density))
+                //    continue;
 
                 Bound gridBound = new Bound(currentCellIndex * cellSize, cellSize);
 
@@ -79,14 +80,14 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 var random = MathUtils.CreateRandomAtPosition(currentCellIndex, settings.seed);
 
                 //Find closest star
-                float starDistance = random.NextFloat();
-                int2 starPosition = gridBound.RandomPointInBound(ref random) - (int2)(offset * starDistance);
+                //float starDistance = random.NextFloat();
+                int2 starPosition = gridBound.RandomPointInBound(ref random);
 
                 if (math.all(position == starPosition))
                 {
                     //This pixel is a star
                     //colors[index] = Color.white * starDistance;
-                    colors[index] = CalculateColor(colors[index], math.saturate(starDistance));
+                    colors[index] = CalculateColor(colors[index], settings.maxAlpha);
                     return;
                 }
                 else
@@ -98,15 +99,14 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                         float ratioLight = 1 - math.saturate(distance / settings.radius);
                         float noiseSinOffset = settings.sinOffsetAmplitude * noise.cnoise(starPosition * settings.sinOffsetScale);
                         float sinValue = MathUtils.unorm(math.sin(tick * settings.speed + noiseSinOffset));
-                        alpha += sinValue * ratioLight * starDistance;
+                        alpha += sinValue * ratioLight;
                     }
                 }
             }
 
         }
 
-
-        colors[index] = CalculateColor(colors[index], math.saturate(alpha));
+        colors[index] = CalculateColor(colors[index], math.saturate(alpha * settings.maxAlpha));
     }
 
     Color CalculateColor(Color baseColor, float alpha)

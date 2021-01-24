@@ -11,6 +11,7 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
 
     public bool isEnable = true;
     public bool isVisible = true;
+    public int renderingLayerOrder = 0;
 
     public void Init(Map map)
     {
@@ -30,7 +31,7 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
-    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
+    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void RenderUI(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
     public virtual void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 
@@ -58,5 +59,15 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     public void Render(ref NativeArray<Color32> colorArray)
     {
         throw new System.NotImplementedException();
+    }
+
+    public int RenderingLayerOrder()
+    {
+        return renderingLayerOrder;
+    }
+
+    public bool IsVisible()
+    {
+        return isVisible;
     }
 }

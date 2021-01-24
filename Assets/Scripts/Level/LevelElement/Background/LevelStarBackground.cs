@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class LevelStarBackground : LevelBackground
+public class LevelStarBackground : LevelElement, IAlwaysRenderable
 {
     [SerializeField] StarBackgroundRendering settings;
     [SerializeField] public float offset;
@@ -14,9 +14,8 @@ public class LevelStarBackground : LevelBackground
         settings = StarBackgroundRendering.Default();
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, float2 levelPosition)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        settings.Render(ref outputcolor, tickBlock.tick, levelPosition * offset);
-
+        settings.Render(ref outputColors, tickBlock.tick, (int2)((float2)renderPos * offset));
     }
 }

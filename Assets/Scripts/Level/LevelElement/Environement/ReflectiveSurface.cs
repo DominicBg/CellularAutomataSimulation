@@ -41,7 +41,7 @@ public class ReflectiveSurface : LevelObject
         }.Run();
     }
 
-    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
 
         new PostReflectingJob()

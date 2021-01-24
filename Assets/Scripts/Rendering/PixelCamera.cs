@@ -8,7 +8,7 @@ public class PixelCamera
 {
     PixelCameraTransform transform;
     int2 viewPort;
-    List<LevelObject> renderingObjects;
+    List<IRenderable> renderingObjects;
     public int2 position
     {
         get => transform.position;
@@ -19,7 +19,7 @@ public class PixelCamera
     {
         this.transform = transform;
         this.viewPort = viewPort;
-        renderingObjects = new List<LevelObject>(100);
+        renderingObjects = new List<IRenderable>(100);
     }
 
     //have a prerender pass that computes the lights positions n filtering
@@ -44,48 +44,79 @@ public class PixelCamera
             if(renderData.levelObjects[i] != null && viewPortBound.IntersectWith(renderData.levelObjects[i].GetBound()))
                 renderingObjects.Add(renderData.levelObjects[i]);
         }
-        IAlwaysRenderable[] alwaysRenderables = renderData.alwaysRenderables;
 
-        int count = renderingObjects.Count;
-        int renderCount = renderData.alwaysRenderables.Length;
+        IAlwaysRenderable[] alwaysRenderables = renderData.alwaysRenderables;
+        renderingObjects.AddRange(alwaysRenderables);
+
+        renderingObjects.Sort((a,b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
+
+
+        //int count = renderingObjects.Count;
+        int renderCount = renderingObjects.Count;
         var nativeLights = PrepareLights(renderData.lightSources, tickBlock.tick);
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].PreRender(ref outputColors, ref tickBlock, position);
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
+
+            if (renderingObjects[i] is LevelObject)
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            else
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position);
+        }
 
         //Render Map
         GridRenderer.ApplyMapPixels(ref outputColors, renderData.map, ref tickBlock, position, nativeLights);
 
-        //Render
-        for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].Render(ref outputColors, ref tickBlock, position);
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
 
+        for (int i = 0; i < renderCount; i++)
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
+
+            if (renderingObjects[i] is LevelObject)
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            else
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, position);
+        }
+    
         //Render Light
         LightRenderer.AddLight(ref outputColors, ref nativeLights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
 
-        //Render PostRender
         for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].PostRender(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].PostRender(ref outputColors, ref tickBlock);
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
 
-        //Render UI
+            if (renderingObjects[i] is LevelObject)
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            else
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position);
+        }
+  
+
         for (int i = 0; i < renderCount; i++)
-            alwaysRenderables[i].RenderUI(ref outputColors, ref tickBlock/*, GetRenderPosition(cameraPos, renderingObjects[i])*/);
-        for (int i = 0; i < count; i++)
-            renderingObjects[i].RenderUI(ref outputColors, ref tickBlock);
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
 
+            if (renderingObjects[i] is LevelObject)
+                renderingObjects[i].RenderUI(ref outputColors, ref tickBlock/*, GetRenderPosition(((LevelObject)renderingObjects[i]).position)*/);
+            else
+                renderingObjects[i].RenderUI(ref outputColors, ref tickBlock/*, position*/);
+        }
+      
         if (inDebug)
         {
             for (int i = 0; i < renderCount; i++)
-                alwaysRenderables[i].RenderDebug(ref outputColors, ref tickBlock, 0);
-            for (int i = 0; i < count; i++)
-                renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(renderingObjects[i].position));
+            {
+                if (renderingObjects[i] is LevelObject)
+                    renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+                else
+                    renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, position);
+            }
         }
 
         nativeLights.Dispose();

@@ -21,7 +21,7 @@ public static class MathUtils
 
     public static Random CreateRandomAtPosition(int2 position, uint seed = 0)
     {
-        uint randomCellSeed = (uint)(position.x + position.y * 100) + seed;
+        uint randomCellSeed = (uint)(53231 + position.x * 3521 + position.y * 10463) + seed;
         return Random.CreateFromIndex(randomCellSeed);
     }
 

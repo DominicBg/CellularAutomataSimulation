@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class LevelSmokeParticleRenderer : LevelParticleRenderer
 {
-    [SerializeField] int2 position = default;
     [SerializeField] SmokeParticleSystemScriptable settings = default;
     SmokeParticleSystem smokeParticleSystem;
 
@@ -41,7 +40,6 @@ public class LevelSmokeParticleRenderer : LevelParticleRenderer
         smokeParticleSystem.EmitParticle(position, ref settings.emitter, ref tickBlock);
     }
 
-
     public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         if(inBackground)
@@ -57,5 +55,10 @@ public class LevelSmokeParticleRenderer : LevelParticleRenderer
     {
         smokeParticleSystem.Dispose();
         base.Dispose();
+    }
+
+    public override Bound GetBound()
+    {
+        return new Bound(position, 1);
     }
 }
