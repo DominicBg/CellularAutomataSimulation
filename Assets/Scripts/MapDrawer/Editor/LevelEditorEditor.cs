@@ -22,6 +22,7 @@ public class LevelEditorEditor : Editor
 
         GUILayout.Space(15);
 
+   
         //show partial scene
         var partialScenes = FindObjectsOfType<PixelPartialScene>();
         for (int i = 0; i < partialScenes.Length; i++)

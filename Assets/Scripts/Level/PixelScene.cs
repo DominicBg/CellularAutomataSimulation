@@ -8,13 +8,30 @@ using UnityEngine;
 public class PixelScene : MonoBehaviour
 {
     public LevelElement[] levelElements;
+    [HideInInspector] public LevelObject[] levelObjects ;
+    [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
+    [HideInInspector] public ILightSource[] lightSources;
+
+
     public Map map;
     bool updateSimulation = true;
 
     public void OnValidate()
     {
-        levelElements = GetComponentsInChildren<LevelElement>();
+        FindRefs();
     }
+    void Awake()
+    {
+        FindRefs();
+    }
+    void FindRefs()
+    {
+        levelElements = GetComponentsInChildren<LevelElement>();
+        levelObjects = GetComponentsInChildren<LevelObject>();
+        alwaysRenderables = GetComponentsInChildren<IAlwaysRenderable>();
+        lightSources = GetComponentsInChildren<ILightSource>();
+    }
+
 
     public void Init(Map map)
     {
@@ -56,11 +73,12 @@ public class PixelScene : MonoBehaviour
         }
 
 
+
         //Update elements
         for (int i = 0; i < levelElements.Length; i++)
         {
             if (levelElements[i].isEnable)
-                levelElements[i].OnUpdate(ref tickBlock);
+                levelElements[i].OnUpdate(ref tickBlock);         
         }
 
         for (int i = 0; i < levelElements.Length; i++)
@@ -77,5 +95,11 @@ public class PixelScene : MonoBehaviour
         {
             levelElements[i].Dispose();
         }
+    }
+
+    public void RequestInit(LevelElement levelElement)
+    {
+        if(!levelElement.isInit)
+            levelElement.Init(map);
     }
 }

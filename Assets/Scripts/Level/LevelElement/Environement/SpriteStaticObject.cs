@@ -50,11 +50,11 @@ public class SpriteStaticObject : LevelObject
             GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
     }
 
-    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
-    {
-        Bound bound = Bound.CenterAligned(renderPos, nativeSprite.sizes);
-        GridRenderer.DrawBound(ref outputColors, bound, Color.red * .75f);
-    }
+    //public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    //{
+    //    Bound bound = Bound.CenterAligned(renderPos, nativeSprite.sizes);
+    //    GridRenderer.DrawBound(ref outputColors, bound, Color.red * .75f);
+    //}
 
     public override void Dispose()
     {

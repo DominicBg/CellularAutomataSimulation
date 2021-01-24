@@ -22,16 +22,7 @@ public class PixelCamera
         renderingObjects = new List<IRenderable>(100);
     }
 
-    //have a prerender pass that computes the lights positions n filtering
-    public struct RenderData
-    {
-        public LevelObject[] levelObjects;
-        public IAlwaysRenderable[] alwaysRenderables;
-        public ILightSource[] lightSources;
-        public Map map;
-    }
-
-    public NativeArray<Color32> Render(RenderData renderData, ref TickBlock tickBlock, bool inDebug)
+    public NativeArray<Color32> Render(PixelScene pixelScene, ref TickBlock tickBlock, bool inDebug)
     {
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
@@ -39,13 +30,13 @@ public class PixelCamera
         Bound viewPortBound = new Bound(position - viewPort/2, viewPort);
 
         //maybe do it more optimzied lol
-        for (int i = 0; i < renderData.levelObjects.Length; i++)
+        for (int i = 0; i < pixelScene.levelObjects.Length; i++)
         {
-            if(renderData.levelObjects[i] != null && viewPortBound.IntersectWith(renderData.levelObjects[i].GetBound()))
-                renderingObjects.Add(renderData.levelObjects[i]);
+            if(pixelScene.levelObjects[i] != null && viewPortBound.IntersectWith(pixelScene.levelObjects[i].GetBound()))
+                renderingObjects.Add(pixelScene.levelObjects[i]);
         }
 
-        IAlwaysRenderable[] alwaysRenderables = renderData.alwaysRenderables;
+        IAlwaysRenderable[] alwaysRenderables = pixelScene.alwaysRenderables;
         renderingObjects.AddRange(alwaysRenderables);
 
         renderingObjects.Sort((a,b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
@@ -53,7 +44,7 @@ public class PixelCamera
 
         //int count = renderingObjects.Count;
         int renderCount = renderingObjects.Count;
-        var nativeLights = PrepareLights(renderData.lightSources, tickBlock.tick);
+        var nativeLights = PrepareLights(pixelScene.lightSources, tickBlock.tick);
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
@@ -68,7 +59,7 @@ public class PixelCamera
         }
 
         //Render Map
-        GridRenderer.ApplyMapPixels(ref outputColors, renderData.map, ref tickBlock, position, nativeLights);
+        GridRenderer.ApplyMapPixels(ref outputColors, pixelScene.map, ref tickBlock, position, nativeLights);
 
 
         for (int i = 0; i < renderCount; i++)

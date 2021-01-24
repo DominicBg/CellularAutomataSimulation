@@ -12,16 +12,21 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     public bool isEnable = true;
     public bool isVisible = true;
     public int renderingLayerOrder = 0;
+    public bool isInit = false;
 
     public void Init(Map map)
     {
         this.map = map;
         OnInit();
+        isInit = true;
     }
 
     public void OnValidate()
     {
-        GetComponentInParent<PixelScene>()?.OnValidate();
+        PixelScene pixelScene = GetComponentInParent<PixelScene>();
+        pixelScene?.OnValidate();
+        pixelScene?.OnValidate();
+        pixelScene?.RequestInit(this);
     }
 
     public virtual void OnInit() { }

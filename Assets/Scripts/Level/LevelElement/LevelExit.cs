@@ -22,6 +22,7 @@ public class LevelExit : LevelObject
         return new Bound(position, sizes);
     }
 
+
     public override void OnLateUpdate(ref TickBlock tickBlock)
     {
         if(GetBound().IntersectWith(player.GetBound()))
@@ -29,7 +30,7 @@ public class LevelExit : LevelObject
             map.RemoveSpriteAtPosition(player.physicData.gridPosition, ref player.physicData.physicBound);
             //lol
             WorldLevel worldLevel = FindObjectOfType<WorldLevel>();
-            worldLevel.StartTransition(entrance, transition);
+            worldLevel.StartTransition(entrance, transition, entrance.GetComponentInParent<PixelPartialScene>());
             Debug.Log("next level");
         }
     }

@@ -151,6 +151,13 @@ public class PlayerElement : PhysicObject, ILightSource
         currentEquipQ = equipable;
     }
 
+    public void SetPosition(int2 position)
+    {
+       this.position = position;
+       this.physicData.position = position;
+       this.physicData.gridPosition = position;
+    }
+
     public override void Dispose()
     {
         spriteAnimator.Dispose();

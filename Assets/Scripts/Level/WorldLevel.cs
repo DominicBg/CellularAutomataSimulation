@@ -11,10 +11,11 @@ public class WorldLevel : MonoBehaviour
     public PixelCamera pixelCamera;
     public PixelScene pixelScene;
     public PixelSceneData pixelSceneData;
+    public PixelPartialScene currentPartialScene;
 
-    LevelObject[] levelObjects;
-    IAlwaysRenderable[] alwaysRenderable;
-    ILightSource[] lightSources;
+    //LevelObject[] levelObjects;
+    //IAlwaysRenderable[] alwaysRenderable;
+    //ILightSource[] lightSources;
 
     public bool inDebug = false;
 
@@ -22,22 +23,21 @@ public class WorldLevel : MonoBehaviour
     TransitionInfo transitionInfo;
 
     TickBlock tickBlock;
-    TickBlock worldTickBlock;
     TickBlock postProcessTickBlock;
 
     public bool updateWorldElement = true;
     public bool updatLevelElement = true;
 
+
     public void LoadLevel()
     {
 
         tickBlock.Init();
-        worldTickBlock.Init();
         postProcessTickBlock.Init();
 
-        levelObjects = GetComponentsInChildren<LevelObject>();
-        alwaysRenderable = GetComponentsInChildren<IAlwaysRenderable>();
-        lightSources = GetComponentsInChildren<ILightSource>();
+        //levelObjects = GetComponentsInChildren<LevelObject>();
+        //alwaysRenderable = GetComponentsInChildren<IAlwaysRenderable>();
+        //lightSources = GetComponentsInChildren<ILightSource>();
 
         pixelScene.Init(pixelSceneData.LoadMap());
         pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.GridSizes);
@@ -53,138 +53,97 @@ public class WorldLevel : MonoBehaviour
         if (updatLevelElement)
             tickBlock.UpdateTick();
 
-        if (updateWorldElement)
-            worldTickBlock.UpdateTick();
-
         postProcessTickBlock.UpdateTick();
 
-        //pixelCameraPos = math.lerp(pixelCameraPos, new float2(player.GetBound().center), GameManager.DeltaTime * cameraSmooth);
-        pixelScene.OnUpdate(ref tickBlock, pixelCamera.position);
-
+        if (!transitionInfo.isInTransition)
+        {
+            pixelScene.OnUpdate(ref tickBlock, pixelCamera.position);
+        }
+        else
+        {
+            UpdateTransition();
+        }
         PostProcessManager.Instance.Update(ref postProcessTickBlock);
     }
 
     public NativeArray<Color32> GetPixelCameraRender()
     {
-        PixelCamera.RenderData renderData = new PixelCamera.RenderData
-        {
-            alwaysRenderables = alwaysRenderable,
-            levelObjects = levelObjects,
-            lightSources =lightSources,
-            map = pixelScene.map
-        };
-        return pixelCamera.Render(renderData, ref tickBlock, inDebug);
+        return pixelCamera.Render(pixelScene, ref tickBlock, inDebug);
     }
 
 
     public void OnRender()
     {
-        var pixels = GetPixelCameraRender();
-        GridRenderer.RenderToScreen(pixels);
-  
-        //GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+        //ADD transition rendering
+        if(!transitionInfo.isInTransition)
+        {
+            var pixels = GetPixelCameraRender();
+            GridRenderer.RenderToScreen(pixels);
+        }
+        else
+        {
+            var outputs = GridRenderer.GetBlankTexture();
 
+            transitionInfo.currentPartialScene.SetActive(true);
+            transitionInfo.nextPartialScene.SetActive(false);
+            var pixels1 = GetPixelCameraRender();
 
-        //LevelContainerGroup levelContainerGroup = CurrentLevelGroup;
-        //if (transitionInfo.isInTransition)
-        //{
-        //    RenderTransition(ref outputColors);
-        //}
-        //else
-        //{
-        //    GridRenderer.GetBlankTexture(out NativeArray<Color32> backgroundColors);
-        //    levelContainerGroup.RenderBackground(ref backgroundColors, ref tickBlock, currentLevelPosition);
-        //    RenderLevelContainer(levels[currentLevelPosition], ref outputColors);
+            int2 cameraPos = pixelCamera.position;
 
-        //    //to be consistent with transition
-        //    GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
+            //Align camera at second position and take a screenshot
+            pixelCamera.position = transitionInfo.entrance.position;
+            transitionInfo.currentPartialScene.SetActive(false);
+            transitionInfo.nextPartialScene.SetActive(true);
+            var pixels2 = GetPixelCameraRender();
 
-        //    backgroundColors.Dispose();
-        //    levelContainerGroup.RenderForeground(ref outputColors, ref tickBlock, currentLevelPosition);
-        //}
-        //PostProcessManager.Instance.Render(ref outputColors, ref postProcessTickBlock);
-        //GridRenderer.RenderToScreen(outputColors);
+            transitionInfo.transition.Transition(ref outputs, ref pixels1, ref pixels2, transitionInfo.transitionRatio);
+
+            pixelCamera.position = cameraPos;
+            GridRenderer.RenderToScreen(outputs);
+            pixels1.Dispose();
+            pixels2.Dispose();
+        }
     }
 
-    //public void RenderLevelContainer(LevelContainer levelContainer, ref NativeArray<Color32> outputColors)
-    //{
-    //    //add world object is visible
-    //    levelContainer.PreRender(ref outputColors, ref tickBlock);
-    //    worldLevelContainer.PreRender(ref outputColors, ref worldTickBlock);
-     
-    //    levelContainer.Render(ref outputColors, ref tickBlock);
-    //    worldLevelContainer.Render(ref outputColors, ref worldTickBlock);
+   
+    public void UpdateTransition()
+    {
+        transitionInfo.transitionRatio += GameManager.DeltaTime * transitionSpeed;
 
+        if(!transitionInfo.changedPartialScene && transitionInfo.transitionRatio > 0.5f)
+        {
+            transitionInfo.changedPartialScene = true;
+            currentPartialScene.SetActive(false);
+            transitionInfo.nextPartialScene.SetActive(true);
 
-    //    LightRenderer.AddLight(ref outputColors, ref levelContainer.lightSources, levelContainer.GetGlobalOffset(), GridRenderer.Instance.lightRendering.settings);
+            currentPartialScene = transitionInfo.nextPartialScene;
 
+            //lol
+            PlayerElement player = GetComponentInChildren<PlayerElement>();
 
-    //    levelContainer.PostRender(ref outputColors, ref tickBlock);
-    //    worldLevelContainer.PostRender(ref outputColors, ref worldTickBlock);
-      
-    //    levelContainer.RenderUI(ref outputColors, ref tickBlock);
-    //    worldLevelContainer.RenderUI(ref outputColors, ref worldTickBlock);
-    
-    //    if (inDebug)
-    //    {
-    //        levelContainer.RenderDebug(ref outputColors, ref tickBlock);
-    //        worldLevelContainer.RenderDebug(ref outputColors, ref worldTickBlock);
-    //    }
-    //}
+            player.SetPosition(transitionInfo.entrance.position);
+            player.currentEquipMouse?.OnUpdate(ref tickBlock);
+            player.currentEquipQ?.OnUpdate(ref tickBlock);
+        }
 
-    //void RenderTransition(ref NativeArray<Color32> outputColors)
-    //{
-    //    int2 transitionPosition = transitionInfo.entrance.levelContainer.levelPosition;
+        if (transitionInfo.transitionRatio >= 1)
+        {
+            transitionInfo.isInTransition = false;
+            pixelCamera.position = transitionInfo.entrance.position;
+        }
+    }
 
-    //    GridRenderer.GetBlankTexture(out NativeArray<Color32> currentColors);
-    //    GridRenderer.GetBlankTexture(out NativeArray<Color32> transitionColors);
-
-    //    LevelContainerGroup currentGroup = levelsGroups[levels[currentLevelPosition]];
-    //    LevelContainerGroup transitionGroup = levelsGroups[levels[transitionPosition]];
-
-    //    bool sameGroup = currentGroup == transitionGroup;
-
-    //    if(sameGroup)
-    //    {
-    //        float2 lerpLevelPosition = math.lerp(currentLevelPosition, transitionPosition, transitionInfo.transitionRatio);
-    //        GridRenderer.GetBlankTexture(out NativeArray<Color32> backgroundColors);
-    //        currentGroup.RenderBackground(ref backgroundColors, ref tickBlock, lerpLevelPosition);
-
-    //        RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
-    //        RenderLevelContainer(levels[transitionPosition], ref transitionColors);
-
-    //        transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
-
-    //        GridRenderer.ApplyTextureBehind(ref outputColors, ref backgroundColors, BlendingMode.Normal);
-
-    //        currentGroup.RenderForeground(ref outputColors, ref tickBlock, lerpLevelPosition);
-
-    //        backgroundColors.Dispose();
-    //    }
-    //    else
-    //    {
-    //        currentGroup.RenderBackground(ref currentColors, ref tickBlock, currentLevelPosition);
-    //        transitionGroup.RenderBackground(ref transitionColors, ref tickBlock, transitionPosition);
-    //        RenderLevelContainer(levels[currentLevelPosition], ref currentColors);
-    //        RenderLevelContainer(levels[transitionPosition], ref transitionColors);
-    //        currentGroup.RenderForeground(ref currentColors, ref tickBlock, currentLevelPosition);
-    //        transitionGroup.RenderForeground(ref transitionColors, ref tickBlock, transitionPosition);
-
-    //        transitionInfo.transition.Transition(ref outputColors, ref currentColors, ref transitionColors, transitionInfo.transitionRatio);
-    //    }
-
-    //    currentColors.Dispose();
-    //    transitionColors.Dispose();    
-    //}
-
-    public void StartTransition(LevelEntrance entrance, TransitionBase transition)
+    public void StartTransition(LevelEntrance entrance, TransitionBase transition, PixelPartialScene nextPartialScene)
     {
         transitionInfo = new TransitionInfo()
         {
             isInTransition = true,
             entrance = entrance,
             transition = transition,
-            transitionRatio = 0
+            transitionRatio = 0,
+            currentPartialScene = currentPartialScene,
+            nextPartialScene = nextPartialScene,
+            changedPartialScene = false
         };
     }
 
@@ -200,5 +159,8 @@ public class WorldLevel : MonoBehaviour
         public bool isInTransition;
         public LevelEntrance entrance;
         public TransitionBase transition;
+        public PixelPartialScene currentPartialScene;
+        public PixelPartialScene nextPartialScene;
+        public bool changedPartialScene;
     }
 }

@@ -27,9 +27,12 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     public WorldLevel currentWorldLevel;
     public PixelSceneData pixelSceneData;
-    public float2 viewPos;
+    LevelObject hoverObject;
+
+    public float2 fracPos;
     public float movingSpeed = 5;
     public bool inDebugView;
+
     public void OnStart()
     {
         controlZ.Clear();
@@ -81,11 +84,16 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         if (InputCommand.IsButtonHeld(KeyCode.LeftShift))
             multiplier = 3;
 
-        viewPos += InputCommand.Direction * movingSpeed * GameManager.DeltaTime * multiplier;
-        currentWorldLevel.pixelCamera.position = (int2)viewPos;
+        float2 movement = InputCommand.Direction * movingSpeed * GameManager.DeltaTime * multiplier + fracPos;
+        fracPos = math.frac(movement);
+        currentWorldLevel.pixelCamera.position += (int2)movement;
 
         FillGridWithCurrentMapParticle();
-        DrawPixels();
+        if (isEditing)
+            DrawPixels();
+        else
+            UpdateScenePicker();
+
         UpdateMapParticles();       
     }
 
@@ -103,7 +111,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
             isRecording = false;
         }
 
-        if (isEditing && isRecording)
+        if (isRecording)
         {
             int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes) + currentWorldLevel.pixelCamera.position - GameManager.GridSizes/2;
 
@@ -201,6 +209,10 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     {
         var pixels = currentWorldLevel.GetPixelCameraRender();
         DrawPreview(ref pixels);
+
+        if (hoverObject != null)
+            GridRenderer.DrawBound(ref pixels, hoverObject.GetBound(), currentWorldLevel.pixelCamera.position, Color.green * 0.75f);
+
         GridRenderer.RenderToScreen(pixels);
     }
 
@@ -239,5 +251,32 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         public ParticleType previousType;
     }
 
+    //add screen picker
+    public void UpdateScenePicker()
+    {
+        var scene = currentWorldLevel.pixelScene;
+        int2 mouseLocal = GridPicker.GetGridPosition(GameManager.GridSizes);
+        int2 pos = currentWorldLevel.pixelCamera.position - GameManager.GridSizes/2 + mouseLocal;
+        hoverObject = null;
+        for (int i = 0; i < scene.levelObjects.Length; i++)
+        {
+            if(scene.levelObjects[i].GetBound().PointInBound(pos) && scene.levelObjects[i].GetType() != typeof(PixelCameraTransform))
+            {
+                hoverObject = scene.levelObjects[i];
+
+#if UNITY_EDITOR
+                //Set to mouse click? lol
+                if(InputCommand.IsButtonDown(KeyCode.C))
+                {
+                    Selection.activeObject = hoverObject;
+                    EditorGUIUtility.PingObject(Selection.activeObject);
+                }
+#endif
+
+                return;
+            }
+        }
+        
+    }
 }
 

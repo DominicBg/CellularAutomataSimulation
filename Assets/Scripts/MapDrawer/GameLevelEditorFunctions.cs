@@ -91,8 +91,7 @@ public class GameLevelEditorFunctions : MonoBehaviour
         var elements = FindObjectsOfType<LevelObject>();
         for (int i = 0; i < elements.Length; i++)
         {
-            if (elements[i] is LevelObject)
-                ((LevelObject)elements[i]).position += offset;
+            elements[i].position += offset;
         }
     }
 }

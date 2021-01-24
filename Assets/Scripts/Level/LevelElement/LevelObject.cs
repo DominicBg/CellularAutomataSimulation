@@ -12,4 +12,16 @@ public abstract class LevelObject : LevelElement
     {
         return other.GetBound().IntersectWith(GetBound());
     }
+
+    [ContextMenu("SetObjectToCameraPos")]
+    public void SetObjectToCameraPos()
+    {
+        position = FindObjectOfType<PixelCameraTransform>().position;
+    }
+
+    [ContextMenu("SetCameraToObjectPos")]
+    public void SetCameraToObjectPos()
+    {
+        FindObjectOfType<PixelCameraTransform>().position = position;
+    }
 }

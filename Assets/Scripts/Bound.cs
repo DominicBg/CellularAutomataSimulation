@@ -73,7 +73,10 @@ public struct Bound
     {
         return !(otherBound.max.x < min.x || otherBound.min.x > max.x || otherBound.max.y < min.y || otherBound.min.y > max.y);
     }
-
+    public bool PointInBound(int2 point)
+    {
+        return !(point.x < min.x || point.x > max.x || point.y < min.y || point.y > max.y);
+    }
     public int2 ProjectPointOnbound(int2 point)
     {
         return math.clamp(point, min, max);
