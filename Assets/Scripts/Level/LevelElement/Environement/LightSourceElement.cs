@@ -22,4 +22,6 @@ public class LightSourceElement : LevelElement, ILightSource
         int2 pos = useTarget ? target.GetBound().center : position;
         return lightSource.GetLightSource(pos, tick);
     }
+
+    bool ILightSource.isVisible() => isVisible;
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class LightRenderer
 {
-    public static void AddLight(ref NativeArray<Color32> outputColors, ref NativeArray<LightSource> lightSources, int2 renderingOffset, in LightRenderingSettings settings)
+    public static void AddLight(ref NativeArray<Color32> outputColors, ref NativeList<LightSource> lightSources, int2 renderingOffset, in LightRenderingSettings settings)
     {
         new AddLightJob()
         {
@@ -23,7 +23,7 @@ public static class LightRenderer
     public struct AddLightJob : IJobParallelFor
     {
         public NativeArray<Color32> outputColors;
-        [ReadOnly] public NativeArray<LightSource> lightSources;
+        [ReadOnly] public NativeList<LightSource> lightSources;
         public LightRenderingSettings settings;
         public int2 renderingOffset;
         public void Execute(int index)

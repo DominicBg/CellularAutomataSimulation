@@ -59,4 +59,6 @@ public class GemObject : LevelObject, ILightSource
             GridRenderer.DrawEllipse(ref outputColor, position, radius, color, new Color32(0,0,0,0), blend);
         }
     }
+
+    bool ILightSource.isVisible() => isVisible;
 }

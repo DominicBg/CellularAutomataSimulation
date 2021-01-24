@@ -11,6 +11,7 @@ public class SpriteStaticObject : LevelObject
 
     NativeSprite nativeSprite;
     public bool hasCollision;
+    public bool isInBackground;
 
     public override void OnInit()
     {
@@ -38,9 +39,15 @@ public class SpriteStaticObject : LevelObject
         return Bound.CenterAligned(position, nativeSprite.sizes);
     }
 
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    {
+        if(isInBackground)
+            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
+    }
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
+        if (!isInBackground)
+            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
     }
 
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)

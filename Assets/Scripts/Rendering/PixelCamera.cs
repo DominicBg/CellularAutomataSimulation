@@ -123,12 +123,13 @@ public class PixelCamera
         return outputColors;
     }
 
-    NativeArray<LightSource> PrepareLights(ILightSource[] lightSources, int tick)
+    NativeList<LightSource> PrepareLights(ILightSource[] lightSources, int tick)
     {
-        NativeArray<LightSource> nativeLights = new NativeArray<LightSource>(lightSources.Length, Allocator.TempJob);
-        for (int i = 0; i < nativeLights.Length; i++)
+        NativeList<LightSource> nativeLights = new NativeList<LightSource>(lightSources.Length, Allocator.TempJob);
+        for (int i = 0; i < lightSources.Length; i++)
         {
-            nativeLights[i] = lightSources[i].GetLightSource(tick);
+            if(lightSources[i].isVisible())
+                nativeLights.Add(lightSources[i].GetLightSource(tick));
         }
         return nativeLights;
     }

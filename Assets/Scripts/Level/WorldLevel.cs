@@ -27,7 +27,6 @@ public class WorldLevel : MonoBehaviour
 
     public bool updateWorldElement = true;
     public bool updatLevelElement = true;
-    public bool usePixelCamera;
 
     public void LoadLevel()
     {
@@ -80,15 +79,10 @@ public class WorldLevel : MonoBehaviour
 
     public void OnRender()
     {
-        if(usePixelCamera)
-        {
-            var pixels = GetPixelCameraRender();
-            GridRenderer.RenderToScreen(pixels);
-            return;
-        }
-
-
-        GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
+        var pixels = GetPixelCameraRender();
+        GridRenderer.RenderToScreen(pixels);
+  
+        //GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
 
         //LevelContainerGroup levelContainerGroup = CurrentLevelGroup;

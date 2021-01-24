@@ -8,6 +8,7 @@ public class GameLevelEditorFunctions : MonoBehaviour
     GameLevelEditorManager editorManager;
 
     public int2 sizes;
+    public int2 offset;
 
     public void Start()
     {
@@ -54,7 +55,33 @@ public class GameLevelEditorFunctions : MonoBehaviour
             {
                 int index = x + y * oldSizes.x;
                 int newIndex = x + y * sizes.x;
-                if(newIndex < editorManager.pixelSceneData.grid.Length && index < grid.Length)
+                if (newIndex < editorManager.pixelSceneData.grid.Length && index < grid.Length)
+                    newGrid[newIndex] = grid[index];
+            }
+        }
+        editorManager.pixelSceneData.grid = newGrid;
+        editorManager.Reload();
+    }
+
+    [ContextMenu("OffsetMap")]
+    public void OffsetMap()
+    {
+        var grid = editorManager.pixelSceneData.grid;
+        int2 oldSizes = editorManager.pixelSceneData.sizes;
+
+        int2 newSizes = oldSizes + offset;
+        editorManager.pixelSceneData.CreateEmpty(newSizes);
+        var newGrid = editorManager.pixelSceneData.grid;
+
+        //iterate over smallest
+        int2 smallSizes = math.min(oldSizes, newSizes);
+        for (int x = 0; x < smallSizes.x; x++)
+        {
+            for (int y = 0; y < smallSizes.y; y++)
+            {
+                int index = x + y * oldSizes.x;
+                int newIndex = (x - offset.x) + (y + offset.y) * newSizes.x;
+                if (newIndex < editorManager.pixelSceneData.grid.Length && index < grid.Length)
                     newGrid[newIndex] = grid[index];
             }
         }
