@@ -101,7 +101,12 @@ public static class RenderingUtils
     {
         float4 color4 = new float4(color.r, color.g, color.b, color.a);
         color4 = math.floor(color4 * resolution) / resolution;
-       return new Color(color4.x, color4.y, color4.z, color4.w);
-
+        return new Color(color4.x, color4.y, color4.z, color4.w);
+    }
+    public static Color ReduceResolution(this Color color, float resolution)
+    {
+        float4 color4 = new float4(color.r, color.g, color.b, color.a);
+        color4 = math.floor(color4 * resolution) / resolution;
+        return new Color(color4.x, color4.y, color4.z, color4.w);
     }
 }

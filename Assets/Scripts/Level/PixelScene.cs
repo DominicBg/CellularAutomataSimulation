@@ -8,10 +8,9 @@ using UnityEngine;
 public class PixelScene : MonoBehaviour
 {
     public LevelElement[] levelElements;
-    [HideInInspector] public LevelObject[] levelObjects ;
+    [HideInInspector] public LevelObject[] levelObjects;
     [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
     [HideInInspector] public ILightSource[] lightSources;
-
 
     public Map map;
     bool updateSimulation = true;

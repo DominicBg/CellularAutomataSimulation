@@ -12,6 +12,7 @@ public class SpriteStaticObject : LevelObject
     NativeSprite nativeSprite;
     public bool hasCollision;
     public bool isInBackground;
+    public bool isFlipped;
 
     public override void OnInit()
     {
@@ -42,12 +43,12 @@ public class SpriteStaticObject : LevelObject
     public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         if(isInBackground)
-            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
+            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, isFlipped, true);
     }
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         if (!isInBackground)
-            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, false, true);
+            GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, isFlipped, true);
     }
 
     //public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)

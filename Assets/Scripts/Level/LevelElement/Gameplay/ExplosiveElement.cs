@@ -9,6 +9,7 @@ public class ExplosiveElement : LevelElement
     [SerializeField] LevelObject target = default;
     [SerializeField] ExplosiveEffectScriptable settings = default;
 
+
     public override void OnUpdate(ref TickBlock tickBlock)
     {
         Bound bound = target.GetBound();

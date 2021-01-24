@@ -17,6 +17,12 @@ public static class ArrayHelper
     {
         return new int2(i % sizes.x, i / sizes.y);
     }
+    public static float2 IndexToUv(int i, int2 sizes)
+    {
+        return (float2)IndexToPos(i, sizes) / sizes;
+    }
+
+
 
     public static T[,] GetGridFromArray<T>(T[] array, int2 sizes)
     {
