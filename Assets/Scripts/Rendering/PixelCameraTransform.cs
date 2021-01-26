@@ -14,6 +14,7 @@ public class PixelCameraTransform : LevelObject
         target = FindObjectOfType<PlayerElement>();
     }
 
+
     public override Bound GetBound()
     {
         return Bound.CenterAligned(position - boundOffset, focusSizes);

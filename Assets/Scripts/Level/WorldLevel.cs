@@ -7,15 +7,10 @@ using UnityEngine;
 
 public class WorldLevel : MonoBehaviour
 {
-    public PlayerElement player;
     public PixelCamera pixelCamera;
     public PixelScene pixelScene;
     public PixelSceneData pixelSceneData;
     public PixelPartialScene currentPartialScene;
-
-    //LevelObject[] levelObjects;
-    //IAlwaysRenderable[] alwaysRenderable;
-    //ILightSource[] lightSources;
 
     public bool inDebug = false;
 
@@ -28,16 +23,10 @@ public class WorldLevel : MonoBehaviour
     public bool updateWorldElement = true;
     public bool updatLevelElement = true;
 
-
     public void LoadLevel()
     {
-
         tickBlock.Init();
         postProcessTickBlock.Init();
-
-        //levelObjects = GetComponentsInChildren<LevelObject>();
-        //alwaysRenderable = GetComponentsInChildren<IAlwaysRenderable>();
-        //lightSources = GetComponentsInChildren<ILightSource>();
 
         pixelScene.Init(pixelSceneData.LoadMap());
         pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.GridSizes);
@@ -78,6 +67,7 @@ public class WorldLevel : MonoBehaviour
         if(!transitionInfo.isInTransition)
         {
             var pixels = GetPixelCameraRender();
+            PostProcessManager.Instance.Render(ref pixels, ref postProcessTickBlock);
             GridRenderer.RenderToScreen(pixels);
         }
         else
@@ -119,11 +109,11 @@ public class WorldLevel : MonoBehaviour
             currentPartialScene = transitionInfo.nextPartialScene;
 
             //lol
-            PlayerElement player = GetComponentInChildren<PlayerElement>();
+            //PlayerElement player = GetComponentInChildren<PlayerElement>();
 
-            player.SetPosition(transitionInfo.entrance.position);
-            player.currentEquipMouse?.OnUpdate(ref tickBlock);
-            player.currentEquipQ?.OnUpdate(ref tickBlock);
+            pixelScene.player.SetPosition(transitionInfo.entrance.position);
+            pixelScene.player.currentEquipMouse?.OnUpdate(ref tickBlock);
+            pixelScene.player.currentEquipQ?.OnUpdate(ref tickBlock);
         }
 
         if (transitionInfo.transitionRatio >= 1)

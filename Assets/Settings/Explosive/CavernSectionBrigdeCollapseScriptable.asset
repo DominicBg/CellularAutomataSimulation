@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ae4bca12633ec4c8db3ab98977a21f, type: 3}
+  m_Name: CavernSectionBrigdeCollapseScriptable
+  m_EditorClassIdentifier: 
+  shockwaveSettings:
+    radiusThickness: 50
+    duration: 1
+    waveSpeed: 25
+    intensity: 0.94
+  screenFlashSettings:
+    jobSettings:
+      threshold: 0
+      color1:
+        serializedVersion: 2
+        rgba: 4294967295
+      color2:
+        serializedVersion: 2
+        rgba: 4278190080
+      blendWithOriginal: 0
+    duration: 1
+    interval: 0
+  shakeSettings:
+    intensity: 12
+    duration: 3
+    speed: 3.75
+    useFalloff: 1
+    blendWithOriginal: 0.5
+  explosiveSettings:
+    radius: 15
+    strength: 35

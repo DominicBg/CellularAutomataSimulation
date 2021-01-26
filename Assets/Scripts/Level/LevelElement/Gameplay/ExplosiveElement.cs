@@ -14,7 +14,7 @@ public class ExplosiveElement : LevelElement
     {
         Bound bound = target.GetBound();
         if (InputCommand.IsButtonDown(KeyCode.Alpha2))
-            Explode(bound.center, ref tickBlock);
+            Explode(bound.center);
 
         bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
         for (int i = 0; i < positions.Length; i++)
@@ -22,7 +22,7 @@ public class ExplosiveElement : LevelElement
             ParticleType type = map.GetParticleType(positions[i]);
             if (type ==  ParticleType.Cinder)
             {
-                Explode(bound.center, ref tickBlock);
+                Explode(bound.center);
                 isEnable = false;
                 target.isVisible = false;
                 target.isEnable = false;
@@ -31,14 +31,12 @@ public class ExplosiveElement : LevelElement
         positions.Dispose();
     }
 
-    private void Explode(int2 position, ref TickBlock tickBlock)
+
+    private void Explode(int2 position)
     {
         Explosive.SetExplosive(position, in settings.explosiveSettings, map);
         PostProcessManager.EnqueueShake(in settings.shakeSettings);
         PostProcessManager.EnqueueScreenFlash(in settings.screenFlashSettings);
         PostProcessManager.EnqueueShockwave(in settings.shockwaveSettings, position);
-        //isEnable = false;
-        //target.isVisible = false;
-        //target.isEnable = false;
     }
 }

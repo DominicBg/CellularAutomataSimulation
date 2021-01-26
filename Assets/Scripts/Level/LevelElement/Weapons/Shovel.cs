@@ -168,7 +168,6 @@ public class Shovel : EquipableElement
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            PlayerElement player = FindObjectOfType<PlayerElement>();
             position = player.position;
         }
     }

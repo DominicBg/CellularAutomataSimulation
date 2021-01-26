@@ -44,7 +44,7 @@ public class PixelCamera
 
         //int count = renderingObjects.Count;
         int renderCount = renderingObjects.Count;
-        var nativeLights = PrepareLights(pixelScene.lightSources, tickBlock.tick);
+        var lights = PrepareLights(pixelScene.lightSources, tickBlock.tick);
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
@@ -53,14 +53,17 @@ public class PixelCamera
                 continue;
 
             if (renderingObjects[i] is LevelObject)
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, renderPos);
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+            }
             else
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position);
+            { 
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position); 
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position, ref lights); 
+            }
         }
-
-        //Render Map
-        GridRenderer.ApplyMapPixels(ref outputColors, pixelScene.map, ref tickBlock, position, nativeLights);
-
 
         for (int i = 0; i < renderCount; i++)
         {
@@ -68,25 +71,40 @@ public class PixelCamera
                 continue;
 
             if (renderingObjects[i] is LevelObject)
-                renderingObjects[i].Render(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, renderPos);
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, renderPos, ref lights);
+            }
             else
+            {
                 renderingObjects[i].Render(ref outputColors, ref tickBlock, position);
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, position, ref lights);
+            }
         }
     
-        //Render Light
-        LightRenderer.AddLight(ref outputColors, ref nativeLights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
-
+        //Post render
         for (int i = 0; i < renderCount; i++)
         {
             if (!renderingObjects[i].IsVisible())
                 continue;
 
             if (renderingObjects[i] is LevelObject)
-                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, renderPos);
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+            }
             else
+            {
                 renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position);
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position, ref lights);
+            }
         }
   
+        //Render Light
+        LightRenderer.AddLight(ref outputColors, ref lights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
+
 
         for (int i = 0; i < renderCount; i++)
         {
@@ -110,7 +128,7 @@ public class PixelCamera
             }
         }
 
-        nativeLights.Dispose();
+        lights.Dispose();
         return outputColors;
     }
 

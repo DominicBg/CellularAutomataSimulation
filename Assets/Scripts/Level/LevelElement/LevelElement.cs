@@ -7,16 +7,18 @@ using UnityEngine;
 public abstract class LevelElement : MonoBehaviour, IRenderable
 {
     //References
-    protected Map map;
+    protected PixelScene scene;
+    protected Map map => scene.map;
+    protected PlayerElement player => scene.player;
 
     public bool isEnable = true;
     public bool isVisible = true;
     public int renderingLayerOrder = 0;
     public bool isInit = false;
 
-    public void Init(Map map)
+    public void Init(PixelScene scene)
     {
-        this.map = map;
+        this.scene = scene;
         OnInit();
         isInit = true;
     }
@@ -37,6 +39,12 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
 
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
+
+    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
+    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
+    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
+
+
     public virtual void RenderUI(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }
     public virtual void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 

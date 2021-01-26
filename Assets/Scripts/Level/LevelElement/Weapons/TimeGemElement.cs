@@ -141,7 +141,6 @@ public class TimeGemElement : EquipableElement
     {
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            PlayerElement player = FindObjectOfType<PlayerElement>();
             position = player.position;
             player.EquipQ(this);
             isEquiped = true;

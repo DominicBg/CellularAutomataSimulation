@@ -19,6 +19,8 @@ public class PlayerElement : PhysicObject, ILightSource
     float inAirDuration;
     float pressJumpBufferDuration;
 
+    bool ghostMode;
+
     public override Bound GetBound()
     {
         return physicData.physicBound.GetCollisionBound(position);
@@ -43,6 +45,17 @@ public class PlayerElement : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
+        if (InputCommand.IsButtonDown(KeyCode.F3))
+            ghostMode = !ghostMode;
+
+        if(ghostMode)
+        {
+            physicData.position += (InputCommand.Direction * 360 * GameManager.DeltaTime);
+            position = (int2)physicData.position;
+            return;
+        }
+
+
         if (currentEquipMouse != null && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
             bool isAltButton = Input.GetMouseButton(1);

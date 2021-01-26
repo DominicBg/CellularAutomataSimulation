@@ -6,7 +6,6 @@ using UnityEngine;
 
 public abstract class EquipableElement : LevelObject
 {
-    [HideInInspector] public PlayerElement player;
     public EquipableBaseScriptable baseSettings;
 
     public bool isEquiped = false;
@@ -20,11 +19,6 @@ public abstract class EquipableElement : LevelObject
 
     UseRequest useRequest;
 
-    public void OnValidate()
-    {
-        base.OnValidate();
-        player = GetLevelElement<PlayerElement>();
-    }
 
     public override void OnInit()
     {

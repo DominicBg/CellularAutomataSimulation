@@ -29,9 +29,9 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     public PixelSceneData pixelSceneData;
     LevelObject hoverObject;
 
-    public float2 fracPos;
+    float2 fracPos;
     public float movingSpeed = 5;
-    public bool inDebugView;
+    public int2 debugSize;
 
     public void OnStart()
     {
@@ -145,6 +145,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         {
             //copy whole map
             grid = new ParticleType[map.Sizes.x, map.Sizes.y];
+            debugSize = map.Sizes;
             for (int x = 0; x < map.Sizes.x; x++)
             {
                 for (int y = 0; y < map.Sizes.y; y++)

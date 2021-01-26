@@ -12,6 +12,7 @@ public class PixelScene : MonoBehaviour
     [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
     [HideInInspector] public ILightSource[] lightSources;
 
+    public PlayerElement player { get; private set; }
     public Map map;
     bool updateSimulation = true;
 
@@ -22,6 +23,7 @@ public class PixelScene : MonoBehaviour
     void Awake()
     {
         FindRefs();
+        player = GetComponentInChildren<PlayerElement>();
     }
     void FindRefs()
     {
@@ -37,8 +39,7 @@ public class PixelScene : MonoBehaviour
         this.map = map;
         for (int i = 0; i < levelElements.Length; i++)
         {
-            //to remove null
-            levelElements[i].Init(map);
+            levelElements[i].Init(this);
         }
     }
 
@@ -99,6 +100,6 @@ public class PixelScene : MonoBehaviour
     public void RequestInit(LevelElement levelElement)
     {
         if(!levelElement.isInit)
-            levelElement.Init(map);
+            levelElement.Init(this);
     }
 }

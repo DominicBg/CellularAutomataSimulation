@@ -9,13 +9,7 @@ public class LevelExit : LevelObject
     public int2 sizes;
     public LevelEntrance entrance;
     public TransitionBase transition;
-    PlayerElement player;
 
-    public override void OnInit()
-    {
-        //nasto
-        player = FindObjectOfType<PlayerElement>();
-    }
 
     public override Bound GetBound()
     {

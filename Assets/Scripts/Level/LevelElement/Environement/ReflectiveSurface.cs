@@ -18,7 +18,7 @@ public class ReflectiveSurface : LevelObject
 
     private NativeArray<Color32> reflectiveColors;
 
-    private static readonly Color safetyColor = new Color(-1, -1, -1, -1);
+    private static readonly Color32 safetyColor = new Color32(0, 1, 2, 3);
 
 
     public override void OnUpdate(ref TickBlock tickBlock)
@@ -43,7 +43,7 @@ public class ReflectiveSurface : LevelObject
 
         new PostReflectingJob()
         {
-            bound = GetBound(),
+            bound = new Bound(renderPos, sizes),
             reflectionBlending = reflectionBlending,
             mirrorBlending = mirrorBlending,
             offset = offset,
@@ -77,9 +77,12 @@ public class ReflectiveSurface : LevelObject
             //Two passes systems, if pixels have changed, don't override it
             for (int i = 0; i < positions.Length; i++)
             {
-                int index = ArrayHelper.PosToIndex(positions[i], GameManager.GridSizes);
-                reflectiveColors[i] = safetyColor;
-                outputColors[index] = safetyColor;
+                if(GridHelper.InBound(positions[i], GameManager.GridSizes))
+                {
+                    int index = ArrayHelper.PosToIndex(positions[i], GameManager.GridSizes);
+                    reflectiveColors[i] = safetyColor;
+                    outputColors[index] = safetyColor;
+                }
             }
             positions.Dispose();
         }
@@ -110,28 +113,35 @@ public class ReflectiveSurface : LevelObject
                 int2 offsetPos = positions[i] + offset;
 
                 if (!GridHelper.InBound(offsetPos, GameManager.GridSizes))
-                    continue;
-
+                {
+                    //Reflect the last pixel instead of reflecting out of map
+                    offsetPos = math.clamp(offsetPos, 0, GameManager.GridSizes - 1);
+                }
                 //If the pixel didnt change, show reflection
                 int index = ArrayHelper.PosToIndex(positions[i], GameManager.GridSizes);
-                if (!RenderingUtils.Equals(reflectiveColors[i], outputColors[index]))
+                Color32 currentOuputColor = outputColors[index];
+                if (!RenderingUtils.Equals(reflectiveColors[i], currentOuputColor))
                     continue;
 
                 int indexOffset = ArrayHelper.PosToIndex(offsetPos, GameManager.GridSizes);
+                { 
+                    Color32 iceColor = iceRendering.GetColor(positions[i], ref tickBlock);
+                    Color color = RenderingUtils.Blend(iceColor, baseColor, mirrorBlending);
+                    color.a = t;
 
-                Color32 iceColor = iceRendering.GetColor(positions[i], ref tickBlock);
-                Color color = RenderingUtils.Blend(iceColor, baseColor, mirrorBlending);
-                color.a = t;
+                    useReflectiveColors[i] = true;
 
-                useReflectiveColors[i] = true;
-
-                //this will draw on top of stuff lol
-                reflectiveColors[i] = RenderingUtils.Blend(outputColors[indexOffset], color, reflectionBlending);
+                    //this will draw on top of stuff lol
+                    reflectiveColors[i] = RenderingUtils.Blend(outputColors[indexOffset], color, reflectionBlending); 
+                }
             }
 
             //If we set the color, it does it recursivly
             for (int i = 0; i < positions.Length; i++)
             {
+                if (!GridHelper.InBound(positions[i], GameManager.GridSizes))
+                    continue;
+
                 int index = ArrayHelper.PosToIndex(positions[i], GameManager.GridSizes);
                 if (!useReflectiveColors[i])
                     continue;
