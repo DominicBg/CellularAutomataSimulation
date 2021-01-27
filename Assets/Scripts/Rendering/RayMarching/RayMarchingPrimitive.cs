@@ -6,6 +6,25 @@ public static class RayMarchingPrimitive
 
     public const float quaterAngle = 0.70710678118f;
 
+    public static void view(float2 uv, bool isOrtho, out float3 ro, out float3 rd)
+    {
+        if (isOrtho)
+            ortho(uv, out ro, out rd);
+        else
+            perspective(uv, out ro, out rd);
+    }
+
+    public static void ortho(float2 uv, out float3 ro, out float3 rd)
+    {
+        ro = new float3(uv.x, uv.y, 0);
+        rd = new float3(0, 0, 1);
+    }
+    public static void perspective(float2 uv, out float3 ro, out float3 rd)
+    {
+        ro = new float3(0, 0, 0);
+        rd = math.normalize(new float3(uv.x, uv.y, 1));
+    }
+
     [BurstCompile]
     public static float sdSphere(float3 pos, float scale)
     {
@@ -168,7 +187,7 @@ public static class RayMarchingPrimitive
         math.sincos(-a, out float s, out float c);
         return new float3(
             p.x * c - p.y * s,
-            p.y * s + p.z * c,
+            p.y * s + p.x * c,
             p.z);
     }
 
@@ -180,6 +199,24 @@ public static class RayMarchingPrimitive
             p.x * a - p.z * a,
             p.y,
             p.x * a + p.z * a);
+    }
+    [BurstCompile]
+    public static float3 RotateXQuater(float3 p, int steps = 1)
+    {
+        float a = quaterAngle * steps;
+        return new float3(
+            p.x,
+            p.y * a - p.z * a,
+            p.y * a + p.z * a);
+    }
+    [BurstCompile]
+    public static float3 RotateZQuater(float3 p, int steps = 1)
+    {
+        float a = quaterAngle * steps;
+        return new float3(
+            p.x * a - p.y * a,
+            p.y * a + p.x * a,
+            p.z);
     }
 
     [BurstCompile]

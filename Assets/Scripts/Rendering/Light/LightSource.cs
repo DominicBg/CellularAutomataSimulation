@@ -50,7 +50,11 @@ public struct LightSource
         light.resolution = resolution;
         return light;
     }
-
+    public float GetLightIntensity(float3 position, float3 normal)
+    {
+        float intensity = GetDistanceIntensity(position) * GetLightSurfaceIntensity(position, normal) * this.intensity;
+        return intensity;
+    }
     public float GetLightIntensity(float2 position, float3 normal)
     {
         float3 pos3D = new float3(position.x, position.y, 0);

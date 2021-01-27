@@ -66,10 +66,16 @@ public struct RayMarchingTemplate : IJobParallelFor
 
     Result RayMarch(float2 uv)
     {
+        //orthogonal
         float3 ro = new float3(uv.x, uv.y, 0);
         float3 rd = new float3(0, 0, 1);
 
+        //perspective
+        //float3 ro = new float3(0, 0, 0);
+        //float3 rd = math.normalize(new float3(uv.x, uv.x, 1));
+
         Result result = new Result();
+
 
         float3 currentPosition = ro;
         float currentDistance = 0;

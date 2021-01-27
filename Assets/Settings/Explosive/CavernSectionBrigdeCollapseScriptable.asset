@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shockwaveSettings:
     radiusThickness: 50
-    duration: 1
-    waveSpeed: 25
-    intensity: 0.94
+    duration: 3
+    waveSpeed: 150
+    intensity: 0.88
   screenFlashSettings:
     jobSettings:
       threshold: 0
@@ -31,10 +31,10 @@ MonoBehaviour:
     interval: 0
   shakeSettings:
     intensity: 12
-    duration: 3
+    duration: 1
     speed: 3.75
     useFalloff: 1
-    blendWithOriginal: 0.5
+    blendWithOriginal: 0.75
   explosiveSettings:
     radius: 15
     strength: 35
