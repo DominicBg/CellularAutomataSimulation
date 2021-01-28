@@ -60,5 +60,5 @@ public class GemObject : LevelObject, ILightSource
         }
     }
 
-    bool ILightSource.isVisible() => isVisible;
+    bool ILightSource.IsVisible() => isVisible;
 }

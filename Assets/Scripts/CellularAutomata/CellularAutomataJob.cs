@@ -2,12 +2,10 @@
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using static ParticleBehaviour;
 
 [BurstCompile]
 public struct CellularAutomataJob : IJob
 {
-    //public NativeArray<ParticleSpawner> nativeParticleSpawners;
     public TickBlock tickBlock;
     public Map map;
     public ParticleBehaviour behaviour;
@@ -26,8 +24,6 @@ public struct CellularAutomataJob : IJob
         map.ClearDirtyGrid();
         map.UpdateParticleTick(updateBound);
         UpdateSimulation();
-
-        //SpawnParticles();
     }
 
     //void SpawnParticles()

@@ -44,7 +44,7 @@ public class PixelCamera
 
         //int count = renderingObjects.Count;
         int renderCount = renderingObjects.Count;
-        var lights = PrepareLights(pixelScene.lightSources, tickBlock.tick);
+        var lights = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
@@ -132,14 +132,20 @@ public class PixelCamera
         return outputColors;
     }
 
-    NativeList<LightSource> PrepareLights(ILightSource[] lightSources, int tick)
+    NativeList<LightSource> PrepareLights(ILightSource[] lightSources, ILightMultiSource[] lightMultiSource, int tick)
     {
         NativeList<LightSource> nativeLights = new NativeList<LightSource>(lightSources.Length, Allocator.TempJob);
         for (int i = 0; i < lightSources.Length; i++)
         {
-            if(lightSources[i].isVisible())
+            if(lightSources[i].IsVisible())
                 nativeLights.Add(lightSources[i].GetLightSource(tick));
         }
+        for (int i = 0; i < lightMultiSource.Length; i++)
+        {
+            if (lightMultiSource[i].IsVisible())
+                lightMultiSource[i].GetLightSource(nativeLights, tick);
+        }
+
         return nativeLights;
     }
 

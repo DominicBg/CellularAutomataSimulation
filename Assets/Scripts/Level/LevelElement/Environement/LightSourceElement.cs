@@ -23,5 +23,5 @@ public class LightSourceElement : LevelElement, ILightSource
         return lightSource.GetLightSource(pos, tick);
     }
 
-    bool ILightSource.isVisible() => isVisible;
+    bool ILightSource.IsVisible() => isVisible;
 }

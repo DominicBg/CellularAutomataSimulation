@@ -11,8 +11,10 @@ public class PixelScene : MonoBehaviour
     [HideInInspector] public LevelObject[] levelObjects;
     [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
     [HideInInspector] public ILightSource[] lightSources;
+    [HideInInspector] public ILightMultiSource[] lightMultiSource;
 
     public PlayerElement player { get; private set; }
+    public Bound updateBound{ get; private set; }
     public Map map;
     bool updateSimulation = true;
 
@@ -31,8 +33,8 @@ public class PixelScene : MonoBehaviour
         levelObjects = GetComponentsInChildren<LevelObject>();
         alwaysRenderables = GetComponentsInChildren<IAlwaysRenderable>();
         lightSources = GetComponentsInChildren<ILightSource>();
+        lightMultiSource = GetComponentsInChildren<ILightMultiSource>();
     }
-
 
     public void Init(Map map)
     {
@@ -48,7 +50,7 @@ public class PixelScene : MonoBehaviour
         if (updateSimulation)
         {
             NativeList<int2> smokeEvents = new NativeList<int2>(25, Allocator.TempJob);
-            Bound updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
+            updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
 
             //var particleSpawners = GetParticleSpawner();
             new CellularAutomataJob()

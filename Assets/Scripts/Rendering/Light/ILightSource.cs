@@ -3,6 +3,6 @@ using Unity.Mathematics;
 
 public interface ILightSource
 {
-    bool isVisible();
+    bool IsVisible();
     LightSource GetLightSource(int tick);
 }

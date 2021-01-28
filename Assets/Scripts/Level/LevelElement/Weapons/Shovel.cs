@@ -148,7 +148,8 @@ public class Shovel : EquipableElement
         for (int i = 0; i < debugPositions.Count; i++)
         {
             int index = ArrayHelper.PosToIndex(renderPos - debugPositions[i], GameManager.GridSizes);
-            outputColor[index] = Color.Lerp(outputColor[index], Color.red, 0.25f); 
+            if(index >= 0 && index < outputColor.Length)
+                outputColor[index] = Color.Lerp(outputColor[index], Color.red, 0.25f); 
         }
     }
 

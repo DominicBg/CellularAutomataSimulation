@@ -11,10 +11,12 @@ public struct LightSource
     float3 direction;
     float radius;
     float angle;
-    float intensity;
+    public float intensity;
     float fadeoff;
     Color color;
     float resolution;
+
+
 
     public static LightSource DirectionalLight(float3 direction, float intensity, Color color, float resolution = 25)
     {

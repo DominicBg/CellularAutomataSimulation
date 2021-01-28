@@ -162,11 +162,10 @@ MonoBehaviour:
     sizes:
       x: 0
       y: 0
-  viewPos:
+  movingSpeed: 100
+  debugSize:
     x: 0
     y: 0
-  movingSpeed: 100
-  inDebugView: 1
 --- !u!4 &24019102
 Transform:
   m_ObjectHideFlags: 0
@@ -194,6 +193,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sizes:
+    x: 0
+    y: 0
+  offset:
     x: 0
     y: 0
 --- !u!1 &29838630
@@ -1459,6 +1461,7 @@ MonoBehaviour:
         x: 5.2
         y: 1.62
       sinOffsetAmplitude: 25.31
+      maxAlpha: 0
     title:
       texture: {fileID: 2800000, guid: a87d3b8b9532afa45aa9db8e366a5ca6, type: 3}
       blending: 0
@@ -1865,6 +1868,15 @@ MonoBehaviour:
     rubbleColor:
       rockColor: {r: 0.20799218, g: 0.24561678, b: 0.3584906, a: 1}
       crackColor: {r: 0.13817194, g: 0.14692852, b: 0.21698111, a: 1}
+      color4Dither:
+        lightColor: {r: 0.41568628, g: 0.47843137, b: 0.67058825, a: 1}
+        mediumColor: {r: 0.2627451, g: 0.30980393, b: 0.4509804, a: 1}
+        darkColor: {r: 0.12941177, g: 0.13725491, b: 0.21568628, a: 1}
+        veryDarkColor: {r: 0.05882353, g: 0.05882353, b: 0.08627451, a: 1}
+        lightThreshold: 0.9
+        mediumThreshold: 0.67
+        darkThreshold: 0.4
+        ditherRange: 0.09
     fireRendering:
       flameColor1:
         serializedVersion: 2

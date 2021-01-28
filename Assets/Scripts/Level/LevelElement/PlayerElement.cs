@@ -181,5 +181,5 @@ public class PlayerElement : PhysicObject, ILightSource
         return settings.lightSourceSettings.GetLightSource(GetBound().center, tick);
     }
 
-    bool ILightSource.isVisible() => isVisible;
+    bool ILightSource.IsVisible() => isVisible;
 }
