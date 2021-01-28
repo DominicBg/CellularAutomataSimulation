@@ -11,24 +11,24 @@ public static class ParticleRenderUtil
             case ParticleType.None:
                 return Color.black;
             case ParticleType.Water:
-                return particleRendering.waterRendering.GetColor(position, ref tickBlock);
+                return particleRendering.waterRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Sand:
-                return particleRendering.sandRendering.GetColor(position, ref tickBlock);
+                return particleRendering.sandRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Mud:
                 return particleRendering.mudColor;
 
             case ParticleType.Snow:
                 return particleRendering.snowColor;
             case ParticleType.Ice:
-                return particleRendering.iceRendering.GetColor(position, ref tickBlock);
+                return particleRendering.iceRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Rock:
                 return particleRendering.rockRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Rubble:
-                return particleRendering.rubbleColor.GetColor(position, ref tickBlock);
+                return particleRendering.rubbleColor.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.TitleDisintegration:
                 return particleRendering.titleDisintegration;
             case ParticleType.Fire:
-                return particleRendering.fireRendering.GetColor(position, ref tickBlock);
+                return particleRendering.fireRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Player:
                 //Gets overriden when trying the sprite
                 return Color.clear;
@@ -36,11 +36,11 @@ public static class ParticleRenderUtil
                 //Should be baked in the map
                 return Color.yellow;
             case ParticleType.Cinder:
-                return particleRendering.cinderRendering.GetColor(position, ref tickBlock);
+                return particleRendering.cinderRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Wood:
-                return particleRendering.woodRendering.GetColor(position, ref tickBlock);
+                return particleRendering.woodRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.String:
-                return particleRendering.stringRendering.GetColor(position, ref tickBlock);
+                return particleRendering.stringRendering.GetColor(position, ref tickBlock, ref map, lightSources);
 
             default:
                 return Color.clear;

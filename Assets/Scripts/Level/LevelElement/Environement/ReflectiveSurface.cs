@@ -38,9 +38,8 @@ public class ReflectiveSurface : LevelObject
         }.Run();
     }
 
-    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
     {
-
         new PostReflectingJob()
         {
             bound = new Bound(renderPos, sizes),
@@ -53,6 +52,7 @@ public class ReflectiveSurface : LevelObject
             tickBlock = tickBlock,
             baseColor = baseColor,
             iceRendering = GridRenderer.Instance.particleRendering.iceRendering,
+            
         }.Run();
         reflectiveColors.Dispose();
     }
@@ -103,6 +103,9 @@ public class ReflectiveSurface : LevelObject
         public IceRendering iceRendering;
         public Color baseColor;
 
+        public NativeArray<LightSource> lightSources;
+        public Map map;
+
         public void Execute()
         {
             bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
@@ -125,7 +128,7 @@ public class ReflectiveSurface : LevelObject
 
                 int indexOffset = ArrayHelper.PosToIndex(offsetPos, GameManager.GridSizes);
                 { 
-                    Color32 iceColor = iceRendering.GetColor(positions[i], ref tickBlock);
+                    Color32 iceColor = iceRendering.GetColor(positions[i], ref tickBlock, ref map, lightSources);
                     Color color = RenderingUtils.Blend(iceColor, baseColor, mirrorBlending);
                     color.a = t;
 

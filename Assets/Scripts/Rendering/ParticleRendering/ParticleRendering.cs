@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 [System.Serializable]
 public struct ParticleRendering
@@ -21,5 +22,5 @@ public struct ParticleRendering
 public interface IParticleRenderer
 {
     //Soon add map + light sources
-    Color32 GetColor(int2 position, ref TickBlock tickBlock);
+    Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources);
 }

@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -22,7 +23,7 @@ public struct WaterRendering: IParticleRenderer
     public Color waterColor;
     public float2 speed;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         float2 sineNoiseValue = tickBlock.tick * bubbleSineNoiseSpeed;
         float sinNoise = math.remap(0, 1, bubbleSineNoiseAmplitude, 1, noise.snoise(sineNoiseValue));

@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -11,7 +12,7 @@ public struct IceRendering : IParticleRenderer
     public float reflectionXDifference;
     public float reflectionShineAngle;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         float noiseSeed = tickBlock.tick * reflectionShineSpeed + position.x * reflectionXDifference + position.y * reflectionShineAngle;
         float noiseValue = noise.snoise(new float2(0, noiseSeed));

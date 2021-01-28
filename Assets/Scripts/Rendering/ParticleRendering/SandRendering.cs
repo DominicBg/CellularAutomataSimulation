@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -13,7 +14,7 @@ public struct SandRendering: IParticleRenderer
     public Color shimmerColor;
     public Color waveColor;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         //add sin ripple
         bool shimmer = tickBlock.random.NextFloat() > shimmerThreshold;

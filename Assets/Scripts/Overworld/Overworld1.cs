@@ -129,7 +129,7 @@ public class Overworld1 : OverworldBase
             if (!canShow)
                 return;
 
-            Color color = sandRendering.GetColor(position, ref tickBlock);
+            Color color = sandRendering.sandColor; //GetColor(position, ref tickBlock);
             color.a = alpha;
             outputColor[index] = color;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ public struct CinderRendering : IParticleRenderer
     public float threshold2;
     public float threshold3;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         float noiseValue = MathUtils.unorm(noise.cnoise((float2)position * spread + tickBlock.tick * speed));
         //sexylolol

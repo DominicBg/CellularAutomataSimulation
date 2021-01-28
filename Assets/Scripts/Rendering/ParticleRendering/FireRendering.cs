@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ public struct FireRendering : IParticleRenderer
 
     public BlendingMode blending;
 
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
+    public Color32 GetColor(int2 position, ref TickBlock tickBlock, ref Map map, NativeArray<LightSource> lightSources)
     {
         Color32 color = Color.clear;
         color = GetColor(color, position, ref tickBlock, flameColor1, flameSpeed1, flameScale1, minMaxAlpha1);

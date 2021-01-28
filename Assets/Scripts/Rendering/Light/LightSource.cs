@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 public struct LightSource
@@ -152,5 +153,27 @@ public struct LightSource
         color.a = math.saturate(color.a);
         color.a = MathUtils.ReduceResolution(color.a, resolution);
         return RenderingUtils.Blend(pixelColor, color, blendingMode);
+    }
+}
+
+public static class LightSourceEx
+{
+    public static float CalculateLight(this NativeArray<LightSource> lightSources, float2 position, float3 normal)
+    {
+        float intensity = 0;
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            intensity += lightSources[i].GetLightIntensity(position, normal);
+        }
+        return math.saturate(intensity);
+    }
+    public static float CalculateLight(this NativeArray<LightSource> lightSources, float3 position, float3 normal)
+    {
+        float intensity = 0;
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            intensity += lightSources[i].GetLightIntensity(position, normal);
+        }
+        return math.saturate(intensity);
     }
 }
