@@ -192,14 +192,33 @@ public static class RayMarchingPrimitive
     }
 
     [BurstCompile]
-    public static float3 RotateYQuater(float3 p, int steps = 1)
+    public static float3 RotateYQuater(float3 p)
     {
-        float a = quaterAngle * steps;
+        float a = quaterAngle;
         return new float3(
             p.x * a - p.z * a,
             p.y,
             p.x * a + p.z * a);
     }
+    [BurstCompile]
+    public static float3 RotateYQuater(float3 p, int steps)
+    {
+        steps %= 4;
+        float2 a = quaterAngle;
+        switch(steps)
+        {
+            case 0: a = new float2(quaterAngle, quaterAngle);  break;
+            case 1: a = new float2(-quaterAngle, quaterAngle);  break;
+            case 2: a = new float2(quaterAngle, -quaterAngle);  break;
+            case 3: a = new float2(-quaterAngle, -quaterAngle);  break;
+        }
+        return new float3(
+            p.x * a.x - p.z * a.y,
+            p.y,
+            p.x * a.y + p.z * a.x);
+    }
+
+
     [BurstCompile]
     public static float3 RotateXQuater(float3 p, int steps = 1)
     {

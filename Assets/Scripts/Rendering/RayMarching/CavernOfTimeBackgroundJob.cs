@@ -34,8 +34,10 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         public float maxStep;
         public float parallaxSpeed;
         public BlendingMode blending;
+        public int2 loopoffset;
+        public float cubeScalarDiff;
+        public EaseXVII.Ease ease;
     }
-
 
     struct Result
     {
@@ -45,16 +47,20 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         public float3 normal;
     }
 
+    int cubeRotation;
+    float cubeScalar;
+
     float DistanceFunction(float3 position, float t)
     {
         position -= new float3(0, 0, settings.cubeZ);
         position = RayMarchingPrimitive.opRep(position, settings.infinity);
 
-        position = RayMarchingPrimitive.RotateY(position, t * settings.speed);
+        position = RayMarchingPrimitive.RotateY(position, t);
+        position = RayMarchingPrimitive.RotateYQuater(position, cubeRotation);
         position = RayMarchingPrimitive.RotateXQuater(position);
         position = RayMarchingPrimitive.RotateZQuater(position);
 
-        float distance = RayMarchingPrimitive.sdBox(position, settings.cubeSizes);
+        float distance = RayMarchingPrimitive.sdBox(position, settings.cubeSizes * cubeScalar);
         return distance;
     }
 
@@ -62,17 +68,24 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
     {
         int2 gridPosition = ArrayHelper.IndexToPos(index, gridSizes);
 
-        float2 uv = ((float2)gridPosition / gridSizes - 0.5f) / settings.scales;
-        Result result = RayMarch(uv);
+        int2 pixelPos = gridPosition + cameraPos + (int2)(new float2(cameraPos.x, cameraPos.y) * settings.parallaxSpeed);
+        int2 modPixelPos = (int2)math.step(settings.scales, ((pixelPos + settings.loopoffset) % (settings.scales * 2)));
+        cubeRotation = (modPixelPos.x + modPixelPos.y) % 4;
+
+        cubeScalar = cubeRotation % 2 == 0 ? 1 : settings.cubeScalarDiff;
+
+        float3 ro = new float3(pixelPos / settings.scales, 0);
+        float3 rd = new float3(0,0,1);
+
+        Result result = RayMarch(ro, rd);
         outputColor[index] = RenderingUtils.Blend(outputColor[index], CalculateColor(result, gridPosition), settings.blending);
     }
-
 
     float3 GetNormal(float3 position)
     {
         float dt = derivativeDelta;
 
-        float t = tickBlock.tick * settings.speed;
+        float t = GetTime();
         float d = DistanceFunction(position, t);
         float dx = DistanceFunction(position + new float3(dt, 0, 0), t);
         float dy = DistanceFunction(position + new float3(0, dt, 0), t);
@@ -81,18 +94,15 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         return math.normalize(new float3(dx, dy, dz) - d);
     }
 
-    Result RayMarch(float2 uv)
+    Result RayMarch(float3 ro, float3 rd)
     {
-        RayMarchingPrimitive.view(uv, settings.isOrthographic, out float3 ro, out float3 rd);
-        ro += new float3(cameraPos.x, cameraPos.y, 0) * settings.parallaxSpeed;
-
         Result result = new Result();
         float3 currentPosition = ro;
         float currentDistance = 0;
-        float t = tickBlock.tick * settings.speed;
-
+        float t = GetTime();
 
         int i;
+
         for (i = 0; i < settings.maxStep; i++)
         {
             float distance = DistanceFunction(currentPosition, t);
@@ -129,5 +139,13 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
             return settings.color.GetColorWitLightValue(intensity, gridPos);
         }
         return Color.clear;
+    }
+
+    private float GetTime()
+    {
+        float pi2 = math.PI * 2;
+        float x = (tickBlock.tick * settings.speed) % pi2;
+        x /= pi2;
+        return EaseXVII.Evaluate(x, settings.ease) * pi2;
     }
 }

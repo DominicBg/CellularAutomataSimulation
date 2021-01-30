@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glowingIntensity:
     min: 0.2
-    max: 0.2
+    max: 0.3
     offsynch: 0
     speed: 0.03
   glowingRadius:
     min: 15
-    max: 15
+    max: 20
     offsynch: 0
     speed: 0.03
   color: {r: 1, g: 0.4189905, b: 0, a: 0.2}
   z: 0
   fadeoff: 5
-  resolution: 25
+  resolution: 100

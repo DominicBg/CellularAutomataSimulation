@@ -29,6 +29,7 @@ public class CinderLightRenderElement : LevelElement, ILightMultiSource
             list.Add(source);
         }
 
+        tickIdle.Dispose();
         cinderPositions.Dispose();
     }
 
