@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// The resolution of the game
     /// </summary>
-    public static readonly int2 GridSizes = new int2(100, 100);
+    public static readonly int2 GridSizes = new int2(128, 128);
 
     /// <summary>
     /// Correspond to the GridSizes.x * GridSizes.y

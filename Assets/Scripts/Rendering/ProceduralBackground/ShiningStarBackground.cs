@@ -70,23 +70,17 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
             {
                 int2 currentCellIndex = cellIndex + new int2(x, y);
 
-                //out of map cell
-                //if (!GridHelper.InBound(currentCellIndex, settings.density))
-                //    continue;
-
                 Bound gridBound = new Bound(currentCellIndex * cellSize, cellSize);
 
                 //Generate a random point in this cell
                 var random = MathUtils.CreateRandomAtPosition(currentCellIndex, settings.seed);
 
                 //Find closest star
-                //float starDistance = random.NextFloat();
                 int2 starPosition = gridBound.RandomPointInBound(ref random);
 
                 if (math.all(position == starPosition))
                 {
                     //This pixel is a star
-                    //colors[index] = Color.white * starDistance;
                     colors[index] = CalculateColor(colors[index], settings.maxAlpha);
                     return;
                 }

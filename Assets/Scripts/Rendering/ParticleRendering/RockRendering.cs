@@ -25,7 +25,11 @@ public struct RockRendering: IParticleRenderer
     {
         if (HaveNonRockInSurrounding(position, ref map))
             return borderColor;
+        return GetColor(position, lightSources, 0);
+    }
 
+    public Color32 GetColor(int2 position, NativeArray<LightSource> lightSources, int2 lightoffset)
+    {
         float2 positionScaled = (float2)position * noiseScale;
      
         float heightAtPosition = GetHeightAtPosition(positionScaled);
@@ -45,7 +49,7 @@ public struct RockRendering: IParticleRenderer
         float intensity = 0;
         for (int i = 0; i < lightSources.Length; i++)
         {
-            float currentIntensity = lightSources[i].GetLightIntensity(position, normal);
+            float currentIntensity = lightSources[i].GetLightIntensity(position + lightoffset, normal);
 
             if (highestIntensityOnly)
                 intensity = math.max(intensity, currentIntensity);

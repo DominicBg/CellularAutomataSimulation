@@ -64,11 +64,14 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         return distance;
     }
 
+    float2 parallaxOffset; // = (int2)((float2)cameraPos * settings.parallaxSpeed);
     public void Execute(int index)
     {
         int2 gridPosition = ArrayHelper.IndexToPos(index, gridSizes);
 
-        int2 pixelPos = gridPosition + cameraPos + (int2)(new float2(cameraPos.x, cameraPos.y) * settings.parallaxSpeed);
+        //light doesnt reflect in the background anymore rip
+        parallaxOffset = ((float2)cameraPos * settings.parallaxSpeed);
+        int2 pixelPos = gridPosition - GameManager.GridSizes/2 + (int2)parallaxOffset;
         int2 modPixelPos = (int2)math.step(settings.scales, ((pixelPos + settings.loopoffset) % (settings.scales * 2)));
         cubeRotation = (modPixelPos.x + modPixelPos.y) % 4;
 
@@ -128,9 +131,11 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         if (result.distance < settings.distanceThreshold)
         {
             float intensity = 0;
-            int2 normalizedGridPos = gridPos * 2 - gridSizes;
+            //int2 normalizedGridPos = gridPos * 2 - gridSizes;
             //Currently have a slight offset
-            float3 pos = new float3(cameraPos + normalizedGridPos, result.pos.z * settings.cubeZLight); //+ new float3((float2)cameraPos * (settings.parallaxSpeed / 2), 0);
+            //float2 cameraAndParallaxOffset = cameraPos - parallaxOffset;
+            float3 pos = new float3(gridPos + cameraPos - parallaxOffset, result.pos.z * settings.cubeZLight);
+
             for (int i = 0; i < lights.Length; i++)
             {
                 intensity += lights[i].GetLightIntensity(pos, -result.normal);

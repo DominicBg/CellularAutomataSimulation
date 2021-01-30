@@ -5,6 +5,47 @@ using UnityEngine;
 using static Unity.Mathematics.noise;
 public static class NoiseXVII
 {
+    public enum NoiseType { Worley, CNoise, SNoise, CNoiseFmb4, CNoiseFbm4r }
+
+    [System.Serializable]
+    public struct Noise
+    {
+        public float amplitude;
+        public float scale;
+        public float offset;
+        public NoiseType type;
+        public bool isInverted;
+
+        public float CalculateValue(float2 pos)
+        {
+            float noiseValue = CalculateNoise(pos * scale + offset);
+            //normalize [-1, 1] to [0, 1]
+            noiseValue = noiseValue * 0.5f + 0.5f;
+            if (isInverted)
+                noiseValue = 1 - noiseValue;
+            return amplitude * math.saturate(noiseValue);
+        }
+
+        float CalculateNoise(float2 pos)
+        {
+            switch (type)
+            {
+                case NoiseType.Worley:
+                    return cellular(pos).x;
+                case NoiseType.CNoise:
+                    return cnoise(pos);
+                case NoiseType.CNoiseFmb4:
+                    return fbm4(pos);
+                case NoiseType.CNoiseFbm4r:
+                    return fbm4r(pos);
+                case NoiseType.SNoise:
+                    return snoise(pos);
+            }
+            return 0;
+        }
+    }
+
+
     // See http://www.iquilezles.org/www/articles/warp/warp.htm for details
     static float2x2 mtx => new float2x2(0.80f, 0.60f, -0.60f, 0.80f);
 
