@@ -9,10 +9,10 @@ public class SpriteStaticObject : LevelObject
 {
     public Texture2D texture;
 
-    NativeSprite nativeSprite;
+    protected NativeSprite nativeSprite;
     public bool hasCollision;
     public bool isInBackground;
-    public bool isFlipped;
+    public bool2 isFlipped;
 
     public override void OnInit()
     {
@@ -27,6 +27,7 @@ public class SpriteStaticObject : LevelObject
                 {
                     if (nativeSprite.pixels[x, y].a != 0)
                     {
+                        //COLLISION MIGHT BREAK WITH FLIP
                         int2 mapPos = position + new int2(x, y) - (nativeSprite.sizes/2);
                         map.SetParticleType(mapPos, ParticleType.Collision);
                     }
@@ -50,12 +51,6 @@ public class SpriteStaticObject : LevelObject
         if (!isInBackground)
             GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, isFlipped, true);
     }
-
-    //public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
-    //{
-    //    Bound bound = Bound.CenterAligned(renderPos, nativeSprite.sizes);
-    //    GridRenderer.DrawBound(ref outputColors, bound, Color.red * .75f);
-    //}
 
     public override void Dispose()
     {

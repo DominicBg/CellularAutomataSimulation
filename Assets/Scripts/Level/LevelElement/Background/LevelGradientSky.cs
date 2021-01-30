@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -27,6 +28,7 @@ public class LevelGradientSky : LevelElement, IAlwaysRenderable
     }
 
 
+    [BurstCompile]
     struct GradientJob : IJobParallelFor
     {
         public NativeArray<Color32> outputColors;

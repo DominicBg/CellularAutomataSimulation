@@ -109,4 +109,9 @@ public static class RenderingUtils
         color4 = math.floor(color4 * resolution) / resolution;
         return new Color(color4.x, color4.y, color4.z, color4.w);
     }
+
+    public static float3 ToNormal(this Color normalColor)
+    {
+        return math.normalize(new float3(normalColor.r, normalColor.g, normalColor.b) - 0.5f);
+    }
 }

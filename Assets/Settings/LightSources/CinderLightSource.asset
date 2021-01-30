@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CinderLightSource
   m_EditorClassIdentifier: 
   glowingIntensity:
-    min: 0.2
-    max: 0.3
+    min: 0.1
+    max: 0.2
     offsynch: 0
     speed: 0.03
   glowingRadius:

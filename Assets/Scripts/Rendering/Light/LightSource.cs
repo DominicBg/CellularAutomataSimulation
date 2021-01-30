@@ -178,4 +178,22 @@ public static class LightSourceEx
         }
         return math.saturate(intensity);
     }
+    public static float CalculateLight(this NativeList<LightSource> lightSources, float2 position, float3 normal)
+    {
+        float intensity = 0;
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            intensity += lightSources[i].GetLightIntensity(position, normal);
+        }
+        return math.saturate(intensity);
+    }
+    public static float CalculateLight(this NativeList<LightSource> lightSources, float3 position, float3 normal)
+    {
+        float intensity = 0;
+        for (int i = 0; i < lightSources.Length; i++)
+        {
+            intensity += lightSources[i].GetLightIntensity(position, normal);
+        }
+        return math.saturate(intensity);
+    }
 }

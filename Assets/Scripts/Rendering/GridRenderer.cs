@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
@@ -30,7 +31,7 @@ public class GridRenderer : MonoBehaviour
 
         int2 sizes = GameManager.GridSizes;
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
-        m_texture.filterMode = FilterMode.Point;     
+        m_texture.filterMode = FilterMode.Point;
     }
 
     public static void GetBlankTexture(out NativeArray<Color32> outputColor)
@@ -59,7 +60,7 @@ public class GridRenderer : MonoBehaviour
             {
                 int i = y * GameManager.GridSizes.x + x;
                 float t = MathUtils.ReduceResolution((float)y / GameManager.GridSizes.y, resolution);
-                outputColor[i] = Color.Lerp(topColor, bottomColor,t);
+                outputColor[i] = Color.Lerp(topColor, bottomColor, t);
             }
         }
     }
@@ -98,7 +99,7 @@ public class GridRenderer : MonoBehaviour
         NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
         for (int i = 0; i < positions.Length; i++)
         {
-            positions[i] -= cameraPos - GameManager.GridSizes/2;
+            positions[i] -= cameraPos - GameManager.GridSizes / 2;
             colors[i] = color;
         }
         new ApplyPixelsJob(outputColor, positions, colors, blending).Run();
@@ -158,19 +159,47 @@ public class GridRenderer : MonoBehaviour
         return outputColor;
     }
 
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool isflipped = false, bool centerAligned = false)
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool centerAligned = false)
+    {
+        ApplySprite(ref outputColor, in sprite, position, centerAligned, false);
+    }
+
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool2 isFlipped, bool centerAligned = false)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
         {
             for (int y = 0; y < sprite.sizes.y; y++)
             {
-                int xx = (!isflipped) ? x : sprite.sizes.x - x - 1;
+                int xx = (!isFlipped.x) ? x : sprite.sizes.x - x - 1;
+                int yy = (!isFlipped.y) ? y : sprite.sizes.y - y - 1;
 
                 int2 texturePos = new int2(x, y) + position - (centerAligned ? sprite.sizes/2 : 0);
-                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[xx, y].a != 0)
+                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[xx, yy].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
-                    outputColor[index] = sprite.pixels[xx, y];
+                    outputColor[index] = sprite.pixels[xx, yy];
+                }
+            }
+        }
+    }
+    public static void ApplyCustomRender(
+        ref NativeArray<Color32> outputColor, int2 position, int2 sizes, bool2 isFlipped, 
+        Func<int2, bool> canReander, Func<int2, Color> renderColor,
+        bool centerAligned = false)
+    {
+        for (int x = 0; x < sizes.x; x++)
+        {
+            for (int y = 0; y < sizes.y; y++)
+            {
+                int xx = (!isFlipped.x) ? x : sizes.x - x - 1;
+                int yy = (!isFlipped.y) ? y : sizes.y - y - 1;
+
+                int2 texturePos = new int2(x, y) + position - (centerAligned ? sizes / 2 : 0);
+                int2 newPos = new int2(xx, yy);
+                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && canReander(newPos))
+                {
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
+                    outputColor[index] = renderColor(newPos);
                 }
             }
         }
