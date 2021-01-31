@@ -14,7 +14,7 @@ public class PixelScene : MonoBehaviour
     [HideInInspector] public ILightMultiSource[] lightMultiSource;
 
     public int2 CameraPosition => pixelCamera.position;
-    public PlayerElement player { get; private set; }
+    public Player player { get; private set; }
     public Bound updateBound{ get; private set; }
     public Map map;
     bool updateSimulation = true;
@@ -28,7 +28,7 @@ public class PixelScene : MonoBehaviour
     void Awake()
     {
         FindRefs();
-        player = GetComponentInChildren<PlayerElement>();
+        player = GetComponentInChildren<Player>();
     }
     void FindRefs()
     {

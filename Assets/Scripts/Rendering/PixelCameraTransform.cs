@@ -10,8 +10,8 @@ public class PixelCameraTransform : LevelObject
 
     public override void OnInit()
     {
+        target = FindObjectOfType<Player>();
         position = target.position;
-        target = FindObjectOfType<PlayerElement>();
     }
 
 

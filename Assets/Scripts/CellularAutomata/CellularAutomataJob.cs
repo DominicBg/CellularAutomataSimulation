@@ -143,7 +143,7 @@ public struct CellularAutomataJob : IJob
             return true;
         }
 
-        int2 slidePosition = map.SimulateParticlePhysic(pos, desiredGridPosition, out bool hasCollision, out int2 collisionPosition);
+        int2 slidePosition = map.SimulateParticlePhysic(pos, desiredGridPosition, out bool hasCollision, out int2 collisionPosition, in settings);
 
         if (!math.all(pos == slidePosition))
         {

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class World1GemShrineElement : SpriteSheetObject
 {
-    [SerializeField] PlayerElement player = default;
+    [SerializeField] Player player = default;
     [SerializeField] TimeGemElement timeGem = default;
     [SerializeField] World1GemContext context = default;
 

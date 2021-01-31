@@ -10,12 +10,19 @@ public abstract class PhysicObject : LevelObject
 {
     public PhysicData physicData;
 
-
-    protected void IniPhysicData(Texture2D collisionTexture)
+    protected void InitPhysicData(int2 sizes, float mass = 10)
+    {
+        physicData.physicBound = new PhysicBound(new Bound(0, sizes));
+        physicData.gridPosition = position;
+        physicData.position = position;
+        physicData.mass = mass;
+    }
+    protected void InitPhysicData(Texture2D collisionTexture, float mass = 10)
     {
         physicData.physicBound = new PhysicBound(collisionTexture);
         physicData.gridPosition = position;
         physicData.position = position;
+        physicData.mass = mass;
     }
 
     protected void HandlePhysic()

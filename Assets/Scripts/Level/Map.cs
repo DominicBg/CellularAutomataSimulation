@@ -136,7 +136,7 @@ public unsafe struct Map
         }
     }
 
-    public int2 SimulateParticlePhysic(int2 from, int2 to, out bool hasCollision, out int2 collisionPos)
+    public int2 SimulateParticlePhysic(int2 from, int2 to, out bool hasCollision, out int2 collisionPos, in PhysiXVIISetings physiXVIISetings)
     {
         to = math.clamp(to, -1, Sizes);
 
@@ -144,7 +144,8 @@ public unsafe struct Map
         int maxSteps = math.abs(diff.x) + math.abs(diff.y);
 
         int2 currentPosition = from;
-
+        int2 safePosition = from;
+        bool useSafety = false;
         float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
         for (int i = 0; i <= maxSteps; i++)
         {
@@ -152,19 +153,36 @@ public unsafe struct Map
             if (math.all(currentPosition == nextPosition))
                 continue;
 
-            //int2 nextPosition = currentPosition + step;
-            if (!InBound(nextPosition) || HasCollision(nextPosition)) /* && !GetParticle(nextPosition).InFreeFall())*/
+            if (!InBound(nextPosition))
             {
                 hasCollision = true;
                 collisionPos = nextPosition;
-                return currentPosition;
+                return useSafety ? safePosition : currentPosition;
             }
 
+            if (HasCollision(nextPosition))
+            {
+                bool skipCollision = GetParticle(nextPosition).InFreeFall() && CanPush(nextPosition, in physiXVIISetings);
+                if (skipCollision)
+                {
+                    useSafety = true;
+                    currentPosition = nextPosition;
+                    continue;
+                }
+
+                hasCollision = true;
+                collisionPos = nextPosition;
+                //return currentPosition;
+                return useSafety ? safePosition : currentPosition;
+            }
+            safePosition = currentPosition;
             currentPosition = nextPosition;
+            useSafety = false;
         }
+
         hasCollision = false;
         collisionPos = -1;
-        return currentPosition;
+        return useSafety ? safePosition : currentPosition;
     }
 
     public int2 FindParticlePosition(int2 from, int2 to, int ignoreFlag = 0)
@@ -286,7 +304,8 @@ public unsafe struct Map
     }
     public bool CanPush(ParticleType type, in PhysiXVIISetings settings)
     {
-        return settings.canPush[(int)type];
+        int index = (int)type;
+        return settings.canPush[index];
     }
 
     public bool HasCollision(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp)

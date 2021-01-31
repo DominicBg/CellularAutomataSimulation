@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ParticleBlowerScriptable
   m_EditorClassIdentifier: 
   equipedOffset:
-    x: 9
+    x: 7
     y: 1
   spriteSheet:
     spriteSheetName: 
@@ -22,11 +22,18 @@ MonoBehaviour:
       sprites:
       - {fileID: 2800000, guid: e7505e06e842cf24cb2fdb6371154dc2, type: 3}
   framePerImage: 5
-  frameCooldown: 2
-  capacity: 25
-  suckRadius: 25
-  offset:
-    x: -2
-    y: -1
-  suckVelocity: 5
-  blowVelocity: 5
+  frameCooldown: 0
+  capacity: 250
+  attractionRadius: 35
+  absorbBound:
+    x: 4
+    y: 8
+  absorbOffset:
+    x: 7
+    y: 2
+  attractionOffset:
+    x: 23
+    y: 4
+  suckVelocity: 300
+  vortexVelocity: 500
+  blowVelocity: 150

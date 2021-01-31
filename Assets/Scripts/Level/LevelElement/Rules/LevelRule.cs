@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class LevelRule : LevelElement
 {
-    public PlayerElement playerElement;
+    public Player playerElement;
     public LevelObject goalElement;
 
     protected bool playerFinished;

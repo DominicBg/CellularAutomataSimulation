@@ -16,8 +16,8 @@ MonoBehaviour:
   levelPrefab: {fileID: 5026943076903704041, guid: e30c8395df118174798e0eeb766269b4, type: 3}
   planetSettings:
     position:
-      x: 50
-      y: 50
+      x: 64
+      y: 64
     radius: 20
     spherizeIntensity: 1
     rotationSpeed:
@@ -50,6 +50,7 @@ MonoBehaviour:
       x: 1.252
       y: 11.254
     sinOffsetAmplitude: 71.17
+    maxAlpha: 0
   backgroundColor:
     serializedVersion: 2
     rgba: 4279895307

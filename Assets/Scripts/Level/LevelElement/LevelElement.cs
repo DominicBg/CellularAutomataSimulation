@@ -9,7 +9,7 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     //References
     protected PixelScene scene;
     protected Map map => scene.map;
-    protected PlayerElement player => scene.player;
+    protected Player player => scene.player;
 
     public bool isEnable = true;
     public bool isVisible = true;

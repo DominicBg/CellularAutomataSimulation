@@ -80,8 +80,13 @@ public class ParticleBlower : EquipableElement
                 continue;
 
             Particle particle = map.GetParticle(positions[i]);
-            float2 direction = math.normalize(absorbMiddle - positions[i]);
-            particle.velocity += direction * GameManager.DeltaTime * settings.suckVelocity;
+            //float2 direction = math.normalize(absorbMiddle - positions[i]);
+            float xVelocity = player.lookLeft ? 1 : -1;
+           
+            float verticalDir = (positions[i].y < absorbMiddle.y) ? 1 : -1;
+            particle.velocity += new float2(0, verticalDir) * GameManager.DeltaTime * settings.vortexVelocity;
+            particle.velocity += new float2(xVelocity, 0) * GameManager.DeltaTime * settings.suckVelocity;
+
             map.SetParticle(positions[i], particle);
         }
 
@@ -98,9 +103,9 @@ public class ParticleBlower : EquipableElement
 
         Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex((uint)tickBlock.tick);
 
-        for (int y = 0; y < settings.absorbBound; y++)
+        for (int y = 0; y < settings.absorbBound.y; y++)
         {
-            int x = random.NextInt(settings.absorbBound + 1);
+            int x = random.NextInt(settings.absorbBound.x + 1);
 
             int2 position = new int2(absorbBound.min.x + x, absorbBound.min.y + y);
 
@@ -115,5 +120,25 @@ public class ParticleBlower : EquipableElement
             };
             map.SetParticle(position, newParticle);
         }
+
+
+        //Throw bill ball
+        //for (int y = 0; y < settings.absorbBound; y++)
+        //{
+        //    for (int x = 0; x < settings.absorbBound; x++)
+        //    {
+        //        int2 position = new int2(absorbBound.min.x + x, absorbBound.min.y + y);
+        //        if (container.Count <= 0 || map.GetParticleType(position) != ParticleType.None)
+        //            continue;
+
+        //        Particle newParticle = new Particle()
+        //        {
+        //            fracPosition = 0.5f, //middle of the cell
+        //            type = container.Pop(),
+        //            velocity = velocity
+        //        };
+        //        map.SetParticle(position, newParticle);
+        //    }
+        //}
     }
 }
