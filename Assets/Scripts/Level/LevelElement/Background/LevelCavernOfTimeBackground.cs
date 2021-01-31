@@ -15,7 +15,6 @@ public class LevelCavernOfTimeBackground: LevelElement, IAlwaysRenderable
         {
             tickBlock = tickBlock,
             outputColor = outputColors,
-            gridSizes = GameManager.GridSizes,
             settings = settings,
             cameraPos = renderPos,
             lights = lights

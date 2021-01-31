@@ -61,7 +61,6 @@ public class Overworld1 : OverworldBase
             sandSettings = sandSettings,
             rockRendering = GridRenderer.Instance.particleRendering.rockRendering,
             sandRendering = GridRenderer.Instance.particleRendering.sandRendering,
-            sizes = GameManager.GridSizes,
             tickBlock = tickBlock
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
@@ -73,7 +72,6 @@ public class Overworld1 : OverworldBase
 
         public PlanetSettings planetSettings;
         public SandSettings sandSettings;
-        public int2 sizes;
 
         public RockRendering rockRendering;
         public SandRendering sandRendering;
@@ -81,8 +79,8 @@ public class Overworld1 : OverworldBase
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, sizes);
-            GenerateFloatingSand(index, sizes - pos, sandSettings.backShadow);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            GenerateFloatingSand(index, GameManager.GridSizes - pos, sandSettings.backShadow);
             GenerateMainPlanet(index, pos);
             GenerateFloatingSand(index, pos, 1);
         }

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cedad8f5097795b439dbaadf67ffe63f, type: 3}
+  m_Name: ParticleBlowerScriptable
+  m_EditorClassIdentifier: 
+  equipedOffset:
+    x: 9
+    y: 1
+  spriteSheet:
+    spriteSheetName: 
+    spriteAnimations:
+    - animationName: 
+      sprites:
+      - {fileID: 2800000, guid: e7505e06e842cf24cb2fdb6371154dc2, type: 3}
+  framePerImage: 5
+  frameCooldown: 2
+  capacity: 25
+  suckRadius: 25
+  offset:
+    x: -2
+    y: -1
+  suckVelocity: 5
+  blowVelocity: 5

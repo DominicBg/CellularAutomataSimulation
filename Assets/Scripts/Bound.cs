@@ -28,6 +28,20 @@ public struct Bound
     }
 
 
+    public NativeArray<int2> GetPositionsGrid(Allocator allocator = Allocator.Temp)
+    {
+        int size = sizes.x * sizes.y;
+        NativeArray<int2> positions = new NativeArray<int2>(size, allocator);
+        int i = 0;
+        for (int x = min.x; x <= max.x; x++)
+        {
+            for (int y = min.y; y <= max.y; y++)
+            {
+                positions[i++] = new int2(x, y);
+            }
+        }
+        return positions;
+    }
     public void GetPositionsGrid(out NativeArray<int2> positions, Allocator allocator = Allocator.Temp)
     {
         int size = sizes.x * sizes.y;

@@ -28,8 +28,8 @@ public class WorldLevel : MonoBehaviour
         tickBlock.Init();
         postProcessTickBlock.Init();
 
-        pixelScene.Init(pixelSceneData.LoadMap());
         pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.GridSizes);
+        pixelScene.Init(pixelSceneData.LoadMap(), pixelCamera);
 
         PostProcessManager.Instance = new PostProcessManager();
     }

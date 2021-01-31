@@ -33,7 +33,7 @@ public abstract class GridHelper
             for (int y = -radius; y <= radius; y++)
             {
                 int2 position = new int2(x, y);
-                if (math.length(position) < radius)
+                if (math.lengthsq(position) < radius * radius)
                 {
                     positionList.Add(position);
                 }
@@ -50,7 +50,7 @@ public abstract class GridHelper
             for (int y = -radius; y <= radius; y++)
             {
                 int2 position = centerPosition + new int2(x, y);
-                if (InBound(position, mapSizes) && math.length(centerPosition - position) < radius)
+                if (InBound(position, mapSizes) && math.lengthsq(centerPosition - position) < radius * radius)
                 {
                     positionList.Add(position);
                 }

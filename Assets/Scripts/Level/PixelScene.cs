@@ -13,10 +13,13 @@ public class PixelScene : MonoBehaviour
     [HideInInspector] public ILightSource[] lightSources;
     [HideInInspector] public ILightMultiSource[] lightMultiSource;
 
+    public int2 CameraPosition => pixelCamera.position;
     public PlayerElement player { get; private set; }
     public Bound updateBound{ get; private set; }
     public Map map;
     bool updateSimulation = true;
+
+    PixelCamera pixelCamera;
 
     public void OnValidate()
     {
@@ -36,8 +39,9 @@ public class PixelScene : MonoBehaviour
         lightMultiSource = GetComponentsInChildren<ILightMultiSource>();
     }
 
-    public void Init(Map map)
+    public void Init(Map map, PixelCamera camera)
     {
+        this.pixelCamera = camera;
         this.map = map;
         for (int i = 0; i < levelElements.Length; i++)
         {

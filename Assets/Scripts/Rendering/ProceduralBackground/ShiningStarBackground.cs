@@ -86,9 +86,11 @@ public struct ShiningStarBackgroundJob : IJobParallelFor
                 }
                 else
                 {
-                    float distance = math.distance(position, starPosition);
-                    if (distance < settings.radius)
+                    float distancesq = math.distancesq(position, starPosition);
+                    if (distancesq < settings.radius * settings.radius)
                     {
+                        float distance = math.sqrt(distancesq);
+
                         //Fade out of light
                         float ratioLight = 1 - math.saturate(distance / settings.radius);
                         float noiseSinOffset = settings.sinOffsetAmplitude * noise.cnoise(starPosition * settings.sinOffsetScale);

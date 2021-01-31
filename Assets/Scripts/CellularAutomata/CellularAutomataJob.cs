@@ -47,11 +47,11 @@ public struct CellularAutomataJob : IJob
         int2 start = updateBound.bottomLeft;
         int2 end = updateBound.topRight;
 
-       // if (tickBlock.tick % 2 == 0)
+        //if (tickBlock.tick % 2 == 0)
         {
-            for (int x = start.x; x < end.x; x++)
+            for (int y = start.y; y < end.y; y++)
             {
-                for (int y = start.y; y < end.y; y++)
+                for (int x = start.x; x < end.x; x++)
                 {
                     int2 pos = new int2(x, y);
                     if(map.InBound(pos))
@@ -61,9 +61,9 @@ public struct CellularAutomataJob : IJob
         }
         //else
         //{
-        //    for (int x = map.Sizes.x - 1; x >= 0; x--)
+        //    for (int x = end.x - 1; x >= 0; x--)
         //    {
-        //        for (int y = map.Sizes.y - 1; y >= 0; y--)
+        //        for (int y = end.y - 1; y >= 0; y--)
         //        {
         //            UpdateParticleBehaviour(new int2(x, y));
         //        }

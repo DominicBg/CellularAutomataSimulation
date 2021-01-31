@@ -7,7 +7,6 @@ using UnityEngine;
 [BurstCompile]
 public struct CavernOfTimeBackgroundJob : IJobParallelFor
 {
-    public int2 gridSizes;
     public TickBlock tickBlock;
 
     public Settings settings;
@@ -64,14 +63,14 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
         return distance;
     }
 
-    float2 parallaxOffset; // = (int2)((float2)cameraPos * settings.parallaxSpeed);
+    int2 parallaxOffset; // = (int2)((float2)cameraPos * settings.parallaxSpeed);
     public void Execute(int index)
     {
-        int2 gridPosition = ArrayHelper.IndexToPos(index, gridSizes);
+        int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
 
         //light doesnt reflect in the background anymore rip
-        parallaxOffset = ((float2)cameraPos * settings.parallaxSpeed);
-        int2 pixelPos = gridPosition - GameManager.GridSizes/2 + (int2)parallaxOffset;
+        parallaxOffset = (int2)((float2)cameraPos * settings.parallaxSpeed);
+        int2 pixelPos = gridPosition - GameManager.GridSizes/2 + parallaxOffset;
         int2 modPixelPos = (int2)math.step(settings.scales, ((pixelPos + settings.loopoffset) % (settings.scales * 2)));
         cubeRotation = (modPixelPos.x + modPixelPos.y) % 4;
 
@@ -130,17 +129,8 @@ public struct CavernOfTimeBackgroundJob : IJobParallelFor
     {
         if (result.distance < settings.distanceThreshold)
         {
-            float intensity = 0;
-            //int2 normalizedGridPos = gridPos * 2 - gridSizes;
-            //Currently have a slight offset
-            //float2 cameraAndParallaxOffset = cameraPos - parallaxOffset;
-            float3 pos = new float3(gridPos + cameraPos - parallaxOffset, result.pos.z * settings.cubeZLight);
-
-            for (int i = 0; i < lights.Length; i++)
-            {
-                intensity += lights[i].GetLightIntensity(pos, -result.normal);
-            }
-            intensity = math.saturate(intensity);
+            float3 pos = new float3(gridPos + cameraPos - GameManager.GridSizes/2, result.pos.z * settings.cubeZLight);
+            float intensity = lights.CalculateLight(pos, -result.normal);
             return settings.color.GetColorWitLightValue(intensity, gridPos);
         }
         return Color.clear;

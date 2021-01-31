@@ -77,6 +77,7 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
                     return;
             }
 
+
             Color rockColor = rockRendering.GetColor(position, lights, cameraPos - parallaxOffset);
             outputColors[index] = rockColor * tone;
         }
