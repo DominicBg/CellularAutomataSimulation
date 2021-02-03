@@ -15,11 +15,11 @@ public class PixelScene : MonoBehaviour
 
     public int2 CameraPosition => pixelCamera.position;
     public Player player { get; private set; }
+    public PixelCamera pixelCamera { get; private set; }
     public Bound updateBound{ get; private set; }
     public Map map;
     bool updateSimulation = true;
 
-    PixelCamera pixelCamera;
 
     public void OnValidate()
     {

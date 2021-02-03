@@ -10,7 +10,7 @@ public class SandForeground : LevelElement, IAlwaysRenderable
 {
     public Settings settings;
 
-    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         new SandForegroundJob()
         {

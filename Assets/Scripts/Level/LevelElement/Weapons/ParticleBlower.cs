@@ -10,7 +10,10 @@ public class ParticleBlower : EquipableElement
 {
     public ParticleBlowerScriptable settings => (ParticleBlowerScriptable)baseSettings;
     Stack<ParticleType> container;
-
+    enum State { Idle, Sucking, Blowing}
+    State currentState;
+    float intensity;
+    bool fadeIn;
 
     public override void OnInit()
     {
@@ -31,6 +34,51 @@ public class ParticleBlower : EquipableElement
     {
     }
 
+    public override void OnUpdate(ref TickBlock tickBlock)
+    {
+        currentState = State.Idle;
+        base.OnUpdate(ref tickBlock);
+
+
+        if (currentState != State.Sucking)
+        {
+            fadeIn = false;
+            intensity -= GameManager.DeltaTime * settings.fadeOut;
+        }
+        else
+        {
+            fadeIn = true;
+            intensity += GameManager.DeltaTime * settings.fadeIn;
+        }
+
+        intensity = math.saturate(intensity);
+        pixelCamera.transform.offset = new int2(1, 0) * (player.lookLeft ? -1 : 1) * (int2)(settings.cameraOffset * GetCurrentFadeIntensity());
+    }
+
+    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    {
+        if (intensity == 0)
+        {
+            return;
+        }
+
+        var inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+        int2 attractionMiddle = GetWorldPositionOffset(settings.attractionOffset);
+
+
+        new ParticleSuckingEffectJob()
+        {
+            outputColors = outputColors,
+            inputColors = inputColors,
+            direction = player.lookLeft ? -1 : 1,
+            settings = settings.effects,
+            tickBlock = tickBlock,
+            intensity = GetCurrentFadeIntensity(),
+            bound = Bound.CenterAligned(pixelCamera.GetRenderPosition(attractionMiddle), settings.attractionRadius)
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+        inputColors.Dispose();
+    }
+
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         int2 absorbMiddle = GetWorldPositionOffset(settings.absorbOffset);
@@ -44,10 +92,12 @@ public class ParticleBlower : EquipableElement
         if(altButton)
         {
             BlowParticles(ref tickBlock);
+            currentState = State.Blowing;
         }
         else
         {
             SuckParticles();
+            currentState = State.Sucking;
         }
     }
  
@@ -80,12 +130,14 @@ public class ParticleBlower : EquipableElement
                 continue;
 
             Particle particle = map.GetParticle(positions[i]);
-            //float2 direction = math.normalize(absorbMiddle - positions[i]);
             float xVelocity = player.lookLeft ? 1 : -1;
            
-            float verticalDir = (positions[i].y < absorbMiddle.y) ? 1 : -1;
+            float verticalDir = math.sign(attractionMiddle.y - positions[i].y);
             particle.velocity += new float2(0, verticalDir) * GameManager.DeltaTime * settings.vortexVelocity;
             particle.velocity += new float2(xVelocity, 0) * GameManager.DeltaTime * settings.suckVelocity;
+
+            //cancel gravity
+            particle.velocity += new float2(0, 1) * GameManager.DeltaTime * GameManager.PhysiXVIISetings.gravity;
 
             map.SetParticle(positions[i], particle);
         }
@@ -140,5 +192,10 @@ public class ParticleBlower : EquipableElement
         //        map.SetParticle(position, newParticle);
         //    }
         //}
+    }
+
+    float GetCurrentFadeIntensity()
+    {
+        return EaseXVII.Evaluate(intensity, fadeIn ? settings.fadeInCurve : settings.fadeOutCurve);
     }
 }

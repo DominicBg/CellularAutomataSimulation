@@ -13,4 +13,11 @@ public class ParticleBlowerScriptable : EquipableBaseScriptable
     public float suckVelocity;
     public float vortexVelocity;
     public float blowVelocity;
+    public float fadeIn;
+    public float fadeOut;
+    public int cameraOffset;
+    public EaseXVII.Ease fadeInCurve;
+    public EaseXVII.Ease fadeOutCurve;
+
+    public ParticleSuckingEffectSettings effects;
 }

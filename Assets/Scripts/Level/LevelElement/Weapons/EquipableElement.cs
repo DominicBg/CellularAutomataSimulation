@@ -26,7 +26,8 @@ public abstract class EquipableElement : LevelObject
         spriteAnimator.framePerImage = baseSettings.framePerImage;
     }
 
-    public sealed override void OnUpdate(ref TickBlock tickBlock)
+
+    public override void OnUpdate(ref TickBlock tickBlock)
     {
         if (!isEquiped && GetBound().IntersectWith(player.GetBound()) && InputCommand.IsButtonDown(KeyCode.E))
         {
@@ -48,7 +49,9 @@ public abstract class EquipableElement : LevelObject
 
         if(isEquiped)
         {
-            if(useRequest.requestUse)
+            isUsedThisFrame = false;
+
+            if (useRequest.requestUse)
             {
                 InternalUse(ref tickBlock);
             }
@@ -58,8 +61,6 @@ public abstract class EquipableElement : LevelObject
             }
             position = GetEquipOffset(baseSettings.equipedOffset);
             OnEquipableUpdate(ref tickBlock);
-
-            isUsedThisFrame = false;
             cooldown = math.max(cooldown - 1, 0);
         }
     }
@@ -88,7 +89,6 @@ public abstract class EquipableElement : LevelObject
         if (cooldown != 0)
             return;
 
-        isUsedThisFrame = true;
         unUsedForTicks = 0;
         isUsedThisFrame = true;
         cooldown = baseSettings.frameCooldown;

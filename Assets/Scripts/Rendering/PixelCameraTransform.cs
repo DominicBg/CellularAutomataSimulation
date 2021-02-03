@@ -7,6 +7,7 @@ public class PixelCameraTransform : LevelObject
     public LevelObject target;
     public int2 focusSizes = 25;
     public int2 boundOffset;
+    public int2 offset;
 
     public override void OnInit()
     {

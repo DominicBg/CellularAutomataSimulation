@@ -10,6 +10,7 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     protected PixelScene scene;
     protected Map map => scene.map;
     protected Player player => scene.player;
+    protected PixelCamera pixelCamera => scene.pixelCamera;
 
     public bool isEnable = true;
     public bool isVisible = true;
@@ -38,11 +39,13 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
 
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
+    public virtual void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
     public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
 
 
     public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
     public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
+    public virtual void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
     public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
 
 

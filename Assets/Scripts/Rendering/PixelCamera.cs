@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class PixelCamera
 {
-    PixelCameraTransform transform;
+    public PixelCameraTransform transform;
     int2 viewPort;
     List<IRenderable> renderingObjects;
     public int2 position
     {
-        get => transform.position;
+        get => transform.position + transform.offset;
         set => transform.position = value;
     }
 
@@ -42,7 +42,6 @@ public class PixelCamera
         renderingObjects.Sort((a,b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
 
 
-        //int count = renderingObjects.Count;
         int renderCount = renderingObjects.Count;
         var lights = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
 
@@ -65,6 +64,7 @@ public class PixelCamera
             }
         }
 
+        //Render
         for (int i = 0; i < renderCount; i++)
         {
             if (!renderingObjects[i].IsVisible())
@@ -83,7 +83,29 @@ public class PixelCamera
             }
         }
     
-        //Post render
+        //Late render
+        for (int i = 0; i < renderCount; i++)
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
+
+            if (renderingObjects[i] is LevelObject)
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, renderPos);
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+            }
+            else
+            {
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position);
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position, ref lights);
+            }
+        }
+  
+        //Render Light
+        LightRenderer.AddLight(ref outputColors, ref lights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
+
+        //Post Process render
         for (int i = 0; i < renderCount; i++)
         {
             if (!renderingObjects[i].IsVisible())
@@ -101,10 +123,6 @@ public class PixelCamera
                 renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position, ref lights);
             }
         }
-  
-        //Render Light
-        LightRenderer.AddLight(ref outputColors, ref lights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
-
 
         for (int i = 0; i < renderCount; i++)
         {
