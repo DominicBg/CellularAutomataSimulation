@@ -7,6 +7,7 @@ using UnityEngine;
 public unsafe struct PhysiXVIISetings
 {
     public float2 gravity;
+    public float maxVelocity;
     public float friction;
     public int maxSlope;
     public float slopeSlow;

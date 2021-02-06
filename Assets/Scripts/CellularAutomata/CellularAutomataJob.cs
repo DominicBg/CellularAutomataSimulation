@@ -26,22 +26,6 @@ public struct CellularAutomataJob : IJob
         UpdateSimulation();
     }
 
-    //void SpawnParticles()
-    //{
-    //    for (int i = 0; i < nativeParticleSpawners.Length; i++)
-    //    {
-    //        var spawner = nativeParticleSpawners[i];
-    //        bool canEmit = spawner.particleSpawnCount != 0;
-
-    //        if (canEmit && tickBlock.random.NextFloat() <= spawner.chanceSpawn && map.IsFreePosition(spawner.spawnPosition))
-    //        {
-    //            spawner.particleSpawnCount--;
-    //            map.SetParticleType(spawner.spawnPosition, spawner.particleType);
-    //            nativeParticleSpawners[i] = spawner;
-    //        }
-    //    }
-    //}
-
     void UpdateSimulation()
     {
         int2 start = updateBound.bottomLeft;
@@ -130,6 +114,9 @@ public struct CellularAutomataJob : IJob
     unsafe bool TryFreeFalling(Particle particle, int2 pos)
     {
         particle.velocity += settings.gravity * deltaTime;
+        if(math.lengthsq(particle.velocity) > settings.maxVelocity * settings.maxVelocity)
+            particle.velocity = math.normalize(particle.velocity) * settings.maxVelocity;
+
         float2 desiredPosition = (pos + particle.fracPosition) + (particle.velocity * deltaTime);
         int2 desiredGridPosition = (int2)desiredPosition;
 
@@ -182,7 +169,7 @@ public struct CellularAutomataJob : IJob
         particle.velocity *= settings.frictions[(int)particle.type] * settings.absorbtion[(int)particle.type];
         map.SetParticle(pos, particle, false);
 
-        return particle.InFreeFall();
+        return false;
     }
 
     bool TryFloatyFalling(Particle particle, int2 pos)

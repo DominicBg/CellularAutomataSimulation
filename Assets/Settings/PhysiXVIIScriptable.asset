@@ -16,6 +16,7 @@ MonoBehaviour:
     gravity:
       x: 0
       y: -250
+    maxVelocity: 300
     friction: 0.8
     maxSlope: 3
     slopeSlow: 0.4

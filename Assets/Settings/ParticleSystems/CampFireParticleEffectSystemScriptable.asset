@@ -14,27 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     colors:
-      colorStartMin: {r: 1, g: 0.30571634, b: 0, a: 0.4392157}
-      colorStartMax: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 1}
+      colorStartMin: {r: 0.6320754, g: 0.19334073, b: 0, a: 0.4392157}
+      colorStartMax: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 0.5372549}
       colorEndMin: {r: 0, g: 0, b: 0, a: 0}
       colorEndMax: {r: 0.5377358, g: 0.31400684, b: 0.30184227, a: 0}
-      resolution: 1555
-      blendingMode: 0
+      resolution: 1000
+      blendingMode: 1
     emitter:
       emitterSizes:
-        x: 15
+        x: 10
         y: 15
-      minStartRadius: 3
-      maxStartRadius: 7
-      minEndRadius: 13
+      minStartRadius: 15
+      maxStartRadius: 15
+      minEndRadius: 15
       maxEndRadius: 15
     lifeTime:
-      minDuration: 5
-      maxDuration: 10
+      minDuration: 3
+      maxDuration: 5
     movement:
       windForce:
-        x: 11.22
-        y: 11.03
+        x: 4.1
+        y: 6.7
       useNoise: 1
-      noiseSpeed: 0.0001
-      noiseAmplitude: 1.64
+      noiseSpeed: 0.01
+      noiseAmplitude: 5

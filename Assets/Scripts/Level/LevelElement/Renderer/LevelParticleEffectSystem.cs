@@ -54,6 +54,11 @@ public class LevelParticleEffectSystem : LevelObject
         if (!inBackground)
             particleEffectSystem.Render(ref outputColor, pixelCamera);
     }
+    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    {
+        GridRenderer.DrawBound(ref outputColors, Bound.CenterAligned(position, settings.settings.emitter.emitterSizes), pixelCamera.position, Color.red * .25f);
+    }
+
 
     public override void Dispose()
     {
@@ -63,6 +68,7 @@ public class LevelParticleEffectSystem : LevelObject
 
     public override Bound GetBound()
     {
-        return particleEffectSystem.bound;
+        int2 emitterSize = settings.settings.emitter.emitterSizes;
+        return math.any(emitterSize > particleEffectSystem.bound.sizes) ? Bound.CenterAligned(position, emitterSize) : particleEffectSystem.bound;
     }
 }

@@ -13,6 +13,8 @@ public class Player : PhysicObject, ILightSource
     [HideInInspector] public EquipableElement currentEquipMouse;
     [HideInInspector] public EquipableElement currentEquipQ;
     [HideInInspector] public bool lookLeft;
+    [HideInInspector] public bool isDirectionLocked;
+
 
     int lookDirection;
     bool canJump;
@@ -68,7 +70,9 @@ public class Player : PhysicObject, ILightSource
 
 
         float2 direction = new float2(InputCommand.Direction.x, 0);
-        lookDirection = (int)math.sign(direction.x);
+        
+        if(!isDirectionLocked)
+            lookDirection = (int)math.sign(direction.x);
 
         bool isGrounded = IsGrounded();
     

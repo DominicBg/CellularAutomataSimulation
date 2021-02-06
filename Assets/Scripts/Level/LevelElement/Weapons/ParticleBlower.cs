@@ -14,6 +14,7 @@ public class ParticleBlower : EquipableElement
     State currentState;
     float intensity;
     bool fadeIn;
+    int suckDirection; 
 
     public override void OnInit()
     {
@@ -40,19 +41,28 @@ public class ParticleBlower : EquipableElement
         base.OnUpdate(ref tickBlock);
 
 
-        if (currentState != State.Sucking)
+        if (currentState == State.Sucking)
         {
-            fadeIn = false;
-            intensity -= GameManager.DeltaTime * settings.fadeOut;
-        }
-        else
-        {
+            player.isDirectionLocked = true;
+            suckDirection = (player.lookLeft ? -1 : 1);
             fadeIn = true;
             intensity += GameManager.DeltaTime * settings.fadeIn;
         }
+        else 
+        {
+            fadeIn = false;
+            player.isDirectionLocked = false;
+            intensity -= GameManager.DeltaTime * settings.fadeOut;
+        }
 
         intensity = math.saturate(intensity);
-        pixelCamera.transform.offset = new int2(1, 0) * (player.lookLeft ? -1 : 1) * (int2)(settings.cameraOffset * GetCurrentFadeIntensity());
+        int shakeIntensity = 
+            (int)(settings.shakeIntensity * 
+            noise.cnoise((float2)tickBlock.tick * settings.shakeFrequency) * 
+            math.sin(tickBlock.tick * settings.shakeFrequency * 2 * math.PI));
+
+
+        pixelCamera.transform.offset = new int2(1, 0) * suckDirection * (int2)(settings.cameraOffset * GetCurrentFadeIntensity()) + new int2((int)(GetCurrentFadeIntensity() * shakeIntensity), 0);
     }
 
     public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
@@ -88,23 +98,20 @@ public class ParticleBlower : EquipableElement
 
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
     {
-        if(altButton)
+        if(altButton && container.Count > 0)
         {
             BlowParticles(ref tickBlock);
             currentState = State.Blowing;
         }
-        else
+        else if(!altButton && container.Count < settings.capacity)
         {
-            SuckParticles();
+            SuckParticles(ref tickBlock);
             currentState = State.Sucking;
         }
     }
  
-    public void SuckParticles()
+    public void SuckParticles(ref TickBlock tickBlock)
     {
-        if (container.Count >= settings.capacity)
-            return;
-
         int2 absorbMiddle = GetWorldPositionOffset(settings.absorbOffset);
         Bound absorbBound = Bound.CenterAligned(absorbMiddle, settings.absorbBound);
         var absorbBoundPos = absorbBound.GetPositionsGrid(Allocator.Temp);
@@ -134,7 +141,8 @@ public class ParticleBlower : EquipableElement
             float verticalDir = math.sign(yDiff);
             particle.velocity += new float2(0, verticalDir) * GameManager.DeltaTime * settings.vortexVelocity;
 
-            if(math.abs(yDiff) <= settings.suckY)
+            bool canSuckThisFrame = tickBlock.tick % 2 == 0;
+            if (math.abs(yDiff) <= settings.suckY && canSuckThisFrame)
                 particle.velocity += new float2(xVelocity, 0) * GameManager.DeltaTime * settings.suckVelocity;
 
             //cancel gravity
@@ -155,14 +163,16 @@ public class ParticleBlower : EquipableElement
         velocity.x = player.lookLeft ? -settings.blowVelocity : settings.blowVelocity;
 
         Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex((uint)tickBlock.tick);
-
-        for (int y = 0; y < settings.absorbBound.y; y++)
+        for (int y = 0; y < settings.maxParticlePerFrame; y++)
         {
-            int x = random.NextInt(settings.absorbBound.x + 1);
+            int xPos = player.lookLeft ? absorbBound.min.x : absorbBound.max.x;
+            int ypos = random.NextInt(absorbBound.min.y, absorbBound.max.y + 1);
 
-            int2 position = new int2(absorbBound.min.x + x, absorbBound.min.y + y);
+            int2 position = new int2(xPos, ypos);
 
-            if (container.Count <= 0 || map.GetParticleType(position) != ParticleType.None)
+            //if (container.Count <= 0 || map.GetParticleType(position) != ParticleType.None)
+            //    continue;
+            if (container.Count <= 0 || !map.InBound(position) || map.GetParticleType(position) != ParticleType.None)
                 continue;
 
             Particle newParticle = new Particle()
