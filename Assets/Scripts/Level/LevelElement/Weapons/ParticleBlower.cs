@@ -65,7 +65,6 @@ public class ParticleBlower : EquipableElement
         var inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
         int2 attractionMiddle = GetWorldPositionOffset(settings.attractionOffset);
 
-
         new ParticleSuckingEffectJob()
         {
             outputColors = outputColors,
@@ -122,7 +121,6 @@ public class ParticleBlower : EquipableElement
         int2 attractionMiddle = GetWorldPositionOffset(settings.attractionOffset);
 
         var positions = Bound.CenterAligned(attractionMiddle, settings.attractionRadius).GetPositionsGrid();
-        // GridHelper.GetCircleAtPosition(attractionMiddle, settings.attractionRadius, map.Sizes, Allocator.Temp);
 
         for (int i = 0; i < positions.Length; i++)
         {
@@ -131,10 +129,13 @@ public class ParticleBlower : EquipableElement
 
             Particle particle = map.GetParticle(positions[i]);
             float xVelocity = player.lookLeft ? 1 : -1;
-           
-            float verticalDir = math.sign(attractionMiddle.y - positions[i].y);
+
+            int yDiff = attractionMiddle.y - positions[i].y;
+            float verticalDir = math.sign(yDiff);
             particle.velocity += new float2(0, verticalDir) * GameManager.DeltaTime * settings.vortexVelocity;
-            particle.velocity += new float2(xVelocity, 0) * GameManager.DeltaTime * settings.suckVelocity;
+
+            if(math.abs(yDiff) <= settings.suckY)
+                particle.velocity += new float2(xVelocity, 0) * GameManager.DeltaTime * settings.suckVelocity;
 
             //cancel gravity
             particle.velocity += new float2(0, 1) * GameManager.DeltaTime * GameManager.PhysiXVIISetings.gravity;

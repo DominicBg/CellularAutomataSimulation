@@ -9,6 +9,8 @@ public class PixelCamera
     public PixelCameraTransform transform;
     int2 viewPort;
     List<IRenderable> renderingObjects;
+
+
     public int2 position
     {
         get => transform.position + transform.offset;
@@ -22,7 +24,8 @@ public class PixelCamera
         renderingObjects = new List<IRenderable>(100);
     }
 
-    public NativeArray<Color32> Render(PixelScene pixelScene, ref TickBlock tickBlock, bool inDebug)
+
+    public NativeArray<Color32> Render(PixelScene pixelScene, ref TickBlock tickBlock, bool inDebug, System.Action<NativeArray<Color32>> onRenderPass = null)
     {
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
@@ -62,6 +65,7 @@ public class PixelCamera
                 renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position); 
                 renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position, ref lights); 
             }
+            onRenderPass?.Invoke(outputColors);
         }
 
         //Render
@@ -81,8 +85,9 @@ public class PixelCamera
                 renderingObjects[i].Render(ref outputColors, ref tickBlock, position);
                 renderingObjects[i].Render(ref outputColors, ref tickBlock, position, ref lights);
             }
+            onRenderPass?.Invoke(outputColors);
         }
-    
+
         //Late render
         for (int i = 0; i < renderCount; i++)
         {
@@ -100,8 +105,9 @@ public class PixelCamera
                 renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position);
                 renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position, ref lights);
             }
+            onRenderPass?.Invoke(outputColors);
         }
-  
+
         //Render Light
         LightRenderer.AddLight(ref outputColors, ref lights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
 
@@ -122,6 +128,7 @@ public class PixelCamera
                 renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position);
                 renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position, ref lights);
             }
+            onRenderPass?.Invoke(outputColors);
         }
 
         for (int i = 0; i < renderCount; i++)
@@ -144,6 +151,7 @@ public class PixelCamera
                 else
                     renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, position);
             }
+            onRenderPass?.Invoke(outputColors);
         }
 
         lights.Dispose();
@@ -180,5 +188,22 @@ public class PixelCamera
     public Bound GetViewingBound()
     {
         return Bound.CenterAligned(position, viewPort);
+    }
+
+    public PixelCameraHandle GetHandle()
+    {
+        return new PixelCameraHandle() { cameraPosition = position, viewPort = viewPort };
+    }
+
+    //Simpler Camera Version for Burst
+    public struct PixelCameraHandle
+    {
+        public int2 cameraPosition;
+        public int2 viewPort;
+
+        public int2 GetRenderPosition(int2 position)
+        {
+            return position - (cameraPosition - viewPort / 2);
+        }
     }
 }

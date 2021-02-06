@@ -26,22 +26,35 @@ MonoBehaviour:
   capacity: 250
   attractionRadius: 35
   absorbBound:
-    x: 4
+    x: 11
     y: 8
   absorbOffset:
-    x: 7
+    x: 3
     y: 2
   attractionOffset:
     x: 22
     y: 1
-  suckVelocity: 250
-  vortexVelocity: 2000
+  suckVelocity: 2000
+  suckY: 5
+  vortexVelocity: 1000
   blowVelocity: 150
+  fadeIn: 4
+  fadeOut: 2
+  cameraOffset: 5
+  fadeInCurve: 24
+  fadeOutCurve: 7
   effects:
-    sample: 3
-    range: 3
-    offset: 0.785
-    speed: 0.5
-    blendRatio: 0.2
-    blendingMode: 4
+    sample: 5
+    range: 10
+    offset: 0.2
+    speed: 0.1
+    blendRatio: 0.1
+    blendingMode: 1
     fadeOff: 15
+    shrink: 0
+    ease: 0
+    sinOffsetFreq: 0.05
+    sinOffsetAmp: 3
+    sinOffset:
+      x: 0.025
+      y: 0.2

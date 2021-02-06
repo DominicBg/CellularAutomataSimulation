@@ -11,6 +11,7 @@ public class ParticleBlowerScriptable : EquipableBaseScriptable
     public int2 absorbOffset;
     public int2 attractionOffset;
     public float suckVelocity;
+    public float suckY;
     public float vortexVelocity;
     public float blowVelocity;
     public float fadeIn;

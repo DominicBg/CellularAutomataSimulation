@@ -23,6 +23,8 @@ public class WorldLevel : MonoBehaviour
     public bool updateWorldElement = true;
     public bool updatLevelElement = true;
 
+    RenderPassRecorder renderPassRecorder;
+
     public void LoadLevel()
     {
         tickBlock.Init();
@@ -32,12 +34,16 @@ public class WorldLevel : MonoBehaviour
         pixelScene.Init(pixelSceneData.LoadMap(), pixelCamera);
 
         PostProcessManager.Instance = new PostProcessManager();
+
+        renderPassRecorder = new RenderPassRecorder();
     }
 
     public void OnUpdate()
     {
         if (InputCommand.IsButtonDown(KeyCode.F1))
             inDebug = !inDebug;
+        if (InputCommand.IsButtonDown(KeyCode.F2))
+            renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.GridSizes);
 
         if (updatLevelElement)
             tickBlock.UpdateTick();

@@ -26,6 +26,11 @@ public struct Bound
     {
         return new Bound(center - sizes / 2, sizes);
     }
+    public static Bound MinMax(int2 min, int2 max)
+    {
+        return new Bound(min, max-min);
+    }
+
 
 
     public NativeArray<int2> GetPositionsGrid(Allocator allocator = Allocator.Temp)

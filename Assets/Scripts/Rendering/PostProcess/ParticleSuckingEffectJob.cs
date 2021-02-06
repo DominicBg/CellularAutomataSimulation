@@ -66,7 +66,7 @@ public struct ParticleSuckingEffectJob : IJobParallelFor
                 color = RenderingUtils.Blend(color, sampleColor, settings.blendingMode);
             }
         }
-        //sampleColor.a = settings.blendRatio * fadeOffAlpha;
-        outputColors[index] = color; // RenderingUtils.Blend(outputColors[index], sampleColor, settings.blendingMode);
+
+        outputColors[index] = color;
     }
 }
