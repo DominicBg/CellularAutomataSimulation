@@ -12,6 +12,7 @@ public class PixelScene : MonoBehaviour
     [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
     [HideInInspector] public ILightSource[] lightSources;
     [HideInInspector] public ILightMultiSource[] lightMultiSource;
+    [HideInInspector] public PixelSceneParticleEvents sceneParticleEvents;
 
     public int2 CameraPosition => pixelCamera.position;
     public Player player { get; private set; }
@@ -20,7 +21,6 @@ public class PixelScene : MonoBehaviour
     public Map map;
     bool updateSimulation = true;
 
-
     public void OnValidate()
     {
         FindRefs();
@@ -28,15 +28,16 @@ public class PixelScene : MonoBehaviour
     void Awake()
     {
         FindRefs();
-        player = GetComponentInChildren<Player>();
     }
     void FindRefs()
     {
+        player = GetComponentInChildren<Player>();
         levelElements = GetComponentsInChildren<LevelElement>();
         levelObjects = GetComponentsInChildren<LevelObject>();
         alwaysRenderables = GetComponentsInChildren<IAlwaysRenderable>();
         lightSources = GetComponentsInChildren<ILightSource>();
         lightMultiSource = GetComponentsInChildren<ILightMultiSource>();
+        sceneParticleEvents = GetComponentInChildren<PixelSceneParticleEvents>();
     }
 
     public void Init(Map map, PixelCamera camera)
@@ -53,10 +54,7 @@ public class PixelScene : MonoBehaviour
     {
         if (updateSimulation)
         {
-            NativeList<int2> smokeEvents = new NativeList<int2>(25, Allocator.TempJob);
             updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
-
-            //var particleSpawners = GetParticleSpawner();
             new CellularAutomataJob()
             {
                 behaviour = GameManager.ParticleBehaviour,
@@ -65,19 +63,10 @@ public class PixelScene : MonoBehaviour
                 tickBlock = tickBlock,
                 deltaTime = GameManager.DeltaTime,
                 settings = GameManager.PhysiXVIISetings,
-                particleSmokeEvent = smokeEvents
+                particleCombustionEvents = sceneParticleEvents.particleEvents.combustionEvents
             }.Run();
-            smokeEvents.Dispose();
-            //HandleParticleEvents(ref tickBlock);
-
-            ////lol
-            //for (int i = 0; i < particleSpawnerElements.particleSpawners.Length; i++)
-            //{
-            //    particleSpawnerElements.particleSpawners[i].particleSpawnCount = particleSpawners[i].particleSpawnCount;
-            //}
-            //particleSpawners.Dispose();
+            sceneParticleEvents.UpdateParticleEvents(ref tickBlock);  
         }
-
 
 
         //Update elements

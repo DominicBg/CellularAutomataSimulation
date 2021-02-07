@@ -15,11 +15,11 @@ public struct CellularAutomataJob : IJob
     public Bound updateBound;
 
     //output event
-    public NativeList<int2> particleSmokeEvent;
+    public NativeList<int2> particleCombustionEvents;
 
     public void Execute()
     {
-        particleSmokeEvent.Clear();
+        particleCombustionEvents.Clear();
 
         map.ClearDirtyGrid();
         map.UpdateParticleTick(updateBound);
@@ -376,7 +376,7 @@ public struct CellularAutomataJob : IJob
             if(surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.woodBehaviour.tickBeforeTurnToCinder)
             {
                 map.SetParticleType(pos, ParticleType.Cinder);
-                particleSmokeEvent.Add(pos);
+                particleCombustionEvents.Add(pos);
             }
         }
         surrounding.Dispose();
@@ -389,7 +389,7 @@ public struct CellularAutomataJob : IJob
             if (surrounding[i].type == ParticleType.Cinder && surrounding[i].tickIdle > behaviour.stringBehaviour.tickBeforeTurnToCinder)
             {
                 map.SetParticleType(pos, ParticleType.Cinder);
-                particleSmokeEvent.Add(pos);
+                particleCombustionEvents.Add(pos);
             }
         }
         surrounding.Dispose();
