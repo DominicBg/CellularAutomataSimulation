@@ -42,7 +42,7 @@ public class Player : PhysicObject, ILightSource
         }
 
         spriteAnimator.Render(ref outputcolor, renderPos, lookLeft);
-        DebugAllPhysicBound(ref outputcolor);
+
     }
 
     public override void OnUpdate(ref TickBlock tickBlock)
@@ -80,6 +80,12 @@ public class Player : PhysicObject, ILightSource
 
         UpdateMovement(direction);
         UpdateJump(isGrounded);
+
+        if(isGrounded && InputCommand.IsButtonHeld(KeyCode.Space))
+        {
+            PhysiXVII.MoveUpFromPile(ref physicData, map, GameManager.PhysiXVIISetings);
+            position = physicData.gridPosition;
+        }
 
         HandlePhysic();
     }
@@ -166,13 +172,6 @@ public class Player : PhysicObject, ILightSource
         }
 
         currentEquipQ = equipable;
-    }
-
-    public void SetPosition(int2 position)
-    {
-       this.position = position;
-       this.physicData.position = position;
-       this.physicData.gridPosition = position;
     }
 
     public override void Dispose()

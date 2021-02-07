@@ -42,9 +42,9 @@ public abstract class GridHelper
         return positionList.AsArray();
     }
 
-    public static NativeArray<int2> GetCircleAtPosition(int2 centerPosition, int radius, int2 mapSizes, Allocator allocator)
+    public static NativeArray<int2> GetCircleAtPosition(int2 centerPosition, int radius, int2 mapSizes, Allocator allocator = Allocator.TempJob)
     {
-        NativeList<int2> positionList = new NativeList<int2>(2 * radius * radius, Allocator.Temp);
+        NativeList<int2> positionList = new NativeList<int2>(2 * radius * radius, allocator);
         for (int x = -radius; x <= radius; x++)
         {
             for (int y = -radius; y <= radius; y++)
@@ -66,9 +66,9 @@ public abstract class GridHelper
         return positions;
     }
 
-    public static NativeArray<int2> GetEllipseAtPosition(int2 centerPosition, int2 radius, int2 mapSizes, Allocator allocator)
+    public static NativeArray<int2> GetEllipseAtPosition(int2 centerPosition, int2 radius, int2 mapSizes, Allocator allocator = Allocator.TempJob)
     {
-        NativeList<int2> positionList = new NativeList<int2>(2 * radius.x * radius.y, Allocator.Temp);
+        NativeList<int2> positionList = new NativeList<int2>(2 * radius.x * radius.y, allocator);
 
         float2 inverseRadius = 1f / (float2)(radius * radius);
         for (int x = -radius.x; x <= radius.x; x++)

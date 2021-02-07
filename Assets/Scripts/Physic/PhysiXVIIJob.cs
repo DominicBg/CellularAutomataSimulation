@@ -53,11 +53,14 @@ public struct PhysiXVIIJob : IJob
             int inclination = GetTerrainInclination(ref physicData, nextGridPosition, isGrounded);
             float inclinationSlowDown = inclination == 0 ? 1 : settings.slopeSlow;
             nextPosition = currentPosition + physicData.velocity * deltaTime * inclinationSlowDown;
-            HandlePhysics(ref physicData, nextPosition, isGrounded);
+            HandlePhysics(ref physicData, nextPosition, isGrounded, out bool hasCollision, out int2 collisionNormal);
+
+            if(hasCollision && collisionNormal.x != 0)
+            {
+                PhysiXVII.MoveUpFromPile(ref physicData, map, settings);
+            }
         }
 
-        //physicData.position = math.clamp(physicData.position, 0, GameManager.GridSizes);
-        //physicData.gridPosition = math.clamp(physicData.gridPosition, 0, GameManager.GridSizes);
         physicDataReference.Value = physicData;
 
         map.RemoveSpriteAtPosition(currentGridPosition, ref physicData.physicBound);
@@ -65,14 +68,15 @@ public struct PhysiXVIIJob : IJob
     }
 
 
-    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, bool isGrounded)
+    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, bool isGrounded, out bool hasCollision, out int2 collisionNormal)
     {
-        //float maxDeltaSq = math.distancesq(physicData.position, desiredPosition);
+        hasCollision = false;
         int2 desiredGridPosition = (int2)(desiredPosition);
 
-        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, isGrounded, out int2 collisionNormal);
+        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, isGrounded, out collisionNormal);
         if (math.all(desiredGridPosition == finalGridPosition))
         {
+
             physicData.position = desiredPosition;
             physicData.gridPosition = finalGridPosition;
         }
@@ -80,6 +84,8 @@ public struct PhysiXVIIJob : IJob
         {
             if(!math.all(collisionNormal == 0))
             {
+                hasCollision = true;
+
                 //Since values can only be -1, 0 and 1, its easy to normalize fast
                 float2 normal = collisionNormal;
                 if(math.abs(normal.x) + math.abs(normal.y) == 2)
@@ -173,13 +179,13 @@ public struct PhysiXVIIJob : IJob
         if (collisionDirection.x != 0)
         {
             int2 boundPos = position + new int2(collisionDirection.x, 0);
-            Bound horizontalBound = (collisionDirection.x == 1) ? physicBound.GetRightCollisionBound(boundPos) : physicBound.GetLeftCollisionBound(boundPos);
+            Bound horizontalBound = (collisionDirection.x == 1) ? physicBound.GetLeftCollisionBound(boundPos) : physicBound.GetRightCollisionBound(boundPos);
             CalculateObjectParticleCollisionBound(ref physicData, horizontalBound, out horizontalAbsorbtion);
         }
         if (collisionDirection.y != 0)
         {
             int2 boundPos = position + new int2(0, collisionDirection.y);
-            Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetTopCollisionBound(boundPos) : physicBound.GetBottomCollisionBound(boundPos);
+            Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetBottomCollisionBound(boundPos) : physicBound.GetTopCollisionBound(boundPos);
             CalculateObjectParticleCollisionBound(ref physicData, verticalBound, out verticalAbsorbtion);
         }
 

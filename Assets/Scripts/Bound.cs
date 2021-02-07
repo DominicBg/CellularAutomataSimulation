@@ -74,7 +74,7 @@ public struct Bound
         }
     }
 
-    public void GetPositionsIndexArrayYX(out NativeArray<int> positions, int2 mapSizes, Allocator allocator = Allocator.TempJob)
+    public void GetPositionsIndexArrayYX(out NativeArray<int> positions, int2 mapSizes, Allocator allocator = Allocator.Temp)
     {
         int size = sizes.x * sizes.y;
         positions = new NativeArray<int>(size, allocator);

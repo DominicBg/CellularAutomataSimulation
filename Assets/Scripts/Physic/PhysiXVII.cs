@@ -26,8 +26,8 @@ public static class PhysiXVII
     {
         Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
         Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
-        bool hasFeetCollision = map.HasCollision(ref feetBound, GetFlag(ParticleType.Player));
-        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, GetFlag(ParticleType.Player));
+        bool hasFeetCollision = map.HasCollision(ref feetBound, GetFlag(ParticleType.Player), Allocator.Temp);
+        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, GetFlag(ParticleType.Player), Allocator.Temp);
         bool atFloorLevel = position.y <= 0;
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
@@ -54,6 +54,51 @@ public static class PhysiXVII
         p1.velocity = outv1 * absorbtion;
         p2.velocity = outv2 * absorbtion;
     }
+
+    [BurstCompile]
+    public static void MoveUpFromPile(ref PhysicData physicData, Map map, in PhysiXVIISetings settings)
+    {
+        int2 position = physicData.gridPosition;
+        int2 pushUp = new int2(0, 1);
+        Bound bound = physicData.physicBound.GetTopCollisionBound(position + pushUp);
+        var boundPos = bound.GetPositionsGrid();
+        
+        bool isBlocked = false;
+        bool canSwap = false;
+        for (int i = 0; i < boundPos.Length; i++)
+        {
+            //Need at least one non-None particle
+            if (!canSwap && map.CanPush(boundPos[i], settings) && !map.IsFreePosition(boundPos[i]))
+            {
+                canSwap = true;
+            }
+            
+            if (!map.IsFreePosition(boundPos[i]) && !map.CanPush(boundPos[i], settings))
+            {
+                isBlocked = true;
+                break;
+            }
+        }
+
+        if (!isBlocked && canSwap)
+        {
+            //Set particles at feet position, move up the character
+            int yPos = physicData.physicBound.GetBottomCollisionBound(position).min.y;
+            for (int i = 0; i < boundPos.Length; i++)
+            {
+                int2 oldPos = boundPos[i];
+                int2 newPos = new int2(boundPos[i].x, yPos);
+                ParticleType type = map.GetParticleType(oldPos);
+                map.SetParticleType(newPos, type);
+            }
+            //SetPosition(position + pushUp);
+            physicData.position = position + pushUp;
+            physicData.gridPosition = position + pushUp;
+        }
+       
+        boundPos.Dispose();
+    }
+
 
     public static int GetFlag(ParticleType particleType)
     {

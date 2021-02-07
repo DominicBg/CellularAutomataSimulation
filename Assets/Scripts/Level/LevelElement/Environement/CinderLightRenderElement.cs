@@ -10,6 +10,7 @@ public class CinderLightRenderElement : LevelElement, ILightMultiSource
     public LightSourceScriptable lightSource;
     public int fadeOffTick = 120;
     public int quantizationSize = 3;
+    Dictionary<int2, float> positionIntensity = new Dictionary<int2, float>();
 
     public void GetLightSource(NativeList<LightSource> list, int tick)
     {
@@ -24,7 +25,7 @@ public class CinderLightRenderElement : LevelElement, ILightMultiSource
             updateBound = scene.updateBound
         }.Run();
 
-        Dictionary<int2, float> positionIntensity = new Dictionary<int2, float>();
+        positionIntensity.Clear();
 
         for (int i = 0; i < cinderPositions.Length; i++)
         {
@@ -38,9 +39,6 @@ public class CinderLightRenderElement : LevelElement, ILightMultiSource
             {
                 positionIntensity.Add(quantizedPosition, intensity);
             }
-            //LightSource source = lightSource.GetLightSource(cinderPositions[i], tick);
-            //source.intensity *= 1 - math.saturate((float)tickIdle[i] / fadeOffTick);
-            //list.Add(source);
         }
 
         foreach(int2 quantizedPos in positionIntensity.Keys)

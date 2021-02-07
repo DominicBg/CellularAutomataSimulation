@@ -8,6 +8,9 @@ using UnityEngine;
 
 public abstract class PhysicObject : LevelObject
 {
+    [Header("Debug")]
+    public PhysicBound.BoundFlag debugBoundFlag;
+    [Header("PhysicData")]
     public PhysicData physicData;
 
     protected void InitPhysicData(int2 sizes, float mass = 10)
@@ -35,36 +38,66 @@ public abstract class PhysicObject : LevelObject
         return PhysiXVII.IsGrounded(in physicData, map, position);
     }
 
-    [Header("Debug")]
-    public PhysicBound.BoundFlag debugBoundFlag;
-    protected void DebugAllPhysicBound(ref NativeArray<Color32> outputColor)
+    public void SetPosition(int2 position)
     {
-        if ((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetCollisionBound(position), Color.magenta);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetBottomCollisionBound(position), Color.yellow);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetLeftCollisionBound(position), Color.red);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Right) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetRightCollisionBound(position), Color.blue);
-
-        if ((debugBoundFlag & PhysicBound.BoundFlag.Top) > 0)
-            DebugPhysicBound(ref outputColor, physicData.physicBound.GetTopCollisionBound(position), Color.cyan);
+        this.position = position;
+        this.physicData.position = position;
+        this.physicData.gridPosition = position;
     }
 
-    protected void DebugPhysicBound(ref NativeArray<Color32> outputColor, Bound bound, Color color)
+    /// <summary>
+    /// If the physic object is submerged, this will make it move upward without destroying particles
+    /// </summary>
+    //protected void MoveUpFromPile()
+    //{
+    //    int2 pushUp = new int2(0, 1);
+    //    Bound bound = physicData.physicBound.GetTopCollisionBound(position + pushUp);
+    //    using (var boundPos = bound.GetPositionsGrid(Allocator.Temp))
+    //    {
+    //        bool isBlocked = false;
+    //        for (int i = 0; i < boundPos.Length; i++)
+    //        {
+    //            if(!map.IsFreePosition(boundPos[i]) && !map.CanPush(boundPos[i], GameManager.PhysiXVIISetings))
+    //            {
+    //                isBlocked = true;
+    //                break;
+    //            }
+    //        }
+
+    //        if (!isBlocked)
+    //        {
+    //            //Set particles at feet position, move up the character
+    //            int yPos = physicData.physicBound.GetBottomCollisionBound(position).min.y;
+    //            map.RemoveSpriteAtPosition(position, ref physicData.physicBound);
+    //            for (int i = 0; i < boundPos.Length; i++)
+    //            {
+    //                int2 oldPos = boundPos[i];
+    //                int2 newPos = new int2(boundPos[i].x, yPos);
+    //                ParticleType type = map.GetParticleType(oldPos);
+    //                map.SetParticleType(newPos, type);
+    //            }
+    //            SetPosition(position + pushUp);
+    //            map.SetSpriteAtPosition(position, ref physicData.physicBound);
+    //        }
+    //    }
+    //}
+
+
+    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.TempJob);
-        NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
-        for (int i = 0; i < positions.Length; i++)
-        {
-            colors[i] = color;
-        }
-        GridRenderer.ApplyPixels(ref outputColor, ref positions, ref colors);
-        positions.Dispose();
-        colors.Dispose();
+        if ((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)
+            GridRenderer.DrawBound(ref outputColors, physicData.physicBound.GetCollisionBound(position), scene.CameraPosition, Color.magenta * 0.5f);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Feet) > 0)
+            GridRenderer.DrawBound(ref outputColors, physicData.physicBound.GetBottomCollisionBound(position), scene.CameraPosition, Color.yellow * 0.5f);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Left) > 0)
+            GridRenderer.DrawBound(ref outputColors, physicData.physicBound.GetLeftCollisionBound(position), scene.CameraPosition, Color.red * 0.5f);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Right) > 0)
+            GridRenderer.DrawBound(ref outputColors, physicData.physicBound.GetRightCollisionBound(position), scene.CameraPosition, Color.blue * 0.5f);
+
+        if ((debugBoundFlag & PhysicBound.BoundFlag.Top) > 0)
+            GridRenderer.DrawBound(ref outputColors, physicData.physicBound.GetTopCollisionBound(position), scene.CameraPosition, Color.cyan * 0.5f);
     }
 }

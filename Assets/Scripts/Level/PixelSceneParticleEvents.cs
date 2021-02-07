@@ -9,6 +9,8 @@ public class PixelSceneParticleEvents : LevelElement, IAlwaysRenderable
 {
     [SerializeField] ParticleEffectSystemScriptable combustionSettings = default;
     ParticleEffectSystem combustionParticleSystem;
+    public int combustionParticleCount = 5;
+    public int comubstionRandomRange = 5;
 
     public ParticleEvents particleEvents;
 
@@ -24,11 +26,17 @@ public class PixelSceneParticleEvents : LevelElement, IAlwaysRenderable
         particleEvents.Dispose();
     }
 
+
     public void UpdateParticleEvents(ref TickBlock tickBlock)
     {
+        Unity.Mathematics.Random rng = new Unity.Mathematics.Random(tickBlock.tickSeed);
         for (int i = 0; i < particleEvents.combustionEvents.Length; i++)
         {
-            combustionParticleSystem.EmitParticleAtPosition(particleEvents.combustionEvents[i], ref tickBlock);
+            int2 position = particleEvents.combustionEvents[i];
+            for (int j = 0; j < combustionParticleCount; j++)
+            {
+                combustionParticleSystem.EmitParticleAtPosition(position + rng.NextInt2(0, comubstionRandomRange+1), ref tickBlock);
+            }
         }
         combustionParticleSystem.Update(ref tickBlock);
     }

@@ -9,10 +9,10 @@ public struct Particle
     public float2 velocity;
     public int tickIdle;
     public float2 fracPosition;
-
+    public bool isStatis;
     public bool InFreeFall()
     {
-        return math.any(math.abs(velocity) > 0.5f);
+        return !isStatis && math.any(math.abs(velocity) > 0.5f);
     }
 }
 

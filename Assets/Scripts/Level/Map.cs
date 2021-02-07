@@ -67,23 +67,6 @@ public unsafe struct Map
         if (setDirty)
             dirtyGrid[pos] = true;
     }
-    //public void MoveParticle(int2 from, int2 to)
-    //{
-    //    MoveParticle(from, to, 0.5f);
-    //}
-
-    //public void MoveParticle(int2 from, int2 to, float2 fracPos)
-    //{
-    //    if (math.all(from == to))
-    //        return;
-
-    //    Particle temp = particleGrid[from];
-    //    temp.tickIdle = 0;
-    //    temp.fracPosition = fracPos;
-    //    particleGrid[from] = new Particle() { type = ParticleType.None, velocity = 0, tickIdle = 0, fracPosition = 0.5f };
-    //    particleGrid[to] = temp;
-    //    dirtyGrid[to] = true;
-    //}
 
     public void MoveParticle(Particle particle, int2 from, int2 to)
     {
