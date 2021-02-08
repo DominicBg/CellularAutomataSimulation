@@ -44,34 +44,21 @@ public class Jetpack : EquipableElement
         }
     }
 
-    protected override void OnEquip()
-    {
-    }
-
-    protected override void OnUnequip()
-    {
-    }
-
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
-    {
-        if (isEquiped)
-        {
-            int2 offset = settings.equipedOffset;
+    {    
+        int2 offset = settings.equipedOffset;
 
-            if (player.lookLeft)
-                offset.x = -offset.x;
+        if (player.lookLeft)
+            offset.x = -offset.x;
 
-            offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
-            //based on player render pos
-            spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset, false);
-        }
-        else
-            spriteAnimator.Render(ref outputcolor, renderPos, false);
+        offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
+        //based on player render pos
+        spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset, false);   
     }
 
     public override void RenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
     {
-        if(isEquiped && currentFuel != settings.fuelCapacity)
+        if(currentFuel != settings.fuelCapacity)
         {
             //dont hardcode player height
 

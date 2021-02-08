@@ -138,8 +138,8 @@ public class Shovel : EquipableElement
         int2 animOffset = playAnim ? settings.animOffset :0;
         //int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
         bool2 flipped;
-        flipped.x = isEquiped ? player.lookLeft : false;
-        flipped.y = isEquiped && playAnim;
+        flipped.x =player.lookLeft;
+        flipped.y = playAnim;
         spriteAnimator.Render(ref outputcolor, renderPos + animOffset, flipped);
     }
 
@@ -153,13 +153,6 @@ public class Shovel : EquipableElement
         }
     }
 
-    protected override void OnEquip()
-    {
-    }
-
-    protected override void OnUnequip()
-    {
-    }
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {

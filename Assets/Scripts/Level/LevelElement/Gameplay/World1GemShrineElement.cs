@@ -23,8 +23,8 @@ public class World1GemShrineElement : SpriteSheetObject
     {
         //show gems
         //when taken...
-        player.EquipQ(timeGem);
-        timeGem.isEquiped = true;
+       // player.EquipQ(timeGem);
+       // timeGem.isEquiped = true;
         isEnable = false;
         Debug.Log("equip gem");
         PlayAnimation(1);

@@ -31,15 +31,4 @@ public class ParticleGun : GunBaseElement
         //outputcolor[ArrayHelper.PosToIndex(pos1, GameManager.GridSizes)] =
         //    ParticleRenderUtil.GetColorForType(pos1, type, ref particleRendering, ref tickBlock, ref map, levelContainer.lightSources);
     }
-
-    protected override void OnEquip()
-    {
-        Debug.Log("PARTICLE GUN EQUIPED");
-    }
-
-    protected override void OnUnequip()
-    {
-        Debug.Log("PARTICLE GUN UNEQUIPED");
-
-    }
 }

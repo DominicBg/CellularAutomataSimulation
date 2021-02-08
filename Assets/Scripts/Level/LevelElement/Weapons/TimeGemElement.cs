@@ -27,14 +27,6 @@ public class TimeGemElement : EquipableElement
         }
     }
 
-    protected override void OnEquip()
-    {
-    }
-
-    protected override void OnUnequip()
-    {
-    }
-
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
     {
         timeStopped = !timeStopped;
@@ -63,9 +55,6 @@ public class TimeGemElement : EquipableElement
 
     public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        if (!isEquiped)
-            return;
-
         int2 center = player.GetBound().center;
         NativeArray<float> alphas = new NativeArray<float>(outputColors.Length, Allocator.TempJob);
 
@@ -100,8 +89,6 @@ public class TimeGemElement : EquipableElement
 
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPosition)
     {
-        if (!isEquiped)
-            return;
         int2 center = player.GetBound().center;
 
         if (timeStopped)
@@ -142,11 +129,9 @@ public class TimeGemElement : EquipableElement
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             position = player.position;
-            player.EquipQ(this);
-            isEquiped = true;
+          
         }
     }
-
    
     [BurstCompile]
     public struct BackgroundMaskJob : IJobParallelFor

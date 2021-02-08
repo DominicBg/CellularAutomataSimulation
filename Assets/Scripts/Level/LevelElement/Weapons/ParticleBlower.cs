@@ -27,14 +27,6 @@ public class ParticleBlower : EquipableElement
 
     }
 
-    protected override void OnEquip()
-    {
-    }
-
-    protected override void OnUnequip()
-    {
-    }
-
     public override void OnUpdate(ref TickBlock tickBlock)
     {
         currentState = State.Idle;

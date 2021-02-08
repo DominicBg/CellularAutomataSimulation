@@ -37,8 +37,8 @@ MonoBehaviour:
   suckVelocity: 1000
   suckY: 5
   vortexVelocity: 700
-  blowVelocity: 150
-  maxParticlePerFrame: 5
+  blowVelocity: 100
+  maxParticlePerFrame: 10
   fadeIn: 2
   fadeOut: 2
   cameraOffset: 0

@@ -37,12 +37,12 @@ public class EscapeInShuttleRule : LevelRule
         playerElement.isEnable = false;
         playerElement.isVisible = false;
         
-        //hack
-        if(playerElement.currentEquipMouse != null)
-            playerElement.currentEquipMouse.isVisible = false;
+        ////hack
+        //if(playerElement.currentEquipMouse != null)
+        //    playerElement.currentEquipMouse.isVisible = false;
 
-        if (playerElement.currentEquipQ != null)
-            playerElement.currentEquipQ.isVisible = false;
+        //if (playerElement.currentEquipQ != null)
+        //    playerElement.currentEquipQ.isVisible = false;
     }
 
 

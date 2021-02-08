@@ -8,9 +8,9 @@ public abstract class EquipableElement : LevelObject
 {
     public EquipableBaseScriptable baseSettings;
 
-    public bool isEquiped = false;
-    protected bool isLateUnequip;
-    protected int2 unequipPosition;
+    //public bool isEquiped = false;
+    //protected bool isLateUnequip;
+    //protected int2 unequipPosition;
     protected SpriteAnimator spriteAnimator;
 
     protected int cooldown;
@@ -29,57 +29,56 @@ public abstract class EquipableElement : LevelObject
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if (!isEquiped && GetBound().IntersectWith(player.GetBound()) && InputCommand.IsButtonDown(KeyCode.E))
-        {
-            isEquiped = true;
-            //isVisible = false;
-            player.EquipMouse(this);
-            OnEquip();
-        }
+        //if (!isEquiped && GetBound().IntersectWith(player.GetBound()) && InputCommand.IsButtonDown(KeyCode.E))
+        //{
+        //    isEquiped = true;
+        //    //isVisible = false;
+        //    player.EquipMouse(this);
+        //    OnEquip();
+        //}
 
-        //This caused a bug where you could equip and unequip in the same frame lol
-        //need an anim or something
-        if (isLateUnequip)
-        {
-            isLateUnequip = false;
-            isEquiped = false;
-            //isVisible = true;
-            position = unequipPosition;
-        }
+        ////This caused a bug where you could equip and unequip in the same frame lol
+        ////need an anim or something
+        //if (isLateUnequip)
+        //{
+        //    isLateUnequip = false;
+        //    isEquiped = false;
+        //    //isVisible = true;
+        //    position = unequipPosition;
+        //}
 
-        if(isEquiped)
-        {
-            isUsedThisFrame = false;
+        //if(isEquiped)
+        //{
+        isUsedThisFrame = false;
 
-            if (useRequest.requestUse)
-            {
-                InternalUse(ref tickBlock);
-            }
-            else
-            {
-                unUsedForTicks++;
-            }
-            position = GetEquipOffset(baseSettings.equipedOffset);
-            OnEquipableUpdate(ref tickBlock);
-            cooldown = math.max(cooldown - 1, 0);
+        if (useRequest.requestUse)
+        {
+            InternalUse(ref tickBlock);
         }
+        else
+        {
+            unUsedForTicks++;
+        }
+        position = GetEquipOffset(baseSettings.equipedOffset);
+        OnEquipableUpdate(ref tickBlock);
+        cooldown = math.max(cooldown - 1, 0);
+       // }
     }
 
     public abstract void OnEquipableUpdate(ref TickBlock tickBlock);
 
-    public void Unequip(int2 unequipPosition)
-    {
-        isLateUnequip = true;
-        this.unequipPosition = unequipPosition;
-    }
+    //public void Unequip(int2 unequipPosition)
+    //{
+    //    isLateUnequip = true;
+    //    this.unequipPosition = unequipPosition;
+    //}
 
-    public void Use(int2 pos, bool useAltButton)
+    public void Use(bool useAltButton)
     {
         useRequest = new UseRequest()
         {
             requestUse = true,
             useAltButton = useAltButton,
-            requestUsePosition = pos
         };
     }
 
@@ -97,16 +96,28 @@ public abstract class EquipableElement : LevelObject
     }
     protected abstract void OnUse(int2 position, bool altButton, ref TickBlock tickBlock);
 
-    protected abstract void OnEquip();
-    protected abstract void OnUnequip();
+    protected virtual void OnEquip() { }
+    protected virtual void OnUnequip() { }
+    public void Equip()
+    {
+        isVisible = true;
+        isEnable = true;
+        OnEquip();
+    }
+    public void Unequip()
+    {
+        isVisible = false;
+        isEnable = false;
+        OnUnequip();
+    }
 
 
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
     {
         //offset might need to be based on renderPos
         //int2 finalPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
-        bool isFlipped = isEquiped ? player.lookLeft : false;
-        spriteAnimator.Render(ref outputcolor, renderPos, isFlipped);
+        //bool isFlipped = player.lookLeft;
+        spriteAnimator.Render(ref outputcolor, renderPos, player.lookLeft);
     }
 
     public override Bound GetBound()

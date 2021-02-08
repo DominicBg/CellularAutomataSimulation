@@ -118,8 +118,8 @@ public class WorldLevel : MonoBehaviour
             //PlayerElement player = GetComponentInChildren<PlayerElement>();
 
             pixelScene.player.SetPosition(transitionInfo.entrance.position);
-            pixelScene.player.currentEquipMouse?.OnUpdate(ref tickBlock);
-            pixelScene.player.currentEquipQ?.OnUpdate(ref tickBlock);
+            //pixelScene.player.currentEquipMouse?.OnUpdate(ref tickBlock);
+            //pixelScene.player.currentEquipQ?.OnUpdate(ref tickBlock);
         }
 
         if (transitionInfo.transitionRatio >= 1)

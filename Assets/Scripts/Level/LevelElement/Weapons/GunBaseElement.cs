@@ -35,9 +35,8 @@ public abstract class GunBaseElement : EquipableElement
         //might need to add offset
       //  int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
         int2 kickOffset = GetKickOffset();
-        bool isFlipped = isEquiped ? player.lookLeft : false;
 
-        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset, isFlipped);
+        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset, player.lookLeft);
     }
 
     protected int2 GetKickOffset()

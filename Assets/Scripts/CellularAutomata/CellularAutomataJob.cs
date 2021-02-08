@@ -62,6 +62,14 @@ public struct CellularAutomataJob : IJob
             return;
 
         Particle particle = map.GetParticle(pos);
+
+        if(particle.tickStatis > 0)
+        {
+            particle.tickStatis--;
+            map.SetParticle(pos, particle);
+            return;
+        }
+
         switch (particle.type)
         {
             case ParticleType.None:
