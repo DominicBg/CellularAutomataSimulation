@@ -177,7 +177,13 @@ public class PixelCamera
 
     public int2 GetRenderPosition(int2 position)
     {
-        return position + GetRenderingOffset();
+        //return position + GetRenderingOffset();
+        return GetRenderPosition(this.position, viewPort, position);
+    }
+
+    public int2 GetGlobalPosition(int2 renderPosition)
+    {
+        return GetGlobalPosition(this.position, viewPort, renderPosition);
     }
 
     int2 GetRenderingOffset()
@@ -203,11 +209,23 @@ public class PixelCamera
 
         public int2 GetRenderPosition(int2 position)
         {
-            return position - (cameraPosition - viewPort / 2);
+            //return position - (cameraPosition - viewPort / 2);
+            return PixelCamera.GetRenderPosition(cameraPosition, viewPort, position);
         }
         public int2 GetGlobalPosition(int2 renderPos)
         {
-            return renderPos + (cameraPosition - viewPort / 2);
+            //return renderPos + (cameraPosition - viewPort / 2);
+            return PixelCamera.GetGlobalPosition(cameraPosition, viewPort, renderPos);
         }
     }
+
+    public static int2 GetRenderPosition(int2 cameraPosition, int2 viewPort, int2 position)
+    {
+        return position - (cameraPosition - viewPort / 2);
+    }
+    public static int2 GetGlobalPosition(int2 cameraPosition, int2 viewPort, int2 renderPos)
+    {
+        return renderPos + (cameraPosition - viewPort / 2);
+    }
+
 }

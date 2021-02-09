@@ -159,8 +159,12 @@ public struct PhysiXVIIJob : IJob
             int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
             if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
             {
+
+                //TEST SLIDING COLLISION
                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
+                //if(math.all(math.abs(collisionNormal) == 1))
                 return safePosition;
+      
             }
             safePosition = currentPos;
         }

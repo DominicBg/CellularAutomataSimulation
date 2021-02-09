@@ -8,16 +8,17 @@ using UnityEngine;
 
 public class StatisGun : GunBaseElement
 {
-    public float boxRotation = 15;
-    public int2 boundSizes = new int2(25, 10);
+    //public float boxRotation = 15;
+    public int2 boundSizes = new int2(100, 50);
     public float statisDuration = 3;
     public int2 offset;
     RotationBound lastRotationBound;
+    RotationBound.Anchor anchor = RotationBound.Anchor.CenterRight;
 
     protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
     {
         int statisTick = (int)statisDuration * GameManager.FPS;
-        lastRotationBound = GetRotationBound();
+        lastRotationBound = GetRotationBound(aimDirection);
         new StatisParticles()
         {
             cameraHandle = pixelCamera.GetHandle(),
@@ -36,21 +37,15 @@ public class StatisGun : GunBaseElement
             GridRenderer.DrawRotationBound(ref outputColors, lastRotationBound, pixelCamera, Color.yellow * ratio * 0.5f);
     }
 
-    RotationBound GetRotationBound()
+    RotationBound GetRotationBound(float2 aimDirection)
     {
-        return new RotationBound(Bound.CenterAligned(GetWorldPositionOffset(offset), boundSizes), player.lookLeft ? -boxRotation : boxRotation);
+        float rotation = MathUtils.DirectionToAngle(aimDirection);
+        //Debug.Log(aimDirection + " " + rotation);
+        //float boxDirectionRotation = player.lookLeft ? -rotation : rotation;
+        //RotationBound.Anchor anchor = player.lookLeft ? RotationBound.Anchor.CenterLeft : RotationBound.Anchor.CenterRight;
+        return new RotationBound(Bound.CenterAligned(GetWorldPositionOffset(offset), boundSizes), rotation, anchor);
     }
 
-    //public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
-    //{
-    //    new RenderRotationBound()
-    //    {
-    //        cameraHandle = pixelCamera.GetHandle(),
-    //        color = Color.yellow * .5f,
-    //        outputColors = outputColors,
-    //        rotationBound = new RotationBound(Bound.CenterAligned(position, boundSizes), boxRotation)
-    //    }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-    //}
 
     [BurstCompile]
     public struct StatisParticles : IJobParallelFor

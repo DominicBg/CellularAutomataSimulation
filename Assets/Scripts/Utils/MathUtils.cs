@@ -81,5 +81,11 @@ public static class MathUtils
     {
         return math.lerp(from2, to2, math.saturate(math.unlerp(from1, to1, x)));
     }
+
+    public static float DirectionToAngle(float2 direction)
+    {
+        direction = math.normalize(direction);
+        return math.degrees(math.atan2(direction.y, direction.x));
+    }
 }
 

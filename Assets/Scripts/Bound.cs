@@ -16,6 +16,12 @@ public struct Bound
     public int2 bottomRight => new int2(position.x + sizes.x - 1, position.y);
     public int2 center => new int2(position.x + sizes.x / 2, position.y + sizes.y / 2);
 
+    public int2 centerLeft => (int2)math.lerp(bottomLeft, topLeft, 0.5f);
+    public int2 centerRight => (int2)math.lerp(bottomRight, topRight, 0.5f);
+    public int2 topCenter => (int2)math.lerp(topLeft, topRight, 0.5f);
+    public int2 bottomCenter => (int2)math.lerp(bottomLeft, bottomRight, 0.5f);
+
+
 
     public Bound(int2 bottomLeft, int2 sizes)
     {
