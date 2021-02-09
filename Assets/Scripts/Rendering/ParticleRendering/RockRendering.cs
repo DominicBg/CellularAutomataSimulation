@@ -27,9 +27,9 @@ public struct RockRendering: IParticleRenderer
         return GetColor(position, lightSources, 0);
     }
 
-    public Color32 GetColor(int2 position, NativeArray<LightSource> lightSources, int2 lightoffset)
+    public Color32 GetColor(float2 position, NativeArray<LightSource> lightSources, int2 lightoffset)
     {
-        float2 positionScaled = (float2)position * noiseScale;
+        float2 positionScaled = position * noiseScale;
      
         float heightAtPosition = GetHeightAtPosition(positionScaled);
 
@@ -45,23 +45,13 @@ public struct RockRendering: IParticleRenderer
         if (showNormal)
             return new Color(normal.x, normal.y, normal.z, 1);
 
+
         float intensity = lightSources.CalculateLight(position + lightoffset, normal);
-        //for (int i = 0; i < lightSources.Length; i++)
-        //{
-        //    float currentIntensity = lightSources[i].GetLightIntensity(position + lightoffset, normal);
-
-        //    if (highestIntensityOnly)
-        //        intensity = math.max(intensity, currentIntensity);
-        //    else
-        //        intensity += currentIntensity;
-        //}
-
-        //intensity = math.saturate(intensity);
 
         if (showIntensity)
             return new Color(intensity, intensity, intensity, 1);
 
-        return color4Dither.GetColorWitLightValue(intensity, position);
+        return color4Dither.GetColorWitLightValue(intensity, (int2)position);
     }
 
     float GetHeightAtPosition(float2 position)

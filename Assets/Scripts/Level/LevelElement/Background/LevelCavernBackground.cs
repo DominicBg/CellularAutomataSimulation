@@ -13,9 +13,6 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
     public NoiseCutoff noiseCutoff;
     public NoiseXVII.Noise[] noises;
 
-
-
-
     [System.Serializable]
 
     public struct NoiseCutoff
@@ -23,7 +20,6 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
         public bool useNoise;
         public float noiseThreshold;
     }
-
 
     public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
     {
@@ -64,8 +60,9 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
         {
             int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
             int2 parallaxOffset = (int2)((float2)cameraPos * parallax);
-            int2 position = gridPosition - GameManager.GridSizes/2 + parallaxOffset;
-            if(noiseCutoff.useNoise)
+            float2 position = gridPosition - GameManager.GridSizes/2 + parallaxOffset;
+
+            if (noiseCutoff.useNoise)
             {
                 float value = 0;
                 for (int i = 0; i < nativeNoises.Length; i++)
@@ -76,7 +73,6 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
                 if (value < noiseCutoff.noiseThreshold)
                     return;
             }
-
 
             Color rockColor = rockRendering.GetColor(position, lights, cameraPos - parallaxOffset);
             outputColors[index] = rockColor * tone;

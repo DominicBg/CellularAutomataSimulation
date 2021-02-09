@@ -12,6 +12,8 @@ public abstract class GunBaseElement : EquipableElement
 
     int cooldownShoot = 0;
 
+    protected int tickShoot;
+
     protected abstract void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map);
 
     protected override void OnUse(int2 position, bool _, ref TickBlock tickBlock)
@@ -21,6 +23,7 @@ public abstract class GunBaseElement : EquipableElement
 
         float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
         OnShoot(startPosition, aimDirection, map);
+        tickShoot = tickBlock.tick;
     }
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)

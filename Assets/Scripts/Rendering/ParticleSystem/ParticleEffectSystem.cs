@@ -84,7 +84,8 @@ public class ParticleEffectSystem
             cameraHandle = pixelCamera.GetHandle(),
             outputColors = outputColor,
             particles = particles,
-            settings = settings.settings
+            settings = settings.settings,
+            bound = bound          
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 

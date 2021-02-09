@@ -120,6 +120,18 @@ public class GridRenderer : MonoBehaviour
         colors.Dispose();
     }
 
+    public static void DrawRotationBound(ref NativeArray<Color32> outputColors, RotationBound bound, PixelCamera pixelCamera, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    {
+        new RenderRotationBound()
+        {
+            cameraHandle = pixelCamera.GetHandle(),
+            color = color,
+            outputColors = outputColors,
+            rotationBound = bound,
+            blending = blending
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    }
+
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {
         new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, blending).Run();

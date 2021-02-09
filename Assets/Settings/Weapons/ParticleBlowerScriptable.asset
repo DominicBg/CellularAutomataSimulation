@@ -44,7 +44,7 @@ MonoBehaviour:
   cameraOffset: 0
   fadeInCurve: 23
   fadeOutCurve: 12
-  shakeIntensity: 5
+  shakeIntensity: 2
   shakeFrequency: 0.3
   effects:
     sample: 5

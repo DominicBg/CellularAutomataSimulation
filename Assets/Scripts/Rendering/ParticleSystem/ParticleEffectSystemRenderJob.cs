@@ -11,10 +11,16 @@ public struct ParticleEffectSystemRenderJob : IJobParallelFor
     [ReadOnly] public NativeList<ParticleEffectSystem.Particle> particles;
     public ParticleEffectSystemSettings settings;
     public PixelCamera.PixelCameraHandle cameraHandle;
+    public Bound bound;
 
     public void Execute(int index)
     {
         int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pixelGlobalPosition = cameraHandle.GetGlobalPosition(position);
+
+        if (!bound.PointInBound(pixelGlobalPosition))
+            return;
+
         Color color = Color.clear;
         for (int i = 0; i < particles.Length; i++)
         {
@@ -24,7 +30,6 @@ public struct ParticleEffectSystemRenderJob : IJobParallelFor
             float distSq = math.distancesq(position, renderPos);
             if(distSq < particle.radius)
             {
-                //add fadeoff?
                 color = RenderingUtils.Blend(color, particle.color, settings.colors.blendingMode);
             }
         }

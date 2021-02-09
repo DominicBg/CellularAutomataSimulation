@@ -205,5 +205,9 @@ public class PixelCamera
         {
             return position - (cameraPosition - viewPort / 2);
         }
+        public int2 GetGlobalPosition(int2 renderPos)
+        {
+            return renderPos + (cameraPosition - viewPort / 2);
+        }
     }
 }
