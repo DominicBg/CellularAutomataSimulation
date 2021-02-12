@@ -19,13 +19,33 @@ public struct RotationBound
         this.anchor = anchor;
     }
 
-    public bool PointInBound(int2 pos)
+    public bool PointInBound(int2 point)
+    {
+        //int2 anchorPos = AnchorPosition();
+        //int2 diffMid = anchorPos - bound.center;
+        //int2 localPos = (int2)MathUtils.Rotate(anchorPos - diffMid - pos, -math.radians(angle));
+        //return bound.PointInBound(anchorPos + localPos);
+        return bound.PointInBound(InverseTransformPoint(TransformPoint(point)));
+    }
+
+    public float2 GetUV(int2 point)
+    {
+        int2 localPoint = TransformPoint(point);
+        return bound.GetUV(InverseTransformPoint(localPoint));
+    }
+
+    private int2 TransformPoint(int2 point)
     {
         int2 anchorPos = AnchorPosition();
         int2 diffMid = anchorPos - bound.center;
-        int2 localPos = (int2)MathUtils.Rotate(anchorPos - diffMid - pos, -math.radians(angle));
-        return bound.PointInBound(anchorPos + localPos);
+        return (int2)MathUtils.Rotate(anchorPos - diffMid - point, -math.radians(angle));
     }
+
+    private int2 InverseTransformPoint(int2 localPoint)
+    {
+        return AnchorPosition() + localPoint;
+    }
+
 
     int2 AnchorPosition()
     {

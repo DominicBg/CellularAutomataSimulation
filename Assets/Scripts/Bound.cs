@@ -11,7 +11,7 @@ public struct Bound
     public int2 max => position + (sizes - 1);
 
     public int2 topLeft => new int2(position.x, position.y + sizes.y - 1);
-    public int2 topRight => new int2(position.x + sizes.x, position.y + sizes.y - 1);
+    public int2 topRight => new int2(position.x + sizes.x - 1, position.y + sizes.y - 1);
     public int2 bottomLeft => position;
     public int2 bottomRight => new int2(position.x + sizes.x - 1, position.y);
     public int2 center => new int2(position.x + sizes.x / 2, position.y + sizes.y / 2);
@@ -102,6 +102,12 @@ public struct Bound
     {
         return !(point.x < min.x || point.x > max.x || point.y < min.y || point.y > max.y);
     }
+
+    public float2 GetUV(int2 point)
+    {
+        return math.unlerp(min, max, point);
+    }
+
     public int2 ProjectPointOnbound(int2 point)
     {
         return math.clamp(point, min, max);

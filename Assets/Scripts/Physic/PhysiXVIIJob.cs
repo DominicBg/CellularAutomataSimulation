@@ -26,9 +26,16 @@ public struct PhysiXVIIJob : IJob
     public void Execute()
     {
         PhysicData physicData = physicDataReference.Value;
+        bool wasGrounded = physicData.isGrounded;
+        physicData.isGrounded = PhysiXVII.IsGrounded(in physicData, map, physicData.gridPosition);
 
-        bool isGrounded = PhysiXVII.IsGrounded(in physicData, map, physicData.gridPosition);
-        if (isGrounded && !(physicData.velocity.y > 0))
+        if(!wasGrounded && physicData.isGrounded)
+        {
+            //Apply ground shock
+            CalculateObjectParticleCollision(ref physicData, new float2(0, 1), new int2(0, 1), false);
+        }
+
+        if (wasGrounded && !(physicData.velocity.y > 0))
         {
             physicData.velocity.y = 0; //set parallel of gravity
             //physicData.velocity *= settings.friction;
@@ -50,10 +57,10 @@ public struct PhysiXVIIJob : IJob
         }
         else
         {
-            int inclination = GetTerrainInclination(ref physicData, nextGridPosition, isGrounded);
+            int inclination = GetTerrainInclination(ref physicData, nextGridPosition);
             float inclinationSlowDown = inclination == 0 ? 1 : settings.slopeSlow;
             nextPosition = currentPosition + physicData.velocity * deltaTime * inclinationSlowDown;
-            HandlePhysics(ref physicData, nextPosition, isGrounded, out bool hasCollision, out int2 collisionNormal);
+            HandlePhysics(ref physicData, nextPosition, out bool hasCollision, out int2 collisionNormal);
 
             if(hasCollision && collisionNormal.x != 0)
             {
@@ -68,12 +75,12 @@ public struct PhysiXVIIJob : IJob
     }
 
 
-    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, bool isGrounded, out bool hasCollision, out int2 collisionNormal)
+    public void HandlePhysics(ref PhysicData physicData, float2 desiredPosition, out bool hasCollision, out int2 collisionNormal)
     {
         hasCollision = false;
         int2 desiredGridPosition = (int2)(desiredPosition);
 
-        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, isGrounded, out collisionNormal);
+        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, out collisionNormal);
         if (math.all(desiredGridPosition == finalGridPosition))
         {
 
@@ -96,7 +103,7 @@ public struct PhysiXVIIJob : IJob
                     normal *= math.SQRT2 * 0.5f;
                 }
                 
-                CalculateObjectParticleCollision(ref physicData, normal, collisionNormal);
+                CalculateObjectParticleCollision(ref physicData, normal, collisionNormal, false);
             }
 
             //Make sure you don't go faster uphill while going left
@@ -123,21 +130,21 @@ public struct PhysiXVIIJob : IJob
     }
 
     //This is slow
-    int GetTerrainInclination(ref PhysicData physicData, int2 to, bool isGrounded)
+    int GetTerrainInclination(ref PhysicData physicData, int2 to)
     {
-        int2 newPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, to, isGrounded, out _);
+        int2 newPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, to, out _);
         return to.y - newPosition.y;
     }
 
-    int2 FindFinalMovePosition(ref PhysicData physicData, int2 from, int2 to, bool isGrounded, out int2 collisionNormal)
+    int2 FindFinalMovePosition(ref PhysicData physicData, int2 from, int2 to, out int2 collisionNormal)
     {
         PhysicBound physicBound = physicData.physicBound;
-        int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, isGrounded);
+        int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, physicData.isGrounded);
         int2 diff = desiredPosition - from;
 
         //For slopes, works but is sloppy
         Bound currentPosBound = physicBound.GetCollisionBound(desiredPosition);
-        if (isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
+        if (physicData.isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
         {
             collisionNormal = 0;
             return desiredPosition;
@@ -148,32 +155,52 @@ public struct PhysiXVIIJob : IJob
         //Trace line on a grid
         int maxSteps = math.abs(diff.x) + math.abs(diff.y);
         float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
+        bool2 blockedAxis = false;
+        int2 blockedPos = 0;
+        collisionNormal = 0;
+
         for (int i = 0; i <= maxSteps; i++)
         {
             int2 currentPos = (int2)math.lerp(from, desiredPosition, i * steps);
             if (math.all(currentPos == safePosition))
                 continue;
-            
+
+            if (blockedAxis.x)
+                currentPos.x = safePosition.x;
+            if (blockedAxis.y)
+                currentPos.y = safePosition.y;
+
             currentPosBound = physicBound.GetCollisionBound(currentPos);
 
             int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
             if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
             {
-
-                //TEST SLIDING COLLISION
                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
-                //if(math.all(math.abs(collisionNormal) == 1))
-                return safePosition;
-      
+                
+                //This is to make sliding collision
+                //we limit the axis that is blocked but we still slide along the other axis
+                blockedAxis |= math.abs(collisionNormal) != 0;
+                if (blockedAxis.x)
+                {
+                    blockedPos.x = safePosition.x;
+                    currentPos.x = safePosition.x;
+                }
+                if (blockedAxis.y)
+                {
+                    blockedPos.y = safePosition.y;
+                    currentPos.y = safePosition.y;
+                }
+
+                if (math.all(blockedAxis))
+                    return safePosition;
             }
             safePosition = currentPos;
         }
 
-        collisionNormal = 0;
         return safePosition;
     }
 
-    void CalculateObjectParticleCollision(ref PhysicData physicData, float2 normal, int2 collisionDirection)
+    void CalculateObjectParticleCollision(ref PhysicData physicData, float2 normal, int2 collisionDirection, bool changeObjectVelocity = true)
     {
         ref PhysicBound physicBound = ref physicData.physicBound;
         int2 position = physicData.gridPosition;
@@ -182,13 +209,13 @@ public struct PhysiXVIIJob : IJob
         float verticalAbsorbtion = 1;
         if (collisionDirection.x != 0)
         {
-            int2 boundPos = position + new int2(collisionDirection.x, 0);
+            int2 boundPos = position - new int2(collisionDirection.x, 0);
             Bound horizontalBound = (collisionDirection.x == 1) ? physicBound.GetLeftCollisionBound(boundPos) : physicBound.GetRightCollisionBound(boundPos);
             CalculateObjectParticleCollisionBound(ref physicData, horizontalBound, out horizontalAbsorbtion);
         }
         if (collisionDirection.y != 0)
         {
-            int2 boundPos = position + new int2(0, collisionDirection.y);
+            int2 boundPos = position - new int2(0, collisionDirection.y);
             Bound verticalBound = (collisionDirection.y == 1) ? physicBound.GetBottomCollisionBound(boundPos) : physicBound.GetTopCollisionBound(boundPos);
             CalculateObjectParticleCollisionBound(ref physicData, verticalBound, out verticalAbsorbtion);
         }
@@ -196,7 +223,8 @@ public struct PhysiXVIIJob : IJob
         float absorbtion = (horizontalAbsorbtion + verticalAbsorbtion) * 0.5f;
          
         //make thing smoother?
-        physicData.velocity = math.reflect(physicData.velocity, normal) * 0.1f; // absorbtion;
+        if(changeObjectVelocity)
+            physicData.velocity = math.reflect(physicData.velocity, normal) * 0.1f; // absorbtion;
     }
 
     unsafe void CalculateObjectParticleCollisionBound(ref PhysicData physicData, Bound bound, out float absorbtion)

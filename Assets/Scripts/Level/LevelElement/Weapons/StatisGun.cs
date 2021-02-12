@@ -8,16 +8,26 @@ using UnityEngine;
 
 public class StatisGun : GunBaseElement
 {
-    //public float boxRotation = 15;
-    public int2 boundSizes = new int2(100, 50);
-    public float statisDuration = 3;
-    public int2 offset;
+    [SerializeField] StatisGunScriptable settings => (StatisGunScriptable)baseSettings;
+
     RotationBound lastRotationBound;
     RotationBound.Anchor anchor = RotationBound.Anchor.CenterRight;
 
+    NativeSprite nativeBeamTexture;
+
+    public override void OnInit()
+    {
+        base.OnInit();
+        nativeBeamTexture = new NativeSprite(settings.beamTexture);
+
+        spriteAnimator.returnToIdleAfterAnim = true;
+    }
+
     protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
     {
-        int statisTick = (int)statisDuration * GameManager.FPS;
+        spriteAnimator.SetAnimation(1);
+
+        int statisTick = (int)settings.statisDuration * GameManager.FPS;
         lastRotationBound = GetRotationBound(aimDirection);
         new StatisParticles()
         {
@@ -28,24 +38,26 @@ public class StatisGun : GunBaseElement
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
-
     public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / statisDuration;
+        float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / settings.statisDuration;
         math.saturate(ratio);
         if(ratio > 0)
-            GridRenderer.DrawRotationBound(ref outputColors, lastRotationBound, pixelCamera, Color.yellow * ratio * 0.5f);
+            GridRenderer.DrawRotationSprite(ref outputColors, lastRotationBound, pixelCamera, nativeBeamTexture, settings.tint * ratio);
+            //GridRenderer.DrawRotationBound(ref outputColors, lastRotationBound, pixelCamera, Color.yellow * ratio * 0.5f);
     }
 
     RotationBound GetRotationBound(float2 aimDirection)
     {
         float rotation = MathUtils.DirectionToAngle(aimDirection);
-        //Debug.Log(aimDirection + " " + rotation);
-        //float boxDirectionRotation = player.lookLeft ? -rotation : rotation;
-        //RotationBound.Anchor anchor = player.lookLeft ? RotationBound.Anchor.CenterLeft : RotationBound.Anchor.CenterRight;
-        return new RotationBound(Bound.CenterAligned(GetWorldPositionOffset(offset), boundSizes), rotation, anchor);
+        return new RotationBound(Bound.CenterAligned(GetWorldPositionOffset(settings.beamOffset), settings.boundSizes), rotation, anchor);
     }
 
+    public override void Dispose()
+    {
+        base.Dispose();
+        nativeBeamTexture.Dispose();
+    }
 
     [BurstCompile]
     public struct StatisParticles : IJobParallelFor

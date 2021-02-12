@@ -17,6 +17,8 @@ public class SpriteAnimator : IDisposable
 
     int currentTick;
 
+    public bool returnToIdleAfterAnim = false;
+
     public void Update()
     {
         currentTick++;
@@ -30,6 +32,10 @@ public class SpriteAnimator : IDisposable
             if (currentFrame == animFrameCount)
             {
                 currentFrame = 0;
+                if(returnToIdleAfterAnim)
+                {
+                    currentAnim = 0;
+                }
             }
         }
     }

@@ -114,4 +114,10 @@ public static class RenderingUtils
     {
         return math.normalize(new float3(normalColor.r, normalColor.g, normalColor.b) - 0.5f);
     }
+
+    public static Color32 SampleTexture(in NativeSprite sprite, float2 uv)
+    {
+        int2 pixelCoord = (int2)math.clamp((uv * sprite.sizes-1), 0, sprite.sizes-1);
+        return sprite.pixels[pixelCoord];
+    }
 }

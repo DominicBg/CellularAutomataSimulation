@@ -26,16 +26,19 @@ MonoBehaviour:
     spriteAnimations:
     - animationName: Idle
       sprites:
-      - {fileID: 2800000, guid: 1f5d0b366e9aa7f46ac3c4e4883330fa, type: 3}
+      - {fileID: 2800000, guid: 323e8b8493fd068459b50addbe93d7c5, type: 3}
+      - {fileID: 2800000, guid: 323e8b8493fd068459b50addbe93d7c5, type: 3}
+      - {fileID: 2800000, guid: f7eba8b47d1847f4ca50be2018bba316, type: 3}
+      - {fileID: 2800000, guid: f7eba8b47d1847f4ca50be2018bba316, type: 3}
     - animationName: Run
       sprites:
-      - {fileID: 2800000, guid: 87755230f497f7f4dbca13e277d8225a, type: 3}
-      - {fileID: 2800000, guid: 915a4faf4b8904a4db15f687e6afd9b1, type: 3}
-      - {fileID: 2800000, guid: d6f498d05334f5942b9892b500f0a783, type: 3}
-      - {fileID: 2800000, guid: 1f5d0b366e9aa7f46ac3c4e4883330fa, type: 3}
+      - {fileID: 2800000, guid: f769596a5d2a852439bfa4c80dad1578, type: 3}
+      - {fileID: 2800000, guid: 378805c7281e1e244b45d2ebffdd1834, type: 3}
+      - {fileID: 2800000, guid: 58c53594bb64e5c4d831a5092d9d5a65, type: 3}
+      - {fileID: 2800000, guid: e26a24471ab44b04c8c13d4ba2d057c9, type: 3}
     - animationName: Fall
       sprites:
-      - {fileID: 2800000, guid: 86fe31a0ef6f23d42ad23fadde5e403d, type: 3}
-      - {fileID: 2800000, guid: 26941dc7a5784804482396b608e85b44, type: 3}
+      - {fileID: 2800000, guid: 7ae807e1fa38f164c9dfe067ad46432c, type: 3}
+      - {fileID: 2800000, guid: 5670cb5811237904692d029eb734135a, type: 3}
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}

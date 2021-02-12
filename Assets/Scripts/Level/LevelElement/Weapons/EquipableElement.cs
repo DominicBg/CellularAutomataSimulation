@@ -8,9 +8,6 @@ public abstract class EquipableElement : LevelObject
 {
     public EquipableBaseScriptable baseSettings;
 
-    //public bool isEquiped = false;
-    //protected bool isLateUnequip;
-    //protected int2 unequipPosition;
     protected SpriteAnimator spriteAnimator;
 
     protected int cooldown;
@@ -29,26 +26,6 @@ public abstract class EquipableElement : LevelObject
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        //if (!isEquiped && GetBound().IntersectWith(player.GetBound()) && InputCommand.IsButtonDown(KeyCode.E))
-        //{
-        //    isEquiped = true;
-        //    //isVisible = false;
-        //    player.EquipMouse(this);
-        //    OnEquip();
-        //}
-
-        ////This caused a bug where you could equip and unequip in the same frame lol
-        ////need an anim or something
-        //if (isLateUnequip)
-        //{
-        //    isLateUnequip = false;
-        //    isEquiped = false;
-        //    //isVisible = true;
-        //    position = unequipPosition;
-        //}
-
-        //if(isEquiped)
-        //{
         isUsedThisFrame = false;
 
         if (useRequest.requestUse)
@@ -62,16 +39,9 @@ public abstract class EquipableElement : LevelObject
         position = GetEquipOffset(baseSettings.equipedOffset);
         OnEquipableUpdate(ref tickBlock);
         cooldown = math.max(cooldown - 1, 0);
-       // }
     }
 
     public abstract void OnEquipableUpdate(ref TickBlock tickBlock);
-
-    //public void Unequip(int2 unequipPosition)
-    //{
-    //    isLateUnequip = true;
-    //    this.unequipPosition = unequipPosition;
-    //}
 
     public void Use(bool useAltButton)
     {

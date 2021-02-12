@@ -120,9 +120,9 @@ public class GridRenderer : MonoBehaviour
         colors.Dispose();
     }
 
-    public static void DrawRotationBound(ref NativeArray<Color32> outputColors, RotationBound bound, PixelCamera pixelCamera, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationBound(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, Color32 color, BlendingMode blending = BlendingMode.Normal)
     {
-        new RenderRotationBound()
+        new RenderRotationBoundJob()
         {
             cameraHandle = pixelCamera.GetHandle(),
             color = color,
@@ -131,6 +131,31 @@ public class GridRenderer : MonoBehaviour
             blending = blending
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, in NativeSprite nativeSprite, Color tint, BlendingMode blending = BlendingMode.Normal)
+    {
+        new RenderRotationBoundSpriteJob()
+        {
+            cameraHandle = pixelCamera.GetHandle(),
+            nativeSprite = nativeSprite,
+            outputColors = outputColors,
+            rotationBound = bound,
+            tint = tint,
+            blending = blending
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    }
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
+    {
+        new RenderRotationBoundSpriteJob()
+        {
+            cameraHandle = pixelCamera.GetHandle(),
+            nativeSprite = nativeSprite,
+            outputColors = outputColors,
+            rotationBound = bound,
+            tint = Color.white,
+            blending = blending
+        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+    }
+
 
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {

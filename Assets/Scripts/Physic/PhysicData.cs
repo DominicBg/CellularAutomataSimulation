@@ -10,4 +10,5 @@ public struct PhysicData
     public int2 gridPosition;
     public float mass;
     public int inclinaison;
+    public bool isGrounded;
 }
