@@ -120,4 +120,22 @@ public static class RenderingUtils
         int2 pixelCoord = (int2)math.clamp((uv * sprite.sizes-1), 0, sprite.sizes-1);
         return sprite.pixels[pixelCoord];
     }
+
+    public static Color ApplyLightOnPixel(
+        int2 position, int2 pixelPos, NativeList<LightSource> lights,
+        System.Func<int2, Color> getColor, System.Func<int2, Color> getNormal,
+        float z = 0, float minLightIntensity = .5f, float lightResolution = 25, bool flipNormal = false)
+    {
+        Color color = getColor(pixelPos);
+        float3 normal = getNormal(pixelPos).ToNormal();
+        if (flipNormal)
+            normal.x = -normal.x;
+
+        float3 pos3D = new float3(position.x, position.y, z);
+        float lightIntensity = lights.CalculateLight(pos3D, normal);
+        lightIntensity = MathUtils.ReduceResolution(lightIntensity, lightResolution);
+        lightIntensity = math.remap(0, 1, minLightIntensity, 1, lightIntensity);
+
+        return color * lightIntensity;
+    }
 }

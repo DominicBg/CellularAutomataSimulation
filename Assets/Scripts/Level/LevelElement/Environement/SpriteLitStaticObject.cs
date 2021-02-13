@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using System;
 
 //Is center aligned
 public class SpriteLitStaticObject : SpriteStaticObject
@@ -22,7 +23,6 @@ public class SpriteLitStaticObject : SpriteStaticObject
 
     public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-
         //override so SpriteStaticObject doesnt render
     }
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
@@ -45,26 +45,16 @@ public class SpriteLitStaticObject : SpriteStaticObject
     void RenderPixels(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
     {
         NativeList<LightSource> lightsCopy = lights;
-        GridRenderer.ApplyCustomRender(
-            ref outputColors, renderPos, nativeSprite.sizes, isFlipped,
-            (pixelPos => nativeSprite.pixels[pixelPos.x, pixelPos.y].a != 0),
-            (pixelPos => ApplyLightOnPixel(position, pixelPos, lightsCopy)),
-            true);           
-    }
-
-    Color ApplyLightOnPixel(int2 position, int2 pixelPos, NativeList<LightSource> lights)
-    {
-        Color color = nativeSprite.pixels[pixelPos.x, pixelPos.y];
-        float3 normal = ((Color)nativeNormalMap.pixels[pixelPos.x, pixelPos.y]).ToNormal();
-
         float z = isInBackground ? -1 : 0;
-        float3 pos3D = new float3(position.x, position.y, z);
-        float lightIntensity = lights.CalculateLight(pos3D, normal);
-        lightIntensity = MathUtils.ReduceResolution(lightIntensity, lightResolution);
-        lightIntensity = math.remap(0, 1, minLightIntensity, 1, lightIntensity);
 
-        return color * lightIntensity;
+        Func<int2, bool> canDrawPixel = pixelPos => nativeSprite.pixels[pixelPos].a != 0;
+        Func<int2, Color> getColor = pixelPos => nativeSprite.pixels[pixelPos];
+        Func<int2, Color> getNormal = pixelPos => nativeNormalMap.pixels[pixelPos];
+        Func<int2, Color> getLightColor = pixelPos => RenderingUtils.ApplyLightOnPixel(position, pixelPos, lightsCopy, getColor, getNormal, z, minLightIntensity, lightResolution);
+
+        GridRenderer.ApplyCustomRender(ref outputColors, renderPos, nativeSprite.sizes, isFlipped, canDrawPixel, getLightColor, true);           
     }
+
 
     public override void Dispose()
     {

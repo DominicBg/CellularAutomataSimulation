@@ -19,6 +19,8 @@ public class Player : PhysicObject, ILightSource
 
     ItemInventory inventory;
 
+    NativeSprite normalMap;
+    bool useNormal;
 
     int lookDirection;
     bool canJump;
@@ -37,16 +39,25 @@ public class Player : PhysicObject, ILightSource
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
         InitPhysicData(settings.collisionTexture);
         inventory = new ItemInventory();
+
+        if(settings.normalMap != null)
+        {
+            useNormal = true;
+            normalMap = new NativeSprite(settings.normalMap);
+        }
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
     {
         if(lookDirection != 0)
         {
             lookLeft = lookDirection == -1;
         }
 
-        spriteAnimator.Render(ref outputcolor, renderPos, lookLeft);
+        if(useNormal)
+            spriteAnimator.RenderWithLight(ref outputcolor, position, renderPos, new bool2(lookLeft, false), lights, normalMap);
+        else
+            spriteAnimator.Render(ref outputcolor, renderPos, lookLeft);
 
     }
 
@@ -160,29 +171,10 @@ public class Player : PhysicObject, ILightSource
         }
     }
 
-
-    //public void EquipMouse(EquipableElement equipable)
-    //{
-    //    if(currentEquipMouse != null)
-    //    {
-    //        currentEquipMouse.Unequip(position);
-    //    }
-
-    //    currentEquipMouse = equipable;
-    //}
-    //public void EquipQ(EquipableElement equipable)
-    //{
-    //    if (currentEquipQ != null)
-    //    {
-    //        currentEquipQ.Unequip(position);
-    //    }
-
-    //    currentEquipQ = equipable;
-    //}
-
     public override void Dispose()
     {
         spriteAnimator.Dispose();
+        normalMap.Dispose();
     }
 
     public LightSource GetLightSource(int tick)

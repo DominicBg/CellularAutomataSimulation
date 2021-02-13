@@ -80,6 +80,21 @@ public class SpriteAnimator : IDisposable
         }
     }
 
+    public void RenderWithLight(ref NativeArray<Color32> outputColors, int2 worldPos, int2 renderPos, bool2 isFlipped, NativeList<LightSource> lightSources, NativeSprite normalMap)
+    {
+        int2 sheetOffset = new int2(currentFrame, currentAnim) * nativeSpriteSheet.spriteSizes;
+        int2 sizes = nativeSpriteSheet.spriteSizes;
+
+        Func<int2, bool> canDrawPixel = pixelPos => nativeSpriteSheet.pixels[sheetOffset + pixelPos].a != 0;
+        Func<int2, Color> getColor = pixelPos => nativeSpriteSheet.pixels[sheetOffset + pixelPos];
+        //We don't want to have flipped normal, reflip
+        Func<int2, Color> getNormal = pixelPos => normalMap.pixels[pixelPos];
+        Func<int2, Color> getLightColor = pixelPos => RenderingUtils.ApplyLightOnPixel(worldPos, pixelPos, lightSources, getColor, getNormal, 0, 0.5f, 25, isFlipped.x);
+
+        GridRenderer.ApplyCustomRender(ref outputColors, renderPos, sizes, isFlipped, canDrawPixel, getLightColor, false);
+    }
+
+
     public void DebugRender(ref NativeArray<Color32> outputColors, int2 position)
     {
         int2 sizes = nativeSpriteSheet.pixels.m_sizes;

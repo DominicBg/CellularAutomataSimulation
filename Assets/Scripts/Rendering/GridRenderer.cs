@@ -221,7 +221,7 @@ public class GridRenderer : MonoBehaviour
     }
     public static void ApplyCustomRender(
         ref NativeArray<Color32> outputColor, int2 position, int2 sizes, bool2 isFlipped, 
-        Func<int2, bool> canReander, Func<int2, Color> renderColor,
+        Func<int2, bool> canRender, Func<int2, Color> renderColor,
         bool centerAligned = false)
     {
         for (int x = 0; x < sizes.x; x++)
@@ -233,7 +233,7 @@ public class GridRenderer : MonoBehaviour
 
                 int2 texturePos = new int2(x, y) + position - (centerAligned ? sizes / 2 : 0);
                 int2 newPos = new int2(xx, yy);
-                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && canReander(newPos))
+                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && canRender(newPos))
                 {
                     int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
                     outputColor[index] = renderColor(newPos);

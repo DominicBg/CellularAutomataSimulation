@@ -21,6 +21,7 @@ public class PlayerControlSettings : ScriptableObject
     [Header("Other")]
     public SpriteSheet spriteSheet;
     public Texture2D collisionTexture;
+    public Texture2D normalMap;
 
     public GlowingLightSourceScriptable lightSourceSettings;
 }
