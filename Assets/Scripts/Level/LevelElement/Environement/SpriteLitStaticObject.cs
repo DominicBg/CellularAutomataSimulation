@@ -13,6 +13,9 @@ public class SpriteLitStaticObject : SpriteStaticObject
 
     public float lightResolution = 25;
     public float minLightIntensity = 0.5f;
+
+    int reflectionIndex;
+
     public override void OnInit()
     {
         nativeSprite = new NativeSprite(texture, normalMap, reflectionMap);
@@ -34,8 +37,6 @@ public class SpriteLitStaticObject : SpriteStaticObject
     {
         var sprite = nativeSprite.pixels;
         var normals = nativeSprite.normals;
-        var reflections = nativeSprite.reflections;
-
         if (nativeSprite.UseNormals)
         {
             GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, minLightIntensity, true);
@@ -47,20 +48,23 @@ public class SpriteLitStaticObject : SpriteStaticObject
 
         if (nativeSprite.UseNormals && nativeSprite.UseReflection)
         {
-            GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, info, ReflectionInfo.Default(), true);
-            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, ReflectionInfo.Default(), 2, .5f, true);
+            reflectionIndex = info.GetReflectionIndex();
+            GridRenderer.PrepareSpriteEnvironementReflection(sprite, renderPos, ref info, reflectionIndex, true);
         }
+    }
 
 
-        //NativeList<LightSource> lightsCopy = lights;
-        //float z = isInBackground ? -1 : 0;
-
-        //Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => nativeSprite.pixels[pixelPos].a != 0;
-        //Func<int2, int2, Color> getColor = (pixelPos, _)=> nativeSprite.pixels[pixelPos];
-        //Func<int2, int2, Color> getNormal = (pixelPos, _) => nativeNormalMap.pixels[pixelPos];
-        //Func<int2, int2, Color> getLightColor = (pixelPos, finalPos) => RenderingUtils.ApplyLightOnPixel(finalPos, pixelPos, lightsCopy, getColor, getNormal, z, minLightIntensity, lightResolution);
-
-        //GridRenderer.ApplyCustomRender(ref outputColors, renderPos, nativeSprite.sizes, isFlipped, canDrawPixel, getLightColor, true);           
+    public override void RenderReflection(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
+    {
+        var sprite = nativeSprite.pixels;
+        var normals = nativeSprite.normals;
+        var reflections = nativeSprite.reflections;
+        if (nativeSprite.UseNormals && nativeSprite.UseReflection)
+        {
+            var defaultReflection = ReflectionInfo.Default();
+            GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref defaultReflection, true);
+            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref defaultReflection, 2, .5f, true);
+        }
     }
 
 

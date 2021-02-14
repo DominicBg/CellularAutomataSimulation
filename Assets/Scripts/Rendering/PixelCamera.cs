@@ -9,15 +9,6 @@ public class PixelCamera
     public PixelCameraTransform transform;
     int2 viewPort;
     List<IRenderable> renderingObjects;
-    //NativeArray<Color32> skybox;
-
-    ///// <summary>
-    ///// This is only possible when calling from a Render function
-    ///// </summary>
-    //public Color SampleSkybox(int2 renderPos)
-    //{
-    //    return skybox[ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes)];
-    //}
 
     public int2 position
     {
@@ -76,6 +67,7 @@ public class PixelCamera
 
         }
         info.skybox = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+        info.reflectionIndices = new NativeGrid<int>(GameManager.RenderSizes, Allocator.TempJob);
 
 
         //PreRender
@@ -132,6 +124,25 @@ public class PixelCamera
             onRenderPass?.Invoke(outputColors);
         }
 
+        //Reflection Pass
+        for (int i = 0; i < renderCount; i++)
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
+
+            if (renderingObjects[i] is LevelObject)
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].RenderReflection(ref outputColors, ref tickBlock, renderPos, ref info);
+            }
+            else
+            {
+                renderingObjects[i].RenderReflection(ref outputColors, ref tickBlock, position, ref info);
+            }
+            onRenderPass?.Invoke(outputColors);
+        }
+
+
         //Render Light
         LightRenderer.AddLight(ref outputColors, ref info.lightSources, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
 
@@ -178,11 +189,7 @@ public class PixelCamera
             onRenderPass?.Invoke(outputColors);
         }
 
-        info.lightSources.Dispose();
-        info.skybox.Dispose();
-
-        //lights.Dispose();
-        // skybox.Dispose();
+        info.Dispose();
         return outputColors;
     }
 
@@ -262,6 +269,14 @@ public struct EnvironementInfo
 {
     public NativeArray<Color32> skybox;
     public NativeList<LightSource> lightSources;
+    public NativeGrid<int> reflectionIndices;
+
+    int internalReflectionIndex;
+
+    public int GetReflectionIndex()
+    {
+        return internalReflectionIndex++;
+    }
 
     ///// <summary>
     ///// This is only possible when calling from a Render function
@@ -272,5 +287,12 @@ public struct EnvironementInfo
             return Color.clear;
 
         return skybox[ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes)];
+    }
+
+    public void Dispose()
+    {
+        skybox.Dispose();
+        lightSources.Dispose();
+        reflectionIndices.Dispose();
     }
 }

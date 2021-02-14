@@ -15,12 +15,7 @@ MonoBehaviour:
   equipedOffset:
     x: 7
     y: 1
-  spriteSheet:
-    spriteSheetName: 
-    spriteAnimations:
-    - animationName: 
-      sprites:
-      - {fileID: 2800000, guid: e7505e06e842cf24cb2fdb6371154dc2, type: 3}
+  spriteSheet: {fileID: 11400000, guid: 808957d29ba9379478c57c0f7ebed421, type: 2}
   framePerImage: 5
   frameCooldown: 0
   capacity: 250

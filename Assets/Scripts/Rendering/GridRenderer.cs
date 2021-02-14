@@ -238,7 +238,7 @@ public class GridRenderer : MonoBehaviour
     }
 
     public static void ApplySpriteSkyboxReflection(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
-    int2 renderPos, EnvironementInfo info, ReflectionInfo reflectionInfo, bool centerAligned = false)
+    int2 renderPos, ref EnvironementInfo info, ref ReflectionInfo reflectionInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -249,15 +249,13 @@ public class GridRenderer : MonoBehaviour
                 if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
-                    outputColor[index] = ApplySkyboxReflection(renderPos, outputColor[index], reflectiveMap[localPos], normals[localPos], info, reflectionInfo);
+                    outputColor[index] = ApplySkyboxReflection(finalPos, outputColor[index], reflectiveMap[localPos], normals[localPos], info, reflectionInfo);
                 }
             }
         }
     }
 
-
-    public static void ApplySpriteEnvironementReflection(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
-        int2 renderPos, ReflectionInfo reflectionInfo, int blurRadius, float blurIntensity, bool centerAligned = false)
+    public static void PrepareSpriteEnvironementReflection(in NativeGrid<Color32> colors, int2 renderPos, ref EnvironementInfo info, int reflectionIndex, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -267,6 +265,28 @@ public class GridRenderer : MonoBehaviour
                 int2 finalPos = renderPos + localPos - (centerAligned ? colors.Sizes / 2 : 0);
                 if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
                 {
+                    info.reflectionIndices[finalPos] = reflectionIndex;
+                }
+            }
+        }
+    }
+
+
+    public static void ApplySpriteEnvironementReflection(
+        ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
+        int2 renderPos, int reflectionIndex, ref EnvironementInfo info, ref ReflectionInfo reflectionInfo, int blurRadius = 2, float blurIntensity = 0.5f, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 localPos = new int2(x, y);
+                int2 finalPos = renderPos + localPos - (centerAligned ? colors.Sizes / 2 : 0);
+                if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
+                {
+                    if (info.reflectionIndices[finalPos] != reflectionIndex)
+                        continue;
+
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
 
                     int2 direction = (int2)(normals[localPos].xy * reflectionInfo.distance);

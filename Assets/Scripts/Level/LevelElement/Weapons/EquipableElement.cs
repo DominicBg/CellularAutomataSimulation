@@ -19,15 +19,15 @@ public abstract class EquipableElement : LevelObject
 
     public override void OnInit()
     {
-        //TODO renable sprites
-       // spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
-       // spriteAnimator.framePerImage = baseSettings.framePerImage;
+       spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
+       spriteAnimator.framePerImage = baseSettings.framePerImage;
     }
 
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
         isUsedThisFrame = false;
+        spriteAnimator.Update(player.lookLeft);
 
         if (useRequest.requestUse)
         {
@@ -85,14 +85,12 @@ public abstract class EquipableElement : LevelObject
 
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        //RENABLE
-        //spriteAnimator.Render(ref outputcolor, renderPos, player.lookLeft);
+        spriteAnimator.Render(ref outputcolor, renderPos);
     }
 
     public override Bound GetBound()
-    {        //RENABLE
-
-        return new Bound(position, 5  /*spriteAnimator.nativeSpriteSheet.spriteSizes*/);
+    {       
+        return new Bound(position, spriteAnimator.nativeSpriteSheet.spriteSizes);
     }
 
     protected int2 GetEquipOffset(int2 offset)

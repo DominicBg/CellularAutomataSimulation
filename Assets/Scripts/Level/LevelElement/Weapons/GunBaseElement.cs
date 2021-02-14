@@ -30,7 +30,7 @@ public abstract class GunBaseElement : EquipableElement
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
-        spriteAnimator.Update(player.lookLeft);
+        //spriteAnimator.Update(player.lookLeft);
         //spriteAnimator.SetAnimation(isUsedThisFrame ? (int)GunAnim.Fire : (int)GunAnim.Idle);
         cooldownShoot = math.max(cooldownShoot - 1, 0);
     }

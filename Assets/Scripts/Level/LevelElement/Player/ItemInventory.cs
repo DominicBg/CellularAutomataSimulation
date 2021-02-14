@@ -7,8 +7,6 @@ public class ItemInventory
     public enum Slot { Main, Secondary}
     EquipableElement[] equipableElements;
 
-
-
     public ItemInventory()
     {
         equipableElements = new EquipableElement[System.Enum.GetNames(typeof(Slot)).Length];

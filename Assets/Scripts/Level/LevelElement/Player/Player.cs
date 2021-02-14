@@ -25,6 +25,7 @@ public class Player : PhysicObject, ILightSource
 
     ItemInventory inventory;
 
+    private int reflectionIndex;
 
     int lookDirection;
     bool canJump;
@@ -49,12 +50,21 @@ public class Player : PhysicObject, ILightSource
     {
         var sprite = spriteAnimator.GetCurrentSprite();
         var normals = spriteAnimator.GetCurrentNormals();
-        var reflections = spriteAnimator.GetCurrentReflections();
-
         GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, minLight);
-        GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, info, skyRefl);
-        GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, envRefl, blurRadius, blurIntensity);
+        
+        reflectionIndex = info.GetReflectionIndex();
+        GridRenderer.PrepareSpriteEnvironementReflection(sprite, renderPos, ref info, reflectionIndex);
     }
+
+    public override void RenderReflection(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
+    {
+        var sprite = spriteAnimator.GetCurrentSprite();
+        var normals = spriteAnimator.GetCurrentNormals();
+        var reflections = spriteAnimator.GetCurrentReflections();
+        GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref skyRefl);
+        GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref envRefl, blurRadius, blurIntensity);
+    }
+
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {

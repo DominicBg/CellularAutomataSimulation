@@ -15,24 +15,7 @@ MonoBehaviour:
   equipedOffset:
     x: 6
     y: 0
-  spriteSheet:
-    spriteSheetName: 
-    spriteAnimations:
-    - animationName: idle
-      sprites:
-      - {fileID: 2800000, guid: a571beb6bb7ab934bbf56b915c2a772b, type: 3}
-    - animationName: Play
-      sprites:
-      - {fileID: 2800000, guid: a571beb6bb7ab934bbf56b915c2a772b, type: 3}
-      - {fileID: 2800000, guid: 74013bd9e258cac448b9611e15d62f2c, type: 3}
-      - {fileID: 2800000, guid: 06ee8188c8114104d93709bd8b769afa, type: 3}
-      - {fileID: 2800000, guid: ffd57c545456c5b4590ebbfd75e6061f, type: 3}
-      - {fileID: 2800000, guid: 333e455089d509645b27cec035b9cc3a, type: 3}
-      - {fileID: 2800000, guid: 7e087c0ae2dfe1a49a990b2030893b81, type: 3}
-      - {fileID: 2800000, guid: 8433b3fe67482834e98a640323bd09a1, type: 3}
-      - {fileID: 2800000, guid: 4d09b6fb8d14a0f4c8a89654484d7f86, type: 3}
-      - {fileID: 2800000, guid: e673376ac3b05214fbcf8e81c0d9d353, type: 3}
-      - {fileID: 2800000, guid: f41a72468b2f7bc4aac352350dfe4f2c, type: 3}
+  spriteSheet: {fileID: 11400000, guid: e0c1b629db0dfd14a9a2dfadd0e7e26f, type: 2}
   framePerImage: 3
   frameCooldown: 2
   shootOffset:
