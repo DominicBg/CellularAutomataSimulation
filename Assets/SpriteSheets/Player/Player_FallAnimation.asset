@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Player_FallAnimation
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: 2800000, guid: cd5e8081e15302d4cb2a2368d25aa0c8, type: 3}
-  - {fileID: 2800000, guid: b80723cfed2ceb243b36c67f4b8627f7, type: 3}
+  - {fileID: 2800000, guid: 0e1aea6e0369bf84ea5439a0bbdc6f01, type: 3}
+  - {fileID: 2800000, guid: 0e1aea6e0369bf84ea5439a0bbdc6f01, type: 3}
   normals:
-  - {fileID: 2800000, guid: 6ca641f038b12074e9fca7e3cad69196, type: 3}
-  - {fileID: 2800000, guid: 90072d397c124274d8734755d27bd58e, type: 3}
+  - {fileID: 2800000, guid: 20633f37e9d2c7549921147662558eac, type: 3}
+  - {fileID: 2800000, guid: 2aa0c96da725a44448f24fe68b99fcb4, type: 3}
   reflections:
-  - {fileID: 2800000, guid: cdb9330f92eb46a4d846840b4ed2ce5f, type: 3}
-  - {fileID: 2800000, guid: 504f7ed144439e44a961538f5ae823f1, type: 3}
+  - {fileID: 2800000, guid: 8de1fb9057b0f0a4d92926c9ab0dff1e, type: 3}
+  - {fileID: 2800000, guid: a1daaf10a08d7124f888c578517a7647, type: 3}

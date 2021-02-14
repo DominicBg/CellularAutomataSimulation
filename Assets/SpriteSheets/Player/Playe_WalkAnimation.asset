@@ -13,11 +13,17 @@ MonoBehaviour:
   m_Name: Playe_WalkAnimation
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: 2800000, guid: cd5e8081e15302d4cb2a2368d25aa0c8, type: 3}
-  - {fileID: 2800000, guid: b80723cfed2ceb243b36c67f4b8627f7, type: 3}
+  - {fileID: 2800000, guid: fda74b98f37d2f74696b2b61f300fc87, type: 3}
+  - {fileID: 2800000, guid: 1cf2bb73dedd7a44290f4fa29e94d73c, type: 3}
+  - {fileID: 2800000, guid: 5b9d7419adf578b41859e903d16be282, type: 3}
+  - {fileID: 2800000, guid: 1cf2bb73dedd7a44290f4fa29e94d73c, type: 3}
   normals:
-  - {fileID: 2800000, guid: 6ca641f038b12074e9fca7e3cad69196, type: 3}
-  - {fileID: 2800000, guid: 90072d397c124274d8734755d27bd58e, type: 3}
+  - {fileID: 2800000, guid: d0613f217a35e8f4c813d90979aa2b3b, type: 3}
+  - {fileID: 2800000, guid: 8e63bc0815c5ebd448d0fa49067da577, type: 3}
+  - {fileID: 2800000, guid: b80c746e1d8157b4a8973a9a753f102f, type: 3}
+  - {fileID: 2800000, guid: 8e63bc0815c5ebd448d0fa49067da577, type: 3}
   reflections:
-  - {fileID: 2800000, guid: cdb9330f92eb46a4d846840b4ed2ce5f, type: 3}
-  - {fileID: 2800000, guid: 504f7ed144439e44a961538f5ae823f1, type: 3}
+  - {fileID: 2800000, guid: 623ad6bafb984ac4380c70806733d0a5, type: 3}
+  - {fileID: 2800000, guid: ef15c90640a94694fae8d5faa0d7c3a5, type: 3}
+  - {fileID: 2800000, guid: 54923eda0f188144b948b914fae9d4d2, type: 3}
+  - {fileID: 2800000, guid: ef15c90640a94694fae8d5faa0d7c3a5, type: 3}

@@ -341,57 +341,6 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-
-    //public static void ApplyLitSprite(ref NativeArray<Color32> outputColors, NativeSprite sprite, NativeSprite normalMap,
-    //    int2 position, int2 renderPos, bool2 isFlipped, NativeList<LightSource> lights, float minLight = 0.5f, bool isCenterAligned = false)
-    //{
-    //    int2 sizes = sprite.sizes;
-    //    Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => sprite.pixels[pixelPos].a != 0;
-    //    Func<int2, int2, Color> getColor = (pixelPos, _) => sprite.pixels[pixelPos];
-    //    Func<int2, int2, Color> getNormal = (pixelPos, _) => normalMap.pixels[pixelPos];
-    //    Func<int2, int2, Color> getLightColor = (pixelPos, _) => ApplyLightOnPixel(position, pixelPos, lights, getColor, getNormal, 0, minLight, 25, isFlipped.x);
-
-    //    ApplyCustomRender(ref outputColors, renderPos, sizes, isFlipped, canDrawPixel, getLightColor, isCenterAligned);
-    //}
-
-    ////BORKEN
-    //public static void ApplySkyBoxReflection(ref NativeArray<Color32> outputColors, NativeSprite sprite, NativeSprite normalMap, NativeSprite reflectionMap,
-    //    int2 renderPos, bool2 isFlipped, EnvironementInfo info, ReflectionInfo reflectionInfo)
-    //{
-    //    var outputColorsPtr = outputColors;
-    //    var infoPtr = info;
-
-    //    Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => reflectionMap.pixels[pixelPos].r != 0 && sprite.pixels[pixelPos].a != 0;
-    //    Func<int2, int2, Color> getCurrentColor = (pixelPos, finalPos) => outputColorsPtr[ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes)];
-    //    Func<int2, int2, Color> getBlendSkyTexture = (pixelPos, finalPos) => 
-    //        ApplySkyboxReflection(pixelPos, getCurrentColor(pixelPos, finalPos), ((Color)reflectionMap.pixels[pixelPos]).r, normalMap.pixels[pixelPos].ToNormal(), info, reflectionInfo, isFlipped);
-
-    //    ApplyCustomRender(ref outputColors, renderPos, sprite.sizes, isFlipped, canDrawPixel, getBlendSkyTexture, false);
-    //}
-
-    //public static void ApplyCustomRender(
-    //    ref NativeArray<Color32> outputColors, int2 position, int2 sizes, bool2 isFlipped, 
-    //    Func<int2, int2, bool> canRender, Func<int2, int2, Color> renderColor,
-    //    bool centerAligned = false)
-    //{
-    //    for (int x = 0; x < sizes.x; x++)
-    //    {
-    //        for (int y = 0; y < sizes.y; y++)
-    //        {
-    //            int xx = (!isFlipped.x) ? x : sizes.x - x - 1;
-    //            int yy = (!isFlipped.y) ? y : sizes.y - y - 1;
-
-    //            int2 finalPos = new int2(x, y) + position - (centerAligned ? sizes / 2 : 0);
-    //            int2 pixelPos = new int2(xx, yy);
-    //            if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && canRender(pixelPos, finalPos))
-    //            {
-    //                int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes.x);
-    //                outputColors[index] = renderColor(pixelPos, finalPos);
-    //            }
-    //        }
-    //    }
-    //}
-
     /// <summary>
     /// Render the outputColor to the screen and dispose the array
     /// </summary>
