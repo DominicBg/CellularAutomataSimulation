@@ -27,9 +27,9 @@ public struct ApplyPixelsJob : IJob
     {
         for (int i = 0; i < pixelPositions.Length; i++)
         {
-            if (GridHelper.InBound(pixelPositions[i], GameManager.GridSizes))
+            if (GridHelper.InBound(pixelPositions[i], GameManager.RenderSizes))
             {
-                int index = ArrayHelper.PosToIndex(pixelPositions[i], GameManager.GridSizes);
+                int index = ArrayHelper.PosToIndex(pixelPositions[i], GameManager.RenderSizes);
                 outputColor[index] = RenderingUtils.Blend(outputColor[index], pixelcolors[i], blending);
             }
         }

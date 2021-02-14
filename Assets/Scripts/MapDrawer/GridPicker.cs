@@ -15,7 +15,7 @@ public class GridPicker : MonoBehaviour
 
     public static int2 GetGridPosition()
     {
-        return GetGridPosition(GameManager.GridSizes);
+        return GetGridPosition(GameManager.RenderSizes);
     }
 
     public static int2 GetGridPosition(int2 gridSizes)
@@ -32,6 +32,6 @@ public class GridPicker : MonoBehaviour
 
         int x = (int)math.remap(0, resolution.x, -xExtra, gridSizes.x + xExtra, result.x);
         int y = (int)math.remap(0, resolution.y, 0, gridSizes.y, result.y);
-        return math.clamp(new int2(x, y), 0, GameManager.GridSizes -1);
+        return math.clamp(new int2(x, y), 0, GameManager.RenderSizes -1);
     }
 }

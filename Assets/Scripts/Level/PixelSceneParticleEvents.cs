@@ -41,7 +41,7 @@ public class PixelSceneParticleEvents : LevelElement, IAlwaysRenderable
         combustionParticleSystem.Update(ref tickBlock);
     }
 
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         combustionParticleSystem.Render(ref outputColors, pixelCamera);
     }

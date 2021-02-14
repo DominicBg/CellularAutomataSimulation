@@ -9,7 +9,7 @@ public class LevelCavernOfTimeBackground: LevelElement, IAlwaysRenderable
 {
     public CavernOfTimeBackgroundJob.Settings settings;
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         new CavernOfTimeBackgroundJob()
         {
@@ -17,7 +17,7 @@ public class LevelCavernOfTimeBackground: LevelElement, IAlwaysRenderable
             outputColor = outputColors,
             settings = settings,
             cameraPos = renderPos,
-            lights = lights
+            lights = info.lightSources
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 }

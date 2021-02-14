@@ -10,7 +10,7 @@ public class SandForeground : LevelElement, IAlwaysRenderable
 {
     public Settings settings;
 
-    public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         new SandForegroundJob()
         {
@@ -33,7 +33,7 @@ public class SandForeground : LevelElement, IAlwaysRenderable
 
         public void Execute(int index)
         {
-            float2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes) + posOffset;
+            float2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes) + posOffset;
             float2 offset = tickBlock.tick * settings.speed;
             float2 offset2 = tickBlock.tick * settings.speed2;
 

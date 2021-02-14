@@ -24,7 +24,7 @@ public struct RayMarchingEdgeDetectorJob : IJobParallelFor
     public RayMarchingEdgeDetectorSettings settings;
     public void Execute(int index)
     {
-        int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 position = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
         bool hardEdge = false;
         hardEdge |= HardEdge(index, position, new int2(1, 0));
@@ -41,10 +41,10 @@ public struct RayMarchingEdgeDetectorJob : IJobParallelFor
     {
         int2 posAdjacent = position + offset;
 
-        if (!GridHelper.InBound(posAdjacent, GameManager.GridSizes))
+        if (!GridHelper.InBound(posAdjacent, GameManager.RenderSizes))
             return false;
 
-        int indexAdjacent = ArrayHelper.PosToIndex(posAdjacent, GameManager.GridSizes);
+        int indexAdjacent = ArrayHelper.PosToIndex(posAdjacent, GameManager.RenderSizes);
         return math.dot(normals[index], normals[indexAdjacent]) < settings.dotThreshold;
     }
 

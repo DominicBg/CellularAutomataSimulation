@@ -37,9 +37,9 @@ public struct ParticleEffectSmokeMoveJob : IJob
             sp.position += (int2)(settings.moveAmplitude * noise);
 
             sp.position += settings.windForce * dt;
-            sp.position = math.clamp(sp.position, 0, GameManager.GridSizes - 1);
+            sp.position = math.clamp(sp.position, 0, GameManager.RenderSizes - 1);
 
-            int index = ArrayHelper.PosToIndex((int2)sp.position, GameManager.GridSizes);
+            int index = ArrayHelper.PosToIndex((int2)sp.position, GameManager.RenderSizes);
             outputColors[index] = Color.Lerp(sp.startColor, sp.endColor, t).ReduceResolution(settings.resolution);
 
             smokeParticles[i] = sp;

@@ -20,7 +20,7 @@ public class StatisGun : GunBaseElement
         base.OnInit();
         nativeBeamTexture = new NativeSprite(settings.beamTexture);
 
-        spriteAnimator.returnToIdleAfterAnim = true;
+        //spriteAnimator.returnToIdleAfterAnim = true;
     }
 
     protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
@@ -38,7 +38,7 @@ public class StatisGun : GunBaseElement
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
-    public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / settings.statisDuration;
         math.saturate(ratio);
@@ -69,7 +69,7 @@ public class StatisGun : GunBaseElement
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
             int2 worldPos = cameraHandle.GetGlobalPosition(pos);
 
             if (rotationBound.PointInBound(worldPos) && map.InBound(worldPos))
@@ -91,7 +91,7 @@ public class StatisGun : GunBaseElement
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
             int2 worldPos = cameraHandle.GetGlobalPosition(pos);
 
             if(rotationBound.PointInBound(worldPos))

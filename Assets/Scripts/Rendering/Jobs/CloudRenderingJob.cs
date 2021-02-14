@@ -50,7 +50,7 @@ public struct CloudRenderingJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        float2 pos = ((float2)ArrayHelper.IndexToPos(index, GameManager.GridSizes) / GameManager.GridSizes - 0.5f) * settings.scale;
+        float2 pos = ((float2)ArrayHelper.IndexToPos(index, GameManager.RenderSizes) / GameManager.RenderSizes - 0.5f) * settings.scale;
         //ortho
         //float3 ro = (new float3(pos.x, pos.y, 0) + settings.offset) * settings.scale;
         //float3 rd = math.forward();

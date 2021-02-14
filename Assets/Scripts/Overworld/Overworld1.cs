@@ -48,7 +48,7 @@ public class Overworld1 : OverworldBase
         new ShiningStarBackgroundJob()
         {
             colors = backgroundColors,
-            maxSizes = GameManager.GridSizes,
+            maxSizes = GameManager.RenderSizes,
             tick = tickBlock.tick,
             settings = starSettings
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
@@ -79,8 +79,8 @@ public class Overworld1 : OverworldBase
 
         public void Execute(int index)
         {
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
-            GenerateFloatingSand(index, GameManager.GridSizes - pos, sandSettings.backShadow);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
+            GenerateFloatingSand(index, GameManager.RenderSizes - pos, sandSettings.backShadow);
             GenerateMainPlanet(index, pos);
             GenerateFloatingSand(index, pos, 1);
         }

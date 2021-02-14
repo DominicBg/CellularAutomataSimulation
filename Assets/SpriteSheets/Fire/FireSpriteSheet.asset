@@ -12,12 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb206bc7463ba95439796cf7f3207e3c, type: 3}
   m_Name: FireSpriteSheet
   m_EditorClassIdentifier: 
-  spriteSheet:
-    spriteSheetName: CampFire
-    spriteAnimations:
-    - animationName: 
-      sprites:
-      - {fileID: 2800000, guid: 0372aff7a3dd36c44b629ff13c5dd34f, type: 3}
-      - {fileID: 2800000, guid: 4bbd36fe593d8ea4b863f65888ccc948, type: 3}
-      - {fileID: 2800000, guid: 8d2fb18b699818e4ba523eca20627480, type: 3}
-      - {fileID: 2800000, guid: d856faca62403974ab407bd902ca71b0, type: 3}
+  spriteAnimations:
+  - {fileID: 11400000, guid: 338482c565d197c4db7b9d8e6b4de1e8, type: 2}

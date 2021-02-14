@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public enum BlendingMode { Normal, Transparency, Additive, Multiply, Screen, Overlay, HardLight, SoftLight }
+public enum BlendingMode { Normal, Transparency, Additive, AdditiveAlpha, Multiply, Screen, Overlay, HardLight, SoftLight }
 public static class RenderingUtils
 {
     public static Color Blend(Color color1, Color color2, BlendingMode blending)
@@ -17,6 +17,8 @@ public static class RenderingUtils
                 return Transparency(color1, color2, color2.a);
             case BlendingMode.Additive:
                 return (color1 + color2).Saturate();
+            case BlendingMode.AdditiveAlpha:
+                return (color1 + (color2 * color2.a)).Saturate();
             case BlendingMode.Multiply:
                 return (color1 * color2).Saturate();
             case BlendingMode.Screen:
@@ -97,6 +99,17 @@ public static class RenderingUtils
         return colorA.r == colorB.r && colorA.g == colorB.g && colorA.b == colorB.b && colorA.a == colorB.a;
     }
 
+    public static Color Alpha(this Color color, float alpha)
+    {
+        color.a = alpha;
+        return color;
+    }
+
+    public static Color32 Alpha(this Color32 color, int alpha)
+    {
+        return new Color32(color.r, color.g, color.b, (byte)alpha);
+    }
+
     public static Color ReduceResolution(this Color color, int resolution)
     {
         float4 color4 = new float4(color.r, color.g, color.b, color.a);
@@ -114,6 +127,10 @@ public static class RenderingUtils
     {
         return math.normalize(new float3(normalColor.r, normalColor.g, normalColor.b) - 0.5f);
     }
+    public static float3 ToNormal(this Color32 normalColor)
+    {
+        return ((Color)normalColor).ToNormal();
+    }
 
     public static Color32 SampleTexture(in NativeSprite sprite, float2 uv)
     {
@@ -121,21 +138,20 @@ public static class RenderingUtils
         return sprite.pixels[pixelCoord];
     }
 
-    public static Color ApplyLightOnPixel(
-        int2 position, int2 pixelPos, NativeList<LightSource> lights,
-        System.Func<int2, Color> getColor, System.Func<int2, Color> getNormal,
-        float z = 0, float minLightIntensity = .5f, float lightResolution = 25, bool flipNormal = false)
+    public static Color ApplyLightOnPixel(int2 worldPos, Color color, float3 normal, NativeList<LightSource> lights, float z = 0, float minLightIntensity = .5f, float lightResolution = 25)
     {
-        Color color = getColor(pixelPos);
-        float3 normal = getNormal(pixelPos).ToNormal();
-        if (flipNormal)
-            normal.x = -normal.x;
-
-        float3 pos3D = new float3(position.x, position.y, z);
+        float3 pos3D = new float3(worldPos.x, worldPos.y, z);
         float lightIntensity = lights.CalculateLight(pos3D, normal);
         lightIntensity = MathUtils.ReduceResolution(lightIntensity, lightResolution);
         lightIntensity = math.remap(0, 1, minLightIntensity, 1, lightIntensity);
 
         return color * lightIntensity;
+    }
+
+    public static Color ApplySkyboxReflection(int2 renderPos, Color currentColor, float reflection, float3 normal, EnvironementInfo info, ReflectionInfo reflectionInfo)
+    {
+        int2 direction = (int2)(normal.xy * reflectionInfo.distance);
+        Color skyBoxColor = info.SampleSkybox(renderPos + direction);
+        return Blend(currentColor, skyBoxColor.Alpha(reflectionInfo.amount * reflection), reflectionInfo.blending);
     }
 }

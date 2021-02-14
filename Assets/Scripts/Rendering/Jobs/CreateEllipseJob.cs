@@ -19,7 +19,7 @@ public struct CreateEllipseJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 pos = position - ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pos = position - ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         Color32 drawColor = outerColor;
 
         float2 inverseRadius = 1f / (radius * radius);

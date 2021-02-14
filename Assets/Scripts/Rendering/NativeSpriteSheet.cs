@@ -8,11 +8,14 @@ using UnityEngine;
 public struct NativeSpriteSheet : IDisposable
 {
     public NativeGrid<Color32> pixels;
+    public NativeGrid<float3> normals;
+    public NativeGrid<float> reflections;
+
     public NativeArray<int> spritePerAnim;
     public int2 spriteSizes;
     public int2 colRows;
 
-    public NativeSpriteSheet(SpriteSheet spriteSheet)
+    public NativeSpriteSheet(SpriteSheetScriptable spriteSheet)
     {
         int rows = spriteSheet.spriteAnimations.Length;
 
@@ -28,7 +31,13 @@ public struct NativeSpriteSheet : IDisposable
         colRows = new int2(cols, rows);
 
         pixels = new NativeGrid<Color32>(spriteSizes * colRows, Allocator.Persistent);
+        normals = new NativeGrid<float3>(spriteSizes * colRows, Allocator.Persistent);
+        reflections = new NativeGrid<float>(spriteSizes * colRows, Allocator.Persistent);
+
         spritePerAnim = new NativeArray<int>(rows, Allocator.Persistent);
+
+        bool useNormal = spriteSheet.spriteAnimations[0].normals != null && spriteSheet.spriteAnimations[0].normals.Length > 0;
+        bool useReflection = spriteSheet.spriteAnimations[0].reflections != null && spriteSheet.spriteAnimations[0].reflections.Length > 0; ;
 
         for (int row = 0; row < rows; row++)
         {
@@ -39,16 +48,23 @@ public struct NativeSpriteSheet : IDisposable
                 //offset to have the first anim on top of the spritesheet
                 int2 offset = new int2(col, row) * spriteSizes;
                 Texture2D currentSprite = spriteSheet.spriteAnimations[row].sprites[col];
-                StoreSprite(currentSprite, offset);
+                Texture2D currentNormal = (useNormal) ? spriteSheet.spriteAnimations[row].normals[col] : null;
+                Texture2D currentReflection = (useReflection) ? spriteSheet.spriteAnimations[row].reflections[col] : null;
+                StoreSprite(currentSprite, currentNormal, currentReflection, offset);
             }
         }
     }
 
-    void StoreSprite(Texture2D texture, int2 offset)
+    void StoreSprite(Texture2D sprite, Texture2D normal, Texture2D reflection, int2 offset)
     {
-        Color32[] colors = texture.GetPixels32(0);
+        bool useNormal = normal != null;
+        bool useReflection = reflection != null;
 
-        int2 sizes = new int2(texture.width, texture.height);
+        Color32[] spriteColors = sprite.GetPixels32(0);
+        Color32[] normalColors = useNormal ? normal.GetPixels32(0) : null;
+        Color32[] reflectionColors = useReflection ? reflection.GetPixels32(0) : null;
+
+        int2 sizes = new int2(sprite.width, sprite.height);
 
         if(math.all(spriteSizes != sizes))
         {
@@ -59,7 +75,14 @@ public struct NativeSpriteSheet : IDisposable
         {
             for (int y = 0; y < sizes.y; y++)
             {
-                pixels[x + offset.x, y + offset.y] = colors[y * sizes.x + x];
+                int i = y * sizes.x + x;
+                pixels[x + offset.x, y + offset.y] = spriteColors[i];
+                if(useNormal)
+                    normals[x + offset.x, y + offset.y] = ((Color)normalColors[i]).ToNormal();
+                
+                //Reflections are black n white, so we can use r g or b
+                if (useReflection)
+                    reflections[x + offset.x, y + offset.y] = ((Color)reflectionColors[i]).r;
             }
         }
     }
@@ -67,6 +90,8 @@ public struct NativeSpriteSheet : IDisposable
     public void Dispose()
     {
         pixels.Dispose();
+        normals.Dispose();
+        reflections.Dispose();
         spritePerAnim.Dispose();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
@@ -11,16 +12,19 @@ public class Player : PhysicObject, ILightSource
 
     public SpriteAnimator spriteAnimator;
 
-    //[HideInInspector] public EquipableElement currentEquipMouse;
-    //[HideInInspector] public EquipableElement currentEquipQ;
+
+    public ReflectionInfo skyRefl = new ReflectionInfo() { amount = .2f, blending = BlendingMode.AdditiveAlpha, distance = 20 };
+    public ReflectionInfo envRefl = new ReflectionInfo() { amount = .5f, blending = BlendingMode.AdditiveAlpha, distance = 20 };
+
+    public float minLight = 0.5f;
+    public int blurRadius = 1;
+    public float blurIntensity = 1;
 
     [HideInInspector] public bool lookLeft;
     [HideInInspector] public bool isDirectionLocked;
 
     ItemInventory inventory;
 
-    NativeSprite normalMap;
-    bool useNormal;
 
     int lookDirection;
     bool canJump;
@@ -39,26 +43,17 @@ public class Player : PhysicObject, ILightSource
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
         InitPhysicData(settings.collisionTexture);
         inventory = new ItemInventory();
-
-        if(settings.normalMap != null)
-        {
-            useNormal = true;
-            normalMap = new NativeSprite(settings.normalMap);
-        }
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        if(lookDirection != 0)
-        {
-            lookLeft = lookDirection == -1;
-        }
+        var sprite = spriteAnimator.GetCurrentSprite();
+        var normals = spriteAnimator.GetCurrentNormals();
+        var reflections = spriteAnimator.GetCurrentReflections();
 
-        if(useNormal)
-            spriteAnimator.RenderWithLight(ref outputcolor, position, renderPos, new bool2(lookLeft, false), lights, normalMap);
-        else
-            spriteAnimator.Render(ref outputcolor, renderPos, lookLeft);
-
+        GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, minLight);
+        GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, info, skyRefl);
+        GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, envRefl, blurRadius, blurIntensity);
     }
 
     public override void OnUpdate(ref TickBlock tickBlock)
@@ -73,6 +68,7 @@ public class Player : PhysicObject, ILightSource
             return;
         }
 
+
         DebugEquip();
         inventory.Update();
 
@@ -80,6 +76,12 @@ public class Player : PhysicObject, ILightSource
         
         if(!isDirectionLocked)
             lookDirection = (int)math.sign(direction.x);
+
+        if (lookDirection != 0)
+        {
+            lookLeft = lookDirection == -1;
+        }
+
 
         bool isGrounded = IsGrounded();
     
@@ -121,7 +123,7 @@ public class Player : PhysicObject, ILightSource
         {
             spriteAnimator.SetAnimation(1);
         }
-        spriteAnimator.Update();
+        spriteAnimator.Update(lookLeft);
     }
 
     private void UpdateMovement(float2 direction)
@@ -174,7 +176,6 @@ public class Player : PhysicObject, ILightSource
     public override void Dispose()
     {
         spriteAnimator.Dispose();
-        normalMap.Dispose();
     }
 
     public LightSource GetLightSource(int tick)

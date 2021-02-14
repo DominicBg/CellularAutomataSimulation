@@ -19,10 +19,10 @@ public class ParticleGun : GunBaseElement
             map.SetParticle(aimStartPosition, newParticle, false, true);
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         //FIX render POS
-        base.Render(ref outputcolor, ref tickBlock, renderPos);
+        base.Render(ref outputcolor, ref tickBlock, renderPos, ref info);
         //int2 pos1 = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) + GetAjustedOffset(settings.particleOffset) : renderPos + settings.particleOffset;
         //pos1 += GetKickOffset();
 

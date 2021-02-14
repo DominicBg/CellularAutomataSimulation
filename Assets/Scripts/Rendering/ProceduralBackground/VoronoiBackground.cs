@@ -21,7 +21,7 @@ public struct VoronoiRendering : ITextureRenderableAnimated
         new VoronoiBackgroundJob()
         {
             colors = colorArray,
-            maxSizes = GameManager.GridSizes,
+            maxSizes = GameManager.RenderSizes,
             settings = this,
             tick = tick
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();

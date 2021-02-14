@@ -50,9 +50,9 @@ public struct PlanetRayMarchingJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
-        float2 uv = ((float2)gridPosition / GameManager.GridSizes - 0.5f) / settings.scales;
+        float2 uv = ((float2)gridPosition / GameManager.RenderSizes - 0.5f) / settings.scales;
         float3 ro = new float3(uv.x, uv.y, 0);
         float3 rd = (settings.ortho) ? new float3(0, 0, 1) : math.normalize(new float3(uv.x, uv.y, 1));
 

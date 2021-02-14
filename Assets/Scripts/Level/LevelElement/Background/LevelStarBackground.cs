@@ -14,7 +14,7 @@ public class LevelStarBackground : LevelElement, IAlwaysRenderable
         settings = StarBackgroundRendering.Default();
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void SkyBoxRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         settings.Render(ref outputColors, tickBlock.tick, (int2)((float2)renderPos * offset));
     }

@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 public unsafe struct Map
 {
-    public int2 Sizes => particleGrid.m_sizes;
+    public int2 Sizes => particleGrid.Sizes;
     public int ArrayLength => Sizes.x * Sizes.y;
 
     NativeGrid<Particle> particleGrid;

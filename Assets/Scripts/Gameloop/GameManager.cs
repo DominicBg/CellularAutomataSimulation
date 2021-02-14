@@ -13,12 +13,12 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// The resolution of the game
     /// </summary>
-    public static readonly int2 GridSizes = new int2(128, 128);
+    public static readonly int2 RenderSizes = new int2(128, 128);
 
     /// <summary>
     /// Correspond to the GridSizes.x * GridSizes.y
     /// </summary>
-    public static readonly int GridLength = GridSizes.x * GridSizes.y;
+    public static readonly int GridLength = RenderSizes.x * RenderSizes.y;
 
     public static readonly int InnerLoopBatchCount = 100;
     public static readonly int FPS = 60;

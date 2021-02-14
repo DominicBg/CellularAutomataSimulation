@@ -22,7 +22,7 @@ public class LevelCollision : LevelElement
             {
                 if(nativeTexture[i].a != 0)
                 {
-                    int2 position = ArrayHelper.IndexToPos(i, GameManager.GridSizes);
+                    int2 position = ArrayHelper.IndexToPos(i, GameManager.RenderSizes);
                     map.SetParticleType(position, ParticleType.Rock);
                 }
             }
@@ -33,7 +33,7 @@ public class LevelCollision : LevelElement
     {
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         GridRenderer.ApplyTexture(ref outputColor, ref nativeTexture);
     }

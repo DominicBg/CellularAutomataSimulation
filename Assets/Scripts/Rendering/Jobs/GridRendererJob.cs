@@ -28,7 +28,7 @@ public struct GridRendererJob : IJobParallelFor
 
     public void Execute(int i)
     {
-        int2 pos = cameraPosition + ArrayHelper.IndexToPos(i, GameManager.GridSizes) - GameManager.GridSizes/2;
+        int2 pos = cameraPosition + ArrayHelper.IndexToPos(i, GameManager.RenderSizes) - GameManager.RenderSizes/2;
         if (map.InBound(pos) && map.GetParticleType(pos) != ParticleType.None)
         {
             Color32 color = ParticleRenderUtil.GetColorForType(pos, map.GetParticleType(pos), ref particleRendering, ref tickBlock, ref map, lightSources);

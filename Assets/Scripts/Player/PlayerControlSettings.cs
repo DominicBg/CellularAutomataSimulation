@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerControlSettings : ScriptableObject
 {
     [Header("Movement")]
-    [Range(0, 1)] public float acceleration;
+    public float acceleration = 175;
     [Range(0, 1)] public float stopMovingDamping = .9f;
     [Range(0, 1)] public float turiningDamping = .3f;
     [Range(0, 1)] public float movingDamping = .3f;
@@ -19,9 +19,8 @@ public class PlayerControlSettings : ScriptableObject
     public float releaseJumpButtonCutoff = 0.5f;
 
     [Header("Other")]
-    public SpriteSheet spriteSheet;
+    public SpriteSheetScriptable spriteSheet;
     public Texture2D collisionTexture;
-    public Texture2D normalMap;
 
     public GlowingLightSourceScriptable lightSourceSettings;
 }

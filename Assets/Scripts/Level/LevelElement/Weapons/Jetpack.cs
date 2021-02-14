@@ -36,7 +36,7 @@ public class Jetpack : EquipableElement
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
-        spriteAnimator.Update();
+        spriteAnimator.Update(player.lookLeft);
         if (unUsedForTicks >= settings.refuelAfterXTick)
         {
             currentFuel = math.min(currentFuel + settings.fuelRefillRate, settings.fuelCapacity);
@@ -44,7 +44,7 @@ public class Jetpack : EquipableElement
         }
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {    
         int2 offset = settings.equipedOffset;
 
@@ -53,7 +53,7 @@ public class Jetpack : EquipableElement
 
         offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
         //based on player render pos
-        spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset, false);   
+        spriteAnimator.Render(ref outputcolor, player.GetBound().center + offset);   
     }
 
     public override void RenderUI(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock)
@@ -67,7 +67,7 @@ public class Jetpack : EquipableElement
             int gridAmmount = (int)(ratio * playersHeight);
             for (int i = 0; i < gridAmmount; i++)
             {
-                int index = ArrayHelper.PosToIndex(player.position + new int2(-2, i), GameManager.GridSizes);
+                int index = ArrayHelper.PosToIndex(player.position + new int2(-2, i), GameManager.RenderSizes);
                 outputcolor[index] = Color.white;
             }
         }

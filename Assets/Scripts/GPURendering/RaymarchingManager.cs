@@ -93,7 +93,7 @@ public class RaymarchingManager : MonoBehaviour
             //int gridSizeX = Mathf.CeilToInt(m_camera.pixelWidth / 8.0f);
             //int gridSizeY = Mathf.CeilToInt(m_camera.pixelHeight / 8.0f);
             // "Run" the compute shader
-            m_raymarchingShader.Dispatch(0, GameManager.GridSizes.x, GameManager.GridSizes.y, 1);
+            m_raymarchingShader.Dispatch(0, GameManager.RenderSizes.x, GameManager.RenderSizes.y, 1);
 
             var array = new uint[outputColor.Length];
             //m_outputBuffer.GetData(array);
@@ -179,11 +179,11 @@ public class RaymarchingManager : MonoBehaviour
     // Cleans the render texture or creates a new one if it doesn't exist
     void CleanOrCreateRenderTexture()
     {
-        if (texture == null || texture.width != GameManager.GridSizes.x || texture.height != GameManager.GridSizes.y)
+        if (texture == null || texture.width != GameManager.RenderSizes.x || texture.height != GameManager.RenderSizes.y)
         {
             // if (renderTexture != null) renderTexture.Release();
 
-            texture = new Texture2D(GameManager.GridSizes.x, GameManager.GridSizes.x, TextureFormat.ARGB32, false);
+            texture = new Texture2D(GameManager.RenderSizes.x, GameManager.RenderSizes.x, TextureFormat.ARGB32, false);
             texture.Apply();
             // RenderTextureFormat.ARGBFloat,
             //RenderTextureReadWrite.Linear);
@@ -229,7 +229,7 @@ public class RaymarchingManager : MonoBehaviour
         m_raymarchingShader.SetMatrix("_Camera2WorldMatrix", m_camera.cameraToWorldMatrix);
         m_raymarchingShader.SetMatrix("_InverseProjectionMatrix", m_camera.projectionMatrix.inverse);
         
-        m_raymarchingShader.SetVector("_sizes", new Vector4(GameManager.GridSizes.x, GameManager.GridSizes.y, 0, 0));
+        m_raymarchingShader.SetVector("_sizes", new Vector4(GameManager.RenderSizes.x, GameManager.RenderSizes.y, 0, 0));
 
 
         // Pass the textures

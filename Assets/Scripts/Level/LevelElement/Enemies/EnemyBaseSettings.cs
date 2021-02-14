@@ -10,7 +10,7 @@ public class EnemyBaseSettings : ScriptableObject
 
     public int maxHp;
 
-    public SpriteSheet spriteSheet;
+    public SpriteSheetScriptable spriteSheet;
     public int2 sizes;
     public float aggroRange;
 }

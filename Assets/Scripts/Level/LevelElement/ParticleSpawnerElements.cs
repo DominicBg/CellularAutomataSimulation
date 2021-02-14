@@ -25,7 +25,7 @@ public class ParticleSpawnerElements : LevelObject
 
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
-        int index = ArrayHelper.PosToIndex(renderPos, GameManager.GridSizes);
+        int index = ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes);
         outputColors[index] = Color.white;
     }
 }

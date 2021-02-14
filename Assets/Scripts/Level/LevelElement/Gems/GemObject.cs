@@ -15,7 +15,7 @@ public class GemObject : LevelObject, ILightSource
         return new Bound(position, 5);
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         //to keep?
         //int pos1 = ArrayHelper.PosToIndex(renderPos, GameManager.GridSizes);
@@ -25,7 +25,7 @@ public class GemObject : LevelObject, ILightSource
         //outputColor[pos2] = color;
     }
 
-    public override void LateRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void LateRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         for (int i = 0; i < gemShines.Length; i++)
         {

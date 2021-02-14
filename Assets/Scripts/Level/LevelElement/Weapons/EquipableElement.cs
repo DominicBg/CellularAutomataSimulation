@@ -19,8 +19,9 @@ public abstract class EquipableElement : LevelObject
 
     public override void OnInit()
     {
-        spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
-        spriteAnimator.framePerImage = baseSettings.framePerImage;
+        //TODO renable sprites
+       // spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
+       // spriteAnimator.framePerImage = baseSettings.framePerImage;
     }
 
 
@@ -82,17 +83,16 @@ public abstract class EquipableElement : LevelObject
     }
 
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        //offset might need to be based on renderPos
-        //int2 finalPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
-        //bool isFlipped = player.lookLeft;
-        spriteAnimator.Render(ref outputcolor, renderPos, player.lookLeft);
+        //RENABLE
+        //spriteAnimator.Render(ref outputcolor, renderPos, player.lookLeft);
     }
 
     public override Bound GetBound()
-    {
-        return new Bound(position, spriteAnimator.nativeSpriteSheet.spriteSizes);
+    {        //RENABLE
+
+        return new Bound(position, 5  /*spriteAnimator.nativeSpriteSheet.spriteSizes*/);
     }
 
     protected int2 GetEquipOffset(int2 offset)
@@ -116,7 +116,7 @@ public abstract class EquipableElement : LevelObject
     public override void Dispose()
     {
         base.Dispose();
-        spriteAnimator.Dispose();
+        spriteAnimator?.Dispose();
     }
 
     struct UseRequest

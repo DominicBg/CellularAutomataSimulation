@@ -19,7 +19,7 @@ public class GridPostProcess
             {
                 colorArray = colors,
                 settings = settings,
-                mapSizes = GameManager.GridSizes
+                mapSizes = GameManager.RenderSizes
             }.Run();
         }
     }

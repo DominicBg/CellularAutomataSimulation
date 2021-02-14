@@ -10,10 +10,11 @@ public class SpriteSheetObject : LevelObject
 
     SpriteAnimator spriteAnimator;
     public bool inBackground;
+    public bool2 isFlipped;
 
     public override void OnInit()
     {
-        spriteAnimator = new SpriteAnimator(spriteSheetScriptable.spriteSheet);
+        spriteAnimator = new SpriteAnimator(spriteSheetScriptable);
     }
 
     public override Bound GetBound()
@@ -23,18 +24,18 @@ public class SpriteSheetObject : LevelObject
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        spriteAnimator.Update();
+        spriteAnimator.Update(isFlipped);
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if(!inBackground)
-            spriteAnimator.Render(ref outputColor, renderPos, false);
+            spriteAnimator.Render(ref outputColor, renderPos);
     }
-    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if(inBackground)
-            spriteAnimator.Render(ref outputColor, renderPos, false);
+            spriteAnimator.Render(ref outputColor, renderPos);
     }
 
     public override void Dispose()

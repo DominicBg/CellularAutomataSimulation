@@ -9,8 +9,9 @@ using UnityEngine;
 public unsafe struct NativeGrid<T> : IDisposable where T : struct
 {
     [NativeDisableUnsafePtrRestriction]
-    public void* m_buffer;
-    public int2 m_sizes;
+    private void* m_buffer;
+    private int2 sizes;
+    public int2 Sizes => sizes;
 
     Allocator m_Allocator;
 
@@ -28,7 +29,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
     public NativeGrid(int2 sizes, Allocator allocator)
     {
         m_binarySize = (sizes.x * sizes.y) * UnsafeUtility.SizeOf<T>();
-        this.m_sizes = sizes;
+        this.sizes = sizes;
         m_Allocator = allocator;
 
         m_buffer = UnsafeUtility.Malloc(m_binarySize, UnsafeUtility.AlignOf<T>(), allocator);
@@ -87,10 +88,10 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckReadAndThrow(m_Safety);
             if (!InBound(index2))
-                throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ {index2}, max {m_sizes}");
+                throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ {index2}, max {sizes}");
 #endif
 
-            int index = ArrayHelper.PosToIndex(index2, m_sizes);
+            int index = ArrayHelper.PosToIndex(index2, sizes);
             return UnsafeUtility.ReadArrayElement<T>(m_buffer, index);
         }
         set
@@ -98,16 +99,16 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
             if (!InBound(index2))
-                throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at {index2}, max {m_sizes}");
+                throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at {index2}, max {sizes}");
 #endif
 
-            int index = ArrayHelper.PosToIndex(index2, m_sizes);
+            int index = ArrayHelper.PosToIndex(index2, sizes);
             UnsafeUtility.WriteArrayElement(m_buffer, index, value);
         }
     }
 
     public bool InBound(int2 pos)
     {
-        return pos.x >= 0 && pos.y >= 0 && pos.x < m_sizes.x && pos.y < m_sizes.y;
+        return pos.x >= 0 && pos.y >= 0 && pos.x < sizes.x && pos.y < sizes.y;
     }
 }

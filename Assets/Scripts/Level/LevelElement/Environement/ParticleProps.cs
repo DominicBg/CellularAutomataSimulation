@@ -57,7 +57,7 @@ public class ParticleProps : LevelObject
         }
     }
 
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         //Job?
         for (int x = 0; x < nativeSprite.sizes.x; x++)
@@ -65,9 +65,9 @@ public class ParticleProps : LevelObject
             for (int y = 0; y < nativeSprite.sizes.y; y++)
             {
                 int2 mapPos = renderPos + new int2(x, y);
-                if (GridHelper.InBound(mapPos, GameManager.GridSizes) && isParticles[x, y])
+                if (GridHelper.InBound(mapPos, GameManager.RenderSizes) && isParticles[x, y])
                 {
-                    int index = ArrayHelper.PosToIndex(mapPos, GameManager.GridSizes);
+                    int index = ArrayHelper.PosToIndex(mapPos, GameManager.RenderSizes);
                     outputColor[index] = nativeSprite.pixels[x, y];
                 }
             }

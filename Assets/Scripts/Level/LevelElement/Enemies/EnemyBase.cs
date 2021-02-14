@@ -36,12 +36,12 @@ public class EnemyBase : PhysicObject
             physicData.velocity.x = 0;
         }
         HandlePhysic();
-        spriteAnimator.Update();
+        spriteAnimator.Update(lookDirection == -1);
     }
 
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        spriteAnimator.Render(ref outputColors, renderPos, lookDirection == -1);
+        spriteAnimator.Render(ref outputColors, renderPos);
     }
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {

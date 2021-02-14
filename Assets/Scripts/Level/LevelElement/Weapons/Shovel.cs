@@ -63,6 +63,7 @@ public class Shovel : EquipableElement
                 }
             }
         }
+
         //try move up one position
         PhysicBound playerPhysicbound = player.physicData.physicBound;
         Bound playerOverBound = playerPhysicbound.GetTopCollisionBound(player.physicData.gridPosition + new int2(0, 1));
@@ -132,22 +133,19 @@ public class Shovel : EquipableElement
         return desiredPos;
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
         int2 animOffset = playAnim ? settings.animOffset :0;
         //int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
-        bool2 flipped;
-        flipped.x =player.lookLeft;
-        flipped.y = playAnim;
-        spriteAnimator.Render(ref outputcolor, renderPos + animOffset, flipped);
+        spriteAnimator.Render(ref outputcolor, renderPos + animOffset);
     }
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
         for (int i = 0; i < debugPositions.Count; i++)
         {
-            int index = ArrayHelper.PosToIndex(renderPos - debugPositions[i], GameManager.GridSizes);
+            int index = ArrayHelper.PosToIndex(renderPos - debugPositions[i], GameManager.RenderSizes);
             if(index >= 0 && index < outputColor.Length)
                 outputColor[index] = Color.Lerp(outputColor[index], Color.red, 0.25f); 
         }

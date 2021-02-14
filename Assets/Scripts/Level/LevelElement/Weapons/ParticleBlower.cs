@@ -57,7 +57,7 @@ public class ParticleBlower : EquipableElement
         pixelCamera.transform.offset = new int2(1, 0) * suckDirection * (int2)(settings.cameraOffset * GetCurrentFadeIntensity()) + new int2((int)(GetCurrentFadeIntensity() * shakeIntensity), 0);
     }
 
-    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if (intensity == 0)
         {

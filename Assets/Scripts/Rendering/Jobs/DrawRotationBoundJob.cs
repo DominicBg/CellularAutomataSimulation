@@ -15,7 +15,7 @@ public struct RenderRotationBoundJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 worldPos = cameraHandle.GetGlobalPosition(pos);
 
         if (rotationBound.PointInBound(worldPos))
@@ -36,7 +36,7 @@ public struct RenderRotationBoundSpriteJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 worldPos = cameraHandle.GetGlobalPosition(pos);
 
         if (rotationBound.PointInBound(worldPos))

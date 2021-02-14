@@ -18,7 +18,7 @@ public abstract class GunBaseElement : EquipableElement
 
     protected override void OnUse(int2 position, bool _, ref TickBlock tickBlock)
     {
-        int2 mousePosition = GridPicker.GetGridPosition(GameManager.GridSizes);
+        int2 mousePosition = GridPicker.GetGridPosition(GameManager.RenderSizes);
         int2 aimPosition = scene.pixelCamera.GetGlobalPosition(mousePosition);
         int2 startPosition = player.GetBound().center;
         //int2 startPosition = GetWorldPositionOffset(baseGunSettings.shootOffset);
@@ -30,18 +30,18 @@ public abstract class GunBaseElement : EquipableElement
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
-        spriteAnimator.Update();
+        spriteAnimator.Update(player.lookLeft);
         //spriteAnimator.SetAnimation(isUsedThisFrame ? (int)GunAnim.Fire : (int)GunAnim.Idle);
         cooldownShoot = math.max(cooldownShoot - 1, 0);
     }
 
-    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {     
         //might need to add offset
       //  int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
         int2 kickOffset = GetKickOffset();
 
-        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset, player.lookLeft);
+        spriteAnimator.Render(ref outputcolor, renderPos + kickOffset);
     }
 
     protected int2 GetKickOffset()

@@ -17,7 +17,7 @@ public struct ShakeScreenJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
         float falloff = settings.useFalloff ? 1 - t * t * t : 1;
         float p = tickBlock.tick * settings.speed;
@@ -29,9 +29,9 @@ public struct ShakeScreenJob : IJobParallelFor
             return;
 
         int2 posOffset = pos + offset;
-        if(GridHelper.InBound(posOffset, GameManager.GridSizes))
+        if(GridHelper.InBound(posOffset, GameManager.RenderSizes))
         {
-            Color32 colorOffset = inputColors[ArrayHelper.PosToIndex(posOffset, GameManager.GridSizes)];
+            Color32 colorOffset = inputColors[ArrayHelper.PosToIndex(posOffset, GameManager.RenderSizes)];
             outputColors[index] = Color.Lerp(outputColors[index], colorOffset, settings.blendWithOriginal * falloff);
         }
         else

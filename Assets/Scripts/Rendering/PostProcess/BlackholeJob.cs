@@ -27,7 +27,7 @@ public struct BlackholeJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 position = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         //float t = tickBlock.DurationSinceTick(startTick) / settings.duration;
 
         //t = math.sin(t * math.PI);
@@ -43,9 +43,9 @@ public struct BlackholeJob : IJobParallelFor
             float intensity = math.lerp(settings.intensityMin, settings.intensityMax, t);
             int2 sampleGridIndex = position + (int2)(dir * t * settings.waveSpeed * intensity);
 
-            if(GridHelper.InBound(sampleGridIndex, GameManager.GridSizes))
+            if(GridHelper.InBound(sampleGridIndex, GameManager.RenderSizes))
             {
-                int sampleIndex = ArrayHelper.PosToIndex(sampleGridIndex, GameManager.GridSizes);
+                int sampleIndex = ArrayHelper.PosToIndex(sampleGridIndex, GameManager.RenderSizes);
                 outputColors[index] = inputColors[sampleIndex];
             }
             else

@@ -20,7 +20,7 @@ public class MapDrawerManager : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes);
+            int2 pos = GridPicker.GetGridPosition(GameManager.RenderSizes);
 
             int halfSize = brushSize / 2;
             for (int x = -halfSize; x <= halfSize; x++)

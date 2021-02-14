@@ -18,7 +18,7 @@ public struct ShockwaveJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 position = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         float t = tickBlock.DurationSinceTick(startTick) / settings.duration;
         
         //rofl add curve system pls
@@ -40,9 +40,9 @@ public struct ShockwaveJob : IJobParallelFor
             //extermities gives 0, center give 1
             ratioThick = math.sin(ratioThick * math.PI);
 
-            if (GridHelper.InBound(sampleGridIndex, GameManager.GridSizes))
+            if (GridHelper.InBound(sampleGridIndex, GameManager.RenderSizes))
             {
-                int sampleIndex = ArrayHelper.PosToIndex(sampleGridIndex, GameManager.GridSizes);
+                int sampleIndex = ArrayHelper.PosToIndex(sampleGridIndex, GameManager.RenderSizes);
                 float intensity = settings.intensity * ratioThick * (1 - t);
                 outputColors[index] = Color.Lerp(outputColors[index], inputColors[sampleIndex], intensity);
             }

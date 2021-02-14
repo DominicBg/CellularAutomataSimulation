@@ -40,7 +40,7 @@ public struct ParticleSuckingEffectJob : IJobParallelFor
     public void Execute(int index)
     {
         bound = Bound.CenterAligned(bound.center, bound.sizes - settings.shrink);
-        int2 gridPos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 gridPos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 projectedPoint = bound.ProjectPointOnbound(gridPos);
         float distanceSqToClosestPoint = math.distancesq(gridPos, projectedPoint);
 
@@ -58,9 +58,9 @@ public struct ParticleSuckingEffectJob : IJobParallelFor
             float t = math.frac(tickBlock.tick * settings.speed + i * settings.offset);
             int offset = (int)(direction * settings.range * intensity * EaseXVII.Evaluate(t, settings.ease));
             int2 samplePos = gridPos + new int2(offset, (int)sinOffset);
-            if(GridHelper.InBound(samplePos, GameManager.GridSizes))
+            if(GridHelper.InBound(samplePos, GameManager.RenderSizes))
             {
-                int sampleIndex = ArrayHelper.PosToIndex(samplePos, GameManager.GridSizes);
+                int sampleIndex = ArrayHelper.PosToIndex(samplePos, GameManager.RenderSizes);
                 Color sampleColor = inputColors[sampleIndex];
                 sampleColor.a = settings.blendRatio * fadeOffAlpha * intensity;
                 color = RenderingUtils.Blend(color, sampleColor, settings.blendingMode);

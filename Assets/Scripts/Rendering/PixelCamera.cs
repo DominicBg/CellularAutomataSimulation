@@ -9,7 +9,15 @@ public class PixelCamera
     public PixelCameraTransform transform;
     int2 viewPort;
     List<IRenderable> renderingObjects;
+    //NativeArray<Color32> skybox;
 
+    ///// <summary>
+    ///// This is only possible when calling from a Render function
+    ///// </summary>
+    //public Color SampleSkybox(int2 renderPos)
+    //{
+    //    return skybox[ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes)];
+    //}
 
     public int2 position
     {
@@ -30,23 +38,45 @@ public class PixelCamera
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
         renderingObjects.Clear();
-        Bound viewPortBound = new Bound(position - viewPort/2, viewPort);
+        Bound viewPortBound = new Bound(position - viewPort / 2, viewPort);
 
         //maybe do it more optimzied lol
         for (int i = 0; i < pixelScene.levelObjects.Length; i++)
         {
-            if(pixelScene.levelObjects[i] != null && viewPortBound.IntersectWith(pixelScene.levelObjects[i].GetBound()))
+            if (pixelScene.levelObjects[i] != null && viewPortBound.IntersectWith(pixelScene.levelObjects[i].GetBound()))
                 renderingObjects.Add(pixelScene.levelObjects[i]);
         }
 
         IAlwaysRenderable[] alwaysRenderables = pixelScene.alwaysRenderables;
         renderingObjects.AddRange(alwaysRenderables);
 
-        renderingObjects.Sort((a,b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
+        renderingObjects.Sort((a, b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
 
 
         int renderCount = renderingObjects.Count;
-        var lights = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
+        EnvironementInfo info = new EnvironementInfo();
+        info.lightSources = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
+
+        //SkyBoxRender
+        for (int i = 0; i < renderCount; i++)
+        {
+            if (!renderingObjects[i].IsVisible())
+                continue;
+
+            if (renderingObjects[i] is LevelObject)
+            {
+                int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
+                renderingObjects[i].SkyBoxRender(ref outputColors, ref tickBlock, renderPos, ref info);
+            }
+            else
+            {
+                renderingObjects[i].SkyBoxRender(ref outputColors, ref tickBlock, position, ref info);
+            }
+            onRenderPass?.Invoke(outputColors);
+
+        }
+        info.skybox = new NativeArray<Color32>(outputColors, Allocator.TempJob);
+
 
         //PreRender
         for (int i = 0; i < renderCount; i++)
@@ -57,13 +87,11 @@ public class PixelCamera
             if (renderingObjects[i] is LevelObject)
             {
                 int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, renderPos);
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, renderPos, ref info);
             }
             else
             { 
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position); 
-                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position, ref lights); 
+                renderingObjects[i].PreRender(ref outputColors, ref tickBlock, position, ref info); 
             }
             onRenderPass?.Invoke(outputColors);
         }
@@ -77,13 +105,11 @@ public class PixelCamera
             if (renderingObjects[i] is LevelObject)
             {
                 int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
-                renderingObjects[i].Render(ref outputColors, ref tickBlock, renderPos);
-                renderingObjects[i].Render(ref outputColors, ref tickBlock, renderPos, ref lights);
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, renderPos, ref info);
             }
             else
             {
-                renderingObjects[i].Render(ref outputColors, ref tickBlock, position);
-                renderingObjects[i].Render(ref outputColors, ref tickBlock, position, ref lights);
+                renderingObjects[i].Render(ref outputColors, ref tickBlock, position, ref info);
             }
             onRenderPass?.Invoke(outputColors);
         }
@@ -97,19 +123,17 @@ public class PixelCamera
             if (renderingObjects[i] is LevelObject)
             {
                 int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
-                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, renderPos);
-                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, renderPos, ref info);
             }
             else
             {
-                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position);
-                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position, ref lights);
+                renderingObjects[i].LateRender(ref outputColors, ref tickBlock, position, ref info);
             }
             onRenderPass?.Invoke(outputColors);
         }
 
         //Render Light
-        LightRenderer.AddLight(ref outputColors, ref lights, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
+        LightRenderer.AddLight(ref outputColors, ref info.lightSources, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
 
         //Post Process render
         for (int i = 0; i < renderCount; i++)
@@ -120,13 +144,11 @@ public class PixelCamera
             if (renderingObjects[i] is LevelObject)
             {
                 int2 renderPos = GetRenderPosition(((LevelObject)renderingObjects[i]).position);
-                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, renderPos);
-                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, renderPos, ref lights);
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, renderPos, ref info);
             }
             else
             {
-                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position);
-                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position, ref lights);
+                renderingObjects[i].PostRender(ref outputColors, ref tickBlock, position, ref info);
             }
             onRenderPass?.Invoke(outputColors);
         }
@@ -146,6 +168,8 @@ public class PixelCamera
         {
             for (int i = 0; i < renderCount; i++)
             {
+                if (!renderingObjects[i].IsVisible())
+                    continue;
                 if (renderingObjects[i] is LevelObject)
                     renderingObjects[i].RenderDebug(ref outputColors, ref tickBlock, GetRenderPosition(((LevelObject)renderingObjects[i]).position));
                 else
@@ -154,7 +178,11 @@ public class PixelCamera
             onRenderPass?.Invoke(outputColors);
         }
 
-        lights.Dispose();
+        info.lightSources.Dispose();
+        info.skybox.Dispose();
+
+        //lights.Dispose();
+        // skybox.Dispose();
         return outputColors;
     }
 
@@ -228,4 +256,21 @@ public class PixelCamera
         return renderPos + (cameraPosition - viewPort / 2);
     }
 
+}
+
+public struct EnvironementInfo
+{
+    public NativeArray<Color32> skybox;
+    public NativeList<LightSource> lightSources;
+
+    ///// <summary>
+    ///// This is only possible when calling from a Render function
+    ///// </summary>
+    public Color SampleSkybox(int2 renderPos)
+    {
+        if (!GridHelper.InBound(renderPos, GameManager.RenderSizes))
+            return Color.clear;
+
+        return skybox[ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes)];
+    }
 }

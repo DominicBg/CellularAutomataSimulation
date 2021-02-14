@@ -113,7 +113,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
         if (isRecording)
         {
-            int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes) + currentWorldLevel.pixelCamera.position - GameManager.GridSizes/2;
+            int2 pos = GridPicker.GetGridPosition(GameManager.RenderSizes) + currentWorldLevel.pixelCamera.position - GameManager.RenderSizes/2;
 
             int halfSize = brushSize / 2;
             int extra = brushSize % 2 == 0 ? 0 : 1;
@@ -219,7 +219,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     void DrawPreview(ref NativeArray<Color32> outputColors)
     {
-        int2 pos = GridPicker.GetGridPosition(GameManager.GridSizes);
+        int2 pos = GridPicker.GetGridPosition(GameManager.RenderSizes);
 
         int halfSize = brushSize / 2;
         int extra = brushSize % 2 == 0 ? 0 : 1;
@@ -229,9 +229,9 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
             for (int y = -halfSize; y < halfSize + extra; y++)
             {
                 int2 pixelPos = new int2(pos.x + x, pos.y + y);
-                if(GridHelper.InBound(pixelPos, GameManager.GridSizes))
+                if(GridHelper.InBound(pixelPos, GameManager.RenderSizes))
                 {
-                    int index = ArrayHelper.PosToIndex(pixelPos, GameManager.GridSizes);
+                    int index = ArrayHelper.PosToIndex(pixelPos, GameManager.RenderSizes);
                     outputColors[index] = Color.gray;
                 }
             }
@@ -256,8 +256,8 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     public void UpdateScenePicker()
     {
         var scene = currentWorldLevel.pixelScene;
-        int2 mouseLocal = GridPicker.GetGridPosition(GameManager.GridSizes);
-        int2 pos = currentWorldLevel.pixelCamera.position - GameManager.GridSizes/2 + mouseLocal;
+        int2 mouseLocal = GridPicker.GetGridPosition(GameManager.RenderSizes);
+        int2 pos = currentWorldLevel.pixelCamera.position - GameManager.RenderSizes/2 + mouseLocal;
         hoverObject = null;
         for (int i = 0; i < scene.levelObjects.Length; i++)
         {

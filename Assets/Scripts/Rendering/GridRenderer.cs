@@ -29,7 +29,7 @@ public class GridRenderer : MonoBehaviour
     {
         Instance = this;
 
-        int2 sizes = GameManager.GridSizes;
+        int2 sizes = GameManager.RenderSizes;
         m_texture = new Texture2D(sizes.x, sizes.y, TextureFormat.RGBA32, false, true);
         m_texture.filterMode = FilterMode.Point;
     }
@@ -54,12 +54,12 @@ public class GridRenderer : MonoBehaviour
     public static void GetGradientTexture(out NativeArray<Color32> outputColor, Color topColor, Color bottomColor, int resolution)
     {
         outputColor = new NativeArray<Color32>(GameManager.GridLength, Allocator.TempJob);
-        for (int x = 0; x < GameManager.GridSizes.x; x++)
+        for (int x = 0; x < GameManager.RenderSizes.x; x++)
         {
-            for (int y = 0; y < GameManager.GridSizes.y; y++)
+            for (int y = 0; y < GameManager.RenderSizes.y; y++)
             {
-                int i = y * GameManager.GridSizes.x + x;
-                float t = MathUtils.ReduceResolution((float)y / GameManager.GridSizes.y, resolution);
+                int i = y * GameManager.RenderSizes.x + x;
+                float t = MathUtils.ReduceResolution((float)y / GameManager.RenderSizes.y, resolution);
                 outputColor[i] = Color.Lerp(topColor, bottomColor, t);
             }
         }
@@ -99,7 +99,7 @@ public class GridRenderer : MonoBehaviour
         NativeArray<Color32> colors = new NativeArray<Color32>(positions.Length, Allocator.TempJob);
         for (int i = 0; i < positions.Length; i++)
         {
-            positions[i] -= cameraPos - GameManager.GridSizes / 2;
+            positions[i] -= cameraPos - GameManager.RenderSizes / 2;
             colors[i] = color;
         }
         new ApplyPixelsJob(outputColor, positions, colors, blending).Run();
@@ -190,17 +190,118 @@ public class GridRenderer : MonoBehaviour
             settings = settings,
             colors = colors,
             outputColor = outputColor,
-            mapSizes = GameManager.GridSizes
+            mapSizes = GameManager.RenderSizes
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         colors.Dispose();
         return outputColor;
     }
 
+    [Obsolete("Use the function with NativeGrid<Color32>")]
     public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool centerAligned = false)
     {
         ApplySprite(ref outputColor, in sprite, position, centerAligned, false);
     }
 
+    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, int2 renderPos, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 texturePos = renderPos + new int2(x, y) - (centerAligned ? colors.Sizes / 2 : 0);
+                if (GridHelper.InBound(texturePos, GameManager.RenderSizes) && colors[x, y].a != 0)
+                {
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.RenderSizes.x);
+                    outputColor[index] = colors[x, y];
+                }
+            }
+        }
+    }
+
+    public static void ApplyLitSprite(ref NativeArray<Color32> outputColors, in NativeGrid<Color32> colors, in NativeGrid<float3> normals,
+        int2 worldPosition, int2 renderPos, NativeList<LightSource> lights, float minLight = 0.5f, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 centerAligendOffset = -(centerAligned ? colors.Sizes / 2 : 0);
+                int2 localPos = new int2(x, y);
+                int2 finalPos = renderPos + localPos + centerAligendOffset;
+                if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
+                {
+                    int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
+                    outputColors[index] = ApplyLightOnPixel(worldPosition + localPos + centerAligendOffset, colors[localPos], normals[localPos], lights, 0, minLight, 25);
+                }
+            }
+        }
+    }
+
+    public static void ApplySpriteSkyboxReflection(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
+    int2 renderPos, EnvironementInfo info, ReflectionInfo reflectionInfo, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 localPos = new int2(x, y);
+                int2 finalPos = renderPos + localPos - (centerAligned ? colors.Sizes / 2 : 0);
+                if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
+                {
+                    int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
+                    outputColor[index] = ApplySkyboxReflection(renderPos, outputColor[index], reflectiveMap[localPos], normals[localPos], info, reflectionInfo);
+                }
+            }
+        }
+    }
+
+
+    public static void ApplySpriteEnvironementReflection(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
+        int2 renderPos, ReflectionInfo reflectionInfo, int blurRadius, float blurIntensity, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 localPos = new int2(x, y);
+                int2 finalPos = renderPos + localPos - (centerAligned ? colors.Sizes / 2 : 0);
+                if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
+                {
+                    int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
+
+                    int2 direction = (int2)(normals[localPos].xy * reflectionInfo.distance);
+                    int2 samplePos = finalPos + direction;
+                    if (!GridHelper.InBound(samplePos, GameManager.RenderSizes))
+                        continue;
+
+                    Color sampleColor = outputColor[ArrayHelper.PosToIndex(samplePos, GameManager.RenderSizes)];
+                    if (blurRadius <= 1)
+                    {   
+                        //Take sample directly
+                        outputColor[index] = Blend(outputColor[index], sampleColor.Alpha(reflectiveMap[localPos] * reflectionInfo.amount), reflectionInfo.blending);
+                        continue;
+                    }
+
+                    //Add Blur
+                    Color color = Color.clear;
+                    var circlePos = GridHelper.GetCircleAtPosition(samplePos, blurRadius, GameManager.RenderSizes, Allocator.Temp);
+                    for (int i = 0; i < circlePos.Length; i++)
+                    {
+                        color += outputColor[ArrayHelper.PosToIndex(circlePos[i], GameManager.RenderSizes)];
+                    }
+                    color /= circlePos.Length;
+                    color.a = blurIntensity;
+                    circlePos.Dispose();
+                    color = Blend(sampleColor, color, BlendingMode.Normal);
+                    
+                    outputColor[index] = Blend(outputColor[index], color.Alpha(reflectiveMap[localPos] * reflectionInfo.amount), reflectionInfo.blending);        
+                }
+            }
+        }
+    }
+
+
+    [Obsolete("Use the function with NativeGrid<Color32>")]
     public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool2 isFlipped, bool centerAligned = false)
     {
         for (int x = 0; x < sprite.sizes.x; x++)
@@ -211,36 +312,65 @@ public class GridRenderer : MonoBehaviour
                 int yy = (!isFlipped.y) ? y : sprite.sizes.y - y - 1;
 
                 int2 texturePos = new int2(x, y) + position - (centerAligned ? sprite.sizes/2 : 0);
-                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && sprite.pixels[xx, yy].a != 0)
+                if (GridHelper.InBound(texturePos, GameManager.RenderSizes) && sprite.pixels[xx, yy].a != 0)
                 {
-                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.RenderSizes.x);
                     outputColor[index] = sprite.pixels[xx, yy];
                 }
             }
         }
     }
-    public static void ApplyCustomRender(
-        ref NativeArray<Color32> outputColor, int2 position, int2 sizes, bool2 isFlipped, 
-        Func<int2, bool> canRender, Func<int2, Color> renderColor,
-        bool centerAligned = false)
-    {
-        for (int x = 0; x < sizes.x; x++)
-        {
-            for (int y = 0; y < sizes.y; y++)
-            {
-                int xx = (!isFlipped.x) ? x : sizes.x - x - 1;
-                int yy = (!isFlipped.y) ? y : sizes.y - y - 1;
 
-                int2 texturePos = new int2(x, y) + position - (centerAligned ? sizes / 2 : 0);
-                int2 newPos = new int2(xx, yy);
-                if (GridHelper.InBound(texturePos, GameManager.GridSizes) && canRender(newPos))
-                {
-                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.GridSizes.x);
-                    outputColor[index] = renderColor(newPos);
-                }
-            }
-        }
-    }
+
+    //public static void ApplyLitSprite(ref NativeArray<Color32> outputColors, NativeSprite sprite, NativeSprite normalMap,
+    //    int2 position, int2 renderPos, bool2 isFlipped, NativeList<LightSource> lights, float minLight = 0.5f, bool isCenterAligned = false)
+    //{
+    //    int2 sizes = sprite.sizes;
+    //    Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => sprite.pixels[pixelPos].a != 0;
+    //    Func<int2, int2, Color> getColor = (pixelPos, _) => sprite.pixels[pixelPos];
+    //    Func<int2, int2, Color> getNormal = (pixelPos, _) => normalMap.pixels[pixelPos];
+    //    Func<int2, int2, Color> getLightColor = (pixelPos, _) => ApplyLightOnPixel(position, pixelPos, lights, getColor, getNormal, 0, minLight, 25, isFlipped.x);
+
+    //    ApplyCustomRender(ref outputColors, renderPos, sizes, isFlipped, canDrawPixel, getLightColor, isCenterAligned);
+    //}
+
+    ////BORKEN
+    //public static void ApplySkyBoxReflection(ref NativeArray<Color32> outputColors, NativeSprite sprite, NativeSprite normalMap, NativeSprite reflectionMap,
+    //    int2 renderPos, bool2 isFlipped, EnvironementInfo info, ReflectionInfo reflectionInfo)
+    //{
+    //    var outputColorsPtr = outputColors;
+    //    var infoPtr = info;
+
+    //    Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => reflectionMap.pixels[pixelPos].r != 0 && sprite.pixels[pixelPos].a != 0;
+    //    Func<int2, int2, Color> getCurrentColor = (pixelPos, finalPos) => outputColorsPtr[ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes)];
+    //    Func<int2, int2, Color> getBlendSkyTexture = (pixelPos, finalPos) => 
+    //        ApplySkyboxReflection(pixelPos, getCurrentColor(pixelPos, finalPos), ((Color)reflectionMap.pixels[pixelPos]).r, normalMap.pixels[pixelPos].ToNormal(), info, reflectionInfo, isFlipped);
+
+    //    ApplyCustomRender(ref outputColors, renderPos, sprite.sizes, isFlipped, canDrawPixel, getBlendSkyTexture, false);
+    //}
+
+    //public static void ApplyCustomRender(
+    //    ref NativeArray<Color32> outputColors, int2 position, int2 sizes, bool2 isFlipped, 
+    //    Func<int2, int2, bool> canRender, Func<int2, int2, Color> renderColor,
+    //    bool centerAligned = false)
+    //{
+    //    for (int x = 0; x < sizes.x; x++)
+    //    {
+    //        for (int y = 0; y < sizes.y; y++)
+    //        {
+    //            int xx = (!isFlipped.x) ? x : sizes.x - x - 1;
+    //            int yy = (!isFlipped.y) ? y : sizes.y - y - 1;
+
+    //            int2 finalPos = new int2(x, y) + position - (centerAligned ? sizes / 2 : 0);
+    //            int2 pixelPos = new int2(xx, yy);
+    //            if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && canRender(pixelPos, finalPos))
+    //            {
+    //                int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes.x);
+    //                outputColors[index] = renderColor(pixelPos, finalPos);
+    //            }
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// Render the outputColor to the screen and dispose the array
@@ -267,7 +397,7 @@ public class GridRenderer : MonoBehaviour
         for (int i = 0; i < outputASCII.Length; i++)
         {
             stringBuilder.Append(outputASCII[i]);
-            if ((i + 1) % GameManager.GridSizes.x == 0)
+            if ((i + 1) % GameManager.RenderSizes.x == 0)
                 stringBuilder.Append('\n');
         }
         Instance.m_rendererText.text = stringBuilder.ToString();

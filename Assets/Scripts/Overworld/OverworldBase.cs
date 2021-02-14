@@ -19,9 +19,9 @@ public abstract class OverworldBase : ScriptableObject
 
     protected void GetBackgroundFromTexture(out NativeArray<Color32> backgroundColors, Texture2D texture)
     {
-        if(texture.width != GameManager.GridSizes.x || texture.height != GameManager.GridSizes.y)
+        if(texture.width != GameManager.RenderSizes.x || texture.height != GameManager.RenderSizes.y)
         {
-            throw new System.Exception($"The background texture have sizes {texture.width}x{texture.height}, must have {GameManager.GridSizes}");
+            throw new System.Exception($"The background texture have sizes {texture.width}x{texture.height}, must have {GameManager.RenderSizes}");
         }
         backgroundColors = new NativeArray<Color32>(texture.GetPixels32(), Allocator.TempJob);
     }

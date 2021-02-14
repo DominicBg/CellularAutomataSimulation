@@ -9,56 +9,63 @@ using System;
 public class SpriteLitStaticObject : SpriteStaticObject
 {
     public Texture2D normalMap;
+    public Texture2D reflectionMap;
 
-    NativeSprite nativeNormalMap;
     public float lightResolution = 25;
     public float minLightIntensity = 0.5f;
     public override void OnInit()
     {
-        base.OnInit();
-        nativeNormalMap = new NativeSprite(normalMap);
-        if (!math.all(nativeSprite.sizes == nativeNormalMap.sizes))
-            Debug.LogError(this.name + " is having a normal map of a different size");
+        nativeSprite = new NativeSprite(texture, normalMap, reflectionMap);
+        TrySetCollision();
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
-    {
-        //override so SpriteStaticObject doesnt render
-    }
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
-    {
-        //override so SpriteStaticObject doesnt render
-    }
-
-
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if (isInBackground)
-            RenderPixels(ref outputColors, ref tickBlock, renderPos, ref lights);
+            RenderPixels(ref outputColors, ref tickBlock, renderPos, ref info.lightSources, ref info);
     }
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if (!isInBackground)
-            RenderPixels(ref outputColors, ref tickBlock, renderPos, ref lights);
+            RenderPixels(ref outputColors, ref tickBlock, renderPos, ref info.lightSources, ref info);
     }
 
-    void RenderPixels(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    void RenderPixels(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights, ref EnvironementInfo info)
     {
-        NativeList<LightSource> lightsCopy = lights;
-        float z = isInBackground ? -1 : 0;
+        var sprite = nativeSprite.pixels;
+        var normals = nativeSprite.normals;
+        var reflections = nativeSprite.reflections;
 
-        Func<int2, bool> canDrawPixel = pixelPos => nativeSprite.pixels[pixelPos].a != 0;
-        Func<int2, Color> getColor = pixelPos => nativeSprite.pixels[pixelPos];
-        Func<int2, Color> getNormal = pixelPos => nativeNormalMap.pixels[pixelPos];
-        Func<int2, Color> getLightColor = pixelPos => RenderingUtils.ApplyLightOnPixel(position, pixelPos, lightsCopy, getColor, getNormal, z, minLightIntensity, lightResolution);
+        if (nativeSprite.UseNormals)
+        {
+            GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, minLightIntensity, true);
+        }
+        else
+        {
+            GridRenderer.ApplySprite(ref outputColors, sprite, renderPos);
+        }
 
-        GridRenderer.ApplyCustomRender(ref outputColors, renderPos, nativeSprite.sizes, isFlipped, canDrawPixel, getLightColor, true);           
+        if (nativeSprite.UseNormals && nativeSprite.UseReflection)
+        {
+            GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, info, ReflectionInfo.Default(), true);
+            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, ReflectionInfo.Default(), 2, .5f, true);
+        }
+
+
+        //NativeList<LightSource> lightsCopy = lights;
+        //float z = isInBackground ? -1 : 0;
+
+        //Func<int2, int2, bool> canDrawPixel = (pixelPos, _) => nativeSprite.pixels[pixelPos].a != 0;
+        //Func<int2, int2, Color> getColor = (pixelPos, _)=> nativeSprite.pixels[pixelPos];
+        //Func<int2, int2, Color> getNormal = (pixelPos, _) => nativeNormalMap.pixels[pixelPos];
+        //Func<int2, int2, Color> getLightColor = (pixelPos, finalPos) => RenderingUtils.ApplyLightOnPixel(finalPos, pixelPos, lightsCopy, getColor, getNormal, z, minLightIntensity, lightResolution);
+
+        //GridRenderer.ApplyCustomRender(ref outputColors, renderPos, nativeSprite.sizes, isFlipped, canDrawPixel, getLightColor, true);           
     }
 
 
     public override void Dispose()
     {
         base.Dispose();
-        nativeNormalMap.Dispose();
     }
 }

@@ -17,7 +17,7 @@ public struct DispersionBlurImageJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         Color32 input = inputColors[index];
         input = Color32.Lerp(input, Color.clear, fadeOff);
 
@@ -34,11 +34,11 @@ public struct DispersionBlurImageJob : IJobParallelFor
 
     float4 GetColor(int2 pos, int2 offset, ref int count)
     {
-        if (!GridHelper.InBound(pos + offset, GameManager.GridSizes))
+        if (!GridHelper.InBound(pos + offset, GameManager.RenderSizes))
             return 0;
 
         count++;
-        int index = ArrayHelper.PosToIndex(pos + offset, GameManager.GridSizes);
+        int index = ArrayHelper.PosToIndex(pos + offset, GameManager.RenderSizes);
         Color col = inputColors[index];
         return new float4(col.r, col.g, col.b, col.a);
     }

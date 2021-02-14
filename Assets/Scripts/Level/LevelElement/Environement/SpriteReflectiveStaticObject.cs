@@ -44,12 +44,12 @@ public class SpriteReflectiveStaticObject : LevelObject
         return Bound.CenterAligned(position, nativeSprite.sizes);
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if(isInBackground)
             GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, isFlipped, true);
     }
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if (!isInBackground)
             GridRenderer.ApplySprite(ref outputColors, nativeSprite, renderPos, isFlipped, true);

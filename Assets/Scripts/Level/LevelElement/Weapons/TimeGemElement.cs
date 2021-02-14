@@ -53,7 +53,7 @@ public class TimeGemElement : EquipableElement
         worldLevel.updatLevelElement = !timeStopped;
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         int2 center = player.GetBound().center;
         NativeArray<float> alphas = new NativeArray<float>(outputColors.Length, Allocator.TempJob);
@@ -87,7 +87,7 @@ public class TimeGemElement : EquipableElement
         alphas.Dispose();
     }
 
-    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPosition)
+    public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPosition, ref EnvironementInfo info)
     {
         int2 center = player.GetBound().center;
 
@@ -104,7 +104,7 @@ public class TimeGemElement : EquipableElement
             }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
 
             //might break
-            player.Render(ref previousColor, ref tickBlock, renderPosition);
+            player.Render(ref previousColor, ref tickBlock, renderPosition, ref info);
             input.Dispose();
 
             new SlowTimeBlurEffectGemJob()
@@ -165,7 +165,7 @@ public class TimeGemElement : EquipableElement
         {
             alphas[index] = 0;
 
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
             float distancesq = math.distancesq(pos, center);
             if (distancesq < settings.maxRadius * settings.maxRadius)
@@ -236,7 +236,7 @@ public class TimeGemElement : EquipableElement
             if (alphas[index] == 0)
                 return;
 
-            int2 pos = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
             Color color = CalculateColor(pos);
             color.a = alphas[index];

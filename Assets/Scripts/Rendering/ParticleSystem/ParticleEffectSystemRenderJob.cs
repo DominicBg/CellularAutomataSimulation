@@ -15,7 +15,7 @@ public struct ParticleEffectSystemRenderJob : IJobParallelFor
 
     public void Execute(int index)
     {
-        int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 position = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 pixelGlobalPosition = cameraHandle.GetGlobalPosition(position);
 
         if (!bound.PointInBound(pixelGlobalPosition))

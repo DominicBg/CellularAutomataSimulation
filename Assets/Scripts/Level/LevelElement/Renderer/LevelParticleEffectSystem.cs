@@ -44,12 +44,12 @@ public class LevelParticleEffectSystem : LevelObject
         particleEffectSystem.EmitParticleAtPosition(position, ref tickBlock);
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void PreRender(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if(inBackground)
             particleEffectSystem.Render(ref outputColor, pixelCamera);
     }
-    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
+    public override void Render(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         if (!inBackground)
             particleEffectSystem.Render(ref outputColor, pixelCamera);

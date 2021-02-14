@@ -21,25 +21,6 @@ MonoBehaviour:
   jumpForce: 90
   inAirJumpThreshold: 0.2
   releaseJumpButtonCutoff: 0.5
-  spriteSheet:
-    spriteSheetName: Astro
-    spriteAnimations:
-    - animationName: Idle
-      sprites:
-      - {fileID: 2800000, guid: 323e8b8493fd068459b50addbe93d7c5, type: 3}
-      - {fileID: 2800000, guid: 323e8b8493fd068459b50addbe93d7c5, type: 3}
-      - {fileID: 2800000, guid: f7eba8b47d1847f4ca50be2018bba316, type: 3}
-      - {fileID: 2800000, guid: f7eba8b47d1847f4ca50be2018bba316, type: 3}
-    - animationName: Run
-      sprites:
-      - {fileID: 2800000, guid: f769596a5d2a852439bfa4c80dad1578, type: 3}
-      - {fileID: 2800000, guid: 378805c7281e1e244b45d2ebffdd1834, type: 3}
-      - {fileID: 2800000, guid: 58c53594bb64e5c4d831a5092d9d5a65, type: 3}
-      - {fileID: 2800000, guid: e26a24471ab44b04c8c13d4ba2d057c9, type: 3}
-    - animationName: Fall
-      sprites:
-      - {fileID: 2800000, guid: 7ae807e1fa38f164c9dfe067ad46432c, type: 3}
-      - {fileID: 2800000, guid: 5670cb5811237904692d029eb734135a, type: 3}
+  spriteSheet: {fileID: 11400000, guid: 762f98d3fbc6892408df708f5accaeb8, type: 2}
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
-  normalMap: {fileID: 2800000, guid: 800da19a6c4a10148aeb0e7ec3a9621f, type: 3}
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}

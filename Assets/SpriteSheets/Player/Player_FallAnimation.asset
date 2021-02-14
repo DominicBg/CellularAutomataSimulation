@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f498b9afa157b014c8d2667295228fb9, type: 3}
+  m_Name: Player_FallAnimation
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 2800000, guid: cd5e8081e15302d4cb2a2368d25aa0c8, type: 3}
+  - {fileID: 2800000, guid: b80723cfed2ceb243b36c67f4b8627f7, type: 3}
+  normals:
+  - {fileID: 2800000, guid: 6ca641f038b12074e9fca7e3cad69196, type: 3}
+  - {fileID: 2800000, guid: 90072d397c124274d8734755d27bd58e, type: 3}
+  reflections:
+  - {fileID: 2800000, guid: cdb9330f92eb46a4d846840b4ed2ce5f, type: 3}
+  - {fileID: 2800000, guid: 504f7ed144439e44a961538f5ae823f1, type: 3}

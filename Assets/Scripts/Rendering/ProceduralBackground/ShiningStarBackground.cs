@@ -33,7 +33,7 @@ public struct StarBackgroundRendering : ITextureRenderableAnimated
         new ShiningStarBackgroundJob()
         {
             colors = colorArray,
-            maxSizes = GameManager.GridSizes,
+            maxSizes = GameManager.RenderSizes,
             settings = this,
             tick = tick,
             offset = offset

@@ -86,7 +86,7 @@ public class BubbleThinkingElement : LevelElement
 
         public void Execute(int index)
         {
-            int2 position = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 position = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
             for (int i = 0; i < circles.Length; i++)
             {

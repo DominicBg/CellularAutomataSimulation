@@ -18,7 +18,7 @@ public class ParticleDestroyerElement : LevelObject
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
-        int index = ArrayHelper.PosToIndex(renderPos, GameManager.GridSizes);
+        int index = ArrayHelper.PosToIndex(renderPos, GameManager.RenderSizes);
         outputColor[index] = Color.red;
     }
 }

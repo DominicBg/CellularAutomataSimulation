@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using static PixelCamera;
 
 public abstract class LevelElement : MonoBehaviour, IRenderable
 {
@@ -37,16 +38,11 @@ public abstract class LevelElement : MonoBehaviour, IRenderable
     public virtual void OnUpdate(ref TickBlock tickBlock) { }
     public virtual void OnLateUpdate(ref TickBlock tickBlock) { }
 
-    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
-    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
-    public virtual void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
-    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos) { }
-
-
-    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
-    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
-    public virtual void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
-    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights) { }
+    public virtual void SkyBoxRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info) { }
+    public virtual void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info) { }
+    public virtual void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info) { }
+    public virtual void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info) { }
+    public virtual void PostRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info) { }
 
 
     public virtual void RenderUI(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock) { }

@@ -13,7 +13,7 @@ public class LevelGradientSky : LevelElement, IAlwaysRenderable
     public float resolution;
     public BlendingMode blending;
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    public override void SkyBoxRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         var nativeGradients = new NativeArray<Color>(gradientColors, Allocator.TempJob);
         new GradientJob()
@@ -39,7 +39,7 @@ public class LevelGradientSky : LevelElement, IAlwaysRenderable
 
         public void Execute(int index)
         {
-            float2 uv = ArrayHelper.IndexToUv(index, GameManager.GridSizes);
+            float2 uv = ArrayHelper.IndexToUv(index, GameManager.RenderSizes);
 
             float value = isVertical ? uv.y : uv.x;
             float steps = 1f / (gradientColors.Length - 1);

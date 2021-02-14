@@ -286,9 +286,9 @@ public struct World1GemRMJob : IJobParallelFor
         diamondPos = diamond.diamondPosition + math.up() * diamond.sinHeightAmp * math.sin(diamond.sinHeightFreq * tickBlock.tick);
 
 
-        int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+        int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
 
-        float2 uv = ((float2)gridPosition / GameManager.GridSizes - 0.5f) / render.scales;
+        float2 uv = ((float2)gridPosition / GameManager.RenderSizes - 0.5f) / render.scales;
         quaternion fromLookAt = quaternion.Euler(math.radians(camera.pitchYawRoll));
 
         float3 dir = math.mul(fromLookAt, new float3(0, 0, 1));

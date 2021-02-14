@@ -30,7 +30,7 @@ public class WorldLevel : MonoBehaviour
         tickBlock.Init();
         postProcessTickBlock.Init();
 
-        pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.GridSizes);
+        pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.RenderSizes);
         pixelScene.Init(pixelSceneData.LoadMap(), pixelCamera);
 
         PostProcessManager.Instance = new PostProcessManager();
@@ -43,7 +43,7 @@ public class WorldLevel : MonoBehaviour
         if (InputCommand.IsButtonDown(KeyCode.F1))
             inDebug = !inDebug;
         if (InputCommand.IsButtonDown(KeyCode.F2))
-            renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.GridSizes);
+            renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.RenderSizes);
 
         if (updatLevelElement)
             tickBlock.UpdateTick();

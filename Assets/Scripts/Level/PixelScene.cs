@@ -54,7 +54,7 @@ public class PixelScene : MonoBehaviour
     {
         if (updateSimulation)
         {
-            updateBound = Bound.CenterAligned(updatePos, GameManager.GridSizes * 2);
+            updateBound = Bound.CenterAligned(updatePos, GameManager.RenderSizes * 2);
             new CellularAutomataJob()
             {
                 behaviour = GameManager.ParticleBehaviour,

@@ -28,7 +28,7 @@ public static class LightRenderer
         public int2 renderingOffset;
         public void Execute(int index)
         {
-            int2 pixelPos = ArrayHelper.IndexToPos(index, GameManager.GridSizes) - renderingOffset; 
+            int2 pixelPos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes) - renderingOffset; 
             Color color = outputColors[index];
 
             for (int i = 0; i < lightSources.Length; i++)

@@ -21,7 +21,7 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
         public float noiseThreshold;
     }
 
-    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref NativeList<LightSource> lights)
+    public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         NativeArray<NoiseXVII.Noise> nativeNoises = new NativeArray<NoiseXVII.Noise>(noises, Allocator.TempJob);
         new RenderCaveJob()
@@ -33,7 +33,7 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
             rockRendering = GridRenderer.Instance.particleRendering.rockRendering,
             tickBlock = tickBlock,
             tone = tone,
-            lights = lights,
+            lights = info.lightSources,
             noiseCutoff = noiseCutoff,
             nativeNoises = nativeNoises,
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
@@ -58,9 +58,9 @@ public class LevelCavernBackground : LevelElement, IAlwaysRenderable
 
         public void Execute(int index)
         {
-            int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.GridSizes);
+            int2 gridPosition = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
             int2 parallaxOffset = (int2)((float2)cameraPos * parallax);
-            float2 position = gridPosition - GameManager.GridSizes/2 + parallaxOffset;
+            float2 position = gridPosition - GameManager.RenderSizes/2 + parallaxOffset;
 
             if (noiseCutoff.useNoise)
             {
