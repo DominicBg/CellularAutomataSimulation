@@ -21,7 +21,7 @@ public class GridPicker : MonoBehaviour
     public static int2 GetGridPosition(int2 gridSizes)
     {
         float2 screen = new Vector2(Screen.width, Screen.height);
-        float2 mousePosition = (Vector2)Input.mousePosition;
+        float2 mousePosition = (Vector2)InputCommand.MousePosition;
         float2 ratio = mousePosition / screen;
         float2 resolution = instance.canvas.referenceResolution;
 

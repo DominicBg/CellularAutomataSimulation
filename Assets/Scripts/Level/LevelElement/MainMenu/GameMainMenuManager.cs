@@ -59,7 +59,7 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         tickBlock.UpdateTick();
      //   mainMenuLevel.OnUpdate(ref tickBlock);
 
-        if(InputCommand.IsButtonDown(KeyCode.Space))
+        if(InputCommand.IsButtonDown(ButtonType.Jump))
         {
             GameManager.Instance.SetOverworld();
         }

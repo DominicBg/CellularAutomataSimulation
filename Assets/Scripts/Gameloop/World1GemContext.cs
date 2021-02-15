@@ -74,7 +74,7 @@ public class World1GemContext : GameContext
         cameraTransform.pitchYawRoll += new float3(InputCommand.Direction.y, InputCommand.Direction.x, 0) * settings.speed * GameManager.DeltaTime;
         cameraTransform.pitchYawRoll.x = math.clamp(cameraTransform.pitchYawRoll.x, settings.minPitch, settings.maxPitch);
 
-        if (InputCommand.IsButtonDown(KeyCode.Escape))
+        if (InputCommand.IsButtonDown(ButtonType.Exit))
             ExitContext();
     }
 }

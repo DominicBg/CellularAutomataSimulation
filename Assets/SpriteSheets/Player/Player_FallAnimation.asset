@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_FallAnimation
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: 2800000, guid: 0e1aea6e0369bf84ea5439a0bbdc6f01, type: 3}
+  - {fileID: 2800000, guid: cba1601010dd3ac4daa9c56c9505cbe6, type: 3}
   - {fileID: 2800000, guid: 0e1aea6e0369bf84ea5439a0bbdc6f01, type: 3}
   normals:
   - {fileID: 2800000, guid: 20633f37e9d2c7549921147662558eac, type: 3}

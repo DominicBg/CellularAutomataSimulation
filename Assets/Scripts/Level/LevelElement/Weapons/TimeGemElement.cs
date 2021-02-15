@@ -126,11 +126,11 @@ public class TimeGemElement : EquipableElement
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            position = player.position;
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    position = player.position;
           
-        }
+        //}
     }
    
     [BurstCompile]

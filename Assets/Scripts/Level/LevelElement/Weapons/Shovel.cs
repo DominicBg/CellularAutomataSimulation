@@ -158,9 +158,9 @@ public class Shovel : EquipableElement
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            position = player.position;
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    position = player.position;
+        //}
     }
 }

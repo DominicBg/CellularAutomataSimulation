@@ -68,8 +68,9 @@ public class Player : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if (InputCommand.IsButtonDown(KeyCode.F3))
-            ghostMode = !ghostMode;
+        //add cheat system?
+        //if (InputCommand.IsButtonDown(KeyCode.F3))
+        //    ghostMode = !ghostMode;
 
         if(ghostMode)
         {
@@ -100,7 +101,7 @@ public class Player : PhysicObject, ILightSource
         UpdateMovement(direction);
         UpdateJump(isGrounded);
 
-        if(isGrounded && InputCommand.IsButtonHeld(KeyCode.Space))
+        if(isGrounded && InputCommand.IsButtonHeld(ButtonType.Jump))
         {
             PhysiXVII.MoveUpFromPile(ref physicData, map, GameManager.PhysiXVIISetings);
             position = physicData.gridPosition;
@@ -111,12 +112,12 @@ public class Player : PhysicObject, ILightSource
 
     void DebugEquip()
     {
-        if (InputCommand.IsButtonDown(KeyCode.Alpha1))
-            inventory.Equip(FindObjectOfType<Shovel>(), ItemInventory.Slot.Main);
-        if (InputCommand.IsButtonDown(KeyCode.Alpha2))
-            inventory.Equip(FindObjectOfType<ParticleBlower>(), ItemInventory.Slot.Main);
-        if (InputCommand.IsButtonDown(KeyCode.Alpha3))
-            inventory.Equip(FindObjectOfType<StatisGun>(), ItemInventory.Slot.Secondary);
+        //if (InputCommand.IsButtonDown(KeyCode.Alpha1))
+        //    inventory.Equip(FindObjectOfType<Shovel>(), ItemInventory.Slot.Main);
+        //if (InputCommand.IsButtonDown(KeyCode.Alpha2))
+        //    inventory.Equip(FindObjectOfType<ParticleBlower>(), ItemInventory.Slot.Main);
+        //if (InputCommand.IsButtonDown(KeyCode.Alpha3))
+        //    inventory.Equip(FindObjectOfType<StatisGun>(), ItemInventory.Slot.Secondary);
     }
 
     private void UpdateAnimation(float2 direction, bool isGrounded)
@@ -162,7 +163,7 @@ public class Player : PhysicObject, ILightSource
             inAirDuration += GameManager.DeltaTime;
 
             //Control jump height
-            if(physicData.velocity.y > 0 && InputCommand.IsButtonUp(KeyCode.Space))
+            if(physicData.velocity.y > 0 && InputCommand.IsButtonUp(ButtonType.Jump))
             {
                 physicData.velocity.y *= settings.releaseJumpButtonCutoff;
             }
@@ -170,7 +171,7 @@ public class Player : PhysicObject, ILightSource
         }
 
         pressJumpBufferDuration -= GameManager.DeltaTime;
-        if (InputCommand.IsButtonDown(KeyCode.Space))
+        if (InputCommand.IsButtonDown(ButtonType.Jump))
         {
             pressJumpBufferDuration = settings.pressJumpBuffer;
         }

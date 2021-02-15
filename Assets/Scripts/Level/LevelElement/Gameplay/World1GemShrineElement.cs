@@ -12,11 +12,11 @@ public class World1GemShrineElement : SpriteSheetObject
     public override void OnUpdate(ref TickBlock tickBlock)
     {
         base.OnUpdate(ref tickBlock);
-        if(InputCommand.IsButtonDown(KeyCode.E) && GetBound().IntersectWith(player.GetBound()))
-        {
-            context.OnEndCallBack = ContextCallBack;
-            GameManager.Instance.SetContext(context);
-        }
+        //if(InputCommand.IsButtonDown(KeyCode.E) && GetBound().IntersectWith(player.GetBound()))
+        //{
+        //    context.OnEndCallBack = ContextCallBack;
+        //    GameManager.Instance.SetContext(context);
+        //}
     }
 
     void ContextCallBack()

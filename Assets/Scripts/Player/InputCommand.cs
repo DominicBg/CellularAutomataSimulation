@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using static InputCommand;
+public enum ButtonType { Jump, Exit, Action1, Action1Alt, Action2, Action2Alt}
 
 public class InputCommand
 {
+
     static InputCommand instance;
+    Inputs inputRef;
 
     //static readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0), new int2(0, 1), new int2(0, -1)};
     //static readonly KeyCode[] directionInputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S};
@@ -17,35 +22,57 @@ public class InputCommand
         EnsureInit();
         instance.InternalUpdate();
     }
-    public static bool IsButtonHeld(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonHeld();
+    public static bool IsButtonHeld(ButtonType keyCode) => instance.GetInput(keyCode).IsButtonHeld();
 
-    public static bool IsButtonDown(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonDown();
-    public static bool IsButtonUp(KeyCode keyCode) => instance.GetInput(keyCode).IsButtonUp();
+    public static bool IsButtonDown(ButtonType keyCode) => instance.GetInput(keyCode).IsButtonDown();
+    public static bool IsButtonUp(ButtonType keyCode) => instance.GetInput(keyCode).IsButtonUp();
 
-    public static DirectionEnum GetKeyDirection()
-    {
-        if (IsButtonDown(KeyCode.W)) return DirectionEnum.Up;
-        if (IsButtonDown(KeyCode.A)) return DirectionEnum.Left;
-        if (IsButtonDown(KeyCode.S)) return DirectionEnum.Down;
-        if (IsButtonDown(KeyCode.D)) return DirectionEnum.Right;
+    //public static DirectionEnum GetKeyDirection()
+    //{
+    //    if (IsButtonDown(KeyCode.W)) return DirectionEnum.Up;
+    //    if (IsButtonDown(KeyCode.A)) return DirectionEnum.Left;
+    //    if (IsButtonDown(KeyCode.S)) return DirectionEnum.Down;
+    //    if (IsButtonDown(KeyCode.D)) return DirectionEnum.Right;
 
-        return DirectionEnum.None;
-    }
+    //    return DirectionEnum.None;
+    //}
 
     static void EnsureInit()
     {
         if (instance == null)
+        {
             instance = new InputCommand();
+            instance.inputRef = new Inputs();
+            instance.inputRef.Enable();
+        }
     }
 
 
     public static float2 Direction { get; private set; }
+    public static float2 MousePosition { get; private set; }
 
-    Dictionary<KeyCode, InputState> inputs = new Dictionary<KeyCode, InputState>();
+    Dictionary<ButtonType, InputState> inputs = new Dictionary<ButtonType, InputState>();
 
-
-
-    InputState GetInput(KeyCode keyCode)
+    InputAction InputActionWithButtonType(ButtonType type)
+    {
+        switch (type)
+        {
+            case ButtonType.Jump:
+                return inputRef.Player.Jump;
+            case ButtonType.Exit:
+                return inputRef.Player.Exit;
+            case ButtonType.Action1:
+                return inputRef.Player.Action1;
+            case ButtonType.Action1Alt:
+                return inputRef.Player.Action1Alt;
+            case ButtonType.Action2:
+                return inputRef.Player.Action2;
+            case ButtonType.Action2Alt:
+                return inputRef.Player.Action2Alt;
+        }
+        return null;
+    }
+    InputState GetInput(ButtonType keyCode)
     {
         InputState inputState;
         if (inputs.TryGetValue(keyCode, out inputState))
@@ -54,47 +81,37 @@ public class InputCommand
         }
 
         inputState = new InputState();
-        inputState.Init(keyCode);
+        inputState.Init(keyCode, InputActionWithButtonType(keyCode));
         inputs.Add(keyCode, inputState);
         return inputState;
     }
 
     public void InternalUpdate()
     {
-        //int2 currentDir = 0;
-        //Direction = 0;
-
-
-        //for (int i = 0; i < directionInputs.Length; i++)
-        //{
-        //    if (Input.GetKey(directionInputs[i]))
-        //    {
-        //        int2 dir = directions[i];
-        //        currentDir.x = currentDir.x == 0 ? dir.x : currentDir.x;
-        //        currentDir.y = currentDir.y == 0 ? dir.y : currentDir.y;
-        //    }
-        //}
-        Direction = new float2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Direction = inputRef.Player.Move.ReadValue<Vector2>();
+        MousePosition = inputRef.Player.Mouse.ReadValue<Vector2>();
         foreach (var input in inputs.Values)
             input.Update();
     }
-
+    
 
     public class InputState
     {
-        KeyCode keyCode;
+        ButtonType buttonType;
         bool isPressed;
         bool wasPressed;
+        InputAction inputAction;
 
-        public void Init(KeyCode keyCode)
+        public void Init(ButtonType keyCode, InputAction inputAction)
         {
-            this.keyCode = keyCode;
+            this.buttonType = keyCode;
+            this.inputAction = inputAction;
         }
 
         public void Update()
         {
             wasPressed = isPressed;
-            isPressed = Input.GetKey(keyCode);
+            isPressed = inputAction.ReadValue<float>() > 0.5f;
         }
 
         public bool IsButtonHeld() => isPressed && wasPressed;

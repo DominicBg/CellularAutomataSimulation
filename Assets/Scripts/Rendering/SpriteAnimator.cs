@@ -71,6 +71,8 @@ public class SpriteAnimator : IDisposable
         currentReflection = new NativeGrid<float>(nativeSpriteSheet.spriteSizes, Allocator.Persistent);
         useNormal = spriteSheet.spriteAnimations[0].normals != null && spriteSheet.spriteAnimations[0].normals.Length > 0;
         useReflection = spriteSheet.spriteAnimations[0].reflections != null && spriteSheet.spriteAnimations[0].reflections.Length > 0;
+
+        StoreCurrentSprite(false);
     }
 
     private void StoreCurrentSprite(bool2 isFlipped)

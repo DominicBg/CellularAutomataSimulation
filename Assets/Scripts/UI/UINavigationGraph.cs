@@ -35,32 +35,33 @@ public class UINavigationGraph : MonoBehaviour
 
     public void OnUpdate()
     {
-        if(InputCommand.IsButtonDown(KeyCode.Space))
+        //TO REENABLE
+        if (InputCommand.IsButtonDown(ButtonType.Jump))
         {
             Debug.Log(currentNode.name);
             currentNode.onEvent?.Invoke();
         }
 
-        InputCommand.DirectionEnum direction = InputCommand.GetKeyDirection();
-        UINode nextNode = null;
-        switch (direction)
-        {
-            case InputCommand.DirectionEnum.Left:
-                nextNode = currentNode.leftNode;
-                break;
-            case InputCommand.DirectionEnum.Right:
-                nextNode = currentNode.rightNode;
-                break;
-            case InputCommand.DirectionEnum.Up:
-                nextNode = currentNode.upNode;
-                break;
-            case InputCommand.DirectionEnum.Down:
-                nextNode = currentNode.downNode;
-                break;
-        }
+        //InputCommand.DirectionEnum direction = InputCommand.GetKeyDirection();
+        //UINode nextNode = null;
+        //switch (direction)
+        //{
+        //    case InputCommand.DirectionEnum.Left:
+        //        nextNode = currentNode.leftNode;
+        //        break;
+        //    case InputCommand.DirectionEnum.Right:
+        //        nextNode = currentNode.rightNode;
+        //        break;
+        //    case InputCommand.DirectionEnum.Up:
+        //        nextNode = currentNode.upNode;
+        //        break;
+        //    case InputCommand.DirectionEnum.Down:
+        //        nextNode = currentNode.downNode;
+        //        break;
+        //}
 
-        if (nextNode != null)
-            currentNode = nextNode;
+        //if (nextNode != null)
+        //    currentNode = nextNode;
     }
 
     public void OnRender(ref NativeArray<Color32> outputColor)

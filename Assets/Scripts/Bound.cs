@@ -94,6 +94,7 @@ public struct Bound
         }
     }
 
+
     public bool IntersectWith(Bound otherBound)
     {
         return !(otherBound.max.x < min.x || otherBound.min.x > max.x || otherBound.max.y < min.y || otherBound.min.y > max.y);

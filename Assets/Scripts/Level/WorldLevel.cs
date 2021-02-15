@@ -40,10 +40,12 @@ public class WorldLevel : MonoBehaviour
 
     public void OnUpdate()
     {
-        if (InputCommand.IsButtonDown(KeyCode.F1))
-            inDebug = !inDebug;
-        if (InputCommand.IsButtonDown(KeyCode.F2))
-            renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.RenderSizes);
+        //Add to cheat
+        //if (InputCommand.IsButtonDown(KeyCode.F1))
+        //    inDebug = !inDebug;
+        //if (InputCommand.IsButtonDown(KeyCode.F2))
+        //    renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.RenderSizes);
+
 
         if (updatLevelElement)
             tickBlock.UpdateTick();

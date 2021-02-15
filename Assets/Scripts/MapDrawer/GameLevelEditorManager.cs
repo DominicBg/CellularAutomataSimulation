@@ -81,7 +81,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
     public void OnUpdate()
     {
         float multiplier = 1;
-        if (InputCommand.IsButtonHeld(KeyCode.LeftShift))
+        if (InputCommand.IsButtonHeld(ButtonType.Action2))
             multiplier = 3;
 
         float2 movement = InputCommand.Direction * movingSpeed * GameManager.DeltaTime * multiplier + fracPos;
@@ -99,17 +99,18 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     private void DrawPixels()
     {
-        if (!isRecording && Input.GetMouseButton(0))
-        {
-            currentList = new List<ParticleChange>(50);
-            isRecording = true;
-        }
-        else if (isRecording && !Input.GetMouseButton(0))
-        {
-            controlZ.Push(currentList);
-            dirtyPixels.Clear();
-            isRecording = false;
-        }
+        //RENABLE
+        //if (!isRecording && Input.GetMouseButton(0))
+        //{
+        //    currentList = new List<ParticleChange>(50);
+        //    isRecording = true;
+        //}
+        //else if (isRecording && !Input.GetMouseButton(0))
+        //{
+        //    controlZ.Push(currentList);
+        //    dirtyPixels.Clear();
+        //    isRecording = false;
+        //}
 
         if (isRecording)
         {
@@ -127,7 +128,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
                 }
             }
         }
-        else if (InputCommand.IsButtonDown(KeyCode.Z))
+        else if (InputCommand.IsButtonDown(ButtonType.Action2Alt))
         {
             var changes = controlZ.Pop();
             for (int i = changes.Count - 1; i >= 0; i--)
@@ -267,7 +268,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
 #if UNITY_EDITOR
                 //Set to mouse click? lol
-                if(InputCommand.IsButtonDown(KeyCode.C))
+                if(InputCommand.IsButtonDown(ButtonType.Action1Alt))
                 {
                     Selection.activeObject = hoverObject;
                     EditorGUIUtility.PingObject(Selection.activeObject);

@@ -13,8 +13,8 @@ public class ExplosiveElement : LevelElement
     public override void OnUpdate(ref TickBlock tickBlock)
     {
         Bound bound = target.GetBound();
-        if (InputCommand.IsButtonDown(KeyCode.Alpha2))
-            Explode(bound.center);
+        //if (InputCommand.IsButtonDown(KeyCode.Alpha2))
+        //    Explode(bound.center);
 
         bound.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
         for (int i = 0; i < positions.Length; i++)
