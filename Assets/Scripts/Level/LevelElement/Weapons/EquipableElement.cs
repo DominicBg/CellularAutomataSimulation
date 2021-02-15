@@ -21,8 +21,10 @@ public abstract class EquipableElement : LevelObject
     {
        spriteAnimator = new SpriteAnimator(baseSettings.spriteSheet);
        spriteAnimator.framePerImage = baseSettings.framePerImage;
-    }
 
+        CheatManager.AddCheat("Equip " + gameObject.name + " Main", () => player.inventory.Equip(this, ItemInventory.Slot.Main));
+        CheatManager.AddCheat("Equip " + gameObject.name + " Secondary", () => player.inventory.Equip(this, ItemInventory.Slot.Secondary));
+    }
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {

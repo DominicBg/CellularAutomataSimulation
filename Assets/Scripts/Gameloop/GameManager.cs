@@ -4,6 +4,7 @@ using UnityEngine;
 using FiniteStateMachine;
 using Unity.Mathematics;
 using Unity.Jobs;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -43,6 +44,8 @@ public class GameManager : MonoBehaviour
     public WorldLevel worldLevelPrefab;
     public WorldLevel GetWorldLevelInstance() => Instantiate(worldLevelPrefab);
 
+    public Action OnGameModeChange;
+    public Action OnGameModeEnd;
 
     [SerializeField] PhysiXVIIScriptable physiXVIIScriptable = default;
     [SerializeField] ParticleBehaviourScriptable particleBehaviourScriptable = default;
@@ -67,10 +70,10 @@ public class GameManager : MonoBehaviour
     {
         m_stateMachine = new StateMachine<GameStateEnum>();
 
-        m_stateMachine.AddState(gameLevelManager, GameStateEnum.Level, EditorPingManager);
-        m_stateMachine.AddState(gameLevelEditorManager, GameStateEnum.LevelEditor, EditorPingManager);
-        m_stateMachine.AddState(gameOverworldManager, GameStateEnum.Overworld, EditorPingManager);
-        m_stateMachine.AddState(gameMainMenuManager, GameStateEnum.MainMenu, EditorPingManager);
+        m_stateMachine.AddState(gameLevelManager, GameStateEnum.Level, OnStateChange, null , (state) => OnGameModeEnd.Invoke());
+        m_stateMachine.AddState(gameLevelEditorManager, GameStateEnum.LevelEditor, OnStateChange, null, (state) => OnGameModeEnd.Invoke());
+        m_stateMachine.AddState(gameOverworldManager, GameStateEnum.Overworld, OnStateChange, null, (state) => OnGameModeEnd.Invoke());
+        m_stateMachine.AddState(gameMainMenuManager, GameStateEnum.MainMenu, OnStateChange, null, (state) => OnGameModeEnd.Invoke());
 
         m_stateMachine.SetState(firstState);
     }
@@ -141,7 +144,13 @@ public class GameManager : MonoBehaviour
     public static GameStateEnum CurrentState => Instance.m_stateMachine.GetCurrentState();
 
 
-    public void EditorPingManager(IGameState state)
+    void OnStateChange(IGameState state)
+    {
+        OnGameModeChange?.Invoke();
+        EditorPingManager(state);
+    }
+
+    void EditorPingManager(IGameState state)
     {
 #if UNITY_EDITOR
         Selection.activeObject = (MonoBehaviour)state;

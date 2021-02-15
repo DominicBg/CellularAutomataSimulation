@@ -23,7 +23,7 @@ public class Player : PhysicObject, ILightSource
     [HideInInspector] public bool lookLeft;
     [HideInInspector] public bool isDirectionLocked;
 
-    ItemInventory inventory;
+    public ItemInventory inventory;
 
     private int reflectionIndex;
 
@@ -44,6 +44,8 @@ public class Player : PhysicObject, ILightSource
         spriteAnimator = new SpriteAnimator(settings.spriteSheet);
         InitPhysicData(settings.collisionTexture);
         inventory = new ItemInventory();
+
+        CheatManager.AddCheat("Ghost Mode", () => ghostMode = !ghostMode);
     }
 
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
@@ -68,10 +70,6 @@ public class Player : PhysicObject, ILightSource
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        //add cheat system?
-        //if (InputCommand.IsButtonDown(KeyCode.F3))
-        //    ghostMode = !ghostMode;
-
         if(ghostMode)
         {
             physicData.position += (InputCommand.Direction * 360 * GameManager.DeltaTime);

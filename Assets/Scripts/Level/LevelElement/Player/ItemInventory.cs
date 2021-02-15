@@ -26,21 +26,21 @@ public class ItemInventory
     {
         //todo bind each action to a key
 
-        //if (Input.GetMouseButton(0))
-        //{
-        //    equipableElements[0]?.Use(false);
-        //}
-        //else if (Input.GetMouseButton(1))
-        //{
-        //    equipableElements[0]?.Use(true);
-        //}
-        //else if (InputCommand.IsButtonHeld(KeyCode.Q))
-        //{
-        //    equipableElements[1]?.Use(false);
-        //}
-        //else if (InputCommand.IsButtonHeld(KeyCode.E))
-        //{
-        //    equipableElements[1]?.Use(true);
-        //}
+        if (InputCommand.IsButtonHeld(ButtonType.Action1))
+        {
+            equipableElements[0]?.Use(false);
+        }
+        else if (InputCommand.IsButtonHeld(ButtonType.Action1Alt))
+        {
+            equipableElements[0]?.Use(true);
+        }
+        else if (InputCommand.IsButtonHeld(ButtonType.Action2))
+        {
+            equipableElements[1]?.Use(false);
+        }
+        else if (InputCommand.IsButtonHeld(ButtonType.Action2Alt))
+        {
+            equipableElements[1]?.Use(true);
+        }
     }
 }
