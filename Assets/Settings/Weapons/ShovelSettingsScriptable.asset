@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShovelSettingsScriptable
   m_EditorClassIdentifier: 
   equipedOffset:
-    x: 0
+    x: 3
     y: -4
   spriteSheet: {fileID: 11400000, guid: 17fe6ef8cf29f7949a1908c3205c1289, type: 2}
   framePerImage: 5

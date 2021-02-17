@@ -27,8 +27,29 @@ public static class PhysiXVII
     {
         Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
         Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
-        bool hasFeetCollision = map.HasCollision(ref feetBound, GetFlag(ParticleType.Player), Allocator.Temp);
-        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, GetFlag(ParticleType.Player), Allocator.Temp);
+        var feetPos = feetBound.GetPositionsGrid(Allocator.Temp);
+        var underFeetPos = underFeetBound.GetPositionsGrid(Allocator.Temp);
+
+        bool hasFeetCollision = false;
+        bool hasUnderFeetCollision = false;
+        for (int i = 0; i < feetPos.Length; i++)
+            hasFeetCollision |= map.HasCollision(feetPos[i], GetFlag(ParticleType.Player)) && !map.GetParticle(feetPos[i]).InFreeFall();
+        for (int i = 0; i < underFeetPos.Length; i++)
+            hasUnderFeetCollision |= map.HasCollision(underFeetPos[i], GetFlag(ParticleType.Player)) && !map.GetParticle(underFeetPos[i]).InFreeFall();
+
+        bool atFloorLevel = position.y <= 0;
+
+        feetPos.Dispose();
+        underFeetPos.Dispose();
+        return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
+    }
+    [BurstCompile]
+    public static bool HasFloorCollision(in PhysicData physicData, Map map, int2 position)
+    {
+        Bound feetBound = physicData.physicBound.GetBottomCollisionBound(position);
+        Bound underFeetBound = physicData.physicBound.GetUnderFeetCollisionBound(position);
+        bool hasFeetCollision = map.HasCollision(ref feetBound, GetFlag(ParticleType.Player));
+        bool hasUnderFeetCollision = map.HasCollision(ref underFeetBound, GetFlag(ParticleType.Player));
         bool atFloorLevel = position.y <= 0;
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }

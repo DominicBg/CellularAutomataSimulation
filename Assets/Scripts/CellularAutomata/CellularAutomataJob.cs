@@ -66,6 +66,7 @@ public struct CellularAutomataJob : IJob
         if(particle.tickStatis > 0)
         {
             particle.tickStatis--;
+            particle.velocity = 0;
             map.SetParticle(pos, particle);
             return;
         }
@@ -73,6 +74,7 @@ public struct CellularAutomataJob : IJob
         switch (particle.type)
         {
             case ParticleType.None:
+                StayStatic(particle, pos);
                 break;
             case ParticleType.Water:
                 UpdateWaterParticle(particle, pos);
@@ -90,6 +92,7 @@ public struct CellularAutomataJob : IJob
                 UpdateIceParticle(particle, pos);
                 break;
             case ParticleType.Rock:
+                StayStatic(particle, pos);
                 break;
             case ParticleType.Rubble:
                 UpdateRubbleParticle(particle, pos);
@@ -116,7 +119,16 @@ public struct CellularAutomataJob : IJob
                 break;
             case ParticleType.Count:
                 break;
+            case ParticleType.Collision:
+                StayStatic(particle, pos);
+                break;
         }
+    }
+
+    void StayStatic(Particle particle, int2 pos)
+    {
+        particle.velocity = 0;
+        map.SetParticle(pos, particle);
     }
 
     unsafe bool TryFreeFalling(Particle particle, int2 pos)

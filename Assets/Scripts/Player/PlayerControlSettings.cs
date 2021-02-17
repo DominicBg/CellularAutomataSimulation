@@ -22,5 +22,9 @@ public class PlayerControlSettings : ScriptableObject
     public SpriteSheetScriptable spriteSheet;
     public Texture2D collisionTexture;
 
+    [Header("Walk friction effect")]
+    public float2 walkingForce = new float2(1, 0.5f);
+
+
     public GlowingLightSourceScriptable lightSourceSettings;
 }

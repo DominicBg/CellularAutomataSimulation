@@ -28,6 +28,7 @@ public struct PhysiXVIIJob : IJob
         PhysicData physicData = physicDataReference.Value;
         bool wasGrounded = physicData.isGrounded;
         physicData.isGrounded = PhysiXVII.IsGrounded(in physicData, map, physicData.gridPosition);
+        bool hasFloorCollision = PhysiXVII.HasFloorCollision(in physicData, map, physicData.gridPosition);
 
         if(!wasGrounded && physicData.isGrounded)
         {
@@ -35,7 +36,7 @@ public struct PhysiXVIIJob : IJob
             CalculateObjectParticleCollision(ref physicData, new float2(0, 1), new int2(0, 1), false);
         }
 
-        if (wasGrounded && !(physicData.velocity.y > 0))
+        if (hasFloorCollision && !(physicData.velocity.y > 0))
         {
             physicData.velocity.y = 0; //set parallel of gravity
             //physicData.velocity *= settings.friction;
@@ -175,8 +176,8 @@ public struct PhysiXVIIJob : IJob
             int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
             if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
             {
-                collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
-                
+                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
+
                 //This is to make sliding collision
                 //we limit the axis that is blocked but we still slide along the other axis
                 blockedAxis |= math.abs(collisionNormal) != 0;
@@ -192,11 +193,14 @@ public struct PhysiXVIIJob : IJob
                 }
 
                 if (math.all(blockedAxis))
+                { 
+                    //collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
                     return safePosition;
+                }
             }
             safePosition = currentPos;
         }
-
+        collisionNormal = 0;
         return safePosition;
     }
 

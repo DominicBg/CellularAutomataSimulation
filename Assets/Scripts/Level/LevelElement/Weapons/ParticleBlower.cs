@@ -20,6 +20,7 @@ public class ParticleBlower : EquipableElement
     {
         base.OnInit();
         container = new Stack<ParticleType>();
+        spriteAnimator.returnToIdleAfterAnim = true;
     }
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)

@@ -36,17 +36,13 @@ public class WorldLevel : MonoBehaviour
         PostProcessManager.Instance = new PostProcessManager();
 
         renderPassRecorder = new RenderPassRecorder();
+
+        CheatManager.AddCheat("Debug Mode", () => inDebug = !inDebug);
+        CheatManager.AddCheat("Render Pass Recorder", () => renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.RenderSizes));
     }
 
     public void OnUpdate()
     {
-        //Add to cheat
-        //if (InputCommand.IsButtonDown(KeyCode.F1))
-        //    inDebug = !inDebug;
-        //if (InputCommand.IsButtonDown(KeyCode.F2))
-        //    renderPassRecorder.RecordRenderPass(pixelScene, ref tickBlock, GameManager.RenderSizes);
-
-
         if (updatLevelElement)
             tickBlock.UpdateTick();
 

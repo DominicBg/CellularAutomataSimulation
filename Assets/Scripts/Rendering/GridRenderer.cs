@@ -65,11 +65,11 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, float2 cameraPos, NativeArray<LightSource> lightSources)
+    public static void ApplyMapPixels(ref NativeArray<Color32> outputColor, Map map, ref TickBlock tickBlock, float2 cameraPos, NativeArray<LightSource> lightSources, bool debug = false)
     {
         using (S_SimulationRender.Auto())
         {
-            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock, cameraPos, lightSources).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+            new GridRendererJob(outputColor, map, Instance.particleRendering, tickBlock, cameraPos, lightSources, debug).Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
         }
     }
 
@@ -290,7 +290,8 @@ public class GridRenderer : MonoBehaviour
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
 
                     int2 direction = (int2)(normals[localPos].xy * reflectionInfo.distance);
-                    int2 samplePos = finalPos + direction;
+                    //int2 mirrorOffset = colors.Sizes - localPos - 1;
+                    int2 samplePos = finalPos + direction; // * mirrorOffset;
                     if (!GridHelper.InBound(samplePos, GameManager.RenderSizes))
                         continue;
 

@@ -77,8 +77,6 @@ public class Player : PhysicObject, ILightSource
             return;
         }
 
-
-        DebugEquip();
         inventory.Update();
 
         float2 direction = new float2(InputCommand.Direction.x, 0);
@@ -105,17 +103,32 @@ public class Player : PhysicObject, ILightSource
             position = physicData.gridPosition;
         }
 
+        var underFeetPositionBeforePhysics = physicData.physicBound.GetUnderFeetCollisionBound(position).GetPositionsGrid();
         HandlePhysic();
-    }
+        var underFeetPositionAfterPhysics = physicData.physicBound.GetUnderFeetCollisionBound(position).GetPositionsGrid();
 
-    void DebugEquip()
-    {
-        //if (InputCommand.IsButtonDown(KeyCode.Alpha1))
-        //    inventory.Equip(FindObjectOfType<Shovel>(), ItemInventory.Slot.Main);
-        //if (InputCommand.IsButtonDown(KeyCode.Alpha2))
-        //    inventory.Equip(FindObjectOfType<ParticleBlower>(), ItemInventory.Slot.Main);
-        //if (InputCommand.IsButtonDown(KeyCode.Alpha3))
-        //    inventory.Equip(FindObjectOfType<StatisGun>(), ItemInventory.Slot.Secondary);
+        //When you move, give force to particle beneath you
+        for (int i = 0; i < underFeetPositionBeforePhysics.Length; i++)
+        {
+            bool found = false;
+            int2 pos = underFeetPositionBeforePhysics[i];
+            for (int j = 0; j < underFeetPositionAfterPhysics.Length; j++)
+            {
+                found |= math.all(pos == underFeetPositionAfterPhysics[j]);
+            }
+            if(!found)
+            {
+                if (map.CanPush(pos, GameManager.PhysiXVIISetings))
+                {
+                    Particle particle = map.GetParticle(pos);
+                    particle.velocity += new float2(lookLeft ? settings.walkingForce.x : -settings.walkingForce.x, settings.walkingForce.y) * GameManager.DeltaTime;
+                    map.SetParticle(pos, particle);
+                }
+            }
+        }
+
+        underFeetPositionBeforePhysics.Dispose();
+        underFeetPositionAfterPhysics.Dispose();
     }
 
     private void UpdateAnimation(float2 direction, bool isGrounded)

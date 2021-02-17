@@ -19,6 +19,7 @@ public struct ApplyTextureJob : IJobParallelFor
         this.useAlphaMask = useAlphaMask;
     }
 
+
     public void Execute(int index)
     {
         bool render = !useAlphaMask || (useAlphaMask && outputColor[index].a != 0);

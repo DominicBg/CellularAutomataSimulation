@@ -12,7 +12,7 @@ public struct Particle
     public int tickStatis;
     public bool InFreeFall()
     {
-        return tickStatis <= 0 && math.any(math.abs(velocity) > 0.5f);
+        return tickStatis <= 0 && math.any(math.abs(velocity) > .1f);
     }
 }
 
