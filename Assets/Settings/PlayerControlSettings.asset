@@ -24,6 +24,6 @@ MonoBehaviour:
   spriteSheet: {fileID: 11400000, guid: 762f98d3fbc6892408df708f5accaeb8, type: 2}
   collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   walkingForce:
-    x: 500
-    y: 1000
+    x: 750
+    y: 1500
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}

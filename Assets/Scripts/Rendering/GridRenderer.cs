@@ -290,8 +290,8 @@ public class GridRenderer : MonoBehaviour
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
 
                     int2 direction = (int2)(normals[localPos].xy * reflectionInfo.distance);
-                    //int2 mirrorOffset = colors.Sizes - localPos - 1;
-                    int2 samplePos = finalPos + direction; // * mirrorOffset;
+                    int2 mirrorOffset = new int2(colors.Sizes.x - localPos.x - 1, localPos.y);
+                    int2 samplePos = renderPos + direction + mirrorOffset;
                     if (!GridHelper.InBound(samplePos, GameManager.RenderSizes))
                         continue;
 
