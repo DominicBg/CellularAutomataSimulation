@@ -26,4 +26,19 @@ MonoBehaviour:
   walkingForce:
     x: 750
     y: 1500
+  shadingInfo:
+    minLightIntensity: 0.5
+    lightResolution: 25
+    z: 0
+  skyReflection:
+    amount: 0.2
+    distance: 20
+    blending: 3
+  environementReflection:
+    amount: 0.5
+    distance: 20
+    blending: 3
+    minLight: 0.7
+    blurRadius: 2
+    blurIntensity: 0.75
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}

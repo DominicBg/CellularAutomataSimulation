@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class CheatManager : MonoBehaviour
 {
+    public enum CheatCategory { None, Player, Equipement, Map}
     static CheatManager Instance;
 
     [SerializeField] Button buttonPrefab;
@@ -28,7 +29,7 @@ public class CheatManager : MonoBehaviour
         cheats.Clear();
     }
 
-    public static void AddCheat(string name, Action action)
+    public static void AddCheat(string name, Action action, CheatCategory category = CheatCategory.None)
     {
         Button button;
         if (Instance.cheats.TryGetValue(name, out button))

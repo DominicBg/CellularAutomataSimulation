@@ -238,7 +238,7 @@ public class GridRenderer : MonoBehaviour
     }
 
     public static void ApplySpriteSkyboxReflection(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
-    int2 renderPos, ref EnvironementInfo info, ref ReflectionInfo reflectionInfo, bool centerAligned = false)
+    int2 renderPos, ref EnvironementInfo info, in ReflectionInfo reflectionInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -249,7 +249,7 @@ public class GridRenderer : MonoBehaviour
                 if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
-                    outputColor[index] = ApplySkyboxReflection(finalPos, outputColor[index], reflectiveMap[localPos], normals[localPos], info, reflectionInfo);
+                    outputColor[index] = ApplySkyboxReflection(finalPos, outputColor[index], reflectiveMap[localPos], normals[localPos], info, in reflectionInfo);
                 }
             }
         }
@@ -274,7 +274,7 @@ public class GridRenderer : MonoBehaviour
 
     public static void ApplySpriteEnvironementReflection(
         ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
-        int2 renderPos, int reflectionIndex, ref EnvironementInfo info, ref EnvironementReflectionInfo reflectionInfo, bool centerAligned = false)
+        int2 renderPos, int reflectionIndex, ref EnvironementInfo info, in EnvironementReflectionInfo reflectionInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -341,6 +341,25 @@ public class GridRenderer : MonoBehaviour
             }
         }
     }
+
+    public static void ApplySpriteCustom(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, int2 renderPos, 
+        Func<int2, bool> canRender, Func<int2, Color> getcolor, bool centerAligned = false)
+    {
+        for (int x = 0; x < colors.Sizes.x; x++)
+        {
+            for (int y = 0; y < colors.Sizes.y; y++)
+            {
+                int2 localPos = new int2(x, y);
+                int2 texturePos = renderPos + localPos - (centerAligned ? colors.Sizes / 2 : 0);
+                if (GridHelper.InBound(texturePos, GameManager.RenderSizes) && canRender(localPos))
+                {
+                    int index = ArrayHelper.PosToIndex(texturePos, GameManager.RenderSizes.x);
+                    outputColor[index] = getcolor(localPos);
+                }
+            }
+        }
+    }
+
 
     /// <summary>
     /// Render the outputColor to the screen and dispose the array

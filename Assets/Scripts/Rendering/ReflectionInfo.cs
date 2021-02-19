@@ -24,7 +24,6 @@ public struct EnvironementReflectionInfo
             amount = .2f,
             blending = BlendingMode.AdditiveAlpha,
             distance = 20,
-            minLight = .5f,
             blurRadius = 2,
             blurIntensity = .75f
         };
@@ -33,7 +32,6 @@ public struct EnvironementReflectionInfo
     public float amount;
     public float distance;
     public BlendingMode blending;
-    public float minLight;
     public int blurRadius;
     public float blurIntensity;
 }

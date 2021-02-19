@@ -61,8 +61,8 @@ public class SpriteLitStaticObject : SpriteStaticObject
         {
             var defaultReflection = ReflectionInfo.Default();
             var defaultEnvReflection = EnvironementReflectionInfo.Default();
-            GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref defaultReflection, true);
-            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref defaultEnvReflection, true);
+            GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, in defaultReflection, true);
+            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, in defaultEnvReflection, true);
         }
     }
 
