@@ -12,14 +12,6 @@ public class Player : PhysicObject, ILightSource
 
     public SpriteAnimator spriteAnimator;
 
-
-    public ReflectionInfo skyRefl = new ReflectionInfo() { amount = .2f, blending = BlendingMode.AdditiveAlpha, distance = 20 };
-    public ReflectionInfo envRefl = new ReflectionInfo() { amount = .5f, blending = BlendingMode.AdditiveAlpha, distance = 20 };
-
-    public float minLight = 0.5f;
-    public int blurRadius = 1;
-    public float blurIntensity = 1;
-
     [HideInInspector] public bool lookLeft;
     [HideInInspector] public bool isDirectionLocked;
 
@@ -52,7 +44,7 @@ public class Player : PhysicObject, ILightSource
     {
         var sprite = spriteAnimator.GetCurrentSprite();
         var normals = spriteAnimator.GetCurrentNormals();
-        GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, minLight);
+        GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, in settings.shadingInfo);
         
         reflectionIndex = info.GetReflectionIndex();
         GridRenderer.PrepareSpriteEnvironementReflection(sprite, renderPos, ref info, reflectionIndex);
@@ -63,8 +55,8 @@ public class Player : PhysicObject, ILightSource
         var sprite = spriteAnimator.GetCurrentSprite();
         var normals = spriteAnimator.GetCurrentNormals();
         var reflections = spriteAnimator.GetCurrentReflections();
-        GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref skyRefl);
-        GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref envRefl, blurRadius, blurIntensity);
+        GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref settings.skyReflection);
+        GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref settings.environementReflection);
     }
 
 
@@ -194,6 +186,7 @@ public class Player : PhysicObject, ILightSource
             pressJumpBufferDuration = 0;
         }
     }
+
 
     public override void Dispose()
     {

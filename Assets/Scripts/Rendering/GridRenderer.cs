@@ -219,7 +219,7 @@ public class GridRenderer : MonoBehaviour
     }
 
     public static void ApplyLitSprite(ref NativeArray<Color32> outputColors, in NativeGrid<Color32> colors, in NativeGrid<float3> normals,
-        int2 worldPosition, int2 renderPos, NativeList<LightSource> lights, float minLight = 0.5f, bool centerAligned = false)
+        int2 worldPosition, int2 renderPos, NativeList<LightSource> lights, in ShadingLitInfo litInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -231,7 +231,7 @@ public class GridRenderer : MonoBehaviour
                 if (GridHelper.InBound(finalPos, GameManager.RenderSizes) && colors[x, y].a != 0)
                 {
                     int index = ArrayHelper.PosToIndex(finalPos, GameManager.RenderSizes);
-                    outputColors[index] = ApplyLightOnPixel(worldPosition + localPos + centerAligendOffset, colors[localPos], normals[localPos], lights, 0, minLight, 25);
+                    outputColors[index] = ApplyLightOnPixel(worldPosition + localPos + centerAligendOffset, colors[localPos], normals[localPos], lights, in litInfo);
                 }
             }
         }
@@ -274,7 +274,7 @@ public class GridRenderer : MonoBehaviour
 
     public static void ApplySpriteEnvironementReflection(
         ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, in NativeGrid<float3> normals, in NativeGrid<float> reflectiveMap,
-        int2 renderPos, int reflectionIndex, ref EnvironementInfo info, ref ReflectionInfo reflectionInfo, int blurRadius = 2, float blurIntensity = 0.5f, bool centerAligned = false)
+        int2 renderPos, int reflectionIndex, ref EnvironementInfo info, ref EnvironementReflectionInfo reflectionInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -296,7 +296,7 @@ public class GridRenderer : MonoBehaviour
                         continue;
 
                     Color sampleColor = outputColor[ArrayHelper.PosToIndex(samplePos, GameManager.RenderSizes)];
-                    if (blurRadius <= 1)
+                    if (reflectionInfo.blurRadius <= 1)
                     {   
                         //Take sample directly
                         outputColor[index] = Blend(outputColor[index], sampleColor.Alpha(reflectiveMap[localPos] * reflectionInfo.amount), reflectionInfo.blending);
@@ -305,13 +305,13 @@ public class GridRenderer : MonoBehaviour
 
                     //Add Blur
                     Color color = Color.clear;
-                    var circlePos = GridHelper.GetCircleAtPosition(samplePos, blurRadius, GameManager.RenderSizes, Allocator.Temp);
+                    var circlePos = GridHelper.GetCircleAtPosition(samplePos, reflectionInfo.blurRadius, GameManager.RenderSizes, Allocator.Temp);
                     for (int i = 0; i < circlePos.Length; i++)
                     {
                         color += outputColor[ArrayHelper.PosToIndex(circlePos[i], GameManager.RenderSizes)];
                     }
                     color /= circlePos.Length;
-                    color.a = blurIntensity;
+                    color.a = reflectionInfo.blurIntensity;
                     circlePos.Dispose();
                     color = Blend(sampleColor, color, BlendingMode.Normal);
                     

@@ -11,4 +11,9 @@ public struct PhysicData
     public float mass;
     public int inclinaison;
     public bool isGrounded;
+
+    //debug data
+    public int2 debugSafePosition;
+    public int2 debugCollisionNormal;
+    public bool2 debugAxisBlocked;
 }

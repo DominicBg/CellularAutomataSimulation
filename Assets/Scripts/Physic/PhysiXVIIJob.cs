@@ -82,6 +82,10 @@ public struct PhysiXVIIJob : IJob
         int2 desiredGridPosition = (int2)(desiredPosition);
 
         int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, out collisionNormal);
+
+        physicData.debugCollisionNormal = collisionNormal;
+        physicData.debugSafePosition = finalGridPosition;
+
         if (math.all(desiredGridPosition == finalGridPosition))
         {
 
@@ -158,6 +162,7 @@ public struct PhysiXVIIJob : IJob
         float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
         bool2 blockedAxis = false;
         int2 blockedPos = 0;
+        physicData.debugAxisBlocked = false;
         collisionNormal = 0;
 
         for (int i = 0; i <= maxSteps; i++)
@@ -192,15 +197,17 @@ public struct PhysiXVIIJob : IJob
                     currentPos.y = safePosition.y;
                 }
 
+                physicData.debugAxisBlocked = blockedAxis;
+
                 if (math.all(blockedAxis))
                 { 
-                    //collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
+                    collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
                     return safePosition;
                 }
             }
             safePosition = currentPos;
         }
-        collisionNormal = 0;
+        //collisionNormal = 0;
         return safePosition;
     }
 
@@ -286,40 +293,75 @@ public struct PhysiXVIIJob : IJob
     }
 
 
+    //private int2 HandleHorizontalDesiredPosition(ref PhysicBound physicBound, int2 from, int2 to, bool isGrounded)
+    //{
+    //    int2 direction = (int2)math.sign(to - from);
+    //    bool goingLeft = direction.x == -1;
+
+    //    Bound horizontalBound = goingLeft ? physicBound.GetLeftCollisionBound(to) : physicBound.GetRightCollisionBound(to);
+
+    //    int minY = horizontalBound.min.y;
+    //    horizontalBound.GetPositionsGrid(out NativeArray<int2> directionPositions);
+    //    int2 desiredPosition = to;
+
+    //    if (isGrounded && CanClimb(minY, directionPositions, out int highestClimbY))
+    //    {
+    //        desiredPosition.y = highestClimbY;
+    //    }
+    //    return desiredPosition;
+    //}
+
+    //private bool CanClimb(int minY, NativeArray<int2> directionPositions, out int highestClimbY)
+    //{
+    //    bool canClimb = false;
+    //    highestClimbY = 0;
+    //    for (int i = 0; i < directionPositions.Length; i++)
+    //    {
+    //        int2 pos = directionPositions[i];
+    //        if (map.HasCollision(pos) && map.GetParticleType(pos) != ParticleType.Player)
+    //        {
+    //            if (pos.y >= minY && pos.y <= minY + settings.maxSlope)
+    //            { 
+    //                canClimb = true;
+    //                highestClimbY = math.max(highestClimbY, pos.y + 1);
+    //            }
+    //        }
+    //    }
+    //    return canClimb;    
+    //}
+
     private int2 HandleHorizontalDesiredPosition(ref PhysicBound physicBound, int2 from, int2 to, bool isGrounded)
     {
         int2 direction = (int2)math.sign(to - from);
-        bool goingLeft = direction.x == -1;
+        //bool goingLeft = direction.x == -1;
 
-        Bound horizontalBound = goingLeft ? physicBound.GetLeftCollisionBound(to) : physicBound.GetRightCollisionBound(to);
+        //Bound collisionBound = physicBound.GetCollisionBound(to);
+        //int2 pos = goingLeft ? collisionBound.bottomLeft : collisionBound.bottomRight;
 
-        int minY = horizontalBound.min.y;
-        horizontalBound.GetPositionsGrid(out NativeArray<int2> directionPositions);
+        //int minY = to.y;
         int2 desiredPosition = to;
 
-        if (isGrounded && CanClimb(minY, directionPositions, out int highestClimbY))
+        if (isGrounded && CanClimb(ref physicBound, desiredPosition, settings.maxSlope, out int highestClimbY))
         {
             desiredPosition.y = highestClimbY;
         }
         return desiredPosition;
     }
 
-    private bool CanClimb(int minY, NativeArray<int2> directionPositions, out int highestClimbY)
+    private bool CanClimb(ref PhysicBound physicBound, int2 startPos, int maxHeight, out int highestClimbY)
     {
         bool canClimb = false;
         highestClimbY = 0;
-        for (int i = 0; i < directionPositions.Length; i++)
+        for (int i = 1; i < maxHeight; i++)
         {
-            int2 pos = directionPositions[i];
-            if (map.HasCollision(pos) && map.GetParticleType(pos) != ParticleType.Player)
-            {
-                if (pos.y >= minY && pos.y <= minY + settings.maxSlope)
-                { 
-                    canClimb = true;
-                    highestClimbY = math.max(highestClimbY, pos.y + 1);
-                }
+            int2 pos = startPos + new int2(0, i);
+            Bound getBoundAtPosition = physicBound.GetCollisionBound(pos);
+            if (!map.HasCollision(ref getBoundAtPosition, PhysiXVII.GetFlag(ParticleType.Player)) /*map.HasCollision(pos) && map.GetParticleType(pos) != ParticleType.Player*/)
+            {         
+                canClimb = true;
+                highestClimbY = math.max(highestClimbY, pos.y/* + 1*/);    
             }
         }
-        return canClimb;    
+        return canClimb;
     }
 }

@@ -138,12 +138,12 @@ public static class RenderingUtils
         return sprite.pixels[pixelCoord];
     }
 
-    public static Color ApplyLightOnPixel(int2 worldPos, Color color, float3 normal, NativeList<LightSource> lights, float z = 0, float minLightIntensity = .5f, float lightResolution = 25)
+    public static Color ApplyLightOnPixel(int2 worldPos, Color color, float3 normal, NativeList<LightSource> lights, in ShadingLitInfo litInfo)
     {
-        float3 pos3D = new float3(worldPos.x, worldPos.y, z);
+        float3 pos3D = new float3(worldPos.x, worldPos.y, litInfo.z);
         float lightIntensity = lights.CalculateLight(pos3D, normal);
-        lightIntensity = MathUtils.ReduceResolution(lightIntensity, lightResolution);
-        lightIntensity = math.remap(0, 1, minLightIntensity, 1, lightIntensity);
+        lightIntensity = MathUtils.ReduceResolution(lightIntensity, litInfo.lightResolution);
+        lightIntensity = math.remap(0, 1, litInfo.minLightIntensity, 1, lightIntensity);
 
         return color * lightIntensity;
     }

@@ -14,3 +14,45 @@ public struct ReflectionInfo
     public float distance;
     public BlendingMode blending;
 }
+
+[System.Serializable]
+public struct EnvironementReflectionInfo
+{
+    public static EnvironementReflectionInfo Default()
+    {
+        return new EnvironementReflectionInfo() {
+            amount = .2f,
+            blending = BlendingMode.AdditiveAlpha,
+            distance = 20,
+            minLight = .5f,
+            blurRadius = 2,
+            blurIntensity = .75f
+        };
+    }
+
+    public float amount;
+    public float distance;
+    public BlendingMode blending;
+    public float minLight;
+    public int blurRadius;
+    public float blurIntensity;
+}
+
+[System.Serializable]
+public struct ShadingLitInfo
+{
+    public static ShadingLitInfo Default()
+    {
+        return new ShadingLitInfo()
+        {
+            minLightIntensity = 0.5f,
+            lightResolution = 25,
+            z = 0,
+        };
+    }
+
+    public float minLightIntensity;
+    public float lightResolution;
+    public float z;
+}
+
