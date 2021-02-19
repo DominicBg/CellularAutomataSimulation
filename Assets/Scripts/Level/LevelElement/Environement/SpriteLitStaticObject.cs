@@ -10,10 +10,7 @@ public class SpriteLitStaticObject : SpriteStaticObject
 {
     public Texture2D normalMap;
     public Texture2D reflectionMap;
-
-    public float lightResolution = 25;
-    public float minLightIntensity = 0.5f;
-
+    
     int reflectionIndex;
 
     public override void OnInit()
@@ -39,7 +36,8 @@ public class SpriteLitStaticObject : SpriteStaticObject
         var normals = nativeSprite.normals;
         if (nativeSprite.UseNormals)
         {
-            GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, minLightIntensity, true);
+            ShadingLitInfo defaultLit = ShadingLitInfo.Default();
+            GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, in defaultLit, true);
         }
         else
         {
@@ -62,8 +60,9 @@ public class SpriteLitStaticObject : SpriteStaticObject
         if (nativeSprite.UseNormals && nativeSprite.UseReflection)
         {
             var defaultReflection = ReflectionInfo.Default();
+            var defaultEnvReflection = EnvironementReflectionInfo.Default();
             GridRenderer.ApplySpriteSkyboxReflection(ref outputColors, sprite, normals, reflections, renderPos, ref info, ref defaultReflection, true);
-            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref defaultReflection, 2, .5f, true);
+            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, sprite, normals, reflections, renderPos, reflectionIndex, ref info, ref defaultEnvReflection, true);
         }
     }
 

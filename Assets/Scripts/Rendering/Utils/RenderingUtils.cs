@@ -148,7 +148,7 @@ public static class RenderingUtils
         return color * lightIntensity;
     }
 
-    public static Color ApplySkyboxReflection(int2 renderPos, Color currentColor, float reflection, float3 normal, EnvironementInfo info, ReflectionInfo reflectionInfo)
+    public static Color ApplySkyboxReflection(int2 renderPos, Color currentColor, float reflection, float3 normal, in EnvironementInfo info, in ReflectionInfo reflectionInfo)
     {
         int2 direction = (int2)(normal.xy * reflectionInfo.distance);
         Color skyBoxColor = info.SampleSkybox(renderPos + direction);
