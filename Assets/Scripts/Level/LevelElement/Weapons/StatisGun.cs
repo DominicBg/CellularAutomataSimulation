@@ -23,25 +23,24 @@ public class StatisGun : GunBaseElement
         spriteAnimator.returnToIdleAfterAnim = true;
     }
 
-    protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
+    protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, ref TickBlock tickBlock)
     {
         spriteAnimator.SetAnimation(1);
-
-        int statisTick = (int)settings.statisDuration * GameManager.FPS;
         lastRotationBound = GetRotationBound(aimDirection);
         new StatisParticles()
         {
             cameraHandle = pixelCamera.GetHandle(),
             map = map,
             rotationBound = lastRotationBound,
-            statisTick = statisTick,
+            statisTickMin = (int)(settings.statisMinDuration * GameManager.FPS),
+            statisTickMax = (int)(settings.statisMaxDuration * GameManager.FPS),
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 
     public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / settings.statisDuration;
-        math.saturate(ratio);
+        float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / settings.flashDuration;
+        ratio = math.saturate(ratio);
         if(ratio > 0)
             GridRenderer.DrawRotationSprite(ref outputColors, lastRotationBound, pixelCamera, nativeBeamTexture, settings.tint * ratio);
     }
@@ -64,7 +63,8 @@ public class StatisGun : GunBaseElement
         public RotationBound rotationBound;
         public PixelCamera.PixelCameraHandle cameraHandle;
         public Map map;
-        public int statisTick;
+        public int statisTickMin;
+        public int statisTickMax;
 
         public void Execute(int index)
         {
@@ -73,8 +73,9 @@ public class StatisGun : GunBaseElement
 
             if (rotationBound.PointInBound(worldPos) && map.InBound(worldPos))
             {
+                Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex((uint)(index + math.abs(worldPos.x + worldPos.y)));
                 Particle particle = map.GetParticle(worldPos);
-                particle.tickStatis = statisTick;
+                particle.tickStatis = random.NextInt(statisTickMin, statisTickMax + 1);
                 map.SetParticle(worldPos, particle);
             }
         }

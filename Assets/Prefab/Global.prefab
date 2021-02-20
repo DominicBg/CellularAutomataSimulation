@@ -316,9 +316,14 @@ MonoBehaviour:
     y: 0
   baseSettings: {fileID: 11400000, guid: 7d8e2827950c7514f909bb01abb395b0, type: 2}
   controller: {fileID: 6772139068616828772}
+  golemType: 2
+  boundSizes:
+    x: 9
+    y: 10
   explosionSettings:
     radius: 25
     strength: 500
+    canDestroy: 0
 --- !u!1 &6813575429628828354
 GameObject:
   m_ObjectHideFlags: 0

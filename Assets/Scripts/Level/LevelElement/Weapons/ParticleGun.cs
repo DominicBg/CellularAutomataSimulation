@@ -7,7 +7,7 @@ public class ParticleGun : GunBaseElement
     public ParticleType type;
     public ParticleGunScriptable settings => (ParticleGunScriptable)baseSettings;
 
-    protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
+    protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, ref TickBlock tickBlock)
     {
         Particle newParticle = new Particle()
         {

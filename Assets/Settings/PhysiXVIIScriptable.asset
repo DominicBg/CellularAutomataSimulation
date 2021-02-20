@@ -22,7 +22,7 @@ MonoBehaviour:
     slopeSlow: 0.3
     limitAxis:
       x: 1
-      y: 0
+      y: 1
     canPush: 000001010100000100010000000000
     frictions:
     - 0

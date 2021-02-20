@@ -33,13 +33,26 @@ public struct GridRendererJob : IJobParallelFor
         int2 pos = cameraPosition + ArrayHelper.IndexToPos(i, GameManager.RenderSizes) - GameManager.RenderSizes/2;
         if (map.InBound(pos) && map.GetParticleType(pos) != ParticleType.None)
         {
-            if(debug)
+            Particle particle = map.GetParticle(pos);
+
+            if (debug)
             {
                 colorArray[i] = map.GetParticle(pos).InFreeFall() ? Color.green : Color.red;
                 return;
             }
 
-            Color32 color = ParticleRenderUtil.GetColorForType(pos, map.GetParticleType(pos), ref particleRendering, ref tickBlock, ref map, lightSources);
+            Color32 color = ParticleRenderUtil.GetColorForType(pos, particle.type, ref particleRendering, ref tickBlock, ref map, lightSources);
+
+            if(particle.tickStatis > 0)
+            {
+                const int tickFadeOut = 30;
+                Color rockStatis = particleRendering.rockRendering.GetColor(pos, lightSources, 0);
+
+                rockStatis.a = (particle.tickStatis > tickFadeOut) ? 1 : (float)particle.tickStatis / tickFadeOut;
+                rockStatis.a *= 0.95f;
+                color = RenderingUtils.Blend(color, rockStatis, BlendingMode.Normal);
+            }
+
             colorArray[i] = (color == Color.clear) ? colorArray[i]: color;
         }
     }

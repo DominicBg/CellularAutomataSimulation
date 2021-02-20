@@ -89,9 +89,4 @@ public struct RockRendering: IParticleRenderer
 
         return false;
     }
-
-    public Color32 GetColor(int2 position, ref TickBlock tickBlock)
-    {
-        return Color.black;
-    }
 }

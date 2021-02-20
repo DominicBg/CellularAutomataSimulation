@@ -14,33 +14,26 @@ public abstract class GunBaseElement : EquipableElement
 
     protected int tickShoot;
 
-    protected abstract void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map);
+    protected abstract void OnShoot(int2 aimStartPosition, float2 aimDirection, ref TickBlock tickBlock);
 
     protected override void OnUse(int2 position, bool _, ref TickBlock tickBlock)
     {
         int2 mousePosition = GridPicker.GetGridPosition(GameManager.RenderSizes);
         int2 aimPosition = scene.pixelCamera.GetGlobalPosition(mousePosition);
         int2 startPosition = player.GetBound().center;
-        //int2 startPosition = GetWorldPositionOffset(baseGunSettings.shootOffset);
-
         float2 aimDirection = math.normalize(new float2(aimPosition - startPosition));
-        OnShoot(startPosition, aimDirection, map);
+        OnShoot(startPosition, aimDirection, ref tickBlock);
         tickShoot = tickBlock.tick;
     }
 
     public override void OnEquipableUpdate(ref TickBlock tickBlock)
     {
-        //spriteAnimator.Update(player.lookLeft);
-        //spriteAnimator.SetAnimation(isUsedThisFrame ? (int)GunAnim.Fire : (int)GunAnim.Idle);
         cooldownShoot = math.max(cooldownShoot - 1, 0);
     }
 
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {     
-        //might need to add offset
-      //  int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, baseSettings.equipedOffset) : renderPos;
         int2 kickOffset = GetKickOffset();
-
         spriteAnimator.Render(ref outputcolor, renderPos + kickOffset);
     }
 

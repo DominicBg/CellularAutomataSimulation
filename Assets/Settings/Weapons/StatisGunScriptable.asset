@@ -27,9 +27,11 @@ MonoBehaviour:
   boundSizes:
     x: 100
     y: 15
-  statisDuration: 3
+  statisMinDuration: 3
+  statisMaxDuration: 3.7
+  flashDuration: 0.5
   beamOffset:
     x: 0
     y: 0
-  tint: {r: 0.011263847, g: 0, b: 1, a: 0}
+  tint: {r: 0.6508908, g: 0, b: 1, a: 1}
   beamTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}

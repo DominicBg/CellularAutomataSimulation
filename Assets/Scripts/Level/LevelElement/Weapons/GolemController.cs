@@ -8,11 +8,13 @@ public class GolemController : CharacterController
 {
     public bool isSummoned { get; private set; }
     List<ParticleType> particles;
+    int2 sizes;
 
-    public void SummonGolem(int2 position, List<ParticleType> particles)
+    public void SummonGolem(int2 position, List<ParticleType> particles, int2 sizes)
     {
         SetPosition(position);
         this.particles = particles;
+        this.sizes = sizes;
         isSummoned = true;
         SetControls(controlsGolem: true);
 
@@ -37,8 +39,7 @@ public class GolemController : CharacterController
         SetControls(controlsGolem: false);
 
         //set particles at position
-
-        Bound bound = GetBound();
+        Bound bound = new Bound(position, sizes);
         var positions = bound.GetPositionsGrid();
         for (int i = 0; i < positions.Length; i++)
         {

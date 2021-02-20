@@ -8,6 +8,7 @@ public static class Explosive
     {
         public int radius;
         public float strength;
+        public bool canDestroy;
     }
 
     public static void SetExplosive(int2 position, in Settings settings, Map map)
@@ -27,11 +28,16 @@ public static class Explosive
             for (int i = 0; i < positions.Length; i++)
             {
                 int2 pos = positions[i];
-                ParticleType newType = GetAfterExplosiveType(map.GetParticleType(pos));
                 Particle particle = map.GetParticle(pos);
                 float2 diff = pos - position;
                 particle.velocity += diff * settings.strength;
-                particle.type = newType;
+                
+                if(settings.canDestroy)
+                {
+                    ParticleType newType = GetAfterExplosiveType(map.GetParticleType(pos));
+                    particle.type = newType;
+                }
+
                 map.SetParticle(pos, particle);
             }
         }

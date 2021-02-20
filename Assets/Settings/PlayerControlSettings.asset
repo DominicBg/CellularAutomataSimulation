@@ -16,7 +16,7 @@ MonoBehaviour:
     x: 750
     y: 1500
   shadingInfo:
-    minLightIntensity: 0.8
+    minLightIntensity: 0.7
     lightResolution: 25
     z: 0
   skyReflection:
@@ -29,4 +29,5 @@ MonoBehaviour:
     blending: 3
     blurRadius: 2
     blurIntensity: 0.75
+    mirrorReflectionThreshold: 0.9
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}
