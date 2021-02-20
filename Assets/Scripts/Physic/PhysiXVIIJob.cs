@@ -19,10 +19,6 @@ public struct PhysiXVIIJob : IJob
         this.physicDataReference = physicData;
     }
 
-    //Find real slope
-    //displace along the slope with speed modifyer
-
-
     public void Execute()
     {
         PhysicData physicData = physicDataReference.Value;
@@ -30,7 +26,10 @@ public struct PhysiXVIIJob : IJob
         physicData.isGrounded = PhysiXVII.IsGrounded(in physicData, map, physicData.gridPosition);
         bool hasFloorCollision = PhysiXVII.HasFloorCollision(in physicData, map, physicData.gridPosition);
 
-        if(!wasGrounded && physicData.isGrounded)
+        //TEST 
+        physicData.isGrounded = hasFloorCollision;
+
+        if (!wasGrounded && physicData.isGrounded)
         {
             //Apply ground shock
             CalculateObjectParticleCollision(ref physicData, new float2(0, 1), new int2(0, 1), false);
@@ -81,14 +80,13 @@ public struct PhysiXVIIJob : IJob
         hasCollision = false;
         int2 desiredGridPosition = (int2)(desiredPosition);
 
-        int2 finalGridPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, desiredGridPosition, out collisionNormal);
+        int2 finalGridPosition = SlideCollider(ref physicData, physicData.gridPosition, desiredGridPosition, out collisionNormal, settings.limitAxis);
 
         physicData.debugCollisionNormal = collisionNormal;
         physicData.debugSafePosition = finalGridPosition;
 
         if (math.all(desiredGridPosition == finalGridPosition))
         {
-
             physicData.position = desiredPosition;
             physicData.gridPosition = finalGridPosition;
         }
@@ -128,87 +126,20 @@ public struct PhysiXVIIJob : IJob
                 finalDesiredPosition = finalGridPosition;
             }
 
+            //Kill velocity on vertical collision
+            if (collisionNormal.y != 0)
+                physicData.velocity.y = 0;
+
             physicData.position = finalDesiredPosition;
             physicData.inclinaison = finalGridPosition.y - physicData.gridPosition.y;
             physicData.gridPosition = (int2)physicData.position;
         } 
     }
 
-    //This is slow
     int GetTerrainInclination(ref PhysicData physicData, int2 to)
     {
-        int2 newPosition = FindFinalMovePosition(ref physicData, physicData.gridPosition, to, out _);
+        int2 newPosition = SlideCollider(ref physicData, physicData.gridPosition, to, out _, settings.limitAxis);
         return to.y - newPosition.y;
-    }
-
-    int2 FindFinalMovePosition(ref PhysicData physicData, int2 from, int2 to, out int2 collisionNormal)
-    {
-        PhysicBound physicBound = physicData.physicBound;
-        int2 desiredPosition = HandleHorizontalDesiredPosition(ref physicBound, from, to, physicData.isGrounded);
-        int2 diff = desiredPosition - from;
-
-        //For slopes, works but is sloppy
-        Bound currentPosBound = physicBound.GetCollisionBound(desiredPosition);
-        if (physicData.isGrounded && math.abs(diff.x) <= 1 && !map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
-        {
-            collisionNormal = 0;
-            return desiredPosition;
-        }
-
-        int2 safePosition = from;
-
-        //Trace line on a grid
-        int maxSteps = math.abs(diff.x) + math.abs(diff.y);
-        float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
-        bool2 blockedAxis = false;
-        int2 blockedPos = 0;
-        physicData.debugAxisBlocked = false;
-        collisionNormal = 0;
-
-        for (int i = 0; i <= maxSteps; i++)
-        {
-            int2 currentPos = (int2)math.lerp(from, desiredPosition, i * steps);
-            if (math.all(currentPos == safePosition))
-                continue;
-
-            if (blockedAxis.x)
-                currentPos.x = safePosition.x;
-            if (blockedAxis.y)
-                currentPos.y = safePosition.y;
-
-            currentPosBound = physicBound.GetCollisionBound(currentPos);
-
-            int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
-            if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
-            {
-                 collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
-
-                //This is to make sliding collision
-                //we limit the axis that is blocked but we still slide along the other axis
-                blockedAxis |= math.abs(collisionNormal) != 0;
-                if (blockedAxis.x)
-                {
-                    blockedPos.x = safePosition.x;
-                    currentPos.x = safePosition.x;
-                }
-                if (blockedAxis.y)
-                {
-                    blockedPos.y = safePosition.y;
-                    currentPos.y = safePosition.y;
-                }
-
-                physicData.debugAxisBlocked = blockedAxis;
-
-                if (math.all(blockedAxis))
-                { 
-                    collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
-                    return safePosition;
-                }
-            }
-            safePosition = currentPos;
-        }
-        //collisionNormal = 0;
-        return safePosition;
     }
 
     void CalculateObjectParticleCollision(ref PhysicData physicData, float2 normal, int2 collisionDirection, bool changeObjectVelocity = true)
@@ -292,74 +223,81 @@ public struct PhysiXVIIJob : IJob
         return collision;
     }
 
-
-    //private int2 HandleHorizontalDesiredPosition(ref PhysicBound physicBound, int2 from, int2 to, bool isGrounded)
-    //{
-    //    int2 direction = (int2)math.sign(to - from);
-    //    bool goingLeft = direction.x == -1;
-
-    //    Bound horizontalBound = goingLeft ? physicBound.GetLeftCollisionBound(to) : physicBound.GetRightCollisionBound(to);
-
-    //    int minY = horizontalBound.min.y;
-    //    horizontalBound.GetPositionsGrid(out NativeArray<int2> directionPositions);
-    //    int2 desiredPosition = to;
-
-    //    if (isGrounded && CanClimb(minY, directionPositions, out int highestClimbY))
-    //    {
-    //        desiredPosition.y = highestClimbY;
-    //    }
-    //    return desiredPosition;
-    //}
-
-    //private bool CanClimb(int minY, NativeArray<int2> directionPositions, out int highestClimbY)
-    //{
-    //    bool canClimb = false;
-    //    highestClimbY = 0;
-    //    for (int i = 0; i < directionPositions.Length; i++)
-    //    {
-    //        int2 pos = directionPositions[i];
-    //        if (map.HasCollision(pos) && map.GetParticleType(pos) != ParticleType.Player)
-    //        {
-    //            if (pos.y >= minY && pos.y <= minY + settings.maxSlope)
-    //            { 
-    //                canClimb = true;
-    //                highestClimbY = math.max(highestClimbY, pos.y + 1);
-    //            }
-    //        }
-    //    }
-    //    return canClimb;    
-    //}
-
-    private int2 HandleHorizontalDesiredPosition(ref PhysicBound physicBound, int2 from, int2 to, bool isGrounded)
+    public int2 SlideCollider(ref PhysicData physicData, int2 from, int2 to, out int2 collisionNormal, bool2 limitAxis)
     {
-        int2 direction = (int2)math.sign(to - from);
-        //bool goingLeft = direction.x == -1;
+        PhysicBound physicBound = physicData.physicBound;
+        int2 diff = to - from;
 
-        //Bound collisionBound = physicBound.GetCollisionBound(to);
-        //int2 pos = goingLeft ? collisionBound.bottomLeft : collisionBound.bottomRight;
+        int2 safePosition = from;
 
-        //int minY = to.y;
-        int2 desiredPosition = to;
+        //Trace line on a grid
+        int maxSteps = math.abs(diff.x) + math.abs(diff.y);
+        float steps = 1f / (maxSteps == 0 ? 1 : maxSteps);
+        bool2 blockedAxis = false;
+        int2 blockedPos = 0;
+        physicData.debugAxisBlocked = false;
+        collisionNormal = 0;
+        Bound currentPosBound;
 
-        if (isGrounded && CanClimb(ref physicBound, desiredPosition, settings.maxSlope, out int highestClimbY))
+        for (int i = 0; i <= maxSteps; i++)
         {
-            desiredPosition.y = highestClimbY;
+            int2 currentPos = (int2)math.lerp(from, to, i * steps);
+            if (math.all(currentPos == safePosition))
+                continue;
+
+            if (blockedAxis.x && limitAxis.x)
+                currentPos.x = safePosition.x;
+            if (blockedAxis.y && limitAxis.x)
+                currentPos.y = safePosition.y;
+
+            currentPosBound = physicBound.GetCollisionBound(currentPos);
+
+            int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
+            if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
+            {
+                //Match collision height
+                if(GetSlopeHeight(ref physicBound, currentPos, settings.maxSlope, out int newYPos))
+                {
+                    currentPos.y = newYPos;
+                }
+                else
+                {
+                    collisionNormal = GetCollisionNormal(ref physicBound, safePosition, currentDir);
+
+                    //This is to make sliding collision
+                    //we limit the axis that is blocked but we still slide along the other axis
+                    blockedAxis |= math.abs(collisionNormal) != 0;
+                    if (blockedAxis.x && limitAxis.x)
+                    {
+                        blockedPos.x = safePosition.x;
+                        currentPos.x = safePosition.x;
+                    }
+                    if (blockedAxis.y && limitAxis.y)
+                    {
+                        blockedPos.y = safePosition.y;
+                        currentPos.y = safePosition.y;
+                    }
+                    physicData.debugAxisBlocked = blockedAxis;
+                }
+            }
+            safePosition = currentPos;
         }
-        return desiredPosition;
+
+        return safePosition;
     }
 
-    private bool CanClimb(ref PhysicBound physicBound, int2 startPos, int maxHeight, out int highestClimbY)
+    private bool GetSlopeHeight(ref PhysicBound physicBound, int2 position, int maxHeight, out int highestPosY)
     {
         bool canClimb = false;
-        highestClimbY = 0;
+        highestPosY = position.y;
         for (int i = 1; i < maxHeight; i++)
         {
-            int2 pos = startPos + new int2(0, i);
+            int2 pos = position + new int2(0, i);
             Bound getBoundAtPosition = physicBound.GetCollisionBound(pos);
-            if (!map.HasCollision(ref getBoundAtPosition, PhysiXVII.GetFlag(ParticleType.Player)) /*map.HasCollision(pos) && map.GetParticleType(pos) != ParticleType.Player*/)
-            {         
-                canClimb = true;
-                highestClimbY = math.max(highestClimbY, pos.y/* + 1*/);    
+            if (!map.HasCollision(ref getBoundAtPosition, PhysiXVII.GetFlag(ParticleType.Player)))
+            {
+                highestPosY = pos.y;
+                return true;
             }
         }
         return canClimb;

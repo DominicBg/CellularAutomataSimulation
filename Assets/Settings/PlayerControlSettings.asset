@@ -12,22 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b1ff579ab83fc479470c3a98eacfd0, type: 3}
   m_Name: PlayerControlSettings
   m_EditorClassIdentifier: 
-  acceleration: 200
-  stopMovingDamping: 0.823
-  turiningDamping: 0.05
-  movingDamping: 0.3
-  dampingForce: 10
-  pressJumpBuffer: 0.2
-  jumpForce: 90
-  inAirJumpThreshold: 0.2
-  releaseJumpButtonCutoff: 0.5
-  spriteSheet: {fileID: 11400000, guid: 762f98d3fbc6892408df708f5accaeb8, type: 2}
-  collisionTexture: {fileID: 2800000, guid: a885ebbb7ebbc3c438bdc5f92402b24f, type: 3}
   walkingForce:
     x: 750
     y: 1500
   shadingInfo:
-    minLightIntensity: 0.5
+    minLightIntensity: 0.8
     lightResolution: 25
     z: 0
   skyReflection:
@@ -38,7 +27,6 @@ MonoBehaviour:
     amount: 0.5
     distance: 20
     blending: 3
-    minLight: 0.7
     blurRadius: 2
     blurIntensity: 0.75
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}

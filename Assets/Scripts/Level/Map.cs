@@ -318,8 +318,9 @@ public unsafe struct Map
                 continue;
 
             ParticleType particleType = GetParticleType(positions[i]);
-            bool ignoreCollision = PhysiXVII.IsInFlag(ignoreFlag, particleType);
-            if (!ignoreCollision && HasParticleCollision(particleType))
+            //bool ignoreCollision = PhysiXVII.IsInFlag(ignoreFlag, particleType);
+            //if (!ignoreCollision && HasParticleCollision(particleType))
+            if (HasParticleCollision(particleType, ignoreFlag))
             {
                 count++;
             }

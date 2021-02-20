@@ -311,8 +311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05fb0b4cb24f00e4eb275b361f918ed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnable: 1
-  isVisible: 1
+  isEnable: 0
+  isVisible: 0
   renderingLayerOrder: 0
   isInit: 0
   position:

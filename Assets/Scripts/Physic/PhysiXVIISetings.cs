@@ -11,6 +11,7 @@ public unsafe struct PhysiXVIISetings
     public float friction;
     public int maxSlope;
     public float slopeSlow;
+    public bool2 limitAxis;
 
     [EnumeratedArray(typeof(ParticleType))]
     public fixed bool canPush[(int)ParticleType.Count];
