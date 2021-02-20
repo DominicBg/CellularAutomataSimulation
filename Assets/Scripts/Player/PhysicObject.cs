@@ -45,44 +45,6 @@ public abstract class PhysicObject : LevelObject
         this.physicData.gridPosition = position;
     }
 
-    /// <summary>
-    /// If the physic object is submerged, this will make it move upward without destroying particles
-    /// </summary>
-    //protected void MoveUpFromPile()
-    //{
-    //    int2 pushUp = new int2(0, 1);
-    //    Bound bound = physicData.physicBound.GetTopCollisionBound(position + pushUp);
-    //    using (var boundPos = bound.GetPositionsGrid(Allocator.Temp))
-    //    {
-    //        bool isBlocked = false;
-    //        for (int i = 0; i < boundPos.Length; i++)
-    //        {
-    //            if(!map.IsFreePosition(boundPos[i]) && !map.CanPush(boundPos[i], GameManager.PhysiXVIISetings))
-    //            {
-    //                isBlocked = true;
-    //                break;
-    //            }
-    //        }
-
-    //        if (!isBlocked)
-    //        {
-    //            //Set particles at feet position, move up the character
-    //            int yPos = physicData.physicBound.GetBottomCollisionBound(position).min.y;
-    //            map.RemoveSpriteAtPosition(position, ref physicData.physicBound);
-    //            for (int i = 0; i < boundPos.Length; i++)
-    //            {
-    //                int2 oldPos = boundPos[i];
-    //                int2 newPos = new int2(boundPos[i].x, yPos);
-    //                ParticleType type = map.GetParticleType(oldPos);
-    //                map.SetParticleType(newPos, type);
-    //            }
-    //            SetPosition(position + pushUp);
-    //            map.SetSpriteAtPosition(position, ref physicData.physicBound);
-    //        }
-    //    }
-    //}
-
-
     public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
     {
         if ((debugBoundFlag & PhysicBound.BoundFlag.All) > 0)

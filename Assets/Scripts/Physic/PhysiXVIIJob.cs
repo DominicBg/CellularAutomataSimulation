@@ -204,6 +204,7 @@ public struct PhysiXVIIJob : IJob
 
     int2 GetCollisionNormal(ref PhysicBound physicBound, int2 safePosition, int2 direction)
     {
+        //Move a bit horizontal/vertically to check if there's a collision
         Bound horizontalBound = physicBound.GetCollisionBound(safePosition + new int2(direction.x, 0));
         Bound verticalBound = physicBound.GetCollisionBound(safePosition + new int2(0, direction.y));
         bool hasHorizontalCollision = map.HasCollision(ref horizontalBound, PhysiXVII.GetFlag(ParticleType.Player));

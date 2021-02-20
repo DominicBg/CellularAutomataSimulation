@@ -6,26 +6,65 @@ using UnityEngine;
 
 public class GolemController : CharacterController
 {
-
-    bool isControlled;
+    public bool isSummoned { get; private set; }
     List<ParticleType> particles;
 
     public void SummonGolem(int2 position, List<ParticleType> particles)
     {
         SetPosition(position);
         this.particles = particles;
-        isControlled = true;
+        isSummoned = true;
+        SetControls(controlsGolem: true);
+
+        physicData.velocity.y = player.physicData.velocity.y + 100;
+    }
+
+    public void SetControls(bool controlsGolem)
+    {
+        player.allowsInput = !controlsGolem;
+        allowsInput = controlsGolem;
+
+        pixelCamera.transform.target = (controlsGolem) ? (LevelObject)this : (LevelObject)player;
+    }
+
+    public void ToggleControls()
+    {
+        SetControls(!allowsInput);
+    }
+
+    public void ExploseGolem(in Explosive.Settings explosiveSettings)
+    {
+        SetControls(controlsGolem: false);
+
+        //set particles at position
+
+        Bound bound = GetBound();
+        var positions = bound.GetPositionsGrid();
+        for (int i = 0; i < positions.Length; i++)
+        {
+            if (i < particles.Count && !map.HasCollision(positions[i], PhysiXVII.GetFlag(ParticleType.Player)))
+                map.SetParticleType(positions[i], particles[i]);
+        }
+        positions.Dispose();
+        Explosive.SetExplosive(GetBound().center, in explosiveSettings, map);
+        isSummoned = false;
+        particles.Clear();
     }
 
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        if(isControlled)
-            base.OnUpdate(ref tickBlock);
+        if (!isSummoned)
+            return;
+
+        base.OnUpdate(ref tickBlock);
     }
 
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
+        if (!isSummoned)
+            return;
+
         var infoPtr = info;
         var tickBlockPtr = tickBlock;
         var mapPtr = map;

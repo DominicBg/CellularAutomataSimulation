@@ -3,7 +3,8 @@ using UnityEngine;
 
 public abstract class CharacterController : PhysicObject
 {
-    public CharacterControlSettings characterSettings;
+    [SerializeField] CharacterControlSettings characterSettings;
+
 
     [HideInInspector] public bool lookLeft;
     [HideInInspector] public bool isDirectionLocked;
@@ -12,7 +13,8 @@ public abstract class CharacterController : PhysicObject
     float inAirDuration;
     float pressJumpBufferDuration;
 
-    public SpriteAnimator spriteAnimator;
+    protected SpriteAnimator spriteAnimator;
+    public bool allowsInput = true;
 
     public override void OnInit()
     {
@@ -28,41 +30,46 @@ public abstract class CharacterController : PhysicObject
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {
-        float2 direction = new float2(InputCommand.Direction.x, 0);
-
-        if (!isDirectionLocked)
-            lookDirection = (int)math.sign(direction.x);
-
-        if (lookDirection != 0)
-        {
-            lookLeft = lookDirection == -1;
-        }
-
-
         bool isGrounded = IsGrounded();
 
-        UpdateAnimation(direction, isGrounded);
-
-        UpdateMovement(direction);
-        UpdateJump(isGrounded);
-
-        if (isGrounded && InputCommand.IsButtonHeld(ButtonType.Jump))
+        if(allowsInput)
         {
-            PhysiXVII.MoveUpFromPile(ref physicData, map, GameManager.PhysiXVIISetings);
-            position = physicData.gridPosition;
+            float2 direction = new float2(InputCommand.Direction.x, 0);
+
+            if (!isDirectionLocked)
+                lookDirection = (int)math.sign(direction.x);
+
+            if (lookDirection != 0)
+            {
+                lookLeft = lookDirection == -1;
+            }
+
+            UpdateMovement(direction);
+            UpdateJump(isGrounded);
+
+            if (isGrounded && InputCommand.IsButtonHeld(ButtonType.Jump))
+            {
+                PhysiXVII.MoveUpFromPile(ref physicData, map, GameManager.PhysiXVIISetings);
+                position = physicData.gridPosition;
+            }
+        }
+        else
+        {
+            physicData.velocity.x = 0;
         }
 
-      
+  
+        UpdateAnimation(lookDirection, isGrounded);
         HandlePhysic();
     }
 
-    private void UpdateAnimation(float2 direction, bool isGrounded)
+    private void UpdateAnimation(float direction, bool isGrounded)
     {
         if (!isGrounded)
         {
             spriteAnimator.SetAnimation(2);
         }
-        else if (direction.x == 0)
+        else if (direction == 0)
         {
             spriteAnimator.SetAnimation(0);
         }

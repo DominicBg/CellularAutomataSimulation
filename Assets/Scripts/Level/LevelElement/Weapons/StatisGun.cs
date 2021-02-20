@@ -20,7 +20,7 @@ public class StatisGun : GunBaseElement
         base.OnInit();
         nativeBeamTexture = new NativeSprite(settings.beamTexture);
 
-        //spriteAnimator.returnToIdleAfterAnim = true;
+        spriteAnimator.returnToIdleAfterAnim = true;
     }
 
     protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, Map map)
@@ -44,7 +44,6 @@ public class StatisGun : GunBaseElement
         math.saturate(ratio);
         if(ratio > 0)
             GridRenderer.DrawRotationSprite(ref outputColors, lastRotationBound, pixelCamera, nativeBeamTexture, settings.tint * ratio);
-            //GridRenderer.DrawRotationBound(ref outputColors, lastRotationBound, pixelCamera, Color.yellow * ratio * 0.5f);
     }
 
     RotationBound GetRotationBound(float2 aimDirection)

@@ -25,7 +25,8 @@ public struct EnvironementReflectionInfo
             blending = BlendingMode.AdditiveAlpha,
             distance = 20,
             blurRadius = 2,
-            blurIntensity = .75f
+            blurIntensity = .75f,
+            mirrorReflectionThreshold = 0.9f
         };
     }
 
@@ -34,6 +35,9 @@ public struct EnvironementReflectionInfo
     public BlendingMode blending;
     public int blurRadius;
     public float blurIntensity;
+
+    //Under this, it will be mirrored
+    public float mirrorReflectionThreshold;
 }
 
 [System.Serializable]

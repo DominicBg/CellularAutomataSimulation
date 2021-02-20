@@ -48,6 +48,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
         currentWorldLevel = GameManager.Instance.GetWorldLevelInstance();
         currentWorldLevel.LoadLevel();
+        currentWorldLevel.inDebug = true;
         pixelSceneData = currentWorldLevel.pixelSceneData;
     }
     public void Reload()
@@ -68,7 +69,7 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
         WorldLevel prefab = GameManager.Instance.worldLevelPrefab;
         pixelSceneData.SaveMap(grid, currentWorldLevel.pixelScene.map.Sizes);
         currentWorldLevel.pixelSceneData = pixelSceneData;
-
+        currentWorldLevel.inDebug = false;
 #if UNITY_EDITOR
         string path = AssetDatabase.GetAssetPath(prefab);               
         PrefabUtility.SaveAsPrefabAsset(currentWorldLevel.gameObject, path);
@@ -99,18 +100,17 @@ public class GameLevelEditorManager : MonoBehaviour, FiniteStateMachine.IGameSta
 
     private void DrawPixels()
     {
-        //RENABLE
-        //if (!isRecording && Input.GetMouseButton(0))
-        //{
-        //    currentList = new List<ParticleChange>(50);
-        //    isRecording = true;
-        //}
-        //else if (isRecording && !Input.GetMouseButton(0))
-        //{
-        //    controlZ.Push(currentList);
-        //    dirtyPixels.Clear();
-        //    isRecording = false;
-        //}
+        if (!isRecording && InputCommand.IsButtonHeld(ButtonType.Action1))
+        {
+            currentList = new List<ParticleChange>(50);
+            isRecording = true;
+        }
+        else if (isRecording && !InputCommand.IsButtonHeld(ButtonType.Action1))
+        {
+            controlZ.Push(currentList);
+            dirtyPixels.Clear();
+            isRecording = false;
+        }
 
         if (isRecording)
         {

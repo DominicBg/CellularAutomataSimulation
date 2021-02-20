@@ -79,11 +79,7 @@ MonoBehaviour:
   characterSettings: {fileID: 11400000, guid: 19933ab20d034d64289c56fe5c79130c, type: 2}
   lookLeft: 0
   isDirectionLocked: 0
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 0
-    returnToIdleAfterAnim: 0
+  allowsInput: 1
 --- !u!1 &3250362568964421413
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,6 +316,9 @@ MonoBehaviour:
     y: 0
   baseSettings: {fileID: 11400000, guid: 7d8e2827950c7514f909bb01abb395b0, type: 2}
   controller: {fileID: 6772139068616828772}
+  explosionSettings:
+    radius: 25
+    strength: 500
 --- !u!1 &6813575429628828354
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,9 +486,5 @@ MonoBehaviour:
   characterSettings: {fileID: 11400000, guid: 19933ab20d034d64289c56fe5c79130c, type: 2}
   lookLeft: 0
   isDirectionLocked: 0
-  spriteAnimator:
-    currentAnim: 0
-    currentFrame: 0
-    framePerImage: 10
-    returnToIdleAfterAnim: 0
+  allowsInput: 1
   settings: {fileID: 11400000, guid: f828d92369ebffd459091525bd71a719, type: 2}

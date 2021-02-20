@@ -19,7 +19,10 @@ MonoBehaviour:
     maxVelocity: 300
     friction: 0.8
     maxSlope: 3
-    slopeSlow: 0.4
+    slopeSlow: 0.3
+    limitAxis:
+      x: 1
+      y: 0
     canPush: 000001010100000100010000000000
     frictions:
     - 0

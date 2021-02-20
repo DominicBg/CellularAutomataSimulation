@@ -11,11 +11,7 @@ public class InputCommand
 
     static InputCommand instance;
     Inputs inputRef;
-
-    //static readonly int2[] directions = new int2[] { new int2(1, 0), new int2(-1, 0), new int2(0, 1), new int2(0, -1)};
-    //static readonly KeyCode[] directionInputs = new KeyCode[] { KeyCode.D, KeyCode.A, KeyCode.W, KeyCode.S};
     public enum DirectionEnum { Left, Right, Up, Down, None }
-
 
     public static void Update()
     {
@@ -26,16 +22,6 @@ public class InputCommand
 
     public static bool IsButtonDown(ButtonType keyCode) => instance.GetInput(keyCode).IsButtonDown();
     public static bool IsButtonUp(ButtonType keyCode) => instance.GetInput(keyCode).IsButtonUp();
-
-    //public static DirectionEnum GetKeyDirection()
-    //{
-    //    if (IsButtonDown(KeyCode.W)) return DirectionEnum.Up;
-    //    if (IsButtonDown(KeyCode.A)) return DirectionEnum.Left;
-    //    if (IsButtonDown(KeyCode.S)) return DirectionEnum.Down;
-    //    if (IsButtonDown(KeyCode.D)) return DirectionEnum.Right;
-
-    //    return DirectionEnum.None;
-    //}
 
     static void EnsureInit()
     {

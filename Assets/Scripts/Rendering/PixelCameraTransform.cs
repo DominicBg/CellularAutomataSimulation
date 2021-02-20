@@ -6,6 +6,8 @@ public class PixelCameraTransform : LevelObject
 {
     public LevelObject target;
     public int2 focusSizes = 25;
+    public int snapMaxDistance = 2;
+    public float elasticSmooth = 5;
     public int2 boundOffset;
     public int2 offset;
 
@@ -28,7 +30,16 @@ public class PixelCameraTransform : LevelObject
         if (math.any(closestPoint != 0))
         {
             int2 diff = targetCenter - closestPoint;
-            position += diff;
+
+            if(math.any(math.abs(diff) > snapMaxDistance))
+            {
+                position = (int2)math.lerp(position, targetCenter, GameManager.DeltaTime * elasticSmooth);
+            }
+            else 
+            {
+                position += diff;
+            
+            }
         }
     }
 
