@@ -47,6 +47,7 @@ public class PixelCamera
         int renderCount = renderingObjects.Count;
         EnvironementInfo info = new EnvironementInfo();
         info.lightSources = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
+        info.cameraHandle = GetHandle();
 
         //SkyBoxRender
         for (int i = 0; i < renderCount; i++)
@@ -270,6 +271,7 @@ public struct EnvironementInfo
     public NativeArray<Color32> skybox;
     public NativeList<LightSource> lightSources;
     public NativeGrid<int> reflectionIndices;
+    public PixelCamera.PixelCameraHandle cameraHandle;
 
     int internalReflectionIndex;
 

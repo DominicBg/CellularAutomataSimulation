@@ -13,6 +13,8 @@ public class Shovel : EquipableElement
 
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
     {
+        spriteAnimator.SetAnimation(1);
+
         //eww
         var worldLevel = FindObjectOfType<WorldLevel>();
         if (!worldLevel.updateLevelElement)
@@ -67,6 +69,7 @@ public class Shovel : EquipableElement
     public override void OnInit()
     {
         base.OnInit();
+        spriteAnimator.returnToIdleAfterAnim = true;
         golemController = FindObjectOfType<GolemController>();
     }
 
@@ -108,10 +111,9 @@ public class Shovel : EquipableElement
 
     public override void Render(ref NativeArray<Color32> outputcolor, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
-        bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
-        int2 animOffset = playAnim ? settings.animOffset :0;
-        //int2 finalRenderPos = isEquiped ? GetEquipOffset(renderPos, renderOffset) : renderPos;
-        spriteAnimator.Render(ref outputcolor, renderPos + animOffset);
+        //bool playAnim = cooldown > 0 && cooldown > settings.frameCooldown / 2;
+       // int2 animOffset = playAnim ? settings.animOffset :0;
+        spriteAnimator.Render(ref outputcolor, info.cameraHandle.GetRenderPosition(GetEquipOffset(settings.equipedOffset)));
     }
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)

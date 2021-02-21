@@ -1535,11 +1535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textureGroups:
-  - textures:
-    - {fileID: 2800000, guid: 7edfaad817262dc42898c280892a9f7c, type: 3}
-    - {fileID: 2800000, guid: d8dbfc0897f0e8749be3ea5fcd887efe, type: 3}
-    - {fileID: 2800000, guid: 82353ca7e90035b438bb4657af37de9b, type: 3}
-    - {fileID: 2800000, guid: 0d5c3c2e7aa499b47bc89890f8b96bad, type: 3}
+  - textures: []
   - textures:
     - {fileID: 2800000, guid: 5a67219fa44cc7a4c8eaba58db4f912c, type: 3}
   - textures:

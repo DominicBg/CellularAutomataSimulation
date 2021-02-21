@@ -33,11 +33,11 @@ MonoBehaviour:
   lightSourceSettings: {fileID: 11400000, guid: a1f2b06aed03fa44cbf96769ab0ab65a, type: 2}
   backpack:
     offset:
-      x: -3
+      x: -5
       y: 2
     sprite: {fileID: 2800000, guid: bbb25a342344e524699ce237a6939aab, type: 3}
     normal: {fileID: 2800000, guid: 30212ed3cd775a246bc525453fc84457, type: 3}
     shadingInfo:
       minLightIntensity: 0.5
       lightResolution: 25
-      z: 0
+      z: -1.31
