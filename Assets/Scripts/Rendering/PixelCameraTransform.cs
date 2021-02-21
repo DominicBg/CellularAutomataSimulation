@@ -26,14 +26,14 @@ public class PixelCameraTransform : LevelObject
     public override void OnLateUpdate(ref TickBlock tickBlock)
     {
         int2 targetCenter = target.GetBound().center;
-        int2 closestPoint = GetBound().ProjectPointOnbound(targetCenter);
+        int2 closestPoint = GetBound().ProjectPointOnBound(targetCenter);
         if (math.any(closestPoint != 0))
         {
             int2 diff = targetCenter - closestPoint;
 
             if(math.any(math.abs(diff) > snapMaxDistance))
             {
-                position = (int2)math.lerp(position, targetCenter, GameManager.DeltaTime * elasticSmooth);
+                position = (int2)math.lerp(position, targetCenter + boundOffset, GameManager.DeltaTime * elasticSmooth);
             }
             else 
             {

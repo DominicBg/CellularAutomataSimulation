@@ -14,6 +14,7 @@ public class StatisGun : GunBaseElement
     RotationBound.Anchor anchor = RotationBound.Anchor.CenterRight;
 
     NativeSprite nativeBeamTexture;
+    GolemController golemController;
 
     public override void OnInit()
     {
@@ -21,12 +22,19 @@ public class StatisGun : GunBaseElement
         nativeBeamTexture = new NativeSprite(settings.beamTexture);
 
         spriteAnimator.returnToIdleAfterAnim = true;
+        golemController = FindObjectOfType<GolemController>();
     }
 
     protected override void OnShoot(int2 aimStartPosition, float2 aimDirection, ref TickBlock tickBlock)
     {
+        float2 viewDir = player.ViewDirection;
+        lastRotationBound = GetRotationBound(viewDir);
+        if(golemController.isSummoned && lastRotationBound.IntersectWith(golemController.GetBound()))
+        {
+            golemController.ExploseGolem();
+        }
+
         spriteAnimator.SetAnimation(1);
-        lastRotationBound = GetRotationBound(aimDirection);
         new StatisParticles()
         {
             cameraHandle = pixelCamera.GetHandle(),
@@ -49,6 +57,28 @@ public class StatisGun : GunBaseElement
     {
         float rotation = MathUtils.DirectionToAngle(aimDirection);
         return new RotationBound(Bound.CenterAligned(GetWorldPositionOffset(settings.beamOffset), settings.boundSizes), rotation, anchor);
+    }
+
+    public override void RenderDebug(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos)
+    {
+        base.RenderDebug(ref outputColors, ref tickBlock, renderPos);
+        var cameraHandle = scene.pixelCamera.GetHandle();
+        if (InputCommand.HasInputDirection)
+        {
+            int2 startPos = cameraHandle.GetRenderPosition(player.GetBound().center);
+            GridRenderer.DrawLine(ref outputColors, startPos, (int2)(startPos + InputCommand.Get8Direction * 25), Color.yellow);
+            GridRenderer.DrawLine(ref outputColors, startPos, (int2)(startPos + InputCommand.Direction * 25), Color.yellow);
+
+            var rotationBound = GetRotationBound(InputCommand.Get8Direction);
+            using (var corners = rotationBound.GetCorners())
+            {
+                for (int i = 0; i < corners.Length; i++)
+                {
+                    int2 cornerRenderPos = cameraHandle.GetRenderPosition(corners[i]);
+                    GridRenderer.DrawEllipse(ref outputColors, cornerRenderPos, 3, Color.yellow, Color.clear);
+                }
+            }
+        }
     }
 
     public override void Dispose()

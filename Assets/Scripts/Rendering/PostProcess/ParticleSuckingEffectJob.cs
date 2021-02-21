@@ -41,7 +41,7 @@ public struct ParticleSuckingEffectJob : IJobParallelFor
     {
         bound = Bound.CenterAligned(bound.center, bound.sizes - settings.shrink);
         int2 gridPos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
-        int2 projectedPoint = bound.ProjectPointOnbound(gridPos);
+        int2 projectedPoint = bound.ProjectPointOnBound(gridPos);
         float distanceSqToClosestPoint = math.distancesq(gridPos, projectedPoint);
 
         if (distanceSqToClosestPoint > settings.fadeOff * settings.fadeOff) 

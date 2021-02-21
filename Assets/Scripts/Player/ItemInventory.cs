@@ -24,23 +24,40 @@ public class ItemInventory
 
     public void Update()
     {
-        //todo bind each action to a key
+        //lol
+        if (InputCommand.IsButtonDown(ButtonType.Action1))
+        {
+            equipableElements[0]?.UsePress(false);
+        }
+        else if (InputCommand.IsButtonDown(ButtonType.Action1Alt))
+        {
+            equipableElements[0]?.UsePress(true);
+        }
+        else if (InputCommand.IsButtonDown(ButtonType.Action2))
+        {
+            equipableElements[1]?.UsePress(false);
+        }
+        else if (InputCommand.IsButtonDown(ButtonType.Action2Alt))
+        {
+            equipableElements[1]?.UsePress(true);
+        }
 
+        //todo bind each action to a key
         if (InputCommand.IsButtonHeld(ButtonType.Action1))
         {
-            equipableElements[0]?.Use(false);
+            equipableElements[0]?.UseHold(false);
         }
         else if (InputCommand.IsButtonHeld(ButtonType.Action1Alt))
         {
-            equipableElements[0]?.Use(true);
+            equipableElements[0]?.UseHold(true);
         }
         else if (InputCommand.IsButtonHeld(ButtonType.Action2))
         {
-            equipableElements[1]?.Use(false);
+            equipableElements[1]?.UseHold(false);
         }
         else if (InputCommand.IsButtonHeld(ButtonType.Action2Alt))
         {
-            equipableElements[1]?.Use(true);
+            equipableElements[1]?.UseHold(true);
         }
     }
 }

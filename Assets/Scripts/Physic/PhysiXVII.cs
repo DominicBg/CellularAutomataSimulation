@@ -121,6 +121,53 @@ public static class PhysiXVII
         boundPos.Dispose();
     }
 
+    //burst it
+    public static bool HasPolygonCollision(NativeList<float2> poly1, NativeList<float2> poly2)
+    {
+        //SAT algorithm
+        var p1 = poly1;
+        var p2 = poly2;
+        for (int order = 0; order < 2; order++)
+        {
+            if(order == 1)
+            {
+                p1 = poly2;
+                p2 = poly1;
+            }
+
+            for (int i = 0; i < p1.Length; i++)
+            {
+                int j = (i + 1) % p1.Length;
+                float2 diff = p1[j] - p1[i];
+                //find normal, rotate by 90 the diff of 2 vector
+                float2 axisProj = new float2(-diff.y, diff.x);
+
+                float minDot_p1 = float.MaxValue;
+                float maxDot_p1 = float.MinValue;
+                for (int p = 0; p < p1.Length; p++)
+                {
+                    float dot = math.dot(p1[p], axisProj);
+                    minDot_p1 = math.min(minDot_p1, dot);
+                    maxDot_p1 = math.max(maxDot_p1, dot);
+                }
+
+                float minDot_p2 = float.MaxValue;
+                float maxDot_p2 = float.MinValue;
+                for (int p = 0; p < p2.Length; p++)
+                {
+                    float dot = math.dot(p2[p], axisProj);
+                    minDot_p2 = math.min(minDot_p2, dot);
+                    maxDot_p2 = math.max(maxDot_p2, dot);
+                }
+
+                if (!(maxDot_p2 >= minDot_p1 && maxDot_p1 >= minDot_p2))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
 
     public static int GetFlag(ParticleType particleType)
     {

@@ -365,7 +365,6 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Render the outputColor to the screen and dispose the array
     /// </summary>
@@ -377,6 +376,22 @@ public class GridRenderer : MonoBehaviour
         Instance.m_renderer.texture = m_texture;
         //Instance.m_cubeRenderer.sharedMaterial.SetTexture("_MainTex", m_texture);
     }
+
+    public static void DrawLine(ref NativeArray<Color32> outputColor, int2 from, int2 to, Color color, BlendingMode blending = BlendingMode.Normal)
+    {
+        int2 diff = math.abs(from - to);
+        int dist = math.max(diff.x, diff.y);
+        float t = 1f / dist;
+        for (int i = 0; i <= dist; i++)
+        {
+            int2 currentPos = (int2)math.lerp(from, to, i * t);
+            if(ArrayHelper.TryPosToIndex(currentPos, GameManager.RenderSizes, out int index))
+            {
+                outputColor[index] = Blend(outputColor[index], color, blending);
+            }
+        }
+    }
+
     public static void RenderToText(NativeArray<Color32> outputColor)
     {
         NativeArray<char> outputASCII = new NativeArray<char>(outputColor.Length, Allocator.TempJob);

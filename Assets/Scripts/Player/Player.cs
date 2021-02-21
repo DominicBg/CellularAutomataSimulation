@@ -15,7 +15,7 @@ public class Player : CharacterController, ILightSource
 
 
     bool ghostMode;
-
+    public float2 ViewDirection => InputCommand.HasInputDirection ? InputCommand.Get8Direction : (lookLeft ? new float2(-1, 0) : new float2(1, 0));
 
     public override void OnInit()
     {

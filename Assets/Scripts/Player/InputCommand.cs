@@ -33,6 +33,10 @@ public class InputCommand
         }
     }
 
+    public static bool HasInputDirection { get; private set; }
+    public static float InputDirectionAngleDeg { get; private set; }
+    public static float InputDirectionAngle8StepDeg { get; private set; }
+    public static float2 Get8Direction { get; private set; }
 
     public static float2 Direction { get; private set; }
     public static float2 MousePosition { get; private set; }
@@ -75,6 +79,25 @@ public class InputCommand
     public void InternalUpdate()
     {
         Direction = inputRef.Player.Move.ReadValue<Vector2>();
+        if(math.all(Direction == 0))
+        {
+            InputDirectionAngleDeg = 0;
+            Get8Direction = 0;
+            HasInputDirection = false;
+        }
+        else
+        {
+            float angle = math.degrees(math.atan2(Direction.y, Direction.x));
+            InputDirectionAngleDeg = angle;
+            InputDirectionAngle8StepDeg = (math.round((angle / 360) * 8) / 8) * 360;
+            if (InputDirectionAngle8StepDeg < 0)
+                InputDirectionAngle8StepDeg = 360 + InputDirectionAngle8StepDeg ;
+
+            Get8Direction = MathUtils.Rotate(new float2(1, 0), math.radians(InputDirectionAngle8StepDeg));
+            //Debug.Log($"InputDirectionAngle8StepDeg {InputDirectionAngleDeg}, InputDirectionAngle8StepDeg {InputDirectionAngle8StepDeg}, Get8Direction {Get8Direction}");
+            HasInputDirection = true;
+        }
+
         MousePosition = inputRef.Player.Mouse.ReadValue<Vector2>();
         foreach (var input in inputs.Values)
             input.Update();

@@ -21,7 +21,7 @@ public class WorldLevel : MonoBehaviour
     TickBlock postProcessTickBlock;
 
     public bool updateWorldElement = true;
-    public bool updatLevelElement = true;
+    public bool updateLevelElement = true;
 
     RenderPassRecorder renderPassRecorder;
 
@@ -43,7 +43,7 @@ public class WorldLevel : MonoBehaviour
 
     public void OnUpdate()
     {
-        if (updatLevelElement)
+        if (updateLevelElement)
             tickBlock.UpdateTick();
 
         postProcessTickBlock.UpdateTick();

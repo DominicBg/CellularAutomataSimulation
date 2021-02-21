@@ -14,7 +14,7 @@ public class Shovel : EquipableElement
     {
         //eww
         var worldLevel = FindObjectOfType<WorldLevel>();
-        if (!worldLevel.updatLevelElement)
+        if (!worldLevel.updateLevelElement)
         {
             return;
         }

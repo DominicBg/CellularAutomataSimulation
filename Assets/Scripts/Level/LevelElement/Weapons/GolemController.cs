@@ -7,6 +7,7 @@ using UnityEngine;
 public class GolemController : CharacterController
 {
     public bool isSummoned { get; private set; }
+    [SerializeField] Explosive.Settings explosiveSettings = new Explosive.Settings() { radius = 5, strength = 15 };
     List<ParticleType> particles;
     int2 sizes;
 
@@ -34,7 +35,7 @@ public class GolemController : CharacterController
         SetControls(!allowsInput);
     }
 
-    public void ExploseGolem(in Explosive.Settings explosiveSettings)
+    public void ExploseGolem()
     {
         SetControls(controlsGolem: false);
 

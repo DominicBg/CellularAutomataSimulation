@@ -11,4 +11,6 @@ public class EquipableBaseScriptable : ScriptableObject
     public SpriteSheetScriptable spriteSheet;
     public int framePerImage = 5;
     public int frameCooldown = 2;
+    public bool needButtonPress;
 }
+

@@ -94,6 +94,25 @@ public struct Bound
         }
     }
 
+    public NativeList<int2> GetCorners(Allocator allocator = Allocator.Temp)
+    {
+        NativeList<int2> positions = new NativeList<int2>(allocator);
+        positions.Add(topLeft);
+        positions.Add(topRight);
+        positions.Add(bottomLeft);
+        positions.Add(bottomRight);
+        return positions;
+    }
+    public NativeList<float2> GetCornersFloat2(Allocator allocator = Allocator.Temp)
+    {
+        NativeList<float2> positions = new NativeList<float2>(allocator);
+        positions.Add(topLeft);
+        positions.Add(topRight);
+        positions.Add(bottomLeft);
+        positions.Add(bottomRight);
+        return positions;
+    }
+
     public bool IntersectWith(Bound otherBound)
     {
         return !(otherBound.max.x < min.x || otherBound.min.x > max.x || otherBound.max.y < min.y || otherBound.min.y > max.y);
@@ -108,7 +127,7 @@ public struct Bound
         return math.unlerp(min, max, point);
     }
 
-    public int2 ProjectPointOnbound(int2 point)
+    public int2 ProjectPointOnBound(int2 point)
     {
         return math.clamp(point, min, max);
     }

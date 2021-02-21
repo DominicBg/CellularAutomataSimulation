@@ -50,7 +50,7 @@ public class TimeGemElement : EquipableElement
         }
 
         var worldLevel = FindObjectOfType<WorldLevel>();
-        worldLevel.updatLevelElement = !timeStopped;
+        worldLevel.updateLevelElement = !timeStopped;
     }
 
     public override void PreRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)

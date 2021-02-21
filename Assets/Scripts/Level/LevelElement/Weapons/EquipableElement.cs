@@ -46,8 +46,19 @@ public abstract class EquipableElement : LevelObject
 
     public abstract void OnEquipableUpdate(ref TickBlock tickBlock);
 
-    public void Use(bool useAltButton)
+    public void UsePress(bool useAltButton)
     {
+        useRequest = new UseRequest()
+        {
+            requestUse = true,
+            useAltButton = useAltButton,
+        };
+    }
+    public void UseHold(bool useAltButton)
+    {
+        if (baseSettings.needButtonPress)
+            return;
+
         useRequest = new UseRequest()
         {
             requestUse = true,

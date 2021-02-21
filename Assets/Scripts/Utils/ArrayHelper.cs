@@ -5,6 +5,12 @@ using UnityEngine;
 
 public static class ArrayHelper
 {
+
+    public static bool TryPosToIndex(int2 pos, int2 sizes, out int index)
+    {
+        index = pos.y * sizes.x + pos.x;
+        return GridHelper.InBound(pos, sizes);
+    }
     public static int PosToIndex(int2 pos, int2 sizes)
     {
         return pos.y * sizes.x + pos.x;
