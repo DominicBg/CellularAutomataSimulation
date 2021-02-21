@@ -24,8 +24,8 @@ public class GolemController : CharacterController
 
     public void SetControls(bool controlsGolem)
     {
-        player.allowsInput = !controlsGolem;
-        allowsInput = controlsGolem;
+        player.SetIsControlled(!controlsGolem);
+        SetIsControlled(controlsGolem);
 
         pixelCamera.transform.target = (controlsGolem) ? (LevelObject)this : (LevelObject)player;
     }
@@ -37,7 +37,6 @@ public class GolemController : CharacterController
 
     public void ExploseGolem()
     {
-        SetControls(controlsGolem: false);
 
         //set particles at position
         Bound bound = new Bound(position, sizes);
@@ -45,10 +44,16 @@ public class GolemController : CharacterController
         for (int i = 0; i < positions.Length; i++)
         {
             if (i < particles.Count && !map.HasCollision(positions[i], PhysiXVII.GetFlag(ParticleType.Player)))
-                map.SetParticleType(positions[i], particles[i]);
+            {
+                Particle particle = new Particle() { type = particles[i], velocity = physicData.velocity, fracPosition = 0.5f };
+                map.SetParticle(positions[i], particle);
+            }
         }
         positions.Dispose();
+
         Explosive.SetExplosive(GetBound().center, in explosiveSettings, map);
+        SetControls(controlsGolem: false);
+
         isSummoned = false;
         particles.Clear();
     }

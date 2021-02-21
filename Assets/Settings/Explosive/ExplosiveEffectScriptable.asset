@@ -38,3 +38,4 @@ MonoBehaviour:
   explosiveSettings:
     radius: 25
     strength: 150
+    canDestroy: 1

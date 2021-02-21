@@ -11,6 +11,8 @@ public class ShovelScriptable : EquipableBaseScriptable
     public int2 lookingOffset;
     public float minThrowStrength;
     public float maxThrowStrength;
+    public float golemThrowStrength;
+
     public float2 throwDirVelocity;
     public int2 animOffset;
 

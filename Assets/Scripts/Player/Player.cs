@@ -13,6 +13,7 @@ public class Player : CharacterController, ILightSource
 
     private int reflectionIndex;
 
+    NativeSprite backPack;
 
     bool ghostMode;
     public float2 ViewDirection => InputCommand.HasInputDirection ? InputCommand.Get8Direction : (lookLeft ? new float2(-1, 0) : new float2(1, 0));
@@ -21,7 +22,7 @@ public class Player : CharacterController, ILightSource
     {
         base.OnInit();
         inventory = new ItemInventory();
-
+        backPack = new NativeSprite(settings.backpack.sprite, settings.backpack.normal);
         CheatManager.AddCheat("Ghost Mode", () => ghostMode = !ghostMode);
     }
 
@@ -29,6 +30,9 @@ public class Player : CharacterController, ILightSource
     {
         var sprite = spriteAnimator.GetCurrentSprite();
         var normals = spriteAnimator.GetCurrentNormals();
+
+        //int2 backpackOffset = backPack.pixels.Sizes/2 + settings.backpack.offset * (lookLeft ? new int2(-1, 1) : new int2(1, 1));
+        //GridRenderer.ApplyLitSprite(ref outputColors, backPack.pixels, backPack.normals, position + backpackOffset, renderPos + backpackOffset, info.lightSources, in settings.backpack.shadingInfo);
         GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, in settings.shadingInfo);
         
         reflectionIndex = info.GetReflectionIndex();
@@ -84,6 +88,12 @@ public class Player : CharacterController, ILightSource
 
         inventory.Update();
 
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        backPack.Dispose();
     }
 
     public LightSource GetLightSource(int tick)

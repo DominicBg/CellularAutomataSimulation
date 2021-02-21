@@ -9,6 +9,7 @@ public class Shovel : EquipableElement
     public ShovelScriptable settings => (ShovelScriptable)baseSettings;
 
     List<int2> debugPositions = new List<int2>();
+    GolemController golemController;
 
     protected override void OnUse(int2 position, bool altButton, ref TickBlock tickBlock)
     {
@@ -19,17 +20,10 @@ public class Shovel : EquipableElement
             return;
         }
   
-
         debugPositions.Clear();
-
         float2 dir = math.normalize(settings.throwDirVelocity);
         int2 startOffset = settings.throwStartOffset;
 
-        //if (player.lookLeft)
-        //{
-        //    dir.x = -dir.x;
-        //    startOffset.x = -startOffset.x;
-        //}
         if (!altButton)
         {
             dir.x = -dir.x;
@@ -64,37 +58,16 @@ public class Shovel : EquipableElement
             }
         }
 
-        //try move up one position
-        PhysicBound playerPhysicbound = player.physicData.physicBound;
-        Bound playerOverBound = playerPhysicbound.GetTopCollisionBound(player.physicData.gridPosition + new int2(0, 1));
-        Bound playerUnderBound = playerPhysicbound.GetBottomCollisionBound(player.physicData.gridPosition + new int2(0, 1));
-
-        playerOverBound.GetPositionsGrid(out NativeArray<int2> headCollisions, Allocator.Temp);
-        playerUnderBound.GetPositionsGrid(out NativeArray<int2> feetCollisions, Allocator.Temp);
-
-        bool isBlocked = false;
-        var physixSettings = GameManager.PhysiXVIISetings;
-        for (int i = 0; i < headCollisions.Length; i++)
+        if(new Bound(position, settings.shovelSize).IntersectWith(golemController.GetBound()))
         {
-            if (!(map.CanPush(headCollisions[i], in physixSettings) || map.IsFreePosition(headCollisions[i])))
-            {
-                isBlocked = true;
-            }
+            golemController.physicData.velocity += dir * settings.golemThrowStrength;
         }
-        if(!isBlocked)
-        {
-            map.RemoveSpriteAtPosition(player.physicData.gridPosition, ref playerPhysicbound);
-            for (int i = 0; i < headCollisions.Length; i++)
-            {
-                map.SwapParticles(headCollisions[i], feetCollisions[i]);
-            }
-            player.physicData.position += new float2(0, 1);
-            player.physicData.gridPosition = (int2)player.physicData.position;
-            //map.SetSpriteAtPosition(player.physicData.gridPosition, ref playerPhysicbound);
+    }
 
-        }
-        headCollisions.Dispose();
-        feetCollisions.Dispose();
+    public override void OnInit()
+    {
+        base.OnInit();
+        golemController = FindObjectOfType<GolemController>();
     }
 
     void ThrowParticle(int2 pos, int2 localPos, float2 dir, int2 startOffset, ref TickBlock tickBlock)

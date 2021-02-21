@@ -21,7 +21,7 @@ public struct NativeSprite : IDisposable
     {
         Color32[] colors = baseTexture.GetPixels32(0);
         Color32[] normalColors = normalTexture != null ? normalTexture.GetPixels32(0) : null;
-        Color32[] reflectiveColors = normalTexture != null ? reflectiveTexture.GetPixels32(0) : null;
+        Color32[] reflectiveColors = reflectiveTexture != null ? reflectiveTexture.GetPixels32(0) : null;
 
         sizes = new int2(baseTexture.width, baseTexture.height);
         pixels = new NativeGrid<Color32>(sizes, Allocator.Persistent);

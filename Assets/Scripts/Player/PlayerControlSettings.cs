@@ -13,4 +13,14 @@ public class PlayerControlSettings : ScriptableObject
     public EnvironementReflectionInfo environementReflection = EnvironementReflectionInfo.Default();
 
     public GlowingLightSourceScriptable lightSourceSettings;
+    public Backpack backpack;
+
+    [System.Serializable]
+    public struct Backpack
+    {
+        public int2 offset;
+        public Texture2D sprite;
+        public Texture2D normal;
+        public ShadingLitInfo shadingInfo;
+    }
 }

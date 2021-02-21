@@ -14,7 +14,7 @@ public abstract class CharacterController : PhysicObject
     float pressJumpBufferDuration;
 
     protected SpriteAnimator spriteAnimator;
-    public bool allowsInput = true;
+    protected bool allowsInput = true;
 
     public override void OnInit()
     {
@@ -62,14 +62,19 @@ public abstract class CharacterController : PhysicObject
                 position = physicData.gridPosition;
             }
         }
-        else
-        {
-            physicData.velocity.x = 0;
-        }
 
   
         UpdateAnimation(lookDirection, isGrounded);
         HandlePhysic();
+    }
+
+    public void SetIsControlled(bool isControlled)
+    {
+        allowsInput = isControlled;
+        if (!isControlled)
+        {
+            physicData.velocity.x = 0;
+        }
     }
 
     private void UpdateAnimation(float direction, bool isGrounded)

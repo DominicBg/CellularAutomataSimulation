@@ -18,6 +18,7 @@ MonoBehaviour:
   spriteSheet: {fileID: 11400000, guid: 17fe6ef8cf29f7949a1908c3205c1289, type: 2}
   framePerImage: 5
   frameCooldown: 15
+  needButtonPress: 0
   shovelSize:
     x: 15
     y: 15
@@ -26,6 +27,7 @@ MonoBehaviour:
     y: -3
   minThrowStrength: 70
   maxThrowStrength: 90
+  golemThrowStrength: 250
   throwDirVelocity:
     x: 2
     y: 1
