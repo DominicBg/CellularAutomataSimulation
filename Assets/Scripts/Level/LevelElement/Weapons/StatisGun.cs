@@ -29,11 +29,6 @@ public class StatisGun : GunBaseElement
     {
         float2 viewDir = player.ViewDirection;
         lastRotationBound = GetRotationBound(viewDir);
-        if(golemController.isSummoned && lastRotationBound.IntersectWith(golemController.GetBound()))
-        {
-            golemController.ExploseGolem();
-        }
-
         spriteAnimator.SetAnimation(1);
         new StatisParticles()
         {
@@ -43,6 +38,13 @@ public class StatisGun : GunBaseElement
             statisTickMin = (int)(settings.statisMinDuration * GameManager.FPS),
             statisTickMax = (int)(settings.statisMaxDuration * GameManager.FPS),
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
+
+
+
+        if(golemController.isSummoned && lastRotationBound.IntersectWith(golemController.GetBound()))
+        {
+            golemController.ExploseGolem();
+        }
     }
 
     public override void LateRender(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)

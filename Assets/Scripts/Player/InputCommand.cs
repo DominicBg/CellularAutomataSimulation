@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static InputCommand;
-public enum ButtonType { Jump, Exit, Action1, Action1Alt, Action2, Action2Alt}
+public enum ButtonType { Jump, Exit, Action1, Action1Alt, Action2, Action2Alt, Hold}
 
 public class InputCommand
 {
@@ -59,6 +59,8 @@ public class InputCommand
                 return inputRef.Player.Action2;
             case ButtonType.Action2Alt:
                 return inputRef.Player.Action2Alt;
+            case ButtonType.Hold:
+                return inputRef.Player.Hold;
         }
         return null;
     }

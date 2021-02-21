@@ -81,6 +81,14 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Hold"",
+                    ""type"": ""Button"",
+                    ""id"": ""da80e7b5-07a7-4e23-9d1e-82f18773d92f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -435,6 +443,28 @@ public class @Inputs : IInputActionCollection, IDisposable
                     ""action"": ""Action1Alt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""40a433b0-c584-4e9b-9d18-5238f894778d"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""baed4360-1c18-4e19-87ac-5661e1e5a3f8"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -473,6 +503,7 @@ public class @Inputs : IInputActionCollection, IDisposable
         m_Player_Action1Alt = m_Player.FindAction("Action1Alt", throwIfNotFound: true);
         m_Player_Action2 = m_Player.FindAction("Action2", throwIfNotFound: true);
         m_Player_Action2Alt = m_Player.FindAction("Action2Alt", throwIfNotFound: true);
+        m_Player_Hold = m_Player.FindAction("Hold", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -530,6 +561,7 @@ public class @Inputs : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Action1Alt;
     private readonly InputAction m_Player_Action2;
     private readonly InputAction m_Player_Action2Alt;
+    private readonly InputAction m_Player_Hold;
     public struct PlayerActions
     {
         private @Inputs m_Wrapper;
@@ -542,6 +574,7 @@ public class @Inputs : IInputActionCollection, IDisposable
         public InputAction @Action1Alt => m_Wrapper.m_Player_Action1Alt;
         public InputAction @Action2 => m_Wrapper.m_Player_Action2;
         public InputAction @Action2Alt => m_Wrapper.m_Player_Action2Alt;
+        public InputAction @Hold => m_Wrapper.m_Player_Hold;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -575,6 +608,9 @@ public class @Inputs : IInputActionCollection, IDisposable
                 @Action2Alt.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction2Alt;
                 @Action2Alt.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction2Alt;
                 @Action2Alt.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction2Alt;
+                @Hold.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHold;
+                @Hold.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHold;
+                @Hold.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHold;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -603,6 +639,9 @@ public class @Inputs : IInputActionCollection, IDisposable
                 @Action2Alt.started += instance.OnAction2Alt;
                 @Action2Alt.performed += instance.OnAction2Alt;
                 @Action2Alt.canceled += instance.OnAction2Alt;
+                @Hold.started += instance.OnHold;
+                @Hold.performed += instance.OnHold;
+                @Hold.canceled += instance.OnHold;
             }
         }
     }
@@ -626,5 +665,6 @@ public class @Inputs : IInputActionCollection, IDisposable
         void OnAction1Alt(InputAction.CallbackContext context);
         void OnAction2(InputAction.CallbackContext context);
         void OnAction2Alt(InputAction.CallbackContext context);
+        void OnHold(InputAction.CallbackContext context);
     }
 }

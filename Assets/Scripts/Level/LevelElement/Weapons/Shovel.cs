@@ -25,12 +25,12 @@ public class Shovel : EquipableElement
         float2 dir = math.normalize(settings.throwDirVelocity);
         int2 startOffset = settings.throwStartOffset;
 
-        if (player.lookLeft)
-        {
-            dir.x = -dir.x;
-            startOffset.x = -startOffset.x;
-        }
-        if (altButton)
+        //if (player.lookLeft)
+        //{
+        //    dir.x = -dir.x;
+        //    startOffset.x = -startOffset.x;
+        //}
+        if (!altButton)
         {
             dir.x = -dir.x;
             startOffset.x = -startOffset.x;

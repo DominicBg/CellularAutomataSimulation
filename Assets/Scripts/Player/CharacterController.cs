@@ -44,7 +44,16 @@ public abstract class CharacterController : PhysicObject
                 lookLeft = lookDirection == -1;
             }
 
-            UpdateMovement(direction);
+            if (InputCommand.IsButtonHeld(ButtonType.Hold))
+            {
+                physicData.velocity.x = 0;
+            }
+            else
+            {
+                UpdateMovement(direction);
+
+            }
+
             UpdateJump(isGrounded);
 
             if (isGrounded && InputCommand.IsButtonHeld(ButtonType.Jump))
@@ -79,6 +88,7 @@ public abstract class CharacterController : PhysicObject
         }
         spriteAnimator.Update(lookLeft);
     }
+
 
     private void UpdateMovement(float2 direction)
     {

@@ -47,12 +47,18 @@ public struct RotationBound
     {
         NativeList<float2> otherPos = otherBound.GetCornersFloat2();
         NativeList<float2> pos = GetCornersFloat2();
-
         bool hasCollision = PhysiXVII.HasPolygonCollision(otherPos, pos);
-
         otherPos.Dispose();
         pos.Dispose();
-
+        return hasCollision;
+    }
+    public bool IntersectWith(RotationBound otherBound)
+    {
+        NativeList<float2> otherPos = otherBound.GetCornersFloat2();
+        NativeList<float2> pos = GetCornersFloat2();
+        bool hasCollision = PhysiXVII.HasPolygonCollision(otherPos, pos);
+        otherPos.Dispose();
+        pos.Dispose();
         return hasCollision;
     }
 

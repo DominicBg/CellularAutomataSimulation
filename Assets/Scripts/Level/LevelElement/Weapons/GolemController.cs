@@ -19,7 +19,7 @@ public class GolemController : CharacterController
         isSummoned = true;
         SetControls(controlsGolem: true);
 
-        physicData.velocity.y = player.physicData.velocity.y + 100;
+        physicData.velocity = player.physicData.velocity + new float2(0, 100);
     }
 
     public void SetControls(bool controlsGolem)

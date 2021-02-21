@@ -152,8 +152,10 @@ public class ParticleBlower : EquipableElement
     {
         int2 middlePos = GetWorldPositionOffset(settings.absorbOffset);
         Bound absorbBound = Bound.CenterAligned(middlePos, settings.absorbBound);
-        float2 velocity = 0;
-        velocity.x = player.lookLeft ? -settings.blowVelocity : settings.blowVelocity;
+        //float2 velocity = 0;
+        //velocity.x = player.lookLeft ? -settings.blowVelocity : settings.blowVelocity;
+
+        float2 velocity = player.ViewDirection * settings.blowVelocity;
 
         Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex((uint)tickBlock.tick);
         for (int y = 0; y < settings.maxParticlePerFrame; y++)

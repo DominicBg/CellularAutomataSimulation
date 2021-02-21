@@ -53,9 +53,6 @@ public class Player : CharacterController, ILightSource
             position = (int2)physicData.position;
             return;
         }
-
-        inventory.Update();
-
         var underFeetPositionBeforePhysics = physicData.physicBound.GetUnderFeetCollisionBound(position).GetPositionsGrid();
 
         base.OnUpdate(ref tickBlock);
@@ -84,6 +81,9 @@ public class Player : CharacterController, ILightSource
 
         underFeetPositionBeforePhysics.Dispose();
         underFeetPositionAfterPhysics.Dispose();
+
+        inventory.Update();
+
     }
 
     public LightSource GetLightSource(int tick)
