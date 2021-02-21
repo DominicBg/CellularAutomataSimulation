@@ -27,3 +27,12 @@ MonoBehaviour:
   - {fileID: 2800000, guid: ef15c90640a94694fae8d5faa0d7c3a5, type: 3}
   - {fileID: 2800000, guid: 54923eda0f188144b948b914fae9d4d2, type: 3}
   - {fileID: 2800000, guid: ef15c90640a94694fae8d5faa0d7c3a5, type: 3}
+  offsets:
+  - x: 0
+    y: 0
+  - x: -1
+    y: 0
+  - x: 0
+    y: 0
+  - x: -1
+    y: 0

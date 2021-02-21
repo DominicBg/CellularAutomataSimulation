@@ -112,7 +112,7 @@ public abstract class EquipableElement : LevelObject
             offset.x = -offset.x;
 
         offset -= spriteAnimator.nativeSpriteSheet.spriteSizes / 2;
-        return player.GetBound().center + offset;
+        return player.GetBound().center + offset + player.AnimOffset;
     }
     protected int2 GetWorldPositionOffset(int2 offset)
     {

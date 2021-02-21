@@ -16,6 +16,8 @@ public abstract class CharacterController : PhysicObject
     protected SpriteAnimator spriteAnimator;
     protected bool allowsInput = true;
 
+    public int2 AnimOffset => spriteAnimator.GetCurrentAnimOffset();
+
     public override void OnInit()
     {
         base.OnInit();

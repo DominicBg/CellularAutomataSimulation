@@ -13,6 +13,7 @@ public class SpriteAnimator : IDisposable
     private NativeGrid<Color32> currentSprite;
     private NativeGrid<float3> currentNormal;
     private NativeGrid<float> currentReflection;
+    private int2 currentAnimOffset;
 
     public int currentAnim;
     public int currentFrame;
@@ -98,6 +99,7 @@ public class SpriteAnimator : IDisposable
                     currentReflection[x, y] = nativeSpriteSheet.reflections[pixelPos.x, pixelPos.y];          
             }
         }
+        currentAnimOffset = nativeSpriteSheet.offsets[currentFrame, currentAnim];
     }
 
     public NativeGrid<Color32> GetCurrentSprite()
@@ -112,6 +114,11 @@ public class SpriteAnimator : IDisposable
     {
         return currentReflection;
     }
+    public int2 GetCurrentAnimOffset()
+    {
+        return currentAnimOffset;
+    }
+
     public int2 GetSizes()
     {
         return nativeSpriteSheet.spriteSizes;

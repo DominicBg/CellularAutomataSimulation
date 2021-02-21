@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: ShoveActive
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: 2800000, guid: d209a526de827f34489205422e4c3c1b, type: 3}
   - {fileID: 2800000, guid: 5b560d5439de20a4697d1b3a71a6100e, type: 3}
   - {fileID: 2800000, guid: 9c8cfa34588643546b0443b5e0a91010, type: 3}
   - {fileID: 2800000, guid: b7227f709e33e434b8765092231bd001, type: 3}
-  - {fileID: 2800000, guid: b7227f709e33e434b8765092231bd001, type: 3}
   normals: []
   reflections: []
+  offsets: []

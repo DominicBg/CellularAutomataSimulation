@@ -8,6 +8,7 @@ public struct NativeSpriteSheet : IDisposable
     public NativeGrid<Color32> pixels;
     public NativeGrid<float3> normals;
     public NativeGrid<float> reflections;
+    public NativeGrid<int2> offsets;
 
     public NativeArray<int> spritePerAnim;
     public int2 spriteSizes;
@@ -31,6 +32,7 @@ public struct NativeSpriteSheet : IDisposable
         pixels = new NativeGrid<Color32>(spriteSizes * colRows, Allocator.Persistent);
         normals = new NativeGrid<float3>(spriteSizes * colRows, Allocator.Persistent);
         reflections = new NativeGrid<float>(spriteSizes * colRows, Allocator.Persistent);
+        offsets = new NativeGrid<int2>(rows * colRows, Allocator.Persistent);
 
         spritePerAnim = new NativeArray<int>(rows, Allocator.Persistent);
 
@@ -39,16 +41,20 @@ public struct NativeSpriteSheet : IDisposable
 
         for (int row = 0; row < rows; row++)
         {
-            int currentCol = spriteSheet.spriteAnimations[row].sprites.Length;
+            SpriteAnimationScriptable animation = spriteSheet.spriteAnimations[row];
+            int currentCol = animation.sprites.Length;
             spritePerAnim[row] = currentCol;
             for (int col = 0; col < currentCol; col++)
             {
                 //offset to have the first anim on top of the spritesheet
                 int2 offset = new int2(col, row) * spriteSizes;
-                Texture2D currentSprite = spriteSheet.spriteAnimations[row].sprites[col];
-                Texture2D currentNormal = (useNormal) ? spriteSheet.spriteAnimations[row].normals[col] : null;
-                Texture2D currentReflection = (useReflection) ? spriteSheet.spriteAnimations[row].reflections[col] : null;
+                Texture2D currentSprite = animation.sprites[col];
+                Texture2D currentNormal = (useNormal) ? animation.normals[col] : null;
+                Texture2D currentReflection = (useReflection) ? animation.reflections[col] : null;
                 StoreSprite(currentSprite, currentNormal, currentReflection, offset);
+
+                bool hasOffset = animation.offsets != null && animation.offsets.Length > 0;
+                offsets[new int2(col, row)] = hasOffset ? spriteSheet.spriteAnimations[row].offsets[col] : 0;
             }
         }
     }
@@ -90,6 +96,7 @@ public struct NativeSpriteSheet : IDisposable
         pixels.Dispose();
         normals.Dispose();
         reflections.Dispose();
+        offsets.Dispose();
         spritePerAnim.Dispose();
     }
 }
