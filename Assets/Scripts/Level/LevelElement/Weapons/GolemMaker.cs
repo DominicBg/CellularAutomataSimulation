@@ -28,7 +28,7 @@ public class GolemMaker : EquipableElement
         {
             if (altButton)
             {
-                controller.ExploseGolem();
+                controller.ExplodeGolem();
             }
             else //!altButton
             {

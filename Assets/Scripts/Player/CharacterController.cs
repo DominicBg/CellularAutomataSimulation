@@ -75,7 +75,8 @@ public abstract class CharacterController : PhysicObject
         allowsInput = isControlled;
         if (!isControlled)
         {
-            physicData.velocity.x = 0;
+            if(physicData.isGrounded)
+                physicData.velocity.x = 0;
         }
     }
 

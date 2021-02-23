@@ -71,7 +71,7 @@ public class UINavigationGraph : MonoBehaviour
             UINode node = nodes[i];
             bool isSelected = currentNode == node;
             NativeSprite sprite = isSelected ? selectedNativeSprites[i] : unselectedNativeSprites[i];
-            GridRenderer.ApplySprite(ref outputColor, sprite, node.position);
+            GridRenderer.DrawSprite(ref outputColor, sprite, node.position);
         }
     }
 

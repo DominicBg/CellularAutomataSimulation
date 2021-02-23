@@ -76,7 +76,7 @@ public class ParticleProps : LevelObject
 
     public override void RenderDebug(ref NativeArray<Color32> outputColor, ref TickBlock tickBlock, int2 renderPos)
     {
-        GridRenderer.ApplySprite(ref outputColor, nativeSprite, renderPos);
+        GridRenderer.DrawSprite(ref outputColor, nativeSprite, renderPos);
     }
 
     public override void Dispose()

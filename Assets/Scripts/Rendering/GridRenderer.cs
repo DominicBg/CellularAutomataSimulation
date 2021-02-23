@@ -120,22 +120,22 @@ public class GridRenderer : MonoBehaviour
         colors.Dispose();
     }
 
-    public static void DrawRotationBound(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, Color32 color, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationBound(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, Color32 color, BlendingMode blending = BlendingMode.Normal)
     {
         new RenderRotationBoundJob()
         {
-            cameraHandle = pixelCamera.GetHandle(),
+            cameraHandle = cameraHandle,
             color = color,
             outputColors = outputColors,
             rotationBound = bound,
             blending = blending
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
-    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, in NativeSprite nativeSprite, Color tint, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, Color tint, BlendingMode blending = BlendingMode.Normal)
     {
         new RenderRotationBoundSpriteJob()
         {
-            cameraHandle = pixelCamera.GetHandle(),
+            cameraHandle = cameraHandle,
             nativeSprite = nativeSprite,
             outputColors = outputColors,
             rotationBound = bound,
@@ -143,11 +143,11 @@ public class GridRenderer : MonoBehaviour
             blending = blending
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
-    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera pixelCamera, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
     {
         new RenderRotationBoundSpriteJob()
         {
-            cameraHandle = pixelCamera.GetHandle(),
+            cameraHandle = cameraHandle,
             nativeSprite = nativeSprite,
             outputColors = outputColors,
             rotationBound = bound,
@@ -197,12 +197,12 @@ public class GridRenderer : MonoBehaviour
     }
 
     [Obsolete("Use the function with NativeGrid<Color32>")]
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool centerAligned = false)
+    public static void DrawSprite(ref NativeArray<Color32> outputColor, in NativeSprite sprite, int2 position, bool centerAligned = false)
     {
         ApplySprite(ref outputColor, in sprite, position, centerAligned, false);
     }
 
-    public static void ApplySprite(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, int2 renderPos, bool centerAligned = false)
+    public static void DrawSprite(ref NativeArray<Color32> outputColor, in NativeGrid<Color32> colors, int2 renderPos, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)
         {
@@ -218,7 +218,7 @@ public class GridRenderer : MonoBehaviour
         }
     }
 
-    public static void ApplyLitSprite(ref NativeArray<Color32> outputColors, in NativeGrid<Color32> colors, in NativeGrid<float3> normals,
+    public static void DrawLitSprite(ref NativeArray<Color32> outputColors, in NativeGrid<Color32> colors, in NativeGrid<float3> normals,
         int2 worldPosition, int2 renderPos, NativeList<LightSource> lights, in ShadingLitInfo litInfo, bool centerAligned = false)
     {
         for (int x = 0; x < colors.Sizes.x; x++)

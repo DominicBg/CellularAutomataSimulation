@@ -33,7 +33,7 @@ public class Player : CharacterController, ILightSource
 
         //int2 backpackOffset = backPack.pixels.Sizes/2 + settings.backpack.offset * (lookLeft ? new int2(-1, 1) : new int2(1, 1));
         //GridRenderer.ApplyLitSprite(ref outputColors, backPack.pixels, backPack.normals, position + backpackOffset, renderPos + backpackOffset, info.lightSources, in settings.backpack.shadingInfo);
-        GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, in settings.shadingInfo);
+        GridRenderer.DrawLitSprite(ref outputColors, sprite, normals, position, renderPos, info.lightSources, in settings.shadingInfo);
         
         reflectionIndex = info.GetReflectionIndex();
         GridRenderer.PrepareSpriteEnvironementReflection(sprite, renderPos, ref info, reflectionIndex);

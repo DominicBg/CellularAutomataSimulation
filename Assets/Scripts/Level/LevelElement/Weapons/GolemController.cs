@@ -10,6 +10,7 @@ public class GolemController : CharacterController
     [SerializeField] Explosive.Settings explosiveSettings = new Explosive.Settings() { radius = 5, strength = 15 };
     List<ParticleType> particles;
     int2 sizes;
+    public float delayLeaveGolem = 0.5f;
 
     public void SummonGolem(int2 position, List<ParticleType> particles, int2 sizes)
     {
@@ -35,7 +36,7 @@ public class GolemController : CharacterController
         SetControls(!allowsInput);
     }
 
-    public void ExploseGolem()
+    public void ExplodeGolem()
     {
 
         //set particles at position
@@ -52,12 +53,14 @@ public class GolemController : CharacterController
         positions.Dispose();
 
         Explosive.SetExplosive(GetBound().center, in explosiveSettings, map);
-        SetControls(controlsGolem: false);
 
         isSummoned = false;
         particles.Clear();
-    }
 
+        //TODO set delay when the golem is far before panning the ceamer
+
+        SetControls(controlsGolem: false);
+    }
 
     public override void OnUpdate(ref TickBlock tickBlock)
     {

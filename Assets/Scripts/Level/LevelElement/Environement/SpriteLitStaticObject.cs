@@ -37,11 +37,11 @@ public class SpriteLitStaticObject : SpriteStaticObject
         if (nativeSprite.UseNormals)
         {
             ShadingLitInfo defaultLit = ShadingLitInfo.Default();
-            GridRenderer.ApplyLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, in defaultLit, true);
+            GridRenderer.DrawLitSprite(ref outputColors, sprite, normals, position, renderPos, lights, in defaultLit, true);
         }
         else
         {
-            GridRenderer.ApplySprite(ref outputColors, sprite, renderPos);
+            GridRenderer.DrawSprite(ref outputColors, sprite, renderPos);
         }
 
         if (nativeSprite.UseNormals && nativeSprite.UseReflection)

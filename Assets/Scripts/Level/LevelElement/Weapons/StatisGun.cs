@@ -43,7 +43,7 @@ public class StatisGun : GunBaseElement
 
         if(golemController.isSummoned && lastRotationBound.IntersectWith(golemController.GetBound()))
         {
-            golemController.ExploseGolem();
+            golemController.ExplodeGolem();
         }
     }
 
@@ -52,7 +52,7 @@ public class StatisGun : GunBaseElement
         float ratio = 1 - tickBlock.DurationSinceTick(tickShoot) / settings.flashDuration;
         ratio = math.saturate(ratio);
         if(ratio > 0)
-            GridRenderer.DrawRotationSprite(ref outputColors, lastRotationBound, pixelCamera, nativeBeamTexture, settings.tint * ratio);
+            GridRenderer.DrawRotationSprite(ref outputColors, lastRotationBound, info.cameraHandle, nativeBeamTexture, settings.tint * ratio);
     }
 
     RotationBound GetRotationBound(float2 aimDirection)
