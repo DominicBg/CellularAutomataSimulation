@@ -37,9 +37,15 @@ public abstract class CharacterController : PhysicObject
         if(allowsInput)
         {
             float2 direction = new float2(InputCommand.Direction.x, 0);
-
+            const float turnAroundThreshold = 0.2f;
             if (!isDirectionLocked)
-                lookDirection = (int)math.sign(direction.x);
+            {
+                if (math.abs(direction.x) > turnAroundThreshold)
+                    lookDirection = (int)math.sign(direction.x);
+                else
+                    lookDirection = 0;
+            }
+
 
             if (lookDirection != 0)
             {

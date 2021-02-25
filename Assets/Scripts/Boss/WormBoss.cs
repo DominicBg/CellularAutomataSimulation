@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class WormBoss : LevelObject
+public class WormBoss : LevelObject, IAlwaysRenderable
 {
     public int bodySize = 10;
     public int headSize = 10;
@@ -25,7 +25,7 @@ public class WormBoss : LevelObject
     NativeSprite bodySprite;
 
     NativeArray<BodyPart> body;
-    //int2 anchorPos;
+    Bound renderBound;
 
     public struct BodyPart
     {
@@ -73,6 +73,8 @@ public class WormBoss : LevelObject
             bodyPart.position = (int2)math.lerp(bodyPart.position, prevBodyPart.position, t);
             body[i] = bodyPart;
         }
+
+        CalculateBound();
     }
 
     void CalculateHeadPosition(ref TickBlock tickBlock)
@@ -97,6 +99,19 @@ public class WormBoss : LevelObject
         body[0] = headPart;
     }
 
+    void CalculateBound()
+    {
+        int2 min = body[0].position;
+        int2 max = body[0].position;
+        for (int i = 0; i < body.Length; i++)
+        {
+            min = math.min(min, body[i].position);
+            max = math.max(max, body[i].position);
+        }
+        int2 sizes = max - min;
+        renderBound = new Bound(min, sizes);
+    }
+
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         base.Render(ref outputColors, ref tickBlock, renderPos, ref info);
@@ -113,7 +128,7 @@ public class WormBoss : LevelObject
 
     public override Bound GetBound()
     {
-        return new Bound(position, bodySize);
+        return renderBound;
     }
 
     public override void Dispose()

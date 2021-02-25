@@ -33,8 +33,9 @@ MonoBehaviour:
     intensity: 12
     duration: 1
     speed: 3.75
-    useFalloff: 1
-    blendWithOriginal: 0.5
+    intensityEase: 20
+    inverseSpeedEase: 1
+    speedEase: 8
   explosiveSettings:
     radius: 25
     strength: 150

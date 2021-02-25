@@ -30,11 +30,12 @@ MonoBehaviour:
     duration: 1
     interval: 0
   shakeSettings:
-    intensity: 12
-    duration: 1
-    speed: 3.75
-    useFalloff: 1
-    blendWithOriginal: 0.75
+    intensity: 5
+    duration: 0.5
+    speed: 0.01
+    intensityEase: 3
+    inverseSpeedEase: 1
+    speedEase: 3
   explosiveSettings:
     radius: 15
     strength: 35

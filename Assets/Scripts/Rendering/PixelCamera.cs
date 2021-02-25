@@ -9,10 +9,11 @@ public class PixelCamera
     public PixelCameraTransform transform;
     int2 viewPort;
     List<IRenderable> renderingObjects;
+    HashSet<IRenderable> renderingHash;
 
     public int2 position
     {
-        get => transform.position + transform.offset;
+        get => transform.position + transform.offset + transform.shakeOffset;
         set => transform.position = value;
     }
 
@@ -21,6 +22,7 @@ public class PixelCamera
         this.transform = transform;
         this.viewPort = viewPort;
         renderingObjects = new List<IRenderable>(100);
+        renderingHash = new HashSet<IRenderable>();
     }
 
 
@@ -29,17 +31,23 @@ public class PixelCamera
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
         renderingObjects.Clear();
+        renderingHash.Clear();
+
         Bound viewPortBound = new Bound(position - viewPort / 2, viewPort);
+
+        //Add always renderable before the objects, because objects have a hash to prevent double rendering
+        IAlwaysRenderable[] alwaysRenderables = pixelScene.alwaysRenderables;
+        renderingObjects.AddRange(alwaysRenderables);
 
         //maybe do it more optimzied lol
         for (int i = 0; i < pixelScene.levelObjects.Length; i++)
         {
-            if (pixelScene.levelObjects[i] != null && viewPortBound.IntersectWith(pixelScene.levelObjects[i].GetBound()))
+            if (!renderingHash.Contains(pixelScene.levelObjects[i]) && pixelScene.levelObjects[i] != null && viewPortBound.IntersectWith(pixelScene.levelObjects[i].GetBound()))
+            {
                 renderingObjects.Add(pixelScene.levelObjects[i]);
+                renderingHash.Add(pixelScene.levelObjects[i]);
+            }
         }
-
-        IAlwaysRenderable[] alwaysRenderables = pixelScene.alwaysRenderables;
-        renderingObjects.AddRange(alwaysRenderables);
 
         renderingObjects.Sort((a, b) => a.RenderingLayerOrder() - b.RenderingLayerOrder());
 

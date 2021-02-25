@@ -12,7 +12,7 @@ public class EscapeInShuttleRule : LevelRule
     public float shakeDuration= 1;
     public float shakeSpeed = .01f;
     public float shakeIntensity;
-    public PostProcessManager.ShakeSettings shakeSettings;
+    public CameraShakeSettings shakeSettings;
     public PostProcessManager.ShockwaveSettings shockWaveSettings;
 
     [Header("Fly phase")]
@@ -20,7 +20,7 @@ public class EscapeInShuttleRule : LevelRule
     public float flightShuttleDuration = 2;
     public float sinSpeed;
     public float sinAmp;
-    public PostProcessManager.ShakeSettings flyShakeSettings;
+    public CameraShakeSettings flyShakeSettings;
 
 
     public enum ShuttleAnim { Idle, RedLight, GreenLight, Fly};
@@ -67,7 +67,7 @@ public class EscapeInShuttleRule : LevelRule
 
                         phase = Phase.Shake;
                         tickFinished = tickBlock.tick;
-                        PostProcessManager.EnqueueShake(in shakeSettings);
+                        pixelCamera.transform.ScreenShake(in shakeSettings, scene.CurrentTick);
                         PostProcessManager.EnqueueShockwave(in shockWaveSettings, goalElement.GetBound().center);
                     }
 
@@ -80,7 +80,7 @@ public class EscapeInShuttleRule : LevelRule
                         phase = Phase.Travel;
                         tickFinished = tickBlock.tick;
                         shuttleSpriteSheet.PlayAnimation((int)ShuttleAnim.Fly);
-                        PostProcessManager.EnqueueShake(in flyShakeSettings);
+                        pixelCamera.transform.ScreenShake(in flyShakeSettings, scene.CurrentTick);
                     }
                     else
                     {

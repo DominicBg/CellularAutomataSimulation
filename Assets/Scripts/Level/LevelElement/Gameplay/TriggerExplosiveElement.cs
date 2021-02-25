@@ -8,6 +8,8 @@ public class TriggerExplosiveElement : LevelObject
 {
     [SerializeField] ExplosiveEffectScriptable settings = default;
 
+
+
     public override Bound GetBound()
     {
         return Bound.CenterAligned(position, settings.explosiveSettings.radius * 2);
@@ -20,7 +22,7 @@ public class TriggerExplosiveElement : LevelObject
     public void OnTriggerExplosive()
     {
         Explosive.SetExplosive(position, in settings.explosiveSettings, map);
-        PostProcessManager.EnqueueShake(in settings.shakeSettings);
+        pixelCamera.transform.ScreenShake(in settings.shakeSettings, scene.CurrentTick);
         PostProcessManager.EnqueueScreenFlash(in settings.screenFlashSettings);
         PostProcessManager.EnqueueShockwave(in settings.shockwaveSettings, position);
     }

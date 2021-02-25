@@ -22,7 +22,7 @@ public class ExplosiveElement : LevelElement
             ParticleType type = map.GetParticleType(positions[i]);
             if (type ==  ParticleType.Cinder)
             {
-                Explode(bound.center);
+                Explode(bound.center, tickBlock.tick);
                 isEnable = false;
                 target.isVisible = false;
                 target.isEnable = false;
@@ -32,10 +32,10 @@ public class ExplosiveElement : LevelElement
     }
 
 
-    private void Explode(int2 position)
+    private void Explode(int2 position, int tick)
     {
         Explosive.SetExplosive(position, in settings.explosiveSettings, map);
-        PostProcessManager.EnqueueShake(in settings.shakeSettings);
+        pixelCamera.transform.ScreenShake(in settings.shakeSettings, tick);
         PostProcessManager.EnqueueScreenFlash(in settings.screenFlashSettings);
         PostProcessManager.EnqueueShockwave(in settings.shockwaveSettings, position);
     }

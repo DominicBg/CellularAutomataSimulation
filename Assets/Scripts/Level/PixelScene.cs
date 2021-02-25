@@ -20,6 +20,7 @@ public class PixelScene : MonoBehaviour
     public Bound updateBound{ get; private set; }
     public Map map;
     bool updateSimulation = true;
+    public int CurrentTick { get; private set; }
 
     public void OnValidate()
     {
@@ -52,6 +53,7 @@ public class PixelScene : MonoBehaviour
 
     public void OnUpdate(ref TickBlock tickBlock, int2 updatePos)
     {
+        CurrentTick = tickBlock.tick;
         if (updateSimulation)
         {
             updateBound = Bound.CenterAligned(updatePos, GameManager.RenderSizes * 2);

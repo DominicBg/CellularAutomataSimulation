@@ -7,6 +7,6 @@ public class ExplosiveEffectScriptable : ScriptableObject
 {
     public PostProcessManager.ShockwaveSettings shockwaveSettings;
     public PostProcessManager.ScreenFlashSettings screenFlashSettings;
-    public PostProcessManager.ShakeSettings shakeSettings;
+    public CameraShakeSettings shakeSettings;
     public Explosive.Settings explosiveSettings;
 }

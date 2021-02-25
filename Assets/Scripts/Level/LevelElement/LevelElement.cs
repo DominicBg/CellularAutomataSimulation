@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using static PixelCamera;
 
 public abstract class LevelElement : MonoBehaviour, IRenderable
 {

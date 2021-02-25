@@ -9,7 +9,6 @@ public class PostProcessManager
 {
     public static PostProcessManager Instance;
     
-    Animation<ShakeSettings> shakeAnimation;
     Animation<ScreenFlashSettings> screenFlashAnimation;
     Animation<ShockwaveSettings> shockwaveAnimation;
     Animation<BlackholeSettings> blackholeAnimation;
@@ -20,15 +19,7 @@ public class PostProcessManager
     //Dictionary<System.Type, FrameEffect<IPostEffect>> frameDictionary = new Dictionary<System.Type, FrameEffect<IPostEffect>>();
 
 
-    public static void EnqueueShake(in ShakeSettings settings)
-    {
-        Instance.shakeAnimation = new Animation<ShakeSettings>()
-        {
-            settings = settings,
-            tick = Instance.currentTick,
-            isActive = true
-        };
-    }
+ 
 
     public static void EnqueueScreenFlash(in ScreenFlashSettings settings)
     {
@@ -78,35 +69,12 @@ public class PostProcessManager
 
     public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
-        RenderShake(ref outputColors, ref tickBlock);
         RenderScreenFlash(ref outputColors, ref tickBlock);
         RenderShockwave(ref outputColors, ref tickBlock);
         RenderBlackHole(ref outputColors, ref tickBlock);
         RenderIllusion(ref outputColors, ref tickBlock);
-
-        //UpdateEffects(ref outputColors, ref tickBlock);
-
     }
 
-    void RenderShake(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
-    {
-        if (!ShouldUpdate(ref shakeAnimation, ref tickBlock, shakeAnimation.settings.duration, out float duration))
-            return;
-
-        float t = duration / shakeAnimation.settings.duration;
-
-        NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
-        new ShakeScreenJob()
-        {
-            outputColors = outputColors,
-            inputColors = inputColors,
-            t = t,
-            tickBlock = tickBlock,
-            settings = shakeAnimation.settings
-        }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-        inputColors.Dispose();
-        return;
-    }
     void RenderScreenFlash(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
     {
         if (!ShouldUpdate(ref screenFlashAnimation, ref tickBlock, screenFlashAnimation.settings.duration, out float duration))
@@ -205,55 +173,6 @@ public class PostProcessManager
         return true;
     }
 
-    //public PostProcessManager()
-    //{
-    //    frameDictionary.Add(typeof(IllusionEffectSettings), new FrameEffect<IPostEffect>());
-    //}
-
-    //public static void SetEffect(in IPostEffect settings)
-    //{
-    //    System.Type type = settings.GetType();
-    //    FrameEffect<IPostEffect> data = Instance.frameDictionary[type];
-    //    data.settings = settings;
-    //    data.isEnabled = true;
-    //    Instance.frameDictionary[type] = data;
-    //}
-
-    //private void UpdateEffects(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
-    //{
-    //    foreach(var frameEffect in frameDictionary.Values)
-    //    {
-    //        if(frameEffect.isEnabled)
-    //        {
-    //            var type = frameEffect.settings.GetType();
-    //            if (type == typeof(IllusionEffectSettings))
-    //            {
-    //                NativeArray<Color32> inputColors = new NativeArray<Color32>(outputColors, Allocator.TempJob);
-    //                new IllusionEffectJob()
-    //                {
-    //                    outputColors = outputColors,
-    //                    settings = (IllusionEffectSettings)frameEffect.settings,
-    //                    inputColors = inputColors,
-    //                    t = tickBlock.tick,
-                        
-    //                }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
-    //                inputColors.Dispose();
-    //            }
-
-    //            //FrameEffect<IPostEffect> data = Instance.frameDictionary[type];
-    //            //data.isEnabled = false;
-    //            //Instance.frameDictionary[type] = data;
-    //        }
-    //    }
-    //}
-
-
-
-    //public struct FrameEffect<T>
-    //{
-    //    public T settings;
-    //    public bool isEnabled;
-    //}    
 
     public struct Animation<T>
     {
@@ -263,15 +182,6 @@ public class PostProcessManager
         public int2 position;
     }
 
-    [System.Serializable]
-    public struct ShakeSettings 
-    {
-        public float intensity;
-        public float duration;
-        public float speed;
-        public bool useFalloff;
-        public float blendWithOriginal;
-    }
 
     [System.Serializable]
     public struct ScreenFlashSettings
