@@ -27,7 +27,7 @@ MonoBehaviour:
     y: -3
   minThrowStrength: 70
   maxThrowStrength: 90
-  golemThrowStrength: 250
+  throwObjectStrength: 1000
   throwDirVelocity:
     x: 2
     y: 1

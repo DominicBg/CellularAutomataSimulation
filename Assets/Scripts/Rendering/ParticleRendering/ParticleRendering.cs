@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public struct ParticleRendering
 {
-    public Color noneColor;
+    public EmptyRendering emptyRendering;
     public WaterRendering waterRendering;
     public SandRendering sandRendering;
     public IceRendering iceRendering;

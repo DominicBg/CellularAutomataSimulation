@@ -31,7 +31,10 @@ public struct GridRendererJob : IJobParallelFor
     public void Execute(int i)
     {
         int2 pos = cameraPosition + ArrayHelper.IndexToPos(i, GameManager.RenderSizes) - GameManager.RenderSizes/2;
-        if (map.InBound(pos) && map.GetParticleType(pos) != ParticleType.None)
+        if (!map.InBound(pos))
+            return;
+
+        if(map.GetParticleType(pos) != ParticleType.None)
         {
             Particle particle = map.GetParticle(pos);
 
@@ -54,6 +57,12 @@ public struct GridRendererJob : IJobParallelFor
             }
 
             colorArray[i] = (color == Color.clear) ? colorArray[i]: color;
+        }
+        else //Empty particle
+        {
+            Particle particle = map.GetParticle(pos);
+            Color32 color = ParticleRenderUtil.GetColorForType(pos, particle.type, ref particleRendering, ref tickBlock, ref map, lightSources);
+            colorArray[i] = RenderingUtils.Blend(colorArray[i], color, particleRendering.emptyRendering.blending);
         }
     }
 }

@@ -1804,7 +1804,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleRendering:
-    noneColor: {r: 0, g: 0, b: 0, a: 1}
+    emptyRendering:
+      emptyColor:
+        serializedVersion: 2
+        rgba: 0
+      contrastColor:
+        serializedVersion: 2
+        rgba: 754974720
+      blending: 0
     waterRendering:
       bubbleSineAmplitude: 1
       bubbleSineSpeed: 0.01

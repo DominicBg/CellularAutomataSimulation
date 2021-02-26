@@ -6,12 +6,24 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
+[System.Flags]
+public enum PhysicAttribute 
+{ 
+    Shovelable = 1 << 0
+}
+
 public abstract class PhysicObject : LevelObject
 {
     [Header("Debug")]
     public PhysicBound.BoundFlag debugBoundFlag;
     [Header("PhysicData")]
+    public PhysicAttribute attributes;
     public PhysicData physicData;
+
+    public bool HaveCurrentAttribute(PhysicAttribute attribute)
+    {
+        return (attributes & attribute) > 0;
+    }
 
     protected void InitPhysicData(int2 sizes, float mass = 10)
     {

@@ -128,11 +128,14 @@ public class GridRenderer : MonoBehaviour
             color = color,
             outputColors = outputColors,
             rotationBound = bound,
-            blending = blending
+            blending = blending,
+
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
     public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, Color tint, BlendingMode blending = BlendingMode.Normal)
     {
+        //precompute sincos for everythread
+        bound.GetSinCosAngle(out float sin, out float cos);
         new RenderRotationBoundSpriteJob()
         {
             cameraHandle = cameraHandle,
@@ -140,11 +143,15 @@ public class GridRenderer : MonoBehaviour
             outputColors = outputColors,
             rotationBound = bound,
             tint = tint,
-            blending = blending
+            blending = blending,
+            sin = sin,
+            cos = cos
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
     public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
-    {
+    {  
+        //precompute sincos for everythread
+        bound.GetSinCosAngle(out float sin, out float cos);
         new RenderRotationBoundSpriteJob()
         {
             cameraHandle = cameraHandle,
@@ -152,7 +159,9 @@ public class GridRenderer : MonoBehaviour
             outputColors = outputColors,
             rotationBound = bound,
             tint = Color.white,
-            blending = blending
+            blending = blending,
+            sin = sin,
+            cos = cos
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
 

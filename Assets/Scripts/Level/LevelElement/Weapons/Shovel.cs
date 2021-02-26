@@ -60,10 +60,16 @@ public class Shovel : EquipableElement
             }
         }
 
-        if(new Bound(position, settings.shovelSize).IntersectWith(golemController.GetBound()))
+        for (int i = 0; i < scene.physicObjects.Length; i++)
         {
-            golemController.physicData.velocity += dir * settings.golemThrowStrength;
+            PhysicObject physicObject = scene.physicObjects[i];
+
+            if (physicObject.HaveCurrentAttribute(PhysicAttribute.Shovelable) && new Bound(position, settings.shovelSize).IntersectWith(physicObject.GetBound()))
+            {
+                physicObject.physicData.velocity += dir * settings.throwObjectStrength / physicObject.physicData.mass;
+            }
         }
+       
     }
 
     public override void OnInit()

@@ -9,7 +9,7 @@ public static class ParticleRenderUtil
         switch (type)
         {
             case ParticleType.None:
-                return Color.black;
+                return particleRendering.emptyRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Water:
                 return particleRendering.waterRendering.GetColor(position, ref tickBlock, ref map, lightSources);
             case ParticleType.Sand:

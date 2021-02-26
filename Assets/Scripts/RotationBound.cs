@@ -24,6 +24,10 @@ public struct RotationBound
     {
         return bound.PointInBound(InverseTransformPoint(TransformPoint(point)));
     }
+    public bool PointInBound(int2 point, float sin, float cos)
+    {
+        return bound.PointInBound(InverseTransformPoint(TransformPoint(point, sin, cos)));
+    }
 
     public float2 GetUV(int2 point)
     {
@@ -31,11 +35,18 @@ public struct RotationBound
         return bound.GetUV(InverseTransformPoint(localPoint));
     }
 
-    private int2 TransformPoint(int2 point, bool inverseRotation = false)
+    private int2 TransformPoint(int2 point)
     {
         int2 anchorPos = AnchorPosition();
         int2 diffMid = anchorPos - bound.center;
-        return (int2)MathUtils.Rotate(anchorPos - diffMid - point, inverseRotation ? math.radians(angle) : - math.radians(angle));
+        return (int2)MathUtils.Rotate(anchorPos - diffMid - point, -math.radians(angle));
+    }
+
+    private int2 TransformPoint(int2 point, float sin, float cos)
+    {
+        int2 anchorPos = AnchorPosition();
+        int2 diffMid = anchorPos - bound.center;
+        return (int2)MathUtils.Rotate(anchorPos - diffMid - point, sin, cos);
     }
 
     private int2 InverseTransformPoint(int2 localPoint)
@@ -84,6 +95,11 @@ public struct RotationBound
     private int2 CornerPos(int2 position)
     {
         return (int2)MathUtils.Rotate(AnchorPosition() - position, math.radians(angle)) + bound.center;
+    }
+
+    public void GetSinCosAngle(out float sin, out float cos)
+    {
+        math.sincos(-math.radians(angle), out sin, out cos);
     }
 
     int2 AnchorPosition()

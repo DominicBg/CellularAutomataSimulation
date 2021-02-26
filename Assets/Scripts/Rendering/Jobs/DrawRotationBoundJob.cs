@@ -33,13 +33,14 @@ public struct RenderRotationBoundSpriteJob : IJobParallelFor
     public BlendingMode blending;
     public NativeSprite nativeSprite;
     public Color32 tint;
+    public float sin, cos;
 
     public void Execute(int index)
     {
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 worldPos = cameraHandle.GetGlobalPosition(pos);
 
-        if (rotationBound.PointInBound(worldPos))
+        if (rotationBound.PointInBound(worldPos, sin, cos))
         {
             float2 uv = rotationBound.GetUV(worldPos);
             Color sampleColor = (Color)RenderingUtils.SampleTexture(in nativeSprite, uv) * tint;

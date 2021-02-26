@@ -9,6 +9,7 @@ public class PixelScene : MonoBehaviour
 {
     public LevelElement[] levelElements;
     [HideInInspector] public LevelObject[] levelObjects;
+    [HideInInspector] public PhysicObject[] physicObjects;
     [HideInInspector] public IAlwaysRenderable[] alwaysRenderables;
     [HideInInspector] public ILightSource[] lightSources;
     [HideInInspector] public ILightMultiSource[] lightMultiSource;
@@ -34,6 +35,7 @@ public class PixelScene : MonoBehaviour
     {
         player = GetComponentInChildren<Player>();
         levelElements = GetComponentsInChildren<LevelElement>();
+        physicObjects = GetComponentsInChildren<PhysicObject>();
         levelObjects = GetComponentsInChildren<LevelObject>();
         alwaysRenderables = GetComponentsInChildren<IAlwaysRenderable>();
         lightSources = GetComponentsInChildren<ILightSource>();

@@ -42,6 +42,12 @@ public static class MathUtils
         return new float2(v.x * c - v.y * s, v.x * s + v.y * c);
     }
 
+    public static float2 Rotate(float2 v, float sin, float cos)
+    {
+        return new float2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+    }
+
+
     public static float2 Spherize(int2 center, int2 position, float radius)
     {
         float2 uv = (float2)(position - center) / radius;
