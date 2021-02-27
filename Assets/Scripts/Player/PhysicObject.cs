@@ -39,6 +39,13 @@ public abstract class PhysicObject : LevelObject
         physicData.position = position;
         physicData.mass = mass;
     }
+    protected void InitPhysicData(PhysicBound physicBound, float mass = 10)
+    {
+        physicData.physicBound = physicBound;
+        physicData.gridPosition = position;
+        physicData.position = position;
+        physicData.mass = mass;
+    }
 
     protected void HandlePhysic()
     {

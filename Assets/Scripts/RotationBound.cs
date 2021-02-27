@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
 
 public struct RotationBound
@@ -20,21 +21,40 @@ public struct RotationBound
         this.anchor = anchor;
     }
 
+    [BurstCompile]
     public bool PointInBound(int2 point)
     {
         return bound.PointInBound(InverseTransformPoint(TransformPoint(point)));
     }
-    public bool PointInBound(int2 point, float sin, float cos)
-    {
-        return bound.PointInBound(InverseTransformPoint(TransformPoint(point, sin, cos)));
-    }
 
+    [BurstCompile]
     public float2 GetUV(int2 point)
     {
         int2 localPoint = TransformPoint(point);
         return bound.GetUV(InverseTransformPoint(localPoint));
     }
 
+    [BurstCompile]
+    public float2 GetUV(int2 point, float sin, float cos)
+    {
+        int2 localPoint = TransformPoint(point, sin, cos);
+        return bound.GetUV(InverseTransformPoint(localPoint));
+    }
+
+    [BurstCompile]
+    public bool TryGetUV(int2 point, float sin, float cos, out float2 uv)
+    {
+        int2 localPoint = InverseTransformPoint(TransformPoint(point, sin, cos));
+        if (bound.PointInBound(localPoint))
+        {
+            uv = bound.GetUV(localPoint);
+            return true;
+        }
+        uv = 0;
+        return false;
+    }
+
+    [BurstCompile]
     private int2 TransformPoint(int2 point)
     {
         int2 anchorPos = AnchorPosition();
@@ -42,6 +62,7 @@ public struct RotationBound
         return (int2)MathUtils.Rotate(anchorPos - diffMid - point, -math.radians(angle));
     }
 
+    [BurstCompile]
     private int2 TransformPoint(int2 point, float sin, float cos)
     {
         int2 anchorPos = AnchorPosition();
@@ -49,11 +70,13 @@ public struct RotationBound
         return (int2)MathUtils.Rotate(anchorPos - diffMid - point, sin, cos);
     }
 
+    [BurstCompile]
     private int2 InverseTransformPoint(int2 localPoint)
     {
         return AnchorPosition() + localPoint;
     }
 
+    [BurstCompile]
     public bool IntersectWith(Bound otherBound)
     {
         NativeList<float2> otherPos = otherBound.GetCornersFloat2();
@@ -63,6 +86,8 @@ public struct RotationBound
         pos.Dispose();
         return hasCollision;
     }
+
+    [BurstCompile]
     public bool IntersectWith(RotationBound otherBound)
     {
         NativeList<float2> otherPos = otherBound.GetCornersFloat2();
@@ -73,6 +98,7 @@ public struct RotationBound
         return hasCollision;
     }
 
+    [BurstCompile]
     public NativeList<int2> GetCorners(Allocator allocator = Allocator.Temp)
     {
         NativeList<int2> positions = new NativeList<int2>(allocator);
@@ -82,6 +108,8 @@ public struct RotationBound
         positions.Add(CornerPos(bound.bottomRight));
         return positions;
     }
+
+    [BurstCompile]
     public NativeList<float2> GetCornersFloat2(Allocator allocator = Allocator.Temp)
     {
         NativeList<float2> positions = new NativeList<float2>(allocator);
@@ -92,17 +120,33 @@ public struct RotationBound
         return positions;
     }
 
+    public void GetCornerMinMax(out int2 min, out int2 max, Allocator allocator = Allocator.Temp)
+    {
+        var corners = GetCorners(allocator);
+        min = corners[0];
+        max = corners[0];
+
+        for (int i = 0; i < corners.Length; i++)
+        {
+            min = math.min(min, corners[i]);
+            max = math.max(max, corners[i]);
+        }
+        corners.Dispose();
+    }
+
+    [BurstCompile]
     private int2 CornerPos(int2 position)
     {
         return (int2)MathUtils.Rotate(AnchorPosition() - position, math.radians(angle)) + bound.center;
     }
 
+    [BurstCompile]
     public void GetSinCosAngle(out float sin, out float cos)
     {
         math.sincos(-math.radians(angle), out sin, out cos);
     }
 
-    int2 AnchorPosition()
+    public int2 AnchorPosition()
     {
         switch (anchor)
         {

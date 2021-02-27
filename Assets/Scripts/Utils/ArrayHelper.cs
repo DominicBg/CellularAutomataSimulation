@@ -21,7 +21,7 @@ public static class ArrayHelper
     }
     public static int2 IndexToPos(int i, int2 sizes)
     {
-        return new int2(i % sizes.x, i / sizes.y);
+        return new int2(i % sizes.x, i / sizes.x);
     }
     public static float2 IndexToUv(int i, int2 sizes)
     {

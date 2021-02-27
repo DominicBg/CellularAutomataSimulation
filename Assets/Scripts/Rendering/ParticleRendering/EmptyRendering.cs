@@ -20,14 +20,20 @@ public struct EmptyRendering : IParticleRenderer
         int2 left = -right;
 
         bool hasSurroundingParticle = false;
-        hasSurroundingParticle |= map.GetParticleType(position + up) != ParticleType.None;
-        hasSurroundingParticle |= map.GetParticleType(position + right) != ParticleType.None;
-        hasSurroundingParticle |= map.GetParticleType(position + down) != ParticleType.None;
-        hasSurroundingParticle |= map.GetParticleType(position + left) != ParticleType.None;
+        hasSurroundingParticle |= HasSurroundingParticle(up, ref map);
+        hasSurroundingParticle |= HasSurroundingParticle(right, ref map);
+        hasSurroundingParticle |= HasSurroundingParticle(down, ref map);
+        hasSurroundingParticle |= HasSurroundingParticle(left, ref map);
 
         if (hasSurroundingParticle)
             return contrastColor;
 
         return emptyColor;
+    }
+
+    bool HasSurroundingParticle(int2 position, ref Map map)
+    {
+        ParticleType type = map.GetParticleType(position);
+        return type != ParticleType.None && type != ParticleType.Collision && type != ParticleType.Player;
     }
 }

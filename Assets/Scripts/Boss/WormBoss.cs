@@ -18,6 +18,8 @@ public class WormBoss : LevelObject, IAlwaysRenderable
     public float bodyFollowSpeed = 5;
     public float maxT = 0.5f;
 
+    public bool useSuperSampler = false;
+
     public Texture2D headTexture;
     public Texture2D bodyTexture;
 
@@ -119,11 +121,19 @@ public class WormBoss : LevelObject, IAlwaysRenderable
         for (int i = body.Length - 1; i >= 1; i--)
         {
             RotationBound bodyBound = new RotationBound(Bound.CenterAligned(body[i].position, bodySize), math.degrees(body[i].angle));
-            GridRenderer.DrawRotationSprite(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
+
+            if (useSuperSampler)
+                GridRenderer.DrawRotationSpriteFast(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
+            else
+                GridRenderer.DrawRotationSprite(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
         }
 
         RotationBound headBound = new RotationBound(Bound.CenterAligned(body[0].position, headSize), math.degrees(body[0].angle));
-        GridRenderer.DrawRotationSprite(ref outputColors, in headBound, info.cameraHandle, in headSprite);
+
+        if (useSuperSampler)
+            GridRenderer.DrawRotationSpriteFast(ref outputColors, in headBound, info.cameraHandle, in headSprite);
+        else
+            GridRenderer.DrawRotationSprite(ref outputColors, in headBound, info.cameraHandle, in headSprite);
     }
 
     public override Bound GetBound()

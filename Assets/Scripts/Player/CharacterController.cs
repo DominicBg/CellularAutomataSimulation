@@ -79,8 +79,11 @@ public abstract class CharacterController : PhysicObject
     public void SetIsControlled(bool isControlled)
     {
         allowsInput = isControlled;
+        physicData.applyFriction = !isControlled;
+
         if (!isControlled)
         {
+            spriteAnimator.SetAnimation(0);
             if(physicData.isGrounded)
                 physicData.velocity.x = 0;
         }

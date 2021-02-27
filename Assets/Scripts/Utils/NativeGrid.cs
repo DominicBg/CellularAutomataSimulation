@@ -43,8 +43,23 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
         //    s_staticSafetyId = AtomicSafetyHandle.NewStaticSafetyId<NativeGrid<T>>();
         //}
         //AtomicSafetyHandle.SetStaticSafetyId(ref m_Safety, s_staticSafetyId);
-#endif
+#endif    
     }
+
+    public static NativeGrid<T> FromGrid(NativeGrid<T> other, Allocator allocator)
+    {
+        //Maybe copy binary content?
+        var grid = new NativeGrid<T>(other.sizes, allocator);
+        for (int x = 0; x < other.sizes.x; x++)
+        {
+            for (int y = 0; y < other.sizes.y; y++)
+            {
+                grid[x, y] = other[x, y];
+            }
+        }
+        return grid;
+    }
+
 
     public void Clear()
     {
@@ -88,7 +103,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckReadAndThrow(m_Safety);
             if (!InBound(index2))
-                throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ {index2}, max {sizes}");
+                throw new ArgumentOutOfRangeException($"Don't you ever try to read out of bound again, this is unsafe :@ ({index2}) , max ({sizes})");
 #endif
 
             int index = ArrayHelper.PosToIndex(index2, sizes);
@@ -99,7 +114,7 @@ public unsafe struct NativeGrid<T> : IDisposable where T : struct
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             AtomicSafetyHandle.CheckWriteAndThrow(m_Safety);
             if (!InBound(index2))
-                throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at {index2}, max {sizes}");
+                throw new ArgumentOutOfRangeException($"Don't you ever try to write out of bound again, this is unsafe :@ at ({index2}) , max ({sizes})");
 #endif
 
             int index = ArrayHelper.PosToIndex(index2, sizes);

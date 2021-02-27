@@ -132,7 +132,7 @@ public class GridRenderer : MonoBehaviour
 
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
-    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, Color tint, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, Color tint, bool useSuperSample = false, BlendingMode blending = BlendingMode.Normal)
     {
         //precompute sincos for everythread
         bound.GetSinCosAngle(out float sin, out float cos);
@@ -145,10 +145,11 @@ public class GridRenderer : MonoBehaviour
             tint = tint,
             blending = blending,
             sin = sin,
-            cos = cos
+            cos = cos,
+            superSample = useSuperSample
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
-    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, bool useSuperSample = false, BlendingMode blending = BlendingMode.Normal)
     {  
         //precompute sincos for everythread
         bound.GetSinCosAngle(out float sin, out float cos);
@@ -161,9 +162,50 @@ public class GridRenderer : MonoBehaviour
             tint = Color.white,
             blending = blending,
             sin = sin,
-            cos = cos
+            cos = cos,
+            superSample = useSuperSample
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
+    public static void DrawRotationSpriteFast(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
+    {
+        bound.GetCornerMinMax(out int2 min, out int2 max);
+        int2 sizes = max - min;
+        NativeGrid<Color32> newSprite = new NativeGrid<Color32>(sizes, Allocator.TempJob);
+        int2 renderPos = cameraHandle.GetRenderPosition(min);
+        int threadLength = newSprite.Sizes.x * newSprite.Sizes.y;
+
+        //precompute sincos for everythread
+        bound.GetSinCosAngle(out float sin, out float cos);
+        new RenderRotationBoundSpritePass1Job()
+        {
+            outputColors = newSprite,
+            cameraHandle = cameraHandle,
+            nativeSprite = nativeSprite,
+            rotationBound = bound,
+            tint = Color.white,
+            sin = sin,
+            cos = cos,
+            renderPos = renderPos
+        }.Schedule(threadLength, 16).Complete();
+
+        NativeGrid<Color32> newSpriteFilled = NativeGrid<Color32>.FromGrid(newSprite, Allocator.TempJob);
+        new RenderRotationBoundSpritePass2Job()
+        {
+            inputColors = newSprite,
+            outputColors = newSpriteFilled,
+        }.Schedule(threadLength, 16).Complete();
+        new RenderRotationBoundSpritePass2Job()
+        {
+            inputColors = newSpriteFilled,
+            outputColors = newSprite,
+        }.Schedule(threadLength, 16).Complete();
+
+        DrawSprite(ref outputColors, in newSpriteFilled, renderPos, false);
+
+        newSprite.Dispose();
+        newSpriteFilled.Dispose();
+    }
+
 
 
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)

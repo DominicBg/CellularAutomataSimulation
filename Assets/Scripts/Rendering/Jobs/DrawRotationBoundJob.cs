@@ -34,19 +34,130 @@ public struct RenderRotationBoundSpriteJob : IJobParallelFor
     public NativeSprite nativeSprite;
     public Color32 tint;
     public float sin, cos;
+    public bool superSample;
 
     public void Execute(int index)
     {
         int2 pos = ArrayHelper.IndexToPos(index, GameManager.RenderSizes);
         int2 worldPos = cameraHandle.GetGlobalPosition(pos);
+        Color sampleColor = GetColor(worldPos);
 
-        if (rotationBound.PointInBound(worldPos, sin, cos))
+        if(sampleColor.a > 0.05f)
         {
-            float2 uv = rotationBound.GetUV(worldPos);
-            Color sampleColor = (Color)RenderingUtils.SampleTexture(in nativeSprite, uv) * tint;
-            //sampleColor = RenderingUtils.Blend(sampleColor, tint, blending);
-            //sampleColor.a = tint.a;
             outputColors[index] = RenderingUtils.Blend(outputColors[index], sampleColor, blending);
         }
+        else if(superSample)
+        {
+            NativeArray<Color> colors = new NativeArray<Color>(4, Allocator.Temp);
+            //try super sampler XVII
+            colors[0] = GetColor(worldPos + new int2(0, 1));
+            colors[1] = GetColor(worldPos + new int2(1, 0));
+            colors[2] = GetColor(worldPos + new int2(0, -1));
+            colors[3] = GetColor(worldPos + new int2(-1, 0));
+
+            //find a pair, if there's 2 take this pixel instead
+            for (int i = 0; i < colors.Length; i++)
+            {
+                for (int j = i + 1; j < colors.Length; j++)
+                {
+                    if(colors[i] == colors[j] && colors[i].a >= 0.05f)
+                    {
+                        outputColors[index] = RenderingUtils.Blend(outputColors[index], colors[i], blending);
+                        colors.Dispose();
+                        return;
+                    }
+                }
+            }
+            colors.Dispose();
+        }
+    }
+
+    Color GetColor(int2 worldPos)
+    {
+        if (rotationBound.TryGetUV(worldPos, sin, cos, out float2 uv))
+        {
+            return (Color)RenderingUtils.SampleTexture(in nativeSprite, uv) * tint;
+        }
+        return Color.clear;
+    }         
+}
+
+
+[BurstCompile]
+public struct RenderRotationBoundSpritePass1Job : IJobParallelFor
+{
+    public NativeGrid<Color32> outputColors;
+
+    public RotationBound rotationBound;
+    public PixelCamera.PixelCameraHandle cameraHandle;
+    public NativeSprite nativeSprite;
+    public Color32 tint;
+    public float sin, cos;
+    public int2 renderPos;
+
+    public void Execute(int index)
+    {
+        int2 pos = ArrayHelper.IndexToPos(index, outputColors.Sizes);
+        int2 worldPos = cameraHandle.GetGlobalPosition(renderPos + pos);
+        outputColors[pos] = GetColor(worldPos); 
+    }
+
+    Color GetColor(int2 worldPos)
+    {
+        if (rotationBound.TryGetUV(worldPos, sin, cos, out float2 uv))
+        {
+            return (Color)RenderingUtils.SampleTexture(in nativeSprite, uv) * tint;
+        }
+        return Color.clear;
+    }
+}
+
+[BurstCompile]
+public struct RenderRotationBoundSpritePass2Job : IJobParallelFor
+{
+    [ReadOnly] public NativeGrid<Color32> inputColors;
+    public NativeGrid<Color32> outputColors;
+
+    public void Execute(int index)
+    {
+        int2 pos = ArrayHelper.IndexToPos(index, outputColors.Sizes);
+
+        if (inputColors[pos].a >= 0.05f)
+        {
+            outputColors[pos] = inputColors[pos];
+            return;
+        }
+
+        NativeArray<Color> colors = new NativeArray<Color>(4, Allocator.Temp);
+
+        //try super sampler XVII
+        colors[0] = GetColor(pos + new int2( 0,  1));
+        colors[1] = GetColor(pos + new int2( 1,  0));
+        colors[2] = GetColor(pos + new int2( 0, -1));
+        colors[3] = GetColor(pos + new int2(-1,  0));
+
+        //find a pair, if there's 2 take this pixel instead
+        for (int i = 0; i < colors.Length; i++)
+        {
+            for (int j = i + 1; j < colors.Length; j++)
+            {
+                if (colors[i] == colors[j] && colors[i].a >= 0.05f)
+                {
+                    outputColors[pos] = colors[i];
+                    colors.Dispose();
+                    return;
+                }
+            }
+        }
+        colors.Dispose();
+    }
+
+    public Color GetColor(int2 pos)
+    {
+        if(GridHelper.InBound(pos, inputColors.Sizes))
+        {
+            return inputColors[pos];
+        }
+        return Color.clear;
     }
 }
