@@ -141,17 +141,11 @@ public struct LightSource
         return (1 - length / radius);
     }
 
-    Color Blend(Color pixelColor, float intensity)
+    public Color Blend(int2 pixelPosition, Color pixelColor, BlendingMode blendingMode, out float lightIntensity)
     {
         Color color = this.color;
-        color.a *= intensity;
-        return RenderingUtils.Blend(pixelColor, color, BlendingMode.Normal);
-    }
-
-    public Color Blend(int2 pixelPosition, Color pixelColor, BlendingMode blendingMode)
-    {
-        Color color = this.color;
-        color.a *= intensity * GetDistanceIntensity(new float3(pixelPosition.x, pixelPosition.y, 0));
+        lightIntensity = intensity * GetDistanceIntensity(new float3(pixelPosition.x, pixelPosition.y, 0));
+        color.a *= lightIntensity;
         color.a = math.saturate(color.a);
         color.a = MathUtils.ReduceResolution(color.a, resolution);
         return RenderingUtils.Blend(pixelColor, color, blendingMode);

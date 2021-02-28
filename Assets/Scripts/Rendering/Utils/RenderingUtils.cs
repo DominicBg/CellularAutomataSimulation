@@ -4,7 +4,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public enum BlendingMode { Normal, Transparency, Additive, AdditiveAlpha, Multiply, Screen, Overlay, HardLight, SoftLight }
+public enum BlendingMode { Normal, Transparency, Additive, AdditiveAlpha, Multiply, Screen, Overlay, HardLight, SoftLight, Count }
 public static class RenderingUtils
 {
     public static Color Blend(Color color1, Color color2, BlendingMode blending)

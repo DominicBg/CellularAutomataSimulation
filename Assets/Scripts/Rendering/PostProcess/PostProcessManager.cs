@@ -14,12 +14,22 @@ public class PostProcessManager
     Animation<BlackholeSettings> blackholeAnimation;
     Animation<IllusionEffectSettings> illusionAnimation;
     int currentTick;
+    bool addBlur;
+    bool addBloom = true;
+    BlendingMode bloomBlending = BlendingMode.AdditiveAlpha;
+    float bloomThreshold = 0.1f;
+    bool debugLightIntensities;
 
-    //FrameEffect<IllusionEffectSettings> illusionEffect;
-    //Dictionary<System.Type, FrameEffect<IPostEffect>> frameDictionary = new Dictionary<System.Type, FrameEffect<IPostEffect>>();
+    public PostProcessManager()
+    {
+        Instance = this;
+        CheatManager.AddCheat("Add Gaussian blur", () => addBlur = !addBlur);
+        CheatManager.AddCheat("Add Bloom", () => addBloom = !addBloom);
+        CheatManager.AddCheat("Toggle bloom", () => bloomBlending = (BlendingMode)((int)(bloomBlending + 1) % (int)BlendingMode.Count));
+        CheatManager.AddCheat("Toggle bloom threshold", () => bloomThreshold = (bloomThreshold + 0.1f) % 1.1f);
+        CheatManager.AddCheat("Debug bloom intensities", () => debugLightIntensities = !debugLightIntensities);
+    }
 
-
- 
 
     public static void EnqueueScreenFlash(in ScreenFlashSettings settings)
     {
@@ -67,12 +77,19 @@ public class PostProcessManager
         currentTick = tickBlock.tick;
     }
 
-    public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)
+    public void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, ref EnvironementInfo info)
     {
         RenderScreenFlash(ref outputColors, ref tickBlock);
         RenderShockwave(ref outputColors, ref tickBlock);
         RenderBlackHole(ref outputColors, ref tickBlock);
         RenderIllusion(ref outputColors, ref tickBlock);
+
+        if (addBlur)
+            GaussianBlurEffect.Apply(ref outputColors);
+        if (addBloom)
+            BloomPostProcess.Apply(ref outputColors, ref info.lightIntensities, bloomThreshold, bloomBlending);
+        if(debugLightIntensities)
+            BloomPostProcess.DebugLightIntensities(ref outputColors, ref info.lightIntensities, bloomThreshold);
     }
 
     void RenderScreenFlash(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock)

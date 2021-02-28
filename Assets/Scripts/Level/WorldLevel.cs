@@ -33,7 +33,7 @@ public class WorldLevel : MonoBehaviour
         pixelCamera = new PixelCamera(pixelScene.GetComponentInChildren<PixelCameraTransform>(),GameManager.RenderSizes);
         pixelScene.Init(pixelSceneData.LoadMap(), pixelCamera);
 
-        PostProcessManager.Instance = new PostProcessManager();
+        new PostProcessManager();
 
         renderPassRecorder = new RenderPassRecorder();
 
@@ -61,7 +61,10 @@ public class WorldLevel : MonoBehaviour
 
     public NativeArray<Color32> GetPixelCameraRender()
     {
-        return pixelCamera.Render(pixelScene, ref tickBlock, inDebug);
+        var outputColors = pixelCamera.Render(pixelScene, ref tickBlock, inDebug, out EnvironementInfo info);
+        PostProcessManager.Instance.Render(ref outputColors, ref postProcessTickBlock, ref info);
+        info.Dispose();
+        return outputColors;
     }
 
 
@@ -71,7 +74,7 @@ public class WorldLevel : MonoBehaviour
         if(!transitionInfo.isInTransition)
         {
             var pixels = GetPixelCameraRender();
-            PostProcessManager.Instance.Render(ref pixels, ref postProcessTickBlock);
+            //PostProcessManager.Instance.Render(ref pixels, ref postProcessTickBlock);
             GridRenderer.RenderToScreen(pixels);
         }
         else

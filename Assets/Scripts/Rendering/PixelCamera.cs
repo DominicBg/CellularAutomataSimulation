@@ -25,8 +25,14 @@ public class PixelCamera
         renderingHash = new HashSet<IRenderable>();
     }
 
-
     public NativeArray<Color32> Render(PixelScene pixelScene, ref TickBlock tickBlock, bool inDebug, System.Action<NativeArray<Color32>> onRenderPass = null)
+    {
+        var outputColors = Render(pixelScene, ref tickBlock, inDebug, out EnvironementInfo envInfo, onRenderPass);
+        envInfo.Dispose();
+        return outputColors;
+    }
+
+    public NativeArray<Color32> Render(PixelScene pixelScene, ref TickBlock tickBlock, bool inDebug, out EnvironementInfo info, System.Action<NativeArray<Color32>> onRenderPass = null)
     {
         GridRenderer.GetBlankTexture(out NativeArray<Color32> outputColors);
 
@@ -53,7 +59,7 @@ public class PixelCamera
 
 
         int renderCount = renderingObjects.Count;
-        EnvironementInfo info = new EnvironementInfo();
+        info = new EnvironementInfo();
         info.lightSources = PrepareLights(pixelScene.lightSources, pixelScene.lightMultiSource, tickBlock.tick);
         info.cameraHandle = GetHandle();
 
@@ -153,7 +159,9 @@ public class PixelCamera
 
 
         //Render Light
-        LightRenderer.AddLight(ref outputColors, ref info.lightSources, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
+        NativeArray<float> lightIntensities = new NativeArray<float>(outputColors.Length, Allocator.TempJob);
+        LightRenderer.AddLight(ref outputColors, ref lightIntensities, ref info.lightSources, GetRenderingOffset(), GridRenderer.Instance.lightRendering.settings);
+        info.lightIntensities = lightIntensities;
 
         //Post Process render
         for (int i = 0; i < renderCount; i++)
@@ -198,7 +206,8 @@ public class PixelCamera
             onRenderPass?.Invoke(outputColors);
         }
 
-        info.Dispose();
+        //info.Dispose();
+        //nvironementInfo = info;
         return outputColors;
     }
 
@@ -221,7 +230,6 @@ public class PixelCamera
 
     public int2 GetRenderPosition(int2 position)
     {
-        //return position + GetRenderingOffset();
         return GetRenderPosition(this.position, viewPort, position);
     }
 
@@ -280,6 +288,7 @@ public struct EnvironementInfo
     public NativeList<LightSource> lightSources;
     public NativeGrid<int> reflectionIndices;
     public PixelCamera.PixelCameraHandle cameraHandle;
+    public NativeArray<float> lightIntensities;
 
     int internalReflectionIndex;
 
@@ -304,5 +313,6 @@ public struct EnvironementInfo
         skybox.Dispose();
         lightSources.Dispose();
         reflectionIndices.Dispose();
+        lightIntensities.Dispose();
     }
 }

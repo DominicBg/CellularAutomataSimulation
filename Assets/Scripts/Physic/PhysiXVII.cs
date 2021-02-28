@@ -43,6 +43,7 @@ public static class PhysiXVII
         underFeetPos.Dispose();
         return hasFeetCollision || hasUnderFeetCollision || atFloorLevel;
     }
+
     [BurstCompile]
     public static bool HasFloorCollision(in PhysicData physicData, Map map, int2 position)
     {

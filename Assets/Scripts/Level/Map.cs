@@ -222,7 +222,9 @@ public unsafe struct Map
         boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
         for (int i = 0; i < positions.Length; i++)
         {
-            SetParticleType(positions[i], ParticleType.None);
+            //if we overlap free fall particles, dont erase them
+            if (GetParticleType(positions[i]) == ParticleType.Player)
+                SetParticleType(positions[i], ParticleType.None);
         }
         positions.Dispose();
     }
@@ -234,7 +236,9 @@ public unsafe struct Map
         boundPosition.GetPositionsGrid(out NativeArray<int2> positions, Allocator.Temp);
         for (int i = 0; i < positions.Length; i++)
         {
-            SetParticleType(positions[i], ParticleType.Player);
+            //if we overlap free fall particles, dont erase them
+            if (GetParticleType(positions[i]) == ParticleType.None)
+                SetParticleType(positions[i], ParticleType.Player);
         }
         positions.Dispose();
     }
@@ -296,20 +300,20 @@ public unsafe struct Map
         return CountCollision(ref bound, ignoreFlag, allocator) > 0;
     }
 
-    public int CountCollision(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp)
+    public bool HasCollisionIgnoreFreeFall(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp)
+    {
+        return CountCollision(ref bound, ignoreFlag, allocator, ignoreFreeFall : true) > 0;
+    }
+
+    public int CountCollision(ref Bound bound, int ignoreFlag = 0, Allocator allocator = Allocator.Temp, bool ignoreFreeFall = false)
     {
         bound.GetPositionsGrid(out NativeArray<int2> positions, allocator);
-        int count = CountCollision(ref positions, ignoreFlag);
+        int count = CountCollision(ref positions, ignoreFlag, ignoreFreeFall);
         positions.Dispose();
         return count;
     }
 
-    public bool HasCollision(ref NativeArray<int2> positions, int ignoreFlag = 0)
-    {
-        return CountCollision(ref positions, ignoreFlag) > 0;
-    }
-
-    public int CountCollision(ref NativeArray<int2> positions, int ignoreFlag = 0)
+    public int CountCollision(ref NativeArray<int2> positions, int ignoreFlag = 0, bool ignoreFreeFall = false)
     {
         int count = 0;
         for (int i = 0; i < positions.Length; i++)
@@ -318,12 +322,12 @@ public unsafe struct Map
                 continue;
 
             ParticleType particleType = GetParticleType(positions[i]);
-            //bool ignoreCollision = PhysiXVII.IsInFlag(ignoreFlag, particleType);
-            //if (!ignoreCollision && HasParticleCollision(particleType))
+            bool inFreeFall = GetParticle(positions[i]).InFreeFall();
+            if (inFreeFall && ignoreFreeFall)
+                continue;
+
             if (HasParticleCollision(particleType, ignoreFlag))
-            {
                 count++;
-            }
         }
         return count;
     }

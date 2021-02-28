@@ -215,8 +215,8 @@ public struct PhysiXVIIJob : IJob
         //Move a bit horizontal/vertically to check if there's a collision
         Bound horizontalBound = physicBound.GetCollisionBound(safePosition + new int2(direction.x, 0));
         Bound verticalBound = physicBound.GetCollisionBound(safePosition + new int2(0, direction.y));
-        bool hasHorizontalCollision = map.HasCollision(ref horizontalBound, PhysiXVII.GetFlag(ParticleType.Player));
-        bool hasVerticalCollision = map.HasCollision(ref verticalBound, PhysiXVII.GetFlag(ParticleType.Player));
+        bool hasHorizontalCollision = map.HasCollisionIgnoreFreeFall(ref horizontalBound, PhysiXVII.GetFlag(ParticleType.Player));
+        bool hasVerticalCollision = map.HasCollisionIgnoreFreeFall(ref verticalBound, PhysiXVII.GetFlag(ParticleType.Player));
         int2 collision = 0;
         if (hasHorizontalCollision)
             collision.x = -direction.x;
@@ -262,7 +262,7 @@ public struct PhysiXVIIJob : IJob
             currentPosBound = physicBound.GetCollisionBound(currentPos);
 
             int2 currentDir = math.clamp(currentPos - safePosition, -1, 1);
-            if (map.HasCollision(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
+            if (map.HasCollisionIgnoreFreeFall(ref currentPosBound, PhysiXVII.GetFlag(ParticleType.Player)))
             {
                 //Match collision height
                 if(GetSlopeHeight(ref physicBound, currentPos, settings.maxSlope, out int newYPos))
