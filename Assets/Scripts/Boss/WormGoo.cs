@@ -11,7 +11,11 @@ public class WormGoo : PhysicObject
     public int mass = 5;
     public float angle = 0;
     public Texture2D texture;
+    public Texture2D normalTexture;
+    public Texture2D reflectionTexture;
     NativeSprite sprite;
+
+    public EnvironementReflectionInfo envReflInfo = EnvironementReflectionInfo.Default();
 
     public float angleSmooth = 3;
     public float maxVelocity = 25;
@@ -28,7 +32,7 @@ public class WormGoo : PhysicObject
     {
         currentSizes = sizes;
         base.OnInit();
-        sprite = new NativeSprite(texture);
+        sprite = new NativeSprite(texture, normalTexture, reflectionTexture);
         InitPhysicData(new PhysicBound(Bound.CenterAligned(0, collisionSize)), mass);
         physicData.applyFriction = true;
     }
@@ -79,13 +83,37 @@ public class WormGoo : PhysicObject
               );
     }
 
+    NativeGrid<Color32> tempPixels;
+    NativeGrid<float3> tempNormal;
+    NativeGrid<float> tempReflection;
+    int relfectionIndex;
+    int2 trueRenderPos;
+
     public override void Render(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
     {
         RotationBound rotationBound = new RotationBound(GetBound(), angle, RotationBound.Anchor.Center);
-        if(useSuperSample)
-            GridRenderer.DrawRotationSpriteFast(ref outputColors, rotationBound, info.cameraHandle, in sprite);
+        if(!useSuperSample)
+        {
+            GridRenderer.DrawRotationSprite(ref outputColors, in rotationBound, info.cameraHandle, in sprite);
+        }
         else
-            GridRenderer.DrawRotationSprite(ref outputColors, rotationBound, info.cameraHandle, in sprite, useSuperSample);
+        {
+            relfectionIndex = info.GetReflectionIndex();
+            sprite.GetRotationSprite(in rotationBound, info.cameraHandle, out tempPixels, out tempNormal, out tempReflection, out int2 min, out int2 max);
+            trueRenderPos = info.cameraHandle.GetRenderPosition(min);
+            GridRenderer.DrawLitSprite(ref outputColors, in tempPixels, in tempNormal, position, trueRenderPos, info.lightSources, ShadingLitInfo.Default());  
+        }
+    }
+
+    public override void RenderReflection(ref NativeArray<Color32> outputColors, ref TickBlock tickBlock, int2 renderPos, ref EnvironementInfo info)
+    {
+        if (useSuperSample)
+        {    
+            GridRenderer.ApplySpriteEnvironementReflection(ref outputColors, in tempPixels, in tempNormal, in tempReflection, trueRenderPos, relfectionIndex, ref info, envReflInfo);
+            tempPixels.Dispose();
+            tempNormal.Dispose();
+            tempReflection.Dispose();
+        }
     }
 
     public override void Dispose()

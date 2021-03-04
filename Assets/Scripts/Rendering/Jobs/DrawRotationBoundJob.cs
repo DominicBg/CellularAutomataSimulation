@@ -161,3 +161,108 @@ public struct RenderRotationBoundSpritePass2Job : IJobParallelFor
         return Color.clear;
     }
 }
+
+
+[BurstCompile]
+public struct RenderRotationBoundSpriteReflectionPass1Job : IJobParallelFor
+{
+    public NativeGrid<Color32> pixels;
+    public NativeGrid<float3> normals;
+    public NativeGrid<float> reflections;
+
+    public NativeGrid<Color32> outputPixels;
+    public NativeGrid<float3> outputNormals;
+    public NativeGrid<float> outputReflections;
+
+    public RotationBound rotationBound;
+    public PixelCamera.PixelCameraHandle cameraHandle;
+
+    public float sin, cos;
+    public int2 renderPos;
+
+    public void Execute(int index)
+    {
+        int2 pos = ArrayHelper.IndexToPos(index, outputPixels.Sizes);
+        int2 worldPos = cameraHandle.GetGlobalPosition(renderPos + pos);
+        if (rotationBound.TryGetUV(worldPos, sin, cos, out float2 uv) && GridHelper.InBound(pos, outputPixels.Sizes))
+        {
+            outputPixels[pos] = RenderingUtils.SampleNativeGrid(in pixels, uv);
+            float3 normal = RenderingUtils.SampleNativeGrid(in normals, uv);
+            outputNormals[pos] = new float3(MathUtils.Rotate(normal.xy, cos, sin), normal.z);
+            outputReflections[pos] = RenderingUtils.SampleNativeGrid(in reflections, uv);
+        }
+        else
+        {
+            outputPixels[pos] = Color.clear;
+            outputNormals[pos] = 0;
+            outputReflections[pos] = 0;
+        }
+    }
+}
+
+[BurstCompile]
+public struct RenderRotationBoundSpriteReflectionPass2Job : IJobParallelFor
+{
+    [ReadOnly] public NativeGrid<Color32> inputPixels;
+    [ReadOnly] public NativeGrid<float3> inputNormals;
+    [ReadOnly] public NativeGrid<float> inputReflections;
+
+    public NativeGrid<Color32> outputPixels;
+    public NativeGrid<float3> outputNormals;
+    public NativeGrid<float> outputReflections;
+
+    public void Execute(int index)
+    {
+        int2 pos = ArrayHelper.IndexToPos(index, inputPixels.Sizes);
+
+        if (inputPixels[pos].a >= 0.05f)
+        {
+            inputPixels[pos] = inputPixels[pos];
+            return;
+        }
+
+        NativeArray<Color> colors = new NativeArray<Color>(4, Allocator.Temp);
+        NativeArray<int2> positions = new NativeArray<int2>(4, Allocator.Temp);
+        positions[0] = pos + new int2(0, 1);
+        positions[1] = pos + new int2(1, 0);
+        positions[2] = pos + new int2(0, -1);
+        positions[3] = pos + new int2(-1, 0);
+
+        //try super sampler XVII
+        for (int i = 0; i < positions.Length; i++)
+        {
+            colors[i] = GetColor(positions[i]);
+        }
+  
+        //find a pair, if there's 2 take this pixel instead
+        for (int i = 0; i < colors.Length; i++)
+        {
+            for (int j = i + 1; j < colors.Length; j++)
+            {
+                if (colors[i] == colors[j] && colors[i].a >= 0.05f)
+                {
+                    int2 samplePos = positions[i];
+                    outputPixels[pos] = inputPixels[samplePos];
+                    outputNormals[pos] = inputNormals[samplePos];
+                    outputReflections[pos] = inputReflections[samplePos];
+
+                    positions.Dispose();
+                    colors.Dispose();
+                    return;
+                }
+            }
+        }
+        colors.Dispose();
+        positions.Dispose();
+    }
+
+    public Color GetColor(int2 pos)
+    {
+        if (GridHelper.InBound(pos, outputPixels.Sizes))
+        {
+            return outputPixels[pos];
+        }
+        return Color.clear;
+    }
+}
+

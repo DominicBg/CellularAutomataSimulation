@@ -166,7 +166,11 @@ public class GridRenderer : MonoBehaviour
             superSample = useSuperSample
         }.Schedule(GameManager.GridLength, GameManager.InnerLoopBatchCount).Complete();
     }
-    public static void DrawRotationSpriteFast(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite, BlendingMode blending = BlendingMode.Normal)
+
+
+
+
+    public static void DrawRotationSprite(ref NativeArray<Color32> outputColors, in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, in NativeSprite nativeSprite)
     {
         bound.GetCornerMinMax(out int2 min, out int2 max);
         int2 sizes = max - min;
@@ -206,8 +210,7 @@ public class GridRenderer : MonoBehaviour
         newSpriteFilled.Dispose();
     }
 
-
-
+  
     public static void ApplyPixels(ref NativeArray<Color32> outputColor, ref NativeArray<int2> pixelPositions, ref NativeArray<Color32> pixelcolors, BlendingMode blending = BlendingMode.Normal)
     {
         new ApplyPixelsJob(outputColor, pixelPositions, pixelcolors, blending).Run();

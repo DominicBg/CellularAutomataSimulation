@@ -121,19 +121,13 @@ public class WormBoss : LevelObject, IAlwaysRenderable
         for (int i = body.Length - 1; i >= 1; i--)
         {
             RotationBound bodyBound = new RotationBound(Bound.CenterAligned(body[i].position, bodySize), math.degrees(body[i].angle));
-
-            if (useSuperSampler)
-                GridRenderer.DrawRotationSpriteFast(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
-            else
-                GridRenderer.DrawRotationSprite(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
+            GridRenderer.DrawRotationSprite(ref outputColors, in bodyBound, info.cameraHandle, in bodySprite);
+          
         }
 
         RotationBound headBound = new RotationBound(Bound.CenterAligned(body[0].position, headSize), math.degrees(body[0].angle));
-
-        if (useSuperSampler)
-            GridRenderer.DrawRotationSpriteFast(ref outputColors, in headBound, info.cameraHandle, in headSprite);
-        else
-            GridRenderer.DrawRotationSprite(ref outputColors, in headBound, info.cameraHandle, in headSprite);
+        GridRenderer.DrawRotationSprite(ref outputColors, in headBound, info.cameraHandle, in headSprite);
+   
     }
 
     public override Bound GetBound()

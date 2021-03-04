@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -45,6 +46,69 @@ public struct NativeSprite : IDisposable
             }
         }
     }
+    public void GetRotationSprite(in RotationBound bound, PixelCamera.PixelCameraHandle cameraHandle, out NativeGrid<Color32> outputPixels, out NativeGrid<float3> outputNormals, out NativeGrid<float> outputReflections, out int2 min, out int2 max)
+    {
+        bound.GetCornerMinMax(out min, out max);
+        int2 sizes = max - min;
+        outputPixels = new NativeGrid<Color32>(sizes, Allocator.TempJob);
+        outputNormals = new NativeGrid<float3>(sizes, Allocator.TempJob);
+        outputReflections = new NativeGrid<float>(sizes, Allocator.TempJob);
+
+        int2 renderPos = cameraHandle.GetRenderPosition(min);
+        int threadLength = sizes.x * sizes.y;
+
+        //precompute sincos for everythread
+        bound.GetSinCosAngle(out float sin, out float cos);
+        new RenderRotationBoundSpriteReflectionPass1Job()
+        {
+            pixels = pixels,
+            normals = normals,
+            reflections = reflections,
+
+            outputPixels = outputPixels,
+            outputNormals = outputNormals,
+            outputReflections = outputReflections,
+            
+            cameraHandle = cameraHandle,
+            rotationBound = bound,
+            sin = sin,
+            cos = cos,
+            renderPos = renderPos
+        }.Schedule(threadLength, 16).Complete();
+
+        NativeGrid<Color32> tempPixels = NativeGrid<Color32>.FromGrid(outputPixels, Allocator.TempJob);
+        NativeGrid<float3> tempNormal = NativeGrid<float3>.FromGrid(outputNormals, Allocator.TempJob);
+        NativeGrid<float> tempReflections = NativeGrid<float>.FromGrid(outputReflections, Allocator.TempJob);
+
+        ////two passes for better results
+        new RenderRotationBoundSpriteReflectionPass2Job()
+        {
+            inputPixels = outputPixels,
+            inputNormals = outputNormals,
+            inputReflections = outputReflections,
+
+            outputPixels = tempPixels,
+            outputNormals = tempNormal,
+            outputReflections = tempReflections
+        }.Schedule(threadLength, 16).Complete();
+
+        new RenderRotationBoundSpriteReflectionPass2Job()
+        {
+            inputPixels = tempPixels,
+            inputNormals = tempNormal,
+            inputReflections = tempReflections,
+
+            outputPixels = outputPixels,
+            outputNormals = outputNormals,
+            outputReflections = outputReflections
+        }.Schedule(threadLength, 16).Complete();
+
+        tempPixels.Dispose();
+        tempNormal.Dispose();
+        tempReflections.Dispose();
+    }
+
+
 
     public void Dispose()
     {

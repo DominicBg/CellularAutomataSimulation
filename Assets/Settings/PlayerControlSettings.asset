@@ -16,7 +16,7 @@ MonoBehaviour:
     x: 750
     y: 1500
   shadingInfo:
-    minLightIntensity: 0.7
+    minLightIntensity: 0.6
     lightResolution: 25
     z: 0
   skyReflection:

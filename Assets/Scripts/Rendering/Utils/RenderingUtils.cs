@@ -137,6 +137,11 @@ public static class RenderingUtils
         int2 pixelCoord = (int2)math.clamp((uv * sprite.sizes-1), 0, sprite.sizes-1);
         return sprite.pixels[pixelCoord];
     }
+    public static T SampleNativeGrid<T>(in NativeGrid<T> grid, float2 uv) where T : struct
+    {
+        int2 pixelCoord = (int2)math.clamp((uv * grid.Sizes - 1), 0, grid.Sizes - 1);
+        return grid[pixelCoord];
+    }
 
     public static Color ApplyLightOnPixel(int2 worldPos, Color color, float3 normal, NativeList<LightSource> lights, in ShadingLitInfo litInfo)
     {
