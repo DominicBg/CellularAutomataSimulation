@@ -451,6 +451,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
@@ -1503,6 +1504,7 @@ MonoBehaviour:
     x: 50
     y: 5
   partaicleBehaviour: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
+  mainMenuLevelPrefab: {fileID: 0}
   t: 0.5
   diamondSize: 7
 --- !u!1 &886483091
@@ -2073,7 +2075,7 @@ MonoBehaviour:
   gameOverworldManager: {fileID: 494699174}
   gameMainMenuManager: {fileID: 746556379}
   firstState: 1
-  worldLevelPrefab: {fileID: 0}
+  worldLevelPrefab: {fileID: 5026943076903704041, guid: e2693a981d9d034499b21376ec6bb6b2, type: 3}
   physiXVIIScriptable: {fileID: 11400000, guid: d8bf304d3a543b242ba8d46eb5dceb00, type: 2}
   particleBehaviourScriptable: {fileID: 11400000, guid: 4327fa583744aff4eb2aeb581fc01a67, type: 2}
 --- !u!4 &1372262967
@@ -2572,6 +2574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}

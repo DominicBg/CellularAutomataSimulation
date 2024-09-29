@@ -8,8 +8,8 @@ using Unity.Jobs;
 
 public class GameMainMenuManager : MonoBehaviour, IGameState
 {
-    public MainMenuLightRender lightRender; 
-    public MainMenuDarkRender darkRender; 
+    public MainMenuLightRender lightRender;
+    public MainMenuDarkRender darkRender;
 
     [Header("Parameters")]
     public float randomSpeed = 1;
@@ -23,7 +23,10 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
     public ParticleBehaviourScriptable partaicleBehaviour;
 
     //public LevelContainer mainMenuLevelPrefab;
+    [SerializeField] PixelScene mainMenuLevelPrefab;
+
     //LevelContainer mainMenuLevel;
+    PixelScene mainMenuLevel;
     TickBlock tickBlock;
 
     //Debug
@@ -35,10 +38,10 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         lightRender.Dispose();
         darkRender.Dispose();
 
-        //if(mainMenuLevel != null)
-        //    mainMenuLevel.Dispose();
+        if (mainMenuLevel != null)
+            mainMenuLevel.Dispose();
 
-        //mainMenuLevel = null;
+        mainMenuLevel = null;
     }
 
     public void OnStart()
@@ -47,9 +50,9 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         darkRender.Init();
 
         //Load simulation
-      //  mainMenuLevel = Instantiate(mainMenuLevelPrefab);
-     //   LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
-      //  mainMenuLevel.Init(data.LoadMap());
+        //  mainMenuLevel = Instantiate(mainMenuLevelPrefab);
+        //   LevelContainerData data = mainMenuLevel.GetComponent<LevelContainerData>();
+        //  mainMenuLevel.Init(data.LoadMap());
 
         tickBlock.Init();
     }
@@ -57,9 +60,9 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
     public void OnUpdate()
     {
         tickBlock.UpdateTick();
-     //   mainMenuLevel.OnUpdate(ref tickBlock);
+        //   mainMenuLevel.OnUpdate(ref tickBlock);
 
-        if(InputCommand.IsButtonDown(ButtonType.Jump))
+        if (InputCommand.IsButtonDown(ButtonType.Jump))
         {
             GameManager.Instance.SetOverworld();
         }
@@ -73,7 +76,7 @@ public class GameMainMenuManager : MonoBehaviour, IGameState
         bool showlight = noiseValue < lightThreshold;
         bool showGlitch = noiseValue > lightThreshold && noiseValue < glitchThreshold;
 
-        //FIX ME
+        ////FIX ME
         //if (showGlitch)
         //{
         //    var lightTexture = lightRender.Render(ref tickBlock, ref mainMenuLevel.map, mainMenuLevel.lightSources);

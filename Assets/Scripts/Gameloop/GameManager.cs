@@ -5,6 +5,7 @@ using FiniteStateMachine;
 using Unity.Mathematics;
 using Unity.Jobs;
 using System;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     public enum GameStateEnum { MainMenu, Overworld, Level, LevelEditor, Context }
 
     StateMachine<GameStateEnum> m_stateMachine;
+
 
     //Rename more manager stuff
     [SerializeField] GameLevelManager gameLevelManager = default;
