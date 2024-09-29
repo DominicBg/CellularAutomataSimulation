@@ -1,5 +1,5 @@
-#CellularAutomataSimulation 
-##AKA Astroboi
+# CellularAutomataSimulation 
+## AKA Astroboi
 
 This prototype explores per-pixel interactions/physics/lightsource with multithread-cpu rendering.
 
